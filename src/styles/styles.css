@@ -1,0 +1,56 @@
+/* Añade aquí los estilos globales de tu aplicación */
+body {
+  font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+}
+
+header, footer {
+  background-color: #f8f8f8;
+  padding: 1em;
+  text-align: center;
+}
+
+form {
+  max-width: 600px;
+  margin: 2em auto;
+  padding: 1em;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+input {
+  display: block;
+  width: calc(100% - 20px);
+  margin: 0.5em 0;
+  padding: 0.5em;
+}
+
+/* Estilos para los enlaces de navegación */
+nav {
+  margin-top: 20px; /* Añade margen superior para separar la navegación del contenido superior */
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+}
+
+nav ul li {
+  display: inline-block;
+  margin-right: 50px; /* Ajusta el margen derecho para separar los enlaces */
+  margin: 1em;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: #000000;
+  padding: 8px 16px;
+  border-radius: 16px;
+  background-color: #f0f0f0;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px; /* Añade margen inferior para separar los enlaces del contenido */
+}
+
+nav ul li a:hover {
+  background-color: #6dfff3;
+}
