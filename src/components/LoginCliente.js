@@ -5,8 +5,8 @@ import axios from 'axios';
 const LoginCliente = () => {
   // Estado para almacenar las credenciales del cliente (email y contraseña)
   const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
+    email: 'santiagor.o06105@gmail.com',
+    password: 'SantiagoRO2024$'
   });
 
   // Función para manejar cambios en los campos del formulario

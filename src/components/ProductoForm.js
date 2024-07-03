@@ -5,12 +5,12 @@ import axios from 'axios';
 const ProductoForm = () => {
   // Estado para almacenar los datos del producto que se va a agregar
   const [product, setProduct] = useState({
-    name: '',
-    description: '',
-    catalog: '',
-    price: '',
-    quantity: '',
-    image: ''
+    name: 'Santiago RO',
+    description: 'TV 70″ QLED UHD (Hisense). Computador Portatil (Lenovo)',
+    catalog: 'Electrodomésticos',
+    price: '1.500.000',
+    quantity: '2.000.000',
+    image: 'https://hisense.com.co/product/televisor-hisense-uhd-4k-a6hv-70/'
   });
 
   // Función para manejar cambios en los campos del formulario

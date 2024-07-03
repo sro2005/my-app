@@ -5,14 +5,14 @@ import axios from 'axios';
 const PedidoForm = () => {
   // Estado para almacenar los datos del pedido
   const [order, setOrder] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    paymentMethod: '',
-    deliveryDate: '',
-    products: '',
+    firstName: 'Santiago',
+    lastName: 'RO',
+    email: 'santiagor.o06105@gmail.com',
+    phone: '3025123847',
+    address: 'KRA 114 #147 A - 41',
+    paymentMethod: 'Billetera Virtual',
+    deliveryDate: '25/07/2024',
+    products: 'Televisor, Computador',
     totalAmount: 0
   });
 

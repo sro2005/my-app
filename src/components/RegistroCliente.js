@@ -5,15 +5,15 @@ import axios from 'axios';
 const RegistroCliente = () => {
   // Estado para almacenar los datos del cliente que se va a registrar
   const [customer, setCustomer] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    birthDate: '',
-    password: '',
-    confirmPassword: '',
-    address: '',
-    phone: '',
-    preferences: ''
+    firstName: 'Santiago',
+    lastName: 'RO',
+    email: 'santiagor.o06105@gmail.com',
+    birthDate: '06/01/2005',
+    password: 'SantiagoRO2024$',
+    confirmPassword: 'SantiagoRO2024$',
+    address: 'CRA 114 #147 A - 41',
+    phone: '3025123847',
+    preferences: 'Televisores, Computadores.'
   });
 
   // Función para manejar cambios en los campos del formulario
