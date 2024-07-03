@@ -10,7 +10,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -23,12 +23,16 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ], 
+    ],
     "overrides": [
-    {
-      "files": ["**/*.js"],
-      "extends": ["plugin:@typescript-eslint/recommended"]
-    }
+      {
+        "files": [
+          "**/*.js"
+        ],
+        "extends": [
+          "plugin:@typescript-eslint/recommended"
+        ]
+      }
     ]
   },
   "browserslist": {
@@ -45,7 +49,6 @@
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
-  "devDependencies": {},
   "keywords": [],
   "author": "",
   "license": "ISC"
