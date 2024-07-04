@@ -1,25 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 // Componente funcional HomePage que representa la página de inicio de la aplicación
 const HomePage = () => {
   return (
     <div>
-        {/* Navegación a las diferentes secciones */}
-      <nav>
-        <ul>
-          <li><Link to="/producto-form">Agregar Producto</Link></li>
-          <li><Link to="/pedido-form">Realizar Pedido</Link></li>
-          <li><Link to="/confirmacion-pedido">Confirmación de Pedido</Link></li>
-          <li><Link to="/listado-clientes">Listado de Clientes</Link></li>
-          <li><Link to="/listado-productos">Listado de Productos</Link></li>
-          <li><Link to="/listado-pedidos">Listado de Pedidos</Link></li>
-          <li><Link to="/registro-cliente">Registro de Cliente</Link></li>
-          <li><Link to="/login-cliente">Iniciar Sesión</Link></li>
-          <li><Link to="/perfil-cliente">Perfil de Cliente</Link></li>
-        </ul>
-      </nav>
-
         {/* Título principal de la página de inicio */}
       <h2>¡Bienvenido! Empresa & Marca "Home Appliances SRO"</h2>
         {/* Párrafo de descripción de la empresa */}

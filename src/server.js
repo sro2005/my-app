@@ -1,33 +1,32 @@
-// Importar los módulos necesarios
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 
-// Crear una instancia de Express
 const app = express();
+const port = process.env.PORT || 5000;
 
-// Middleware para parsear JSON y permitir CORS
+// Middleware
 app.use(bodyParser.json());
-app.use(cors());
 
-// Definir las rutas API
-app.get('/', (req, res) => {
-  res.send('API Funcionando'); // Ruta principal
+// Rutas
+app.post('/api/customers', (req, res) => {
+  // Aquí iría la lógica para registrar un cliente
+  const newCustomer = req.body;
+  // Guardar nuevo cliente en la base de datos (lógica simulada aquí)
+  res.status(201).json({ message: 'Cliente registrado exitosamente', newCustomer });
 });
 
-// Rutas para los endpoints específicos
-app.use('/api/producto-form', require('./routes/productoForm'));
-app.use('/api/pedido-form', require('./routes/pedidoForm'));
-app.use('/api/confirmacion-pedido', require('./routes/confirmacionPedido'));
-app.use('/api/listado-clientes', require('./routes/listadoClientes'));
-app.use('/api/listado-productos', require('./routes/listadoProductos'));
-app.use('/api/listado-pedidos', require('./routes/listadoPedidos'));
-app.use('/api/registro-cliente', require('./routes/registroCliente'));
-app.use('/api/login-cliente', require('./routes/loginCliente'));
-app.use('/api/perfil-cliente', require('./routes/perfilCliente'));
+app.post('/api/login', (req, res) => {
+  // Aquí iría la lógica para iniciar sesión de un cliente
+  const credentials = req.body;
+  // Validar credenciales (lógica simulada aquí)
+  if (credentials.email === 'santiagor.o06105@gmail.com' && credentials.password === 'SantiagoRO2024$') {
+    res.status(200).json({ message: 'Inicio de sesión exitoso', token: 'fake-jwt-token' });
+  } else {
+    res.status(401).json({ message: 'Credenciales incorrectas' });
+  }
+});
 
 // Iniciar el servidor
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Servidor iniciado en el puerto ${PORT}`);
+app.listen(port, () => {
+  console.log(`Servidor corriendo en http://localhost:${port}`);
 });
