@@ -1,63 +1,74 @@
+// src/components/RegistroCliente.js
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-// Componente funcional RegistroCliente para registrar nuevos clientes
 const RegistroCliente = () => {
-  // Estado para almacenar los datos del cliente que se va a registrar
-  const [customer, setCustomer] = useState({
-    firstName: 'Santiago',
-    lastName: 'RO',
-    email: 'santiagor.o06105@gmail.com',
-    birthDate: '06/01/2005',
-    password: 'SantiagoRO2024$',
-    confirmPassword: 'SantiagoRO2024$',
-    address: 'CRA 114 #147 A - 41',
-    phone: '3025123847',
-    preferences: 'Televisores, Computadores.'
-  });
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [birthDate, setBirthDate] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [preferences, setPreferences] = useState('');
 
-  // Función para manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    setCustomer({ ...customer, [e.target.name]: e.target.value });
-  };
+  const navigate = useNavigate();
 
-  // Función para manejar el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Validación de contraseñas
-    if (customer.password !== customer.confirmPassword) {
+
+    if (password !== confirmPassword) {
       alert('Las contraseñas no coinciden!');
       return;
     }
 
-    // Petición POST para enviar los datos del cliente a la API
-    axios.post('/api/customers', customer)
-      .then(response => {
-        console.log('Cliente registrado:', response.data); // Mostrar mensaje de éxito en la consola
-      })
-      .catch(error => {
-        console.error('Error registrando cliente:', error); // Manejar errores si la petición falla
-      });
+    // Lógica de registro aquí
+    // Puedes usar axios para enviar los datos a tu servidor
+    // Ejemplo:
+    /*
+    axios.post('/api/customers', {
+      firstName,
+      lastName,
+      email,
+      birthDate,
+      password,
+      address,
+      phone,
+      preferences
+    })
+    .then(response => {
+      console.log('Cliente registrado:', response.data);
+      // Redirigir al formulario de inicio de sesión después de un registro exitoso
+      navigate('/login');
+    })
+    .catch(error => {
+      console.error('Error registrando cliente:', error);
+      alert('Ocurrió un error al registrar al cliente. Por favor, intenta nuevamente.');
+    });
+    */
+
+    // Simulación de registro exitoso
+    alert('¡Registro exitoso!');
+    navigate('/login');
   };
 
-  // Renderizado del formulario de registro de cliente
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="firstName" placeholder="Nombres" onChange={handleChange} required />
-      <input type="text" name="lastName" placeholder="Apellidos" onChange={handleChange} required />
-      <input type="email" name="email" placeholder="Correo Electrónico" onChange={handleChange} required />
-      <input type="date" name="birthDate" placeholder="Fecha de Nacimiento" onChange={handleChange} required />
-      <input type="password" name="password" placeholder="Contraseña" onChange={handleChange} required />
-      <input type="password" name="confirmPassword" placeholder="Confirmar Contraseña" onChange={handleChange} required />
-      <input type="text" name="address" placeholder="Dirección" onChange={handleChange} required />
-      <input type="tel" name="phone" placeholder="Teléfono" onChange={handleChange} required />
-      <input type="text" name="preferences" placeholder="Preferencias de Productos" onChange={handleChange} required />
+      <h1>CREAR CUENTA</h1>
+      <h2>Registro del Cliente</h2>
+      <input type="text" placeholder="Nombres" value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
+      <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
+      <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)}/>
+      <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}/>
+      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)}/>
+      <input type="password" placeholder="Confirmar Contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+      <input type="text" placeholder="Dirección del domicilio" value={address} onChange={(e) => setAddress(e.target.value)}/>
+      <input type="tel" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)}/>
+      <input type="text" placeholder="Preferencias de Productos" value={preferences} onChange={(e) => setPreferences(e.target.value)}/>
       <button type="submit">Registrar</button>
     </form>
   );
 };
 
-// Exportar el componente RegistroCliente para su uso en otros archivos
 export default RegistroCliente;
-

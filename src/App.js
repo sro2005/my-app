@@ -1,10 +1,8 @@
-// App.js
-
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+// src/App.js
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header';
-import Footer from './components/Footer'; // Importa el componente Footer
-import LoginPage from './components/LoginPage';
+import Footer from './components/Footer';
 import HomePage from './components/HomePage';
 import ProductoForm from './components/ProductoForm';
 import PedidoForm from './components/PedidoForm';
@@ -13,35 +11,68 @@ import ListadoClientes from './components/ListadoClientes';
 import ListadoProductos from './components/ListadoProductos';
 import ListadoPedidos from './components/ListadoPedidos';
 import PerfilCliente from './components/PerfilCliente';
+import RegistroCliente from './components/RegistroCliente';
+import LoginCliente from './components/LoginCliente';
 import './styles/styles.css';
 
-// Componente principal de la aplicación
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+  };
+
   return (
     <Router>
       <div className="App">
-        {/* Encabezado de la aplicación */}
-        <Header />
-        
-        {/* Definición de las rutas de la aplicación */}
+        <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
         <Routes>
-          {/* Ruta de registro e inicio de sesión */}
-          <Route path="/login" element={<LoginPage />} />
+          {/* Ruta para el formulario de registro */}
+          {!isAuthenticated && (
+            <Route path="/registro" element={<RegistroCliente />} />
+          )}
 
-          {/* Rutas de la aplicación principal */}
-          <Route path="/home-page" element={<HomePage />} />
-          <Route path="/producto-form" element={<ProductoForm />} />
-          <Route path="/pedido-form" element={<PedidoForm />} />
-          <Route path="/confirmacion-pedido" element={<ConfirmacionPedido />} />
-          <Route path="/listado-clientes" element={<ListadoClientes />} />
-          <Route path="/listado-productos" element={<ListadoProductos />} />
-          <Route path="/listado-pedidos" element={<ListadoPedidos />} />
-          <Route path="/perfil-cliente" element={<PerfilCliente />} />
+          {/* Ruta para el formulario de inicio de sesión */}
+          {!isAuthenticated && (
+            <Route path="/login" element={<LoginCliente onLoginSuccess={handleLoginSuccess} />} />
+          )}
 
-          {/* Agregar más rutas según sea necesario */}
+          {/* Rutas protegidas que requieren autenticación */}
+          {isAuthenticated && (
+            <Route path="/" element={<Navigate to="/home-page" />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/home-page" element={<HomePage />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/producto-form" element={<ProductoForm />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/pedido-form" element={<PedidoForm />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/confirmacion-pedido" element={<ConfirmacionPedido />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/listado-clientes" element={<ListadoClientes />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/listado-productos" element={<ListadoProductos />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/listado-pedidos" element={<ListadoPedidos />} />
+          )}
+          {isAuthenticated && (
+            <Route path="/perfil-cliente" element={<PerfilCliente />} />
+          )}
+
+          {/* Ruta de redirección por defecto */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-        
-        {/* Footer de la aplicación */}
         <Footer />
       </div>
     </Router>

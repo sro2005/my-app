@@ -1,32 +1,35 @@
+// server.js
+
 const express = require('express');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(bodyParser.json());
+app.use(cors());
 
-// Rutas
-app.post('/api/customers', (req, res) => {
-  // Aquí iría la lógica para registrar un cliente
-  const newCustomer = req.body;
-  // Guardar nuevo cliente en la base de datos (lógica simulada aquí)
-  res.status(201).json({ message: 'Cliente registrado exitosamente', newCustomer });
+// Conexión a MongoDB
+mongoose.connect('mongodb://localhost:27017/my-app-db', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Error de conexión MongoDB:'));
+db.once('open', () => {
+  console.log('Conexión exitosa a MongoDB');
 });
 
-app.post('/api/login', (req, res) => {
-  // Aquí iría la lógica para iniciar sesión de un cliente
-  const credentials = req.body;
-  // Validar credenciales (lógica simulada aquí)
-  if (credentials.email === 'santiagor.o06105@gmail.com' && credentials.password === 'SantiagoRO2024$') {
-    res.status(200).json({ message: 'Inicio de sesión exitoso', token: 'fake-jwt-token' });
-  } else {
-    res.status(401).json({ message: 'Credenciales incorrectas' });
-  }
-});
+// Rutas API
+const customerRouter = require('./routes/customerRoutes'); // Definir tus rutas aquí
+const authRouter = require('./routes/authRoutes'); // Definir rutas de autenticación aquí
+app.use('/api/customers', customerRouter);
+app.use('/api/auth', authRouter);
 
 // Iniciar el servidor
 app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+  console.log(`Servidor backend corriendo en http://localhost:${port}`);
 });

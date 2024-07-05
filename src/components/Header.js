@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // Componente funcional Header que muestra el encabezado de la página
-const Header = () => {
+const Header = ({ isAuthenticated, onLogout }) => {
+  const [showGoodbyeMessage, setShowGoodbyeMessage] = useState(false);
+    const handleLogout = () => {
+      setShowGoodbyeMessage(true);
+      setTimeout(() => {
+      setShowGoodbyeMessage(false);
+      onLogout();
+    }, 3000); // Muestra el mensaje durante 3 segundos
+  };
+
   return (
     <header>
       {/* Título principal del encabezado */}
@@ -10,16 +19,30 @@ const Header = () => {
       {/* Navegación a las diferentes secciones */}
       <nav>
         <ul>
-          <li><Link to="/home-page">Home</Link></li>
-          <li><Link to="/producto-form">Agregar Producto</Link></li>
-          <li><Link to="/pedido-form">Realizar Pedido</Link></li>
-          <li><Link to="/confirmacion-pedido">Confirmación de Pedido</Link></li>
-          <li><Link to="/listado-clientes">Listado de Clientes</Link></li>
-          <li><Link to="/listado-productos">Listado de Productos</Link></li>
-          <li><Link to="/listado-pedidos">Listado de Pedidos</Link></li>
-          <li><Link to="/perfil-cliente">Perfil de Cliente</Link></li>
+        {isAuthenticated ? (
+            <>
+              <li><Link to="/home-page">Home</Link></li>
+              <li><Link to="/producto-form">Add Products</Link></li>
+              <li><Link to="/pedido-form">Place Orders</Link></li>
+              <li><Link to="/listado-clientes">Módulo Clientes</Link></li>
+              <li><Link to="/listado-productos">Módulo Productos</Link></li>
+              <li><Link to="/listado-pedidos">Módulo Pedidos</Link></li>
+              <li><Link to="/perfil-cliente">Perfil</Link></li>
+              <li><button onClick={handleLogout}>LogOut</button></li>
+            </>
+          ) : (
+            <>
+              <li><Link to="/registro">Registro</Link></li>
+              <li><Link to="/login">Login</Link></li>
+            </>
+          )}
         </ul>
       </nav>
+        {showGoodbyeMessage && (
+            <div className="goodbye-message">
+              <h1>Gracias por visitarnos, vuelve pronto</h1>
+            </div>
+        )}      
     </header>
   );
 };
