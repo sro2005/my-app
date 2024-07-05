@@ -47,10 +47,6 @@ button {
   display: block;
 }
 
-button:hover {
-  background-color: #0056b3;
-}
-
 /* Estilos para los enlaces de navegación */
 nav {
   margin-top: 20px;
@@ -102,4 +98,9 @@ nav ul li a:hover {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
   text-align: left;
   margin-bottom: 20px; /* Ajusta el valor según sea necesario */
+}
+
+.logout {
+  display: inline-block;
+  text-align: center;
 }
