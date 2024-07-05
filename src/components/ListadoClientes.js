@@ -20,7 +20,11 @@ const ListadoClientes = () => {
   }, []); // El array vacío asegura que el efecto se ejecute solo una vez al cargar el componente
 
   return (
-    <div>
+    <div class="container">
+      <h2>Módulo de Cliente</h2>
+         <p><b>Definición:</b> El modelo de cliente representa la información y las interacciones de los clientes con una empresa o servicio.</p>
+         <p><b>Propósito:</b> Administra los perfiles de los clientes, incluyendo datos personales, historial de compras, preferencias y cualquier otra información relevante para ofrecer una experiencia personalizada y satisfactoria.</p>
+         <p><b>Importancia:</b> Permite a las empresas conocer mejor a sus clientes, ofrecer productos y servicios adaptados a sus necesidades, y construir relaciones sólidas y duraderas con ellos. Esto puede conducir a una mayor fidelización de clientes, recomendaciones y crecimiento del negocio.</p>
       {/* Título de la lista de clientes */}
       <h2>Listado de Clientes</h2>
 

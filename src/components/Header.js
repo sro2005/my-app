@@ -25,7 +25,7 @@ const Header = ({ isAuthenticated, onLogout }) => {
               <li><Link to="/producto-form">Add Products</Link></li>
               <li><Link to="/pedido-form">Place Orders</Link></li>
               <li><Link to="/listado-clientes">Módulo Clientes</Link></li>
-              <li><Link to="/listado-productos">Módulo Productos</Link></li>
+              <li><Link to="/listado-productos">Módulo Inventarios</Link></li>
               <li><Link to="/listado-pedidos">Módulo Pedidos</Link></li>
               <li><Link to="/perfil-cliente">Perfil</Link></li>
               <li><button onClick={handleLogout}>LogOut</button></li>

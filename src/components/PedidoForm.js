@@ -40,6 +40,8 @@ const PedidoForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+      <h1>Formulario</h1>
+      <h2>Realizar Nuevo Pedido</h2>
       {/* Campo de nombre */}
       <input type="text" name="firstName" placeholder="Nombre" onChange={handleChange} required />
 

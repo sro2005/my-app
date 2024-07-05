@@ -20,7 +20,11 @@ const ListadoProductos = () => {
   }, []); // El array vacío asegura que el efecto se ejecute solo una vez al cargar el componente
 
   return (
-    <div>
+    <div class="container">
+      <h2>Módulo de Inventario</h2>
+         <p><b>Definición:</b> El modelo de inventario es una representación estructurada de los productos disponibles en un sistema o negocio.</p>
+         <p><b>Propósito:</b> Su función principal es gestionar y mantener un registro detallado de los productos en stock, incluyendo su cantidad, ubicación, y atributos como nombre, descripción y precio.</p>
+         <p><b>Importancia:</b> Permite a las empresas controlar eficientemente su inventario, optimizar la gestión de existencias, prevenir la escasez o el exceso de productos, y asegurar la disponibilidad de productos para satisfacer la demanda de los clientes.</p>
       {/* Título de la lista de productos */}
       <h2>Listado de Productos</h2>
 

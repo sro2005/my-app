@@ -33,6 +33,8 @@ const ProductoForm = () => {
   // Renderizado del formulario de producto
   return (
     <form onSubmit={handleSubmit}>
+      <h1>Formulario</h1>
+      <h2>Agregar Nuevo Producto</h2>
       <input type="text" name="name" placeholder="Nombre del Producto" onChange={handleChange} required />
       <input type="text" name="description" placeholder="Descripción" onChange={handleChange} required />
       <input type="text" name="catalog" placeholder="Catálogo" onChange={handleChange} required />

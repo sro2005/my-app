@@ -92,3 +92,14 @@ nav ul li a:hover {
   text-align: center;
   z-index: 1000;
 }
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px;
+  background-color: #fff; /* Fondo blanco */
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
+  text-align: left;
+  margin-bottom: 20px; /* Ajusta el valor según sea necesario */
+}
