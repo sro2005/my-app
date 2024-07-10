@@ -28,7 +28,7 @@ exports.createCustomer = async (req, res) => {
     });
 
     await customer.save();
-    res.status(201).json(customer);
+    res.status(201).json({ message: 'Cliente registrado exitosamente', customer });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -81,7 +81,7 @@ exports.updateCustomer = async (req, res) => {
     customer.preferences = preferences || customer.preferences;
 
     await customer.save();
-    res.status(200).json(customer);
+    res.status(200).json({ message: 'Cliente actualizado exitosamente', customer });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -97,7 +97,7 @@ exports.deleteCustomer = async (req, res) => {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
-    res.status(200).json({ message: 'Cliente eliminado' });
+    res.status(200).json({ message: 'Cliente eliminado exitosamente' });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
