@@ -14,7 +14,7 @@ exports.createOrder = async (req, res) => {
     await order.save();
     res.status(201).json({ message: 'Pedido realizado exitosamente', order });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: "Cliente no encontrado" });
   }
 };
 
