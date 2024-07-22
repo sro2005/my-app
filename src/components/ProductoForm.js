@@ -5,12 +5,12 @@ import axios from 'axios';
 const ProductoForm = () => {
   // Estado para almacenar los datos del producto que se va a agregar
   const [product, setProduct] = useState({
-    name: 'Santiago RO',
-    description: 'TV 70″ QLED UHD (Hisense). Computador Portatil (Lenovo)',
-    catalog: 'Electrodomésticos',
-    price: '1.500.000',
-    quantity: '2.000.000',
-    image: 'https://hisense.com.co/wp-content/uploads/2023/08/televisor-hisense-A6HV-5-70-1000x800.jpg , https://panamericana.vtexassets.com/arquivos/ids/524568/portatil-lenovo-ideapad-slim-3-14iah8-83eq001nlm-14-intel-core-i5-ram-8gb-512gb-ssd-gris-197532269811.jpg?v=638399752814370000'
+    name: '',
+    description: '',
+    catalog: '',
+    price: '',
+    quantity: '',
+    image: ''
   });
 
   // Función para manejar cambios en los campos del formulario
