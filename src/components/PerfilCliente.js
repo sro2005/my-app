@@ -43,10 +43,10 @@ const PerfilCliente = () => {
         />
       </div>
       <div className="profile-info">
-        <p><strong>Nombre:</strong> {customer.firstName} {customer.lastName}</p>
+        <p><strong>Cliente:</strong> {customer.firstName} {customer.lastName}</p>
         <p><strong>Correo Electrónico:</strong> {customer.email}</p>
         <p><strong>Fecha de Nacimiento:</strong> {formatDate(customer.birthDate)}</p>
-        <p><strong>Dirección:</strong> {customer.address}</p>
+        <p><strong>Número de Identificación (C.C):</strong> {customer.identificationNumber}</p>
         <p><strong>Teléfono:</strong> {customer.phone}</p>
         <p><strong>Preferencias:</strong> {customer.preferences}</p>
       </div>

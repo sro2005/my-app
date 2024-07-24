@@ -45,7 +45,7 @@ const ProductoForm = () => {
       <input type="number" placeholder="Precio" value={price} onChange={(e) => setPrice(e.target.value)} required />
       <input type="number" placeholder="Cantidad" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
       <input type="text" placeholder="URL de Imagen" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
-      <button type="submit">Agregar Producto</button>
+      <button type="submit">AGREGAR</button>
     </form>
   );
 };

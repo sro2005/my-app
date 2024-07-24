@@ -27,7 +27,7 @@ const ClienteItem = ({ cliente }) => (
         <img src="/icono-user.png" alt="Icono de Usuario"/>
       </div>
       <div className="cliente-details">
-        <p><strong>Nombre:</strong> {cliente.firstName} {cliente.lastName}</p>
+        <p><strong>Nombre del Cliente:</strong> {cliente.firstName} {cliente.lastName}</p>
         <p><strong>Email:</strong> {cliente.email}</p>
         <p><strong>Teléfono:</strong> {cliente.phone}</p>
         <p><strong>Registrado:</strong> {formatDateTime(cliente.registrationDate)}</p>

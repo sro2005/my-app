@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 // Crear un nuevo cliente
 exports.createCustomer = async (req, res) => {
   try {
-    const { firstName, lastName, email, birthDate, password, address, phone, preferences } = req.body;
+    const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences } = req.body;
     console.log('Datos recibidos:', req.body);
     // Verificar si ya existe un cliente con el mismo correo electrónico
     const existingCustomer = await Customer.findOne({ email });
@@ -22,9 +22,9 @@ exports.createCustomer = async (req, res) => {
       firstName,
       lastName,
       email,
+      identificationNumber,
       birthDate,
       password: hashedPassword,
-      address,
       phone,
       preferences
     });
@@ -73,7 +73,7 @@ exports.loginCustomer = async (req, res) => {
 exports.updateCustomer = async (req, res) => {
   try {
     const { id } = req.params;
-    const { firstName, lastName, email, birthDate, address, phone, preferences } = req.body;
+    const { firstName, lastName, email, identificationNumber, birthDate, phone, preferences } = req.body;
 
     const customer = await Customer.findById(id);
     if (!customer) {
@@ -83,8 +83,8 @@ exports.updateCustomer = async (req, res) => {
     customer.firstName = firstName || customer.firstName;
     customer.lastName = lastName || customer.lastName;
     customer.email = email || customer.email;
+    customer.identificationNumber = identificationNumber || customer.identificationNumber;
     customer.birthDate = birthDate || customer.birthDate;
-    customer.address = address || customer.address;
     customer.phone = phone || customer.phone;
     customer.preferences = preferences || customer.preferences;
 

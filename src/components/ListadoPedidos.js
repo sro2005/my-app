@@ -35,6 +35,7 @@ const PedidoItem = ({ pedido }) => (
       <div className="pedido-details">
         <p><strong>Nombre del Cliente:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>ID del Pedido:</strong> {pedido._id}</p>
+        <p><strong>Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
         <p><strong>Fecha Estimada de Entrega del Pedido:</strong> {formatDate(pedido.deliveryDate)}</p>
       </div>

@@ -77,13 +77,13 @@ const PedidoForm = () => {
     <form onSubmit={handleSubmit}>
       <h1>Formulario</h1>
       <h2>Realizar Nuevo Pedido</h2>
-      <input type="text" placeholder="Nombre" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+      <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
       <input type="text" placeholder="Apellido" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
       <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
       <input type="tel" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-      <input type="text" placeholder="Dirección" value={address} onChange={(e) => setAddress(e.target.value)} required />
+      <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
       <input type="text" placeholder="Método de Pago" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} required />
-      <input type="date" placeholder="Fecha de Entrega" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} required />
+      <input type="date" placeholder="Fecha Estimada de Entrega del Pedido" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} required />
       <select name="productId" onChange={handleProductChange} required>
         <option value="">Selecciona un producto</option>
         {products.map(product => (
@@ -93,7 +93,7 @@ const PedidoForm = () => {
         ))}
       </select>
       <p><strong>Total a pagar:</strong> {formatPrice(totalAmount)}</p>
-      <button type="submit">Realizar Pedido</button>
+      <button type="submit">REALIZAR</button>
     </form>
   );
 };
