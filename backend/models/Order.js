@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true },
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }],
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true },
+  phone: { type: String, required: true },
+  address: { type: String, required: true },
+  paymentMethod: { type: String, required: true },
+  deliveryDate: { type: Date, required: true },
   totalAmount: { type: Number, required: true },
-  orderDate: { type: Date, default: Date.now }
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }]
 });
 
 module.exports = mongoose.model('Order', orderSchema);

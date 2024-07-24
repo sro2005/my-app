@@ -3,13 +3,15 @@ const Product = require('../models/Product');
 // Crear un nuevo producto
 exports.createProduct = async (req, res) => {
   try {
-    const { name, price, category, stock } = req.body;
+    const { name, description, category, price, quantity, imageUrl } = req.body;
 
     const product = new Product({
-      name,
-      price,
-      category,
-      stock
+      name, 
+      description, 
+      category, 
+      price, 
+      quantity, 
+      imageUrl
     });
 
     await product.save();

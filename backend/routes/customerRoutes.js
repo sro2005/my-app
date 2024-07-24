@@ -6,7 +6,7 @@ const customerController = require('../controllers/customerController');
 router.post('/register', customerController.createCustomer);
 
 // Ruta para obtener todos los clientes
-router.get('/', customerController.getCustomers);
+router.get('/', customerController.getCustomer);
 
 // Ruta para iniciar sesión
 router.post('/login', customerController.loginCustomer);

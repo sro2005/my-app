@@ -1,11 +1,13 @@
-const Customer = require('../models/customer');
+const express = require('express');
+const router = express.Router();
+const Customer = require('../models/Customer');
 const bcrypt = require('bcrypt');
 
 // Crear un nuevo cliente
 exports.createCustomer = async (req, res) => {
   try {
     const { firstName, lastName, email, birthDate, password, address, phone, preferences } = req.body;
-
+    console.log('Datos recibidos:', req.body);
     // Verificar si ya existe un cliente con el mismo correo electrónico
     const existingCustomer = await Customer.findOne({ email });
     if (existingCustomer) {
@@ -30,15 +32,16 @@ exports.createCustomer = async (req, res) => {
     await customer.save();
     res.status(201).json({ message: 'Cliente registrado exitosamente', customer });
   } catch (error) {
+    console.error('Error al registrar cliente:', error.message);
     res.status(400).json({ error: error.message });
   }
-};
+}
 
 // Obtener todos los clientes
-exports.getCustomers = async (req, res) => {
+exports.getCustomer = async (req, res) => {
   try {
-    const customers = await Customer.find().select('-password');
-    res.status(200).json(customers);
+    const customer = await Customer.find().select('-password');
+    res.status(200).json(customer);
   } catch (error) {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
@@ -50,14 +53,19 @@ exports.loginCustomer = async (req, res) => {
 
   try {
     const customer = await Customer.findOne({ email });
-    if (!customer || !await bcrypt.compare(password, customer.password)) {
+    if (!customer) {
+      return res.status(400).json({ message: 'Credenciales inválidas' });
+    }
+
+    const isMatch = await bcrypt.compare(password, customer.password);
+    if (!isMatch) {
       return res.status(400).json({ message: 'Credenciales inválidas' });
     }
 
     res.status(200).json({ message: 'Inicio de sesión exitoso' });
   } catch (error) {
     console.error('Error en el inicio de sesión:', error.message);
-    res.status(400).json({ message: 'Credenciales inválidas' });
+    res.status(500).json({ message: 'Error en el servidor' });
   }
 };
 

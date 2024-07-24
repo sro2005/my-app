@@ -1,6 +1,7 @@
 // src/components/RegistroCliente.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const RegistroCliente = () => {
   const [firstName, setFirstName] = useState('');
@@ -23,11 +24,8 @@ const RegistroCliente = () => {
       return;
     }
 
-    // Lógica de registro aquí
-    // Puedes usar axios para enviar los datos a tu servidor
-    // Ejemplo:
-    /*
-    axios.post('/api/customers', {
+    // Enviar datos al backend usando Axios
+    axios.post('/api/customers/register', {
       firstName,
       lastName,
       email,
@@ -35,37 +33,32 @@ const RegistroCliente = () => {
       password,
       address,
       phone,
-      preferences
+      preferences: preferences.split(',')
     })
     .then(response => {
       console.log('Cliente registrado:', response.data);
-      // Redirigir al formulario de inicio de sesión después de un registro exitoso
+      alert('¡Registro exitoso!');
       navigate('/login');
     })
     .catch(error => {
       console.error('Error registrando cliente:', error);
       alert('Ocurrió un error al registrar al cliente. Por favor, intenta nuevamente.');
     });
-    */
-
-    // Simulación de registro exitoso
-    alert('¡Registro exitoso!');
-    navigate('/login');
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h1>CREAR CUENTA</h1>
       <h2>Registro del Cliente</h2>
-      <input type="text" placeholder="Nombres" value={firstName} onChange={(e) => setFirstName(e.target.value)}/>
-      <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
-      <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)}/>
-      <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)}/>
-      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)}/>
-      <input type="password" placeholder="Confirmar Contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
-      <input type="text" placeholder="Dirección del domicilio" value={address} onChange={(e) => setAddress(e.target.value)}/>
-      <input type="tel" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)}/>
-      <input type="text" placeholder="Preferencias de Productos" value={preferences} onChange={(e) => setPreferences(e.target.value)}/>
+      <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+      <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+      <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
+      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      <input type="password" placeholder="Confirmar Contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+      <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
+      <input type="tel" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+      <input type="text" placeholder="Preferencias de Productos" value={preferences} onChange={(e) => setPreferences(e.target.value)} required />
       <button type="submit">Registrar</button>
     </form>
   );

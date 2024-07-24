@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// Función para formatear el precio en formato local
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
+};
+
+// Componente funcional para mostrar cada producto
+const ProductoItem = ({ producto }) => (
+  <li className="producto-item">
+    <div className="producto-info">
+      <div className="producto-image">
+      <img src="https://hisense.com.co/wp-content/uploads/2024/04/6942147485231_2-1000x800.jpg" alt={producto.name}/>
+      </div>
+      <div className="producto-details">
+        <p><strong>Nombre:</strong> {producto.name}</p>
+        <p><strong>Descripción:</strong> {producto.description}</p>
+        <p><strong>Precio:</strong> {formatPrice(producto.price)}</p>
+        <p><strong>Categoría:</strong> {producto.category}</p>
+      </div>
+    </div>
+  </li>
+);
+
 // Componente funcional ListadoProductos que muestra una lista de productos obtenidos desde la API
 const ListadoProductos = () => {
   // Estado para almacenar la lista de productos
@@ -20,21 +42,18 @@ const ListadoProductos = () => {
   }, []); // El array vacío asegura que el efecto se ejecute solo una vez al cargar el componente
 
   return (
-    <div class="container">
+    <div className="container">
       <h2>Módulo de Inventario</h2>
-         <p><b>Definición:</b> El modelo de inventario es una representación estructurada de los productos disponibles en un sistema o negocio.</p>
-         <p><b>Propósito:</b> Su función principal es gestionar y mantener un registro detallado de los productos en stock, incluyendo su cantidad, ubicación, y atributos como nombre, descripción y precio.</p>
-         <p><b>Importancia:</b> Permite a las empresas controlar eficientemente su inventario, optimizar la gestión de existencias, prevenir la escasez o el exceso de productos, y asegurar la disponibilidad de productos para satisfacer la demanda de los clientes.</p>
+      <p><b>Definición:</b> El modelo de inventario es una representación estructurada de los productos disponibles en un sistema o negocio.</p>
+      <p><b>Propósito:</b> Su función principal es gestionar y mantener un registro detallado de los productos en stock, incluyendo su cantidad, ubicación, y atributos como nombre, descripción y precio.</p>
+      <p><b>Importancia:</b> Permite a las empresas controlar eficientemente su inventario, optimizar la gestión de existencias, prevenir la escasez o el exceso de productos, y asegurar la disponibilidad de productos para satisfacer la demanda de los clientes.</p>
       {/* Título de la lista de productos */}
       <h2>Listado de Productos</h2>
 
       {/* Lista de productos */}
-      <ul>
+      <ul className="productos-list">
         {productos.map(producto => (
-          <li key={producto.id}>
-            {/* Mostrar nombre y descripción de cada producto */}
-            {producto.name} - {producto.description}
-          </li>
+          <ProductoItem key={producto._id} producto={producto} />
         ))}
       </ul>
     </div>
@@ -43,4 +62,3 @@ const ListadoProductos = () => {
 
 // Exportar el componente ListadoProductos para que pueda ser utilizado en otros archivos
 export default ListadoProductos;
-

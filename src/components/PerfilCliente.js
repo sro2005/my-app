@@ -1,39 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Componente funcional PerfilCliente para mostrar el perfil del cliente
+// Función para formatear la fecha en formato DD/MM/YYYY sin hora
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    return 'Fecha no válida'; // Devuelve un mensaje de error si la fecha es inválida
+  }
+
+  // Obtener la fecha en formato UTC
+  const utcDate = new Date(date.toUTCString());
+
+  // Formatear la fecha en formato DD/MM/YYYY
+  const day = String(utcDate.getUTCDate()).padStart(2, '0');
+  const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
+  const year = utcDate.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
 const PerfilCliente = () => {
-  // Estado para almacenar la información del cliente
   const [customer, setCustomer] = useState(null);
 
-  // Efecto de efecto secundario para obtener los datos del cliente al montar el componente
   useEffect(() => {
-    axios.get('/api/customer') // Petición GET para obtener los datos del cliente desde la API
+    axios.get('/api/customers') // Asegúrate de que esta ruta sea correcta
       .then(response => {
-        setCustomer(response.data); // Almacenar los datos del cliente en el estado local
+        setCustomer(response.data[0]); // Asegúrate de que la API retorne un array
       })
       .catch(error => {
-        console.error('Error obteniendo perfil:', error); // Manejar errores si la petición falla
+        console.error('Error obteniendo perfil:', error);
       });
-  }, []); // El segundo argumento de useEffect [] asegura que se ejecute solo una vez al montar el componente
+  }, []);
 
-  // Si el cliente aún no se ha cargado, mostrar un mensaje de carga
-  if (!customer) return <p>Cargando...</p>;
+  if (!customer) return <p className="loading">Cargando...</p>;
 
-  // Renderizado del perfil del cliente una vez que los datos están disponibles
   return (
-    <div>
+    <div className="profile-container">
       <h2>Perfil de Cliente</h2>
-      <p>Nombre: {customer.firstName} {customer.lastName}</p>
-      <p>Correo Electrónico: {customer.email}</p>
-      <p>Fecha de Nacimiento: {customer.birthDate}</p>
-      <p>Dirección: {customer.address}</p>
-      <p>Teléfono: {customer.phone}</p>
-      <p>Preferencias: {customer.preferences}</p>
+      <div className="profile-picture">
+      <img src='/icono-user.png' alt="Foto del Cliente" 
+        />
+      </div>
+      <div className="profile-info">
+        <p><strong>Nombre:</strong> {customer.firstName} {customer.lastName}</p>
+        <p><strong>Correo Electrónico:</strong> {customer.email}</p>
+        <p><strong>Fecha de Nacimiento:</strong> {formatDate(customer.birthDate)}</p>
+        <p><strong>Dirección:</strong> {customer.address}</p>
+        <p><strong>Teléfono:</strong> {customer.phone}</p>
+        <p><strong>Preferencias:</strong> {customer.preferences}</p>
+      </div>
     </div>
   );
 };
 
-// Exportar el componente PerfilCliente para su uso en otros archivos
 export default PerfilCliente;
-

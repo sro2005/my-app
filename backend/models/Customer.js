@@ -9,7 +9,8 @@ const customerSchema = new mongoose.Schema({
   password: { type: String, required: true },
   address: { type: String, required: true },
   phone: { type: String, required: true },
-  preferences: { type: [String], required: true }
+  preferences: { type: [String], required: true },
+  registrationDate: { type: Date, default: Date.now } // Añadido aquí
 });
 
 customerSchema.statics.authenticate = async function(email, password) {
