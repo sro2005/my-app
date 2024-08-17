@@ -7,7 +7,7 @@ import axios from 'axios';
 const isAdult = (birthDate) => {
   const today = new Date();
   const birthDateObj = new Date(birthDate);
-  const age = today.getFullYear() - birthDateObj.getFullYear();
+  let age = today.getFullYear() - birthDateObj.getFullYear();
   const month = today.getMonth() - birthDateObj.getMonth();
 
   // Ajuste de edad si el cumpleaños no ha pasado aún este año
