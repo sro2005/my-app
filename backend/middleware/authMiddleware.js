@@ -26,7 +26,7 @@ exports.authenticateToken = (req, res, next) => {
 };
 
 // Middleware para autorización: verifica si el usuario tiene uno de los roles permitidos
-exports.authorizeRole = (...roles) => {
+exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
     // Verificar si el rol del usuario está en la lista de roles permitidos
     if (!roles.includes(req.user.role)) {

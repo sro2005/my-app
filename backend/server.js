@@ -4,7 +4,7 @@ const cors = require('cors');
 const productRoutes = require('./routes/productRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 require('dotenv').config();
 
 const app = express();
@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Conexión a MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase')
+mongoose.connect('mongodb://localhost:27017/mydatabase')
   .then(() => {
     console.log('Connected to MongoDB');
   })
@@ -24,9 +24,9 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabas
   });
 
 // Rutas protegidas por autenticación
-app.use('/api/products', authenticateToken, authorizeRole('admin'), productRoutes);
+app.use('/api/products', authenticateToken, authorizeRoles('admin'), productRoutes);
 app.use('/api/customers', authenticateToken, customerRoutes);
-app.use('/api/orders', authenticateToken, authorizeRole('admin'), orderRoutes);
+app.use('/api/orders', authenticateToken, authorizeRoles('admin'), orderRoutes);
 
 // Manejo de errores
 app.use((req, res, next) => {
