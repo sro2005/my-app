@@ -16,8 +16,11 @@ const LoginCliente = ({ onLoginSuccess }) => {
     })
     .then(response => {
       console.log('Inicio de sesión exitoso:', response.data);
-      // Llamar a la función onLoginSuccess si la autenticación es exitosa
-      onLoginSuccess();
+      // Obtener el rol del usuario desde la respuesta
+      const userRole = response.data.role; 
+      localStorage.setItem('authToken', response.data.token);
+      localStorage.setItem('userRole', userRole);
+      onLoginSuccess(userRole); // Pasar el rol al callback
       alert('Credenciales válidas.');
     })
     .catch(error => {
