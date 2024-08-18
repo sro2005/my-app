@@ -5,7 +5,7 @@ const { authenticate, authorizeRoles } = require('../middleware/authMiddleware')
 
 // Ruta para crear un nuevo producto (accesible solo para admins)
 // Este endpoint permite a los administradores agregar nuevos productos.
-router.post('/', authenticate, authorizeRoles('admin'), productController.createProduct);
+router.post('/agregar', authenticate, authorizeRoles('admin'), productController.createProduct);
 
 // Ruta para obtener todos los productos (accesible para todos los usuarios)
 // Este endpoint permite a cualquier usuario obtener una lista de todos los productos.
