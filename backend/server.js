@@ -4,7 +4,7 @@ const cors = require('cors');
 const productRoutes = require('./routes/productRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const { authenticateToken, authorizeRole } = require('./middlewares/authMiddleware');
+const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware');
 require('dotenv').config();
 
 const app = express();
