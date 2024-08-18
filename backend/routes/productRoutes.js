@@ -1,26 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const orderController = require('../controllers/orderController');
+const productController = require('../controllers/productController');
 const { authenticate, authorizeRoles } = require('../middleware/authMiddleware');
 
-// Ruta para crear un nuevo pedido (accesible solo para usuarios autenticados)
-// Este endpoint permite a los usuarios autenticados realizar pedidos.
-// Utiliza el método POST para enviar los datos del pedido.
-router.post('/realizar', authenticate, orderController.createOrder);
+// Ruta para crear un nuevo producto (accesible solo para admins)
+// Este endpoint permite a los administradores agregar nuevos productos.
+router.post('/', authenticate, authorizeRoles('admin'), productController.createProduct);
 
-// Ruta para obtener todos los pedidos (accesible solo para admins)
-// Este endpoint permite a los administradores obtener una lista de todos los pedidos.
-// Requiere autenticación y autorización para el rol 'admin'.
-router.get('/', authenticate, authorizeRoles('admin'), orderController.getOrders);
+// Ruta para obtener todos los productos (accesible para todos los usuarios)
+// Este endpoint permite a cualquier usuario obtener una lista de todos los productos.
+router.get('/', productController.getProducts);
 
-// Ruta para actualizar un pedido (accesible solo para admins)
-// Este endpoint permite a los administradores actualizar un pedido específico mediante su ID.
-// Utiliza el método PUT para enviar los datos actualizados.
-router.put('/:id', authenticate, authorizeRoles('admin'), orderController.updateOrder);
+// Ruta para obtener un producto específico por su ID (accesible para todos los usuarios)
+// Este endpoint permite a cualquier usuario obtener información sobre un producto específico mediante su ID.
+router.get('/:id', productController.getProductById);
 
-// Ruta para eliminar un pedido (accesible solo para admins)
-// Este endpoint permite a los administradores eliminar un pedido específico mediante su ID.
-// Utiliza el método DELETE para eliminar el pedido.
-router.delete('/:id', authenticate, authorizeRoles('admin'), orderController.deleteOrder);
+// Ruta para actualizar un producto específico por su ID (accesible solo para admins)
+// Este endpoint permite a los administradores actualizar un producto específico mediante su ID.
+router.put('/:id', authenticate, authorizeRoles('admin'), productController.updateProduct);
+
+// Ruta para eliminar un producto específico por su ID (accesible solo para admins)
+// Este endpoint permite a los administradores eliminar un producto específico mediante su ID.
+router.delete('/:id', authenticate, authorizeRoles('admin'), productController.deleteProduct);
 
 module.exports = router;

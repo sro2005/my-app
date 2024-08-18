@@ -4,9 +4,9 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'Th1s!s@V3ry$ecur3&Uniqu3K3y#2024!';
 
 // Middleware para autenticación: verifica el token JWT en la cabecera Authorization
-exports.authenticate = (req, res, next) => {
+exports.authenticateToken = (req, res, next) => {
   // Obtener el token de la cabecera Authorization
-  const token = req.header('Authorization').replace('Bearer ', '');
+  const token = req.header('Authorization')?.replace('Bearer ', '');
 
   // Verificar si el token está presente
   if (!token) {
@@ -26,7 +26,7 @@ exports.authenticate = (req, res, next) => {
 };
 
 // Middleware para autorización: verifica si el usuario tiene uno de los roles permitidos
-exports.authorizeRoles = (...roles) => {
+exports.authorizeRole = (...roles) => {
   return (req, res, next) => {
     // Verificar si el rol del usuario está en la lista de roles permitidos
     if (!roles.includes(req.user.role)) {
