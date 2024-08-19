@@ -1,7 +1,6 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { UserProvider, useUser } from './context/UserContext';
 import Loading from './components/Loading'; 
 import LandingPage from './components/LandingPage';
 import Header from './components/Header';
@@ -32,24 +31,13 @@ const AppContent = () => {
     <>
       <Header isAuthenticated={!!user} onLogout={handleLogout} />
       <Routes>
-        {!user && (
+        {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
             <Route path="/registro" element={<RegistroCliente />} />
             <Route path="/login" element={<LoginCliente />} />
           </>
-        )}
-        {user && user.role === 'cliente' && (
-          <>
-            <Route path="/" element={<Navigate to="/home-page" />} />
-            <Route path="/home-page" element={<HomePage />} />
-            <Route path="/pedido-form" element={<PedidoForm />} />
-            <Route path="/listado-productos" element={<ListadoProductos />} />
-            <Route path="/listado-pedidos" element={<ListadoPedidos />} />
-            <Route path="/perfil-cliente" element={<PerfilCliente />} />
-          </>
-        )}
-        {user && user.role === 'admin' && (
+        ) : (
           <>
             <Route path="/" element={<Navigate to="/home-page" />} />
             <Route path="/home-page" element={<HomePage />} />
@@ -77,3 +65,4 @@ const App = () => (
 );
 
 export default App;
+
