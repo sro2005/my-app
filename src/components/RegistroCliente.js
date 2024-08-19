@@ -44,6 +44,13 @@ const RegistroCliente = () => {
       return;
     }
 
+    // Validación simple de teléfono (formato +57 seguido de 10 dígitos)
+    const phoneRegex = /^\+57\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert('Número de teléfono inválido. Debe estar en formato +57 seguido de 10 dígitos.');
+      return;
+    }
+
     // Enviar datos al backend usando Axios
     axios.post('/api/customers/register', {
       firstName,
@@ -53,7 +60,7 @@ const RegistroCliente = () => {
       birthDate,
       password,
       phone,
-      preferences: preferences.split(',')
+      preferences: preferences.split(',').map(pref => pref.trim()) // Elimina espacios en blanco
     })
     .then(response => {
       console.log('Cliente registrado:', response.data);
@@ -73,12 +80,12 @@ const RegistroCliente = () => {
       <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
       <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
       <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="number" placeholder="Número de Identificación (Cédula de Ciudadanía)" value={identificationNumber} onChange={(e) => setIdentificationNumber(e.target.value)} required />
+      <input type="text" placeholder="Número de Identificación (Cédula de Ciudadanía)" value={identificationNumber} onChange={(e) => setIdentificationNumber(e.target.value)} required />
       <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <input type="password" placeholder="Confirmar Contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
       <input type="tel" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-      <input type="text" placeholder="Preferencias de Productos" value={preferences} onChange={(e) => setPreferences(e.target.value)} required />
+      <input type="text" placeholder="Preferencias de Productos (separadas por comas)" value={preferences} onChange={(e) => setPreferences(e.target.value)} required />
       <button type="submit">Registrar</button>
     </form>
   );

@@ -7,17 +7,7 @@ exports.createOrder = async (req, res) => {
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
 
     // Validaciones
-    const emailPattern = /^[^\s@]+@[^\s@]+\.(gmail\.com|outlook\.com)$/;
-    if (!emailPattern.test(email)) {
-      return res.status(400).json({ message: 'El correo electrónico debe ser de tipo gmail.com o outlook.com' });
-    }
-
-    const phonePattern = /^\+57\d{10}$/;
-    if (!phonePattern.test(phone)) {
-      return res.status(400).json({ message: 'El número de teléfono debe tener el formato +57 seguido de 10 dígitos' });
-    }
-
-    if (!firstName || !lastName || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
+    if (!firstName || !lastName || !email || !phone || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
@@ -65,21 +55,6 @@ exports.updateOrder = async (req, res) => {
     // Extraer el id del pedido y la información para actualizar desde la solicitud
     const { id } = req.params;
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
-
-    // Validaciones
-    const emailPattern = /^[^\s@]+@[^\s@]+\.(gmail\.com|outlook\.com)$/;
-    if (email && !emailPattern.test(email)) {
-      return res.status(400).json({ message: 'El correo electrónico debe ser de tipo gmail.com o outlook.com' });
-    }
-
-    const phonePattern = /^\+57\d{10}$/;
-    if (phone && !phonePattern.test(phone)) {
-      return res.status(400).json({ message: 'El número de teléfono debe tener el formato +57 seguido de 10 dígitos' });
-    }
-
-    if (!firstName || !lastName || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-    }
 
     // Buscar y actualizar el pedido en la base de datos
     const updatedOrder = await Order.findByIdAndUpdate(id, {

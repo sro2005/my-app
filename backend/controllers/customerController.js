@@ -1,118 +1,105 @@
-const Order = require('../models/Order'); // Importa el modelo de Pedido
+const Customer = require('../models/Customer');
+const bcrypt = require('bcrypt'); // Asegúrate de importar bcrypt para la comparación de contraseñas
 
-// Crear un nuevo pedido
-exports.createOrder = async (req, res) => {
+// Registro de un nuevo cliente
+exports.registerCustomer = async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
+    const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences } = req.body;
 
-    // Validaciones básicas
-    if (!firstName || !lastName || !email || !phone || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-    }
-
-    // Validación simple de email (solo gmail y outlook)
-    const emailRegex = /^[^\s@]+@(gmail\.com|outlook\.com)$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: 'Email debe ser de tipo @gmail.com o @outlook.com' });
-    }
-
-    // Validación simple de número de teléfono (formato +57 y 10 dígitos)
-    const phoneRegex = /^\+57\d{10}$/;
-    if (!phoneRegex.test(phone)) {
-      return res.status(400).json({ message: 'Número de teléfono inválido. Debe estar en formato +57 seguido de 10 dígitos' });
-    }
-
-    // Crea una nueva instancia del modelo Order
-    const newOrder = new Order({
+    // Crear un nuevo cliente
+    const newCustomer = new Customer({
       firstName,
       lastName,
       email,
+      identificationNumber,
+      birthDate,
+      password: await bcrypt.hash(password, 10), // Asegúrate de encriptar la contraseña
       phone,
-      address,
-      paymentMethod,
-      deliveryDate,
-      totalAmount,
-      products
+      preferences
     });
 
-    // Guarda el nuevo pedido en la base de datos
-    await newOrder.save();
-    res.status(201).json({ message: 'Pedido realizado exitosamente', order: newOrder });
+    // Guardar el cliente en la base de datos
+    await newCustomer.save();
+    res.status(201).json({ message: 'Cliente registrado exitosamente' });
   } catch (error) {
-    res.status(400).json({ message: 'Error al crear el pedido', error: error.message });
+    res.status(400).json({ message: 'Error al registrar el cliente', error: error.message });
   }
 };
 
-// Obtener todos los pedidos
-exports.getOrders = async (req, res) => {
+// Inicio de sesión de un cliente
+exports.loginCustomer = async (req, res) => {
   try {
-    const orders = await Order.find();
-    res.status(200).json(orders);
+    const { email, password } = req.body;
+
+    // Buscar al cliente por correo electrónico
+    const customer = await Customer.findOne({ email });
+    if (!customer) {
+      return res.status(400).json({ message: 'El correo electrónico no está registrado' });
+    }
+
+    // Verificar la contraseña
+    const match = await bcrypt.compare(password, customer.password);
+    if (!match) {
+      return res.status(400).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // Inicio de sesión exitoso sin devolver el customerId
+    res.status(200).json({ message: 'Inicio de sesión exitoso' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: 'Error al iniciar sesión', error: error.message });
   }
 };
 
-// Actualizar un pedido
-exports.updateOrder = async (req, res) => {
+// Obtener todos los clientes
+exports.getCustomer = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
-
-    // Validaciones básicas
-    if (!firstName || !lastName || !email || !phone || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-    }
-
-    // Validación simple de email (solo gmail y outlook)
-    const emailRegex = /^[^\s@]+@(gmail\.com|outlook\.com)$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: 'Email debe ser de tipo @gmail.com o @outlook.com' });
-    }
-
-    // Validación simple de número de teléfono (formato +57 y 10 dígitos)
-    const phoneRegex = /^\+57\d{10}$/;
-    if (!phoneRegex.test(phone)) {
-      return res.status(400).json({ message: 'Número de teléfono inválido. Debe estar en formato +57 seguido de 10 dígitos' });
-    }
-
-    // Actualiza el pedido en la base de datos
-    const updatedOrder = await Order.findByIdAndUpdate(id, {
-      firstName,
-      lastName,
-      email,
-      phone,
-      address,
-      paymentMethod,
-      deliveryDate,
-      totalAmount,
-      products
-    }, { new: true });
-
-    if (!updatedOrder) {
-      return res.status(404).json({ message: 'Pedido no encontrado' });
-    }
-
-    res.status(200).json({ message: 'Pedido actualizado exitosamente', order: updatedOrder });
+    // Obtener todos los clientes desde la base de datos
+    const customers = await Customer.find();
+    
+    // Enviar una respuesta exitosa con la lista de clientes
+    res.status(200).json(customers);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: 'Error al obtener los clientes', error: error.message });
   }
 };
 
-// Eliminar un pedido
-exports.deleteOrder = async (req, res) => {
+// Actualizar la información de un cliente
+exports.updateCustomer = async (req, res) => {
   try {
     const { id } = req.params;
+    const { firstName, lastName, email, identificationNumber, birthDate, phone, preferences } = req.body;
 
-    const order = await Order.findByIdAndDelete(id);
+    // Buscar y actualizar el cliente
+    const updatedCustomer = await Customer.findByIdAndUpdate(
+      id,
+      { firstName, lastName, email, identificationNumber, birthDate, phone, preferences },
+      { new: true }
+    );
 
-    if (!order) {
-      return res.status(404).json({ message: 'Pedido no encontrado' });
+    if (!updatedCustomer) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
-    res.status(200).json({ message: 'Pedido eliminado exitosamente' });
+    res.status(200).json({ message: 'Cliente actualizado exitosamente', updatedCustomer });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).json({ message: 'Error al actualizar el cliente', error: error.message });
   }
 };
 
+// Eliminar un cliente
+exports.deleteCustomer = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Buscar y eliminar el cliente
+    const deletedCustomer = await Customer.findByIdAndDelete(id);
+
+    if (!deletedCustomer) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+
+    res.status(200).json({ message: 'Cliente eliminado exitosamente' });
+  } catch (error) {
+    res.status(400).json({ message: 'Error al eliminar el cliente', error: error.message });
+  }
+};

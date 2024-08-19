@@ -1,5 +1,5 @@
 // src/App.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Loading from './components/Loading'; 
 import LandingPage from './components/LandingPage';
@@ -17,15 +17,31 @@ import LoginCliente from './components/LoginCliente';
 import './styles/styles.css';
 
 const AppContent = () => {
-  const { user, logout, loading } = useUser();
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        setUser({ email: 'test@example.com' }); // Simulación del usuario autenticado
+      }
+    }, 1000);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    setUser(null);
+  };
+
+  const handleLoginSuccess = () => {
+    setUser({ email: 'test@example.com' }); // Ajustar según la respuesta real del login
+  };
 
   if (loading) {
     return <Loading />;
   }
-
-  const handleLogout = () => {
-    logout();
-  };
 
   return (
     <>
@@ -34,8 +50,8 @@ const AppContent = () => {
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/registro" element={<RegistroCliente />} />
-            <Route path="/login" element={<LoginCliente />} />
+            <Route path="/register" element={<RegistroCliente />} />
+            <Route path="/login" element={<LoginCliente onLoginSuccess={handleLoginSuccess} />} />
           </>
         ) : (
           <>
@@ -57,12 +73,9 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <UserProvider>
-    <Router>
-      <AppContent />
-    </Router>
-  </UserProvider>
+  <Router>
+    <AppContent />
+  </Router>
 );
 
 export default App;
-

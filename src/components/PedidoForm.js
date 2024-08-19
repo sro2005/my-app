@@ -18,6 +18,8 @@ const PedidoForm = () => {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [productId, setProductId] = useState("");
   const [totalAmount, setTotalAmount] = useState(0);
+  const [accountNumber, setAccountNumber] = useState("");
+  const [sameRegisteredNumber, setSameRegisteredNumber] = useState(false);
   
   // Estado para almacenar la lista de productos
   const [products, setProducts] = useState([]);
@@ -52,6 +54,13 @@ const PedidoForm = () => {
     }
   };
 
+  // Maneja el cambio en el método de pago
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+    setAccountNumber("");
+    setSameRegisteredNumber(false);
+  };
+
   // Maneja el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
@@ -66,7 +75,9 @@ const PedidoForm = () => {
       paymentMethod,
       deliveryDate,
       products: [productId],
-      totalAmount
+      totalAmount,
+      accountNumber: paymentMethod === "Tarjeta de Crédito" || paymentMethod === "Tarjeta de Débito" ? accountNumber : undefined,
+      sameRegisteredNumber: (paymentMethod === "Nequi" || paymentMethod === "Daviplata" || paymentMethod === "Transfiya") ? sameRegisteredNumber : undefined
     };
     
     setOrderDetails(order);
@@ -99,12 +110,77 @@ const PedidoForm = () => {
         <h1>Formulario</h1>
         <h2>Realizar Nuevo Pedido</h2>
         <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-        <input type="text" placeholder="Apellido" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+        <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
         <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <input type="tel" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)} required />
         <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
-        <input type="text" placeholder="Método de Pago" value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} required />
-        <input type="date" placeholder="Fecha Estimada de Entrega del Pedido" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} required />
+        <select name="paymentMethod" onChange={handlePaymentMethodChange} required>
+          <option value="">Selecciona un método de pago</option>
+          <option value="Tarjeta de Crédito">Tarjeta Crédito</option>
+          <option value="Tarjeta de Débito">Tarjeta Débito</option>
+          <option value="Nequi">Nequi</option>
+          <option value="Daviplata">Daviplata</option>
+          <option value="Transfiya">Transfiya</option>
+        </select>
+        
+        {/* Campo para el número de cuenta */}
+        {(paymentMethod === "Tarjeta de Crédito" || paymentMethod === "Tarjeta de Débito") && (
+          <input
+            type="text"
+            placeholder="Número de Cuenta"
+            value={accountNumber}
+            onChange={(e) => setAccountNumber(e.target.value)}
+            required
+          />
+        )}
+
+        {/* Campo para indicar si el número es el mismo que el registrado */}
+        {(paymentMethod === "Nequi" || paymentMethod === "Daviplata" || paymentMethod === "Transfiya") && (
+          <div className="payment-options">
+            <p>¿Es el mismo número registrado?</p>
+            <label>
+              <input
+                type="radio"
+                value="Sí"
+                checked={sameRegisteredNumber === true}
+                onChange={() => setSameRegisteredNumber(true)}
+              />
+              Sí
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="No"
+                checked={sameRegisteredNumber === false}
+                onChange={() => setSameRegisteredNumber(false)}
+              />
+              No
+            </label>
+            {!sameRegisteredNumber && (
+              <input
+                type="text"
+                placeholder="Número de Cuenta"
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
+                required
+              />
+            )}
+          </div>
+        )}
+        
+        {/* Campo de fecha de entrega */}
+        <div className="date-field">
+          <label htmlFor="deliveryDate">Fecha deseada para la entrega:</label>
+          <input
+            type="date"
+            id="deliveryDate"
+            name="deliveryDate"
+            value={deliveryDate}
+            onChange={(e) => setDeliveryDate(e.target.value)}
+            required
+          />
+        </div>
+        
         <select name="productId" onChange={handleProductChange} required>
           <option value="">Selecciona un producto</option>
           {products.map(product => (
@@ -113,6 +189,7 @@ const PedidoForm = () => {
             </option>
           ))}
         </select>
+        
         <p><strong>Total a pagar:</strong> {formatPrice(totalAmount)}</p>
         <button type="submit">REALIZAR</button>
       </form>
@@ -122,18 +199,20 @@ const PedidoForm = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Confirmar Pedido</h2>
-            <p>Cliente: {orderDetails.firstName} {orderDetails.lastName}</p>
-            <p>Correo Electrónico: {orderDetails.email}</p>
-            <p>Teléfono: {orderDetails.phone}</p>
-            <p>Dirección: {orderDetails.address}</p>
-            <p>Método de Pago: {orderDetails.paymentMethod}</p>
-            <p>Fecha de Entrega: {orderDetails.deliveryDate}</p>
-            <p>Productos: {orderDetails.products.join(', ')}</p>
-            <p>Total: {formatPrice(orderDetails.totalAmount)}</p>
+            <p><strong>Cliente:</strong> {orderDetails.firstName} {orderDetails.lastName}</p>
+            <p><strong>Correo Electrónico:</strong> {orderDetails.email}</p>
+            <p><strong>Teléfono:</strong> {orderDetails.phone}</p>
+            <p><strong>Dirección:</strong> {orderDetails.address}</p>
+            <p><strong>Método de Pago:</strong> {orderDetails.paymentMethod}</p>
+            {orderDetails.accountNumber && <p><strong>Número de Cuenta:</strong> {orderDetails.accountNumber}</p>}
+            {orderDetails.sameRegisteredNumber !== undefined && <p><strong>¿Número Registrado?:</strong> {orderDetails.sameRegisteredNumber ? "Sí" : "No"}</p>}
+            <p><strong>Fecha de Entrega:</strong> {orderDetails.deliveryDate}</p>
+            <p><strong>Producto:</strong> {products.find(product => product._id === orderDetails.products[0])?.name}</p>
+            <p><strong>Total a Pagar:</strong> {formatPrice(orderDetails.totalAmount)}</p>
             <div className="modal-buttons">
-             <button className="modal-button-cancel" onClick={handleCancel}>CANCELAR</button>
-             <button className="modal-button-confirm" onClick={handleConfirm}>CONFIRMAR PEDIDO</button>
-          </div>
+              <button className="modal-button-cancel" onClick={handleCancel}>CANCELAR</button>
+              <button className="modal-button-confirm" onClick={handleConfirm}>CONFIRMAR PEDIDO</button>
+            </div>
           </div>
         </div>
       )}
@@ -142,3 +221,4 @@ const PedidoForm = () => {
 };
 
 export default PedidoForm;
+

@@ -9,7 +9,7 @@ const Header = ({ isAuthenticated, onLogout }) => {
     setShowGoodbyeMessage(true);
     setTimeout(() => {
       setShowGoodbyeMessage(false);
-      onLogout();
+      onLogout(); // Asegúrate de usar onLogout
     }, 3000);
   };
 
@@ -33,7 +33,7 @@ const Header = ({ isAuthenticated, onLogout }) => {
             </>
           ) : (
             <>
-              <li><Link to="/registro">Registro</Link></li>
+              <li><Link to="/register">Registro</Link></li>
               <li><Link to="/login">Login</Link></li>
             </>
           )}

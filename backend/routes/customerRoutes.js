@@ -3,7 +3,7 @@ const router = express.Router();
 const customerController = require('../controllers/customerController');
 
 // Ruta para crear un nuevo cliente (accesible para todos los usuarios, incluidos los clientes)
-router.post('/register', customerController.createCustomer);
+router.post('/register', customerController.registerCustomer);
 
 // Ruta para obtener todos los clientes (ahora accesible sin autenticación)
 // Esta ruta estaba protegida para admins
