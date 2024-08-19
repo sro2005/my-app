@@ -1,122 +1,118 @@
-const Customer = require('../models/Customer'); // Importa el modelo de Cliente
-const bcrypt = require('bcrypt'); // Importa bcrypt para encriptar contraseñas
-const jwt = require('jsonwebtoken'); // Importa jsonwebtoken para generar tokens
+const Order = require('../models/Order'); // Importa el modelo de Pedido
 
-// Crear un nuevo cliente
-exports.createCustomer = async (req, res) => {
+// Crear un nuevo pedido
+exports.createOrder = async (req, res) => {
   try {
-    // Extrae datos del cuerpo de la solicitud
-    const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences, role = 'client' } = req.body;
+    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
 
-    // Hashea la contraseña antes de guardarla en la base de datos
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Validaciones básicas
+    if (!firstName || !lastName || !email || !phone || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    }
 
-    // Crea una nueva instancia del modelo Customer
-    const newCustomer = new Customer({
+    // Validación simple de email (solo gmail y outlook)
+    const emailRegex = /^[^\s@]+@(gmail\.com|outlook\.com)$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Email debe ser de tipo @gmail.com o @outlook.com' });
+    }
+
+    // Validación simple de número de teléfono (formato +57 y 10 dígitos)
+    const phoneRegex = /^\+57\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: 'Número de teléfono inválido. Debe estar en formato +57 seguido de 10 dígitos' });
+    }
+
+    // Crea una nueva instancia del modelo Order
+    const newOrder = new Order({
       firstName,
       lastName,
       email,
-      identificationNumber,
-      birthDate,
-      password: hashedPassword,
       phone,
-      preferences,
-      role // Se asume que el modelo Customer tiene un campo 'role'
+      address,
+      paymentMethod,
+      deliveryDate,
+      totalAmount,
+      products
     });
 
-    // Guarda el nuevo cliente en la base de datos
-    await newCustomer.save();
-    res.status(201).json({ message: 'Cliente registrado exitosamente', customer: newCustomer });
+    // Guarda el nuevo pedido en la base de datos
+    await newOrder.save();
+    res.status(201).json({ message: 'Pedido realizado exitosamente', order: newOrder });
   } catch (error) {
-    // Maneja errores y responde con un mensaje de error
-    res.status(400).json({ message: "Error al registrar el cliente", error: error.message });
+    res.status(400).json({ message: 'Error al crear el pedido', error: error.message });
   }
 };
 
-// Iniciar sesión
-exports.loginCustomer = async (req, res) => {
-  const { email, password } = req.body; // Extrae email y contraseña del cuerpo de la solicitud
-
+// Obtener todos los pedidos
+exports.getOrders = async (req, res) => {
   try {
-    // Llama al método estático `authenticate` del modelo Customer para verificar credenciales
-    const customer = await Customer.authenticate(email, password);
-    
-    // Genera un token JWT con el id del cliente y su rol
-    const token = jwt.sign({ id: customer._id, role: customer.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-
-    // Responde con el token generado
-    res.status(200).json({ message: 'Inicio de sesión exitoso', token });
+    const orders = await Order.find();
+    res.status(200).json(orders);
   } catch (error) {
-    // Maneja errores en el inicio de sesión
-    res.status(400).json({ message: 'Credenciales inválidas' });
-  }
-};
-
-// Obtener todos los clientes
-exports.getCustomer = async (req, res) => {
-  try {
-    // Obtiene todos los clientes de la base de datos
-    const customers = await Customer.find();
-    res.status(200).json(customers);
-  } catch (error) {
-    // Maneja errores al obtener clientes
     res.status(400).json({ error: error.message });
   }
 };
 
-// Actualizar un cliente
-exports.updateCustomer = async (req, res) => {
+// Actualizar un pedido
+exports.updateOrder = async (req, res) => {
   try {
-    const { id } = req.params; // Extrae el id del cliente de los parámetros de la solicitud
-    const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences } = req.body;
+    const { id } = req.params;
+    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
 
-    // Prepara los datos a actualizar
-    const updateData = {
+    // Validaciones básicas
+    if (!firstName || !lastName || !email || !phone || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
+      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+    }
+
+    // Validación simple de email (solo gmail y outlook)
+    const emailRegex = /^[^\s@]+@(gmail\.com|outlook\.com)$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Email debe ser de tipo @gmail.com o @outlook.com' });
+    }
+
+    // Validación simple de número de teléfono (formato +57 y 10 dígitos)
+    const phoneRegex = /^\+57\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: 'Número de teléfono inválido. Debe estar en formato +57 seguido de 10 dígitos' });
+    }
+
+    // Actualiza el pedido en la base de datos
+    const updatedOrder = await Order.findByIdAndUpdate(id, {
       firstName,
       lastName,
       email,
-      identificationNumber,
-      birthDate,
       phone,
-      preferences
-    };
+      address,
+      paymentMethod,
+      deliveryDate,
+      totalAmount,
+      products
+    }, { new: true });
 
-    // Hashea la nueva contraseña si está presente en el cuerpo de la solicitud
-    if (password) {
-      updateData.password = await bcrypt.hash(password, 10);
+    if (!updatedOrder) {
+      return res.status(404).json({ message: 'Pedido no encontrado' });
     }
 
-    // Actualiza el cliente en la base de datos
-    const updatedCustomer = await Customer.findByIdAndUpdate(id, updateData, { new: true });
-
-    if (!updatedCustomer) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
-    }
-
-    // Responde con el cliente actualizado
-    res.status(200).json({ message: 'Cliente actualizado exitosamente', customer: updatedCustomer });
+    res.status(200).json({ message: 'Pedido actualizado exitosamente', order: updatedOrder });
   } catch (error) {
-    // Maneja errores al actualizar un cliente
     res.status(400).json({ error: error.message });
   }
 };
 
-// Eliminar un cliente
-exports.deleteCustomer = async (req, res) => {
+// Eliminar un pedido
+exports.deleteOrder = async (req, res) => {
   try {
-    const { id } = req.params; // Extrae el id del cliente de los parámetros de la solicitud
+    const { id } = req.params;
 
-    // Elimina el cliente de la base de datos
-    const customer = await Customer.findByIdAndDelete(id);
+    const order = await Order.findByIdAndDelete(id);
 
-    if (!customer) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
+    if (!order) {
+      return res.status(404).json({ message: 'Pedido no encontrado' });
     }
 
-    // Responde con un mensaje de éxito
-    res.status(200).json({ message: 'Cliente eliminado exitosamente' });
+    res.status(200).json({ message: 'Pedido eliminado exitosamente' });
   } catch (error) {
-    // Maneja errores al eliminar un cliente
     res.status(400).json({ error: error.message });
   }
 };
+
