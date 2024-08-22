@@ -26,6 +26,11 @@ app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 
+// Ruta de comprobación de estado
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+})
+
 // Manejo de errores
 app.use((req, res, next) => {
   const error = new Error('Not Found');
