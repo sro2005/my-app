@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Conexión a MongoDB
-mongoose.connect('mongodb://localhost:27017/mydatabase')
+mongoose.connect('mongodb+srv://santiagoro06:SantiagoRO1924@home-appliances-sro.jerw6.mongodb.net/?retryWrites=true&w=majority&appName=home-appliances-sro')
   .then(() => {
     console.log('Connected to MongoDB');
   })
