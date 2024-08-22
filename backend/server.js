@@ -4,6 +4,7 @@ const cors = require('cors');
 const productRoutes = require('./routes/productRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,7 +14,9 @@ app.use(cors());
 app.use(express.json());
 
 // Conexión a MongoDB
-mongoose.connect('mongodb+srv://santiagoro06:SantiagoRO1924@home-appliances-sro.jerw6.mongodb.net/?retryWrites=true&w=majority&appName=home-appliances-sro')
+const mongoURI = process.env.MONGODB_URI;
+mongoose.connect(mongoURI)
+
   .then(() => {
     console.log('Connected to MongoDB');
   })
