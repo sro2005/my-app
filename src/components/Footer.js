@@ -8,7 +8,7 @@ const Footer = () => {
       <p>&copy; Copyright 2024 </p>
 
       {/* Nombre del proyecto */}
-      <p>Project - [Home Appliances SRO]</p>
+      <p>App - [Home Appliances SRO]</p>
 
       {/* Aviso de derechos reservados */}
       <p>Todos los derechos reservados.</p>
