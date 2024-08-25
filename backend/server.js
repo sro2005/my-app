@@ -11,7 +11,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Define los orígenes permitidos
-const allowedOrigins = ['http://localhost:3000'];
+const allowedOrigins = [
+  'http://localhost:3000', // Para desarrollo local
+  'https://company-home-appliances-sro.vercel.app' // Dominio de producción
+];
 
 // Middleware
 app.use(cors({
