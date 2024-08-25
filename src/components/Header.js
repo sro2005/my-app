@@ -1,6 +1,8 @@
 // src/components/Header.js
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Header = ({ isAuthenticated, onLogout }) => {
   const [showGoodbyeMessage, setShowGoodbyeMessage] = React.useState(false);
@@ -19,7 +21,8 @@ const Header = ({ isAuthenticated, onLogout }) => {
       <nav>
         <ul>
           {isAuthenticated ? (
-            <>
+            <div className="nav-container">
+            <ul className="nav-links">
               <li><Link to="/home-page">Home</Link></li>
               <li><Link to="/producto-form">Add Products</Link></li>
               <li><Link to="/pedido-form">Place Orders</Link></li>
@@ -27,10 +30,13 @@ const Header = ({ isAuthenticated, onLogout }) => {
               <li><Link to="/listado-productos">Módulo Inventarios</Link></li>
               <li><Link to="/listado-pedidos">Módulo Pedidos</Link></li>
               <li><Link to="/perfil-cliente">Perfil</Link></li>
-              <div className="logout">
-                <button onClick={logout}>LogOut</button>
-              </div>
-            </>
+            </ul>
+             <div className="nav-actions">
+                <button className="logout-button" onClick={logout}>
+                  <FontAwesomeIcon icon={faSignOutAlt} />
+              </button>
+             </div>
+            </div>
           ) : (
             <>
               <li><Link to="/register">Registro</Link></li>

@@ -30,7 +30,8 @@ const ListadoProductos = () => {
 
   // Efecto para realizar la petición GET a la API al cargar el componente
   useEffect(() => {
-    axios.get('/api/products')
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    axios.get(`${apiUrl}/api/products`)
       .then(response => {
         // Actualizar el estado de productos con los datos recibidos
         setProductos(response.data);

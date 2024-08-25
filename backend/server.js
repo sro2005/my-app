@@ -10,10 +10,12 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Define los orígenes permitidos
+const allowedOrigins = ['http://localhost:3000'];
+
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = ['https://company-home-appliances-sro.vercel.app'];
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
@@ -21,19 +23,26 @@ app.use(cors({
     }
   }
 }));
+
 app.use(helmet()); // Mejorar la seguridad HTTP
 app.use(express.json());
 
 // Conexión a MongoDB
 const mongoURI = process.env.MONGODB_URI;
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+console.log('MONGODB_URI:', mongoURI);
+mongoose.connect(mongoURI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => {
     console.error('Failed to connect to MongoDB', err);
     process.exit(1); // Termina el proceso si la conexión falla
   });
 
-// Rutas sin autenticación para acceder temporalmente
+// Ruta de prueba para la raíz
+app.get('/', (req, res) => {
+  res.send('¡Welcome to "Home Appliances SRO" - APIs!');
+});
+
+// Rutas de API
 app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);

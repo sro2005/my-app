@@ -16,8 +16,11 @@ const ProductoForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+  // Obtener la URL base de la variable de entorno
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
     // Enviar datos al backend
-    axios.post('/api/products/agregar', {
+    axios.post(`${apiUrl}/api/products/agregar`, {
       name,
       description,
       category,

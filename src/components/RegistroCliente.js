@@ -1,7 +1,7 @@
-// src/components/RegistroCliente.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Select from 'react-select';
 
 // Función para verificar si el cliente es mayor de 18 años
 const isAdult = (birthDate) => {
@@ -18,6 +18,32 @@ const isAdult = (birthDate) => {
   return age >= 18;
 };
 
+const options = [
+  { value: 'Refrigeradores', label: 'Refrigeradores' },
+  { value: 'Estufas', label: 'Estufas' },
+  { value: 'Microondas', label: 'Microondas' },
+  { value: 'Lavadoras', label: 'Lavadoras' },
+  { value: 'Aspiradoras', label: 'Aspiradoras' },
+  { value: 'Aires acondicionados', label: 'Aires acondicionados' },
+  { value: 'Sandwicheras', label: 'Sandwicheras' },
+  { value: 'Televisores', label: 'Televisores' },
+  { value: 'Secadores de cabello', label: 'Secadores de cabello' },
+  { value: 'Planchas de ropa', label: 'Planchas de ropa' },
+  { value: 'Cafeteras', label: 'Cafeteras' },
+  { value: 'Computadores de Escritorio', label: 'Computadores de Escritorio' },
+  { value: 'Computadores Portátiles', label: 'Computadores Portátiles' },
+  { value: 'Tabletas/Tablets', label: 'Tabletas/Tablets' },
+  { value: 'Impresoras', label: 'Impresoras' },
+  { value: 'Consola de Videojuegos', label: 'Consola de Videojuegos' },
+  { value: 'Bocinas inteligentes o parlantes Bluetooth', label: 'Bocinas inteligentes o parlantes Bluetooth' },
+  { value: 'Celulares', label: 'Celulares' },
+  { value: 'Tostadoras', label: 'Tostadoras' },
+  { value: 'Batidoras', label: 'Batidoras' },
+  { value: 'Hornos', label: 'Hornos' },
+  { value: 'Licuadoras', label: 'Licuadoras' },
+  { value: 'Ventiladores', label: 'Ventiladores' }
+];
+
 const RegistroCliente = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -27,7 +53,7 @@ const RegistroCliente = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
-  const [preferences, setPreferences] = useState('');
+  const [preferences, setPreferences] = useState([]);
 
   const navigate = useNavigate();
 
@@ -51,8 +77,11 @@ const RegistroCliente = () => {
       return;
     }
 
+    // Obtener la URL base de la variable de entorno
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
     // Enviar datos al backend usando Axios
-    axios.post('/api/customers/register', {
+    axios.post(`${apiUrl}/api/customers/register`, {
       firstName,
       lastName,
       email,
@@ -60,7 +89,7 @@ const RegistroCliente = () => {
       birthDate,
       password,
       phone,
-      preferences: preferences.split(',').map(pref => pref.trim()) // Elimina espacios en blanco
+      preferences: preferences.map(pref => pref.value) // Enviar los valores de las preferencias
     })
     .then(response => {
       console.log('Cliente registrado:', response.data);
@@ -81,11 +110,27 @@ const RegistroCliente = () => {
       <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
       <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
       <input type="text" placeholder="Número de Identificación (Cédula de Ciudadanía)" value={identificationNumber} onChange={(e) => setIdentificationNumber(e.target.value)} required />
-      <input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
+      <div>
+        <label htmlFor="birthDate">Fecha de Nacimiento:</label>
+        <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
+      </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <input type="password" placeholder="Confirmar Contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-      <input type="tel" placeholder="Teléfono" value={phone} onChange={(e) => setPhone(e.target.value)} required />
-      <input type="text" placeholder="Preferencias de Productos (separadas por comas)" value={preferences} onChange={(e) => setPreferences(e.target.value)} required />
+      <input type="tel" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+      
+      <div>
+        <label htmlFor="preferences">Preferencias de Productos:</label>
+        <Select
+          id="preferences"
+          isMulti
+          options={options}
+          value={preferences}
+          onChange={setPreferences}
+          placeholder="Selecciona tus preferencias"
+          className="select-preferences"
+        />
+      </div>
+      
       <button type="submit">Registrar</button>
     </form>
   );

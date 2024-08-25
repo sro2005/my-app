@@ -20,11 +20,21 @@ const formatDate = (dateString) => {
   return `${day}/${month}/${year}`;
 };
 
+const formatPreferences = (prefs) => {
+  if (Array.isArray(prefs)) {
+    return prefs.join(', ');
+  } else if (typeof prefs === 'string') {
+    return prefs.split(',').map(pref => pref.trim()).join(', ');
+  }
+  return 'Preferencias no disponibles';
+};
+
 const PerfilCliente = () => {
   const [customer, setCustomer] = useState(null);
 
   useEffect(() => {
-    axios.get('/api/customers') // Asegúrate de que esta ruta sea correcta
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    axios.get(`${apiUrl}/api/customers`) // Asegúrate de que esta ruta sea correcta
       .then(response => {
         setCustomer(response.data[0]); // Asegúrate de que la API retorne un array
       })
@@ -48,7 +58,7 @@ const PerfilCliente = () => {
         <p><strong>Fecha de Nacimiento:</strong> {formatDate(customer.birthDate)}</p>
         <p><strong>Número de Identificación (C.C):</strong> {customer.identificationNumber}</p>
         <p><strong>Teléfono:</strong> {customer.phone}</p>
-        <p><strong>Preferencias:</strong> {customer.preferences}</p>
+        <p><strong>Preferencias:</strong> {formatPreferences(customer.preferences)}</p>
       </div>
     </div>
   );

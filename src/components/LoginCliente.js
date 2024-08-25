@@ -14,11 +14,14 @@ const LoginCliente = ({ onLoginSuccess }) => {
     setMessage('');
     setMessageType('');
 
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
     // Enviar datos al backend usando Axios
-    axios.post('/api/customers/login', { email, password })
+    axios.post(`${apiUrl}/api/customers/login`, { email, password })
       .then(response => {
         console.log('Inicio de sesión exitoso:', response.data);
         localStorage.setItem('authToken', response.data.token); // Guardar solo el token
+        localStorage.setItem('userData', JSON.stringify(response.data.user)); // Guarda los datos del cliente
         onLoginSuccess(); // Llamar al callback para manejar el inicio de sesión exitoso
         setMessage('Credenciales válidas.'); // Mostrar mensaje de éxito
         setMessageType('success'); // Establecer tipo de mensaje a éxito

@@ -44,7 +44,8 @@ const ListadoClientes = () => {
 
   // Efecto para realizar la petición GET a la API al cargar el componente
   useEffect(() => {
-    axios.get('/api/customers')
+    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    axios.get(`${apiUrl}/api/customers`)
       .then(response => {
         // Actualizar el estado de clientes con los datos recibidos
         setClientes(response.data);
