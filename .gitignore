@@ -24,3 +24,6 @@ yarn-error.log*
 
 .env
 .env.production
+
+#backend
+node_modules

@@ -10,18 +10,22 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Define los orígenes permitidos
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
-// Middleware
-app.use(cors({
+// Configurar las opciones CORS
+const corsOptions = {
   origin: (origin, callback) => {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
     if (allowedOrigins.includes(origin) || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
-  }
-}));
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+// Middleware
+app.use(cors(corsOptions));
 
 app.use(helmet()); // Mejorar la seguridad HTTP
 app.use(express.json());
