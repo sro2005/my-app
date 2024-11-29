@@ -104,7 +104,7 @@ input {
 
 button {
   font-family: 'Roboto Slab', serif;
-  width: 32%;
+  width: 34%;
   padding: 12px 25px; /* Ajusté el padding para un mejor espaciado */
   color: white; /* Color del texto */
   background-color: #FFA500; /* Naranja estándar */
@@ -215,10 +215,17 @@ nav ul li a:hover {
   color: #ffffff; /* Cambia el color según tu diseño */
   display: flex;
   align-items: center;
+  transition: background-color 0.3s ease; /* Opcional: para un efecto suave */
+}
+
+.logout-button:hover {
+  background-color: transparent; /* Asegúrate de que no se aplique color de fondo */
+  color: #ffffff; /* Asegúrate de que el color no cambie al pasar el cursor */
 }
 
 .logout-button:focus {
   outline: none; /* Quita el borde de enfoque (opcional) */
+  background-color: transparent; /* Asegúrate de que no se aplique color de fondo */
 }
 
 form select {
