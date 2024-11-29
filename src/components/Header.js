@@ -17,7 +17,9 @@ const Header = ({ isAuthenticated, onLogout }) => {
 
   return (
     <header>
-      <h1>Home Appliances SRO</h1>
+      <h1>⚡ELECTROVIBEHOME⚡</h1>
+      <div class="separator-shadow"></div>
+      <h4>• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</h4>
       <nav>
         <ul>
           {isAuthenticated ? (

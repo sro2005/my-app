@@ -57,6 +57,13 @@ const LoginCliente = ({ onLoginSuccess }) => {
           {message}
         </p>
       )} {/* Mostrar mensaje con color basado en el tipo */}
+
+      {/* Enlace para "Olvidé mi contraseña" */}
+      <div style={{ textAlign: 'center', marginTop: '10px' }}>
+        <a href="/recuperar-contrasena" style={{ color: '#FF6347', textDecoration: 'none' }}>
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
     </form>
   );
 };

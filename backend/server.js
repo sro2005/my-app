@@ -10,23 +10,6 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Define los orígenes permitidos
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',');
-
-// Configuración del middleware CORS
-app.use(cors({
-  origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-
 app.use(helmet()); // Mejorar la seguridad HTTP
 app.use(express.json());
 
@@ -42,7 +25,7 @@ mongoose.connect(mongoURI)
 
 // Ruta de prueba para la raíz
 app.get('/', (req, res) => {
-  res.send('¡Welcome to "Home Appliances SRO" - APIs!');
+  res.send('¡Welcome to ⚡ELECTROVIBEHOME⚡ - APIs!');
 });
 
 // Rutas de API
