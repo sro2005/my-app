@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 // Define los orígenes permitidos
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:3000'];  // Si no está definido en las variables de entorno, usa este por defecto
+  : ['https://my-app-peach-chi.vercel.app'];  // Si no está definido en las variables de entorno, usa este por defecto
 
 // Configuración del middleware CORS
 app.use(cors({
