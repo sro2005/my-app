@@ -8,12 +8,14 @@ const orderRoutes = require('./routes/orderRoutes');
 require('dotenv').config();
 
 const app = express();
+
+// Usa process.env.PORT para el puerto en producción, y 5000 en desarrollo local.
 const PORT = process.env.PORT || 5000;
 
-// Define los orígenes permitidos
+// Define los orígenes permitidos a partir de las variables de entorno (en desarrollo será localhost y en producción Vercel).
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['https://my-app-peach-chi.vercel.app'];  // Si no está definido en las variables de entorno, usa este por defecto
+  : ['http://localhost:3000'];  // Origen permitido en local por defecto (puedes modificarlo más tarde para Vercel)
 
 // Configuración del middleware CORS
 app.use(cors({
@@ -28,13 +30,12 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-
-app.use(helmet()); // Mejorar la seguridad HTTP
-app.use(express.json());
+app.use(helmet()); // Seguridad adicional en cabeceras HTTP
+app.use(express.json()); // Middleware para analizar JSON en las solicitudes
 
 // Conexión a MongoDB
-const mongoURI = process.env.MONGODB_URI;
-console.log('MONGODB_URI:', mongoURI);
+const mongoURI = process.env.MONGODB_URI;  // Asegúrate de tener tu cadena de conexión correcta en .env
+console.log('MONGODB_URI:', mongoURI);  // Esto es solo para depuración, puedes eliminarlo después de probar.
 mongoose.connect(mongoURI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => {
@@ -43,8 +44,8 @@ mongoose.connect(mongoURI)
   });
 
 // Ruta de prueba para la raíz
-app.get('/', (req, res) => {
-  res.send('¡Welcome to "Home Appliances SRO" - APIs!');
+app.get('/api', (req, res) => {
+  res.send('¡Welcome to "⚡ELECTROVIBEHOME⚡" - APIs!');
 });
 
 // Rutas de API
