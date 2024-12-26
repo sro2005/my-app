@@ -51,6 +51,9 @@ const ListadoPedidos = () => {
   // Efecto para realizar la petición GET a la API al cargar el componente
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    if (!API_URL) {
+      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+    }
     axios.get(`${API_URL}/api/orders`)
       .then(response => {
         setPedidos(response.data);

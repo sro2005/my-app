@@ -16,6 +16,10 @@ const LoginCliente = ({ onLoginSuccess }) => {
 
     const API_URL = process.env.REACT_APP_API_BASE_URL;
 
+    if (!API_URL) {
+      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+    }
+
     // Enviar datos al backend usando Axios
     axios.post(`${API_URL}/api/customers/login`, { email, password })
       .then(response => {

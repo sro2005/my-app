@@ -34,6 +34,9 @@ const PerfilCliente = () => {
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    if (!API_URL) {
+      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+    }
     axios.get(`${API_URL}/api/customers`) // Asegúrate de que esta ruta sea correcta
       .then(response => {
         setCustomer(response.data[0]); // Asegúrate de que la API retorne un array

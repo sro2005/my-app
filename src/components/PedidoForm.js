@@ -58,6 +58,9 @@ const PedidoForm = () => {
 
   // Cargar la lista de productos al montar el componente
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    if (!API_URL) {
+      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+    }
     axios.get(`${API_URL}/api/products`) // Solicita la lista de productos desde el backend
       .then(response => setProducts(response.data.map(product => ({
         value: product._id,
@@ -108,6 +111,9 @@ const PedidoForm = () => {
   // Maneja la confirmación del pedido
   const handleConfirm = () => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    if (!API_URL) {
+      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+    }
     axios.post(`${API_URL}/api/orders/realizar`, orderDetails) // Envía los detalles del pedido al backend
       .then(response => {
         console.log('Pedido realizado:', response.data);
