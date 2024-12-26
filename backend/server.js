@@ -12,10 +12,10 @@ const app = express();
 // Usa process.env.PORT para el puerto en producción, y 5000 en desarrollo local.
 const PORT = process.env.PORT || 5000;
 
-// Define los orígenes permitidos a partir de las variables de entorno (en desarrollo será localhost y en producción Vercel).
+// Define los orígenes permitidos a partir de las variables de entorno
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['https://my-app-peach-chi.vercel.app/'];  // Origen permitido en local por defecto (puedes modificarlo más tarde para Vercel)
+  : ['https://my-app-five-pearl.vercel.app/'];
 
 // Configuración del middleware CORS
 app.use(cors({
