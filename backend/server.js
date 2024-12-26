@@ -20,7 +20,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 // Configuración del middleware CORS
 app.use(cors({
   origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin) || !origin) {
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -35,7 +35,7 @@ app.use(express.json()); // Middleware para analizar JSON en las solicitudes
 
 // Conexión a MongoDB
 const mongoURI = process.env.MONGODB_URI;  // Asegúrate de tener tu cadena de conexión correcta en .env
-console.log('MONGODB_URI:', mongoURI);  // Esto es solo para depuración, puedes eliminarlo después de probar.
+console.log('Connecting to MongoDB...');
 mongoose.connect(mongoURI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => {
@@ -71,9 +71,9 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
   res.status(err.status || 500).json({
     message: err.message,
+    // Elimina la pila de errores en producción
     error: process.env.NODE_ENV === 'development' ? err.stack : {}
   });
 });

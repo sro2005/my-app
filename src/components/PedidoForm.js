@@ -57,8 +57,8 @@ const PedidoForm = () => {
     }
 
   // Cargar la lista de productos al montar el componente
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
-    axios.get(`${apiUrl}/api/products`) // Solicita la lista de productos desde el backend
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    axios.get(`${API_URL}/api/products`) // Solicita la lista de productos desde el backend
       .then(response => setProducts(response.data.map(product => ({
         value: product._id,
         label: `${product.name} - ${formatPrice(product.price)}`,
@@ -107,8 +107,8 @@ const PedidoForm = () => {
 
   // Maneja la confirmación del pedido
   const handleConfirm = () => {
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
-    axios.post(`${apiUrl}/api/orders/realizar`, orderDetails) // Envía los detalles del pedido al backend
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    axios.post(`${API_URL}/api/orders/realizar`, orderDetails) // Envía los detalles del pedido al backend
       .then(response => {
         console.log('Pedido realizado:', response.data);
         alert('¡Pedido realizado exitosamente!');

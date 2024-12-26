@@ -78,10 +78,10 @@ const RegistroCliente = () => {
     }
 
     // Obtener la URL base de la variable de entorno
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
 
     // Enviar datos al backend usando Axios
-    axios.post(`${apiUrl}/api/customers/register`, {
+    axios.post(`${API_URL}/api/customers/register`, {
       firstName,
       lastName,
       email,

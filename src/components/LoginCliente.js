@@ -14,10 +14,10 @@ const LoginCliente = ({ onLoginSuccess }) => {
     setMessage('');
     setMessageType('');
 
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
 
     // Enviar datos al backend usando Axios
-    axios.post(`${apiUrl}/api/customers/login`, { email, password })
+    axios.post(`${API_URL}/api/customers/login`, { email, password })
       .then(response => {
         console.log('Inicio de sesión exitoso:', response.data);
         localStorage.setItem('authToken', response.data.token); // Guardar solo el token

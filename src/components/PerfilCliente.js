@@ -33,8 +33,8 @@ const PerfilCliente = () => {
   const [customer, setCustomer] = useState(null);
 
   useEffect(() => {
-    const apiUrl = process.env.REACT_APP_API_BASE_URL;
-    axios.get(`${apiUrl}/api/customers`) // Asegúrate de que esta ruta sea correcta
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    axios.get(`${API_URL}/api/customers`) // Asegúrate de que esta ruta sea correcta
       .then(response => {
         setCustomer(response.data[0]); // Asegúrate de que la API retorne un array
       })
