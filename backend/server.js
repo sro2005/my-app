@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 5000; // Si no hay variable de entorno, usa 5000 para desarrollo
 
 // Configuración CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', ''];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'https://electrovibehome.up.railway.app'];
 app.use(
   cors({
     origin: (origin, callback) => {
