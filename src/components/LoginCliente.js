@@ -21,7 +21,7 @@ const LoginCliente = ({ onLoginSuccess }) => {
     }
 
     // Enviar datos al backend usando Axios
-    axios.post(`https://electrovibehome.up.railway.app/api/customers/login`, { email, password })
+    axios.post(`${API_URL}/api/customers/login`, { email, password })
       .then(response => {
         console.log('Inicio de sesión exitoso:', response.data);
         localStorage.setItem('authToken', response.data.token); // Guardar solo el token
