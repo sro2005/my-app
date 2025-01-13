@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Loading from './components/Loading'; 
@@ -25,7 +24,7 @@ const AppContent = () => {
       setLoading(false);
       const token = localStorage.getItem('authToken');
       if (token) {
-        setUser({ email: 'test@example.com' }); // Simulación del usuario autenticado
+        setUser({ email: 'test@example.com' }); // Simulación de usuario autenticado
       }
     }, 1000);
   }, []);
@@ -36,7 +35,7 @@ const AppContent = () => {
   };
 
   const handleLoginSuccess = () => {
-    setUser({ email: 'test@example.com' }); // Ajustar según la respuesta real del login
+    setUser({ email: 'test@example.com' });
   };
 
   if (loading) {
