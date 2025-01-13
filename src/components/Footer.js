@@ -29,7 +29,7 @@ const Footer = () => {
       </ul>
     </div>
   </div>
-  <p>&copy; Copyright 2024 </p>
+  <p>&copy; Copyright 2025 </p>
   <p>⚡ELECTROVIBEHOME⚡</p>
   <p>Todos los derechos reservados.</p>
 </footer>
