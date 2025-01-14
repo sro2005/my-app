@@ -11,7 +11,7 @@ const ProductoItem = ({ producto }) => (
   <li className="producto-item">
     <div className="producto-info">
       <div className="producto-image">
-      <img src="https://hisense.com.co/wp-content/uploads/2024/04/6942147485231_2-1000x800.jpg" alt={producto.name}/>
+      <img src={producto.imageUrl} alt={producto.name}/>
       </div>
       <div className="producto-details">
         <p><strong>Nombre del Producto:</strong> {producto.name}</p>
