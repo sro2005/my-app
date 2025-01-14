@@ -10,6 +10,25 @@ exports.createOrder = async (req, res) => {
     if (!firstName || !lastName || !email || !phone || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
+    
+    // Validar que los productos tengan suficientes cantidades disponibles
+    for (const item of products) {
+      const product = await Product.findById(item.productId);
+      if (!product) {
+        return res.status(404).json({ message: `Producto con ID ${item.productId} no encontrado` });
+      }
+      if (product.quantity < item.quantity) {
+        return res.status(400).json({ message: `El producto ${product.name} no tiene suficiente inventario` });
+      }
+    }
+
+    // Reducir las cantidades de los productos en el inventario
+    for (const item of products) {
+      const product = await Product.findById(item.productId);
+      product.quantity -= item.quantity;
+      await product.save(); // Guardar los cambios en la base de datos
+    }
+
 
     // Crear una nueva instancia del modelo Order con la información proporcionada
     const newOrder = new Order({

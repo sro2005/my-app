@@ -8,6 +8,9 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
 };
 
+// Fecha de hoy en formato YYYY-MM-DD
+const today = new Date().toISOString().split('T')[0]; // Esto obtiene la fecha actual en el formato adecuado
+
 const PedidoForm = () => {
   // Estados para almacenar los datos del formulario
   const [firstName, setFirstName] = useState("");
@@ -226,6 +229,7 @@ const PedidoForm = () => {
             name="deliveryDate"
             value={deliveryDate}
             onChange={(e) => setDeliveryDate(e.target.value)}
+            min={today} // Establece la fecha mínima como la de hoy
             required
           />
         </div>

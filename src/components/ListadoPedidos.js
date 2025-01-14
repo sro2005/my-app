@@ -38,6 +38,7 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
         <p><strong>Fecha Estimada de Entrega del Pedido:</strong> {formatDate(pedido.deliveryDate)}</p>
+        <p><strong>Estado del Pedido:</strong> {pedido.status || 'Estado no disponible'}</p>
       </div>
     </div>
   </li>

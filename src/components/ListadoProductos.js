@@ -18,6 +18,7 @@ const ProductoItem = ({ producto }) => (
         <p><strong>Descripción:</strong> {producto.description}</p>
         <p><strong>Precio:</strong> {formatPrice(producto.price)}</p>
         <p><strong>Categoría:</strong> {producto.category}</p>
+        <p><strong>Cantidad disponible:</strong> {producto.quantity > 0 ? `${producto.quantity} unidades` : 'Producto agotado'}</p>
       </div>
     </div>
   </li>
@@ -45,6 +46,7 @@ const ListadoProductos = () => {
       });
   }, []); // El array vacío asegura que el efecto se ejecute solo una vez al cargar el componente
 
+  
   return (
     <div className="container">
       <h2>Módulo de Inventario</h2>
