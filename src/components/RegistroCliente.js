@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css'; // Importa los estilos de la librería
 import axios from 'axios';
 import Select from 'react-select';
 
@@ -70,13 +72,6 @@ const RegistroCliente = () => {
       return;
     }
 
-    // Validación simple de teléfono (formato +57 seguido de 10 dígitos)
-    const phoneRegex = /^\+57\d{10}$/;
-    if (!phoneRegex.test(phone)) {
-      alert('Número de teléfono inválido. Debe estar en formato +57 seguido de 10 dígitos.');
-      return;
-    }
-
     // Obtener la URL base de la variable de entorno
     const API_URL = process.env.REACT_APP_API_BASE_URL;
     if (!API_URL) {
@@ -118,7 +113,7 @@ const RegistroCliente = () => {
       </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <input type="password" placeholder="Confirmar Contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-      <input type="tel" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+      <PhoneInput placeholder="Número de Celular" value={phone} onChange={setPhone} defaultCountry="CO" required />
       
       <div>
         <label htmlFor="preferences">Preferencias de Productos:</label>

@@ -1,4 +1,5 @@
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 
 // Crear un nuevo pedido
 exports.createOrder = async (req, res) => {
@@ -7,10 +8,10 @@ exports.createOrder = async (req, res) => {
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
 
     // Validaciones
-    if (!firstName || !lastName || !email || !phone || !address || !paymentMethod || !deliveryDate || !totalAmount || !products) {
+    const requiredFields = [firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products];
+    if (requiredFields.some(field => !field || field.trim() === '')) {
       return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
-    
     // Validar que los productos tengan suficientes cantidades disponibles
     for (const item of products) {
       const product = await Product.findById(item.productId);

@@ -237,7 +237,7 @@ const PedidoForm = () => {
         {/* Campo de selección de producto */}
         <Select
           placeholder="Selecciona un producto"
-          options={products}
+          options={products} // Si no hay productos, muestra un mensaje predeterminado
           onChange={handleProductChange}
           value={product}
           isClearable
@@ -271,7 +271,7 @@ const PedidoForm = () => {
               </>
             )}
             <p><strong>Fecha Deseada para la Entrega:</strong> {orderDetails.deliveryDate}</p>
-            <p><strong>Producto Seleccionado:</strong> {product ? product.label : ''}</p>
+            <p><strong>Producto Seleccionado:</strong> {product?.label}</p>
             <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
             <div className="button-container">
             <button className="cancel-button" onClick={handleCancel}>CANCELAR</button>

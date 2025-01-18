@@ -46,6 +46,11 @@ app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 
+// Ruta para la raíz
+app.get('/', (req, res) => {
+  res.send('Bienvenido a la API de ⚡ELECTROVIBEHOME⚡');
+});
+
 // Ruta de prueba
 app.get('/health', (req, res) => res.status(200).send('API running'));
 
