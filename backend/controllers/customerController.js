@@ -30,6 +30,10 @@ exports.registerCustomer = async (req, res) => {
 
     const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences, role } = req.body;
     
+    // Cifrar la contraseña 
+    const hashedPassword = await bcrypt.hash(password, 10); 
+    console.log('Contraseña cifrada durante el registro:', hashedPassword); // Añadir un log para confirmar el cifrado
+
     // Crear un nuevo cliente
     const newCustomer = new Customer({
       firstName,
@@ -37,7 +41,7 @@ exports.registerCustomer = async (req, res) => {
       email,
       identificationNumber,
       birthDate,
-      password: await bcrypt.hash(password, 10), // Asegúrate de encriptar la contraseña
+      password: hashedPassword,
       phone,
       preferences,
       role // Establecer el rol del usuario
@@ -47,7 +51,6 @@ exports.registerCustomer = async (req, res) => {
     await newCustomer.save();
     res.status(201).json({ message: 'Cliente registrado exitosamente' });
   } catch (error) {
-    console.error('Error en el registro del cliente:', error);
     res.status(400).json({ message: 'Error al registrar el cliente', error: error.message });
   }
 };
@@ -67,16 +70,20 @@ exports.loginCustomer = async (req, res) => {
         console.error('Correo no encontrado:', email);
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       } 
+      // Print the stored hashed password for debugging 
+      console.log('Stored hashed password:', customer.password);
+
       // Verifica la contraseña 
       const isMatch = await bcrypt.compare(password, customer.password); 
       if (!isMatch) { 
         console.error('Contraseña incorrecta para:', email);
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       }
+      console.log('Contraseña correcta para:', email);
 
     // Generar el token JWT
     const token = jwt.sign({ id: customer._id, role: customer.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    
+    console.log('Token generado para:', email);
     res.status(200).json({ token, user: customer, role: customer.role, message: 'Inicio de sesión exitoso' });
   } catch (error) {
     console.error('Error en el inicio de sesión:', error);

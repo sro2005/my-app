@@ -23,6 +23,7 @@ customerSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    console.log('Contraseña cifrada:', this.password); // Añadir un log para confirmar el cifrado
     next();
   } catch (error) {
     console.error('Error cifrando la contraseña:', error);

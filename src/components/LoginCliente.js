@@ -44,7 +44,7 @@ const LoginCliente = ({ onLoginSuccess }) => {
     <form onSubmit={handleSubmit}>
       <h1>INICIAR SESIÓN</h1>
       <h2>Login del Cliente</h2>
-      <input type="text" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required  /> 
+      <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required  /> 
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
       <button type="submit" disabled={loading}>Ingresar</button> {/* Deshabilitar botón durante la carga */}
       {message && (
