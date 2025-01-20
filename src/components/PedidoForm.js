@@ -9,10 +9,9 @@ const formatPrice = (price) => {
 };
 
 // Fecha de hoy en formato YYYY-MM-DD
-const today = new Date().toISOString().split('T')[0]; // Esto obtiene la fecha actual en el formato adecuado
+const today = new Date().toISOString().split('T')[0];
 
 const PedidoForm = () => {
-  // Estados para almacenar los datos del formulario
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,29 +24,19 @@ const PedidoForm = () => {
   const [accountNumber, setAccountNumber] = useState("");
   const [bankName, setBankName] = useState("");
   const [sameRegisteredNumber, setSameRegisteredNumber] = useState(false);
-  
-  // Estado para almacenar la lista de productos
   const [products, setProducts] = useState([]);
-  
-  // Estado para manejar la visibilidad del modal de confirmación
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  
-  // Estado para almacenar los detalles del pedido para la confirmación
   const [orderDetails, setOrderDetails] = useState(null);
+  const [loading, setLoading] = useState(false);
   
-  // Hook para la navegación
   const navigate = useNavigate();
 
-  // Cargar los datos del cliente desde localStorage al montar el componente
   useEffect(() => {
     const savedCustomerData = localStorage.getItem('userData');
     
     if (savedCustomerData) {
       try {
-        // Intenta analizar los datos guardados
         const userData = JSON.parse(savedCustomerData);
-        
-        // Verifica si los datos están definidos y tienen las propiedades esperadas
         if (userData && userData.firstName && userData.lastName && userData.email && userData.phone) {
           setFirstName(userData.firstName);
           setLastName(userData.lastName);
@@ -59,7 +48,6 @@ const PedidoForm = () => {
       }
     }
 
-  // Cargar la lista de productos al montar el componente
     const API_URL = process.env.REACT_APP_API_BASE_URL;
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
@@ -87,11 +75,9 @@ const PedidoForm = () => {
     setSameRegisteredNumber(false);
   };
 
-  // Maneja el envío del formulario
   const handleSubmit = (e) => {
-    e.preventDefault(); // Previene el comportamiento por defecto del formulario
-    
-    // Prepara los detalles del pedido para la confirmación
+    e.preventDefault();
+
     const order = {
       firstName,
       lastName,
@@ -108,33 +94,39 @@ const PedidoForm = () => {
     };
     
     setOrderDetails(order);
-    setShowConfirmModal(true); // Muestra el modal de confirmación
+    setShowConfirmModal(true);
   };
 
-  // Maneja la confirmación del pedido
   const handleConfirm = () => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const token = localStorage.getItem('token');
+
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
-    axios.post(`${API_URL}/api/orders/realizar`, orderDetails) // Envía los detalles del pedido al backend
+    
+    setLoading(true);
+
+    axios.post(`${API_URL}/api/orders/realizar`, orderDetails, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(response => {
         console.log('Pedido realizado:', response.data);
+        setLoading(false);
         alert('¡Pedido realizado exitosamente!');
-        navigate('/confirmacion-pedido', { state: { order: response.data } }); // Navega a la página de confirmación
+        navigate('/confirmacion-pedido', { state: { order: response.data } });
       })
       .catch(error => {
         console.error('Error realizando pedido:', error);
+        setLoading(false);
         alert('Ocurrió un error al realizar el pedido. Por favor, intenta nuevamente.');
       });
   };
 
-  // Maneja la cancelación del pedido
   const handleCancel = () => {
-    setShowConfirmModal(false); // Cierra el modal de confirmación
+    setShowConfirmModal(false);
   };
 
-  // Opciones para el método de pago
   const paymentMethods = [
     { value: 'Tarjeta de Crédito', label: 'Tarjeta Crédito' },
     { value: 'Tarjeta de Débito', label: 'Tarjeta Débito' },
@@ -144,8 +136,7 @@ const PedidoForm = () => {
   ];
 
   return (
-    <div >
-      {/* Formulario para realizar un pedido */}
+    <div>
       <form onSubmit={handleSubmit}>
         <h1>Formulario</h1>
         <h2>Realizar Nuevo Pedido</h2>
@@ -155,7 +146,6 @@ const PedidoForm = () => {
         <input type="tel" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(e.target.value)} required />
         <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
 
-        {/* Campo de selección de método de pago */}
         <Select
           placeholder="Selecciona un método de pago"
           options={paymentMethods}
@@ -164,7 +154,6 @@ const PedidoForm = () => {
           isClearable
         />
                       
-        {/* Campo para el número de cuenta */}
         {(paymentMethod && (paymentMethod.value === "Tarjeta de Crédito" || paymentMethod.value === "Tarjeta de Débito")) && (
           <>
             <input
@@ -178,14 +167,13 @@ const PedidoForm = () => {
               type="text"
               placeholder="Número de Cuenta"
               value={accountNumber}
-              onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 20))} // Solo números, máximo 20 dígitos
+              onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 20))}
               maxLength="20"
               required
             />
           </>
         )}
 
-        {/* Campo para indicar si el número es el mismo que el registrado */}
         {(paymentMethod && (paymentMethod.value === "Nequi" || paymentMethod.value === "Daviplata" || paymentMethod.value === "Transfiya")) && (
           <div className="payment-options">
             <p>¿Es el mismo número registrado?</p>
@@ -212,7 +200,7 @@ const PedidoForm = () => {
                 type="text"
                 placeholder="Número de Cuenta"
                 value={accountNumber}
-                onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} // Solo números, máximo 10 dígitos
+                onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
                 maxLength="10"
                 required
               />
@@ -220,7 +208,6 @@ const PedidoForm = () => {
           </div>
         )}
         
-        {/* Campo de fecha de entrega */}
         <div className="date-field">
           <label htmlFor="deliveryDate">Fecha deseada para la entrega:</label>
           <input
@@ -229,15 +216,14 @@ const PedidoForm = () => {
             name="deliveryDate"
             value={deliveryDate}
             onChange={(e) => setDeliveryDate(e.target.value)}
-            min={today} // Establece la fecha mínima como la de hoy
+            min={today}
             required
           />
         </div>
         
-        {/* Campo de selección de producto */}
         <Select
           placeholder="Selecciona un producto"
-          options={products} // Si no hay productos, muestra un mensaje predeterminado
+          options={products}
           onChange={handleProductChange}
           value={product}
           isClearable
@@ -247,7 +233,6 @@ const PedidoForm = () => {
         <button type="submit">REALIZAR</button>
       </form>
       
-      {/* Modal de confirmación */}
       {showConfirmModal && (
         <div className="modal">
           <div className="modal-content">
@@ -274,14 +259,17 @@ const PedidoForm = () => {
             <p><strong>Producto Seleccionado:</strong> {product?.label}</p>
             <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
             <div className="button-container">
-            <button className="cancel-button" onClick={handleCancel}>CANCELAR</button>
-            <button className="confirm-button" onClick={handleConfirm}>CONFIRMAR</button>
+              <button className="cancel-button" onClick={handleCancel}>CANCELAR</button>
+              <button className="confirm-button" onClick={handleConfirm}>CONFIRMAR</button>
             </div>
           </div>
         </div>
       )}
+      
+      {loading && <div className="spinner">Procesando...</div>}
     </div>
   );
 };
 
 export default PedidoForm;
+

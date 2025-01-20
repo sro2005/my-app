@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
+const morgan = require('morgan');
 require('dotenv').config(); // Variables de entorno
 
 const productRoutes = require('./routes/productRoutes');
@@ -31,6 +32,7 @@ app.use(
 
 app.use(helmet());
 app.use(express.json());
+app.use(morgan('combined')); // Configurar Morgan para logging
 
 // Conexión a MongoDB
 mongoose

@@ -20,7 +20,7 @@ const Header = ({ isAuthenticated, onLogout }) => {
       <h1>⚡ELECTROVIBEHOME⚡</h1>
       <div class="separator-shadow"></div>
       <h4>• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</h4>
-      <nav>
+      <nav aria-label="Main Navigation">
         <ul>
           {isAuthenticated ? (
             <div className="nav-container">

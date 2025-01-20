@@ -14,10 +14,8 @@ const formatDate = (dateString) => {
     return 'Fecha no válida'; // Devuelve un mensaje de error si la fecha es inválida
   }
 
-  // Obtener la fecha en formato UTC
-  const utcDate = new Date(date.toUTCString());
+  const utcDate = new Date(date.toUTCString()); // Obtener la fecha en formato UTC
 
-  // Formatear la fecha en formato DD/MM/YYYY
   const day = String(utcDate.getUTCDate()).padStart(2, '0');
   const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
   const year = utcDate.getUTCFullYear();
@@ -46,23 +44,33 @@ const PedidoItem = ({ pedido }) => (
 
 // Componente funcional ListadoPedidos que muestra una lista de pedidos obtenidos desde la API
 const ListadoPedidos = () => {
-  // Estado para almacenar la lista de pedidos
   const [pedidos, setPedidos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Efecto para realizar la petición GET a la API al cargar el componente
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const token = localStorage.getItem('token'); // Obtener el token desde localStorage
+
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
-    axios.get(`${API_URL}/api/orders`)
+
+    axios.get(`${API_URL}/api/orders`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(response => {
         setPedidos(response.data);
+        setLoading(false); // Detener la animación de carga
       })
       .catch(error => {
         console.error('Error obteniendo pedidos:', error);
+        setLoading(false); // Detener la animación de carga en caso de error
       });
   }, []);
+
+  if (loading) {
+    return <div className="spinner">Cargando...</div>; // Mostrar un spinner mientras se cargan los datos
+  }
 
   return (
     <div className="container">

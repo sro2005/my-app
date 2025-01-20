@@ -1,70 +1,60 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Importar Axios
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginCliente = ({ onLoginSuccess }) => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(''); // Parte inicial del correo antes del @
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState(''); // Estado para manejar el mensaje
-  const [messageType, setMessageType] = useState(''); // Estado para manejar el tipo de mensaje (éxito o error)
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+  const [loading, setLoading] = useState(false); // Estado para manejar el estado de carga
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Limpiar mensajes anteriores
     setMessage('');
     setMessageType('');
 
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
 
-    // Enviar datos al backend usando Axios
+    setLoading(true); // Mostrar spinner de carga
+
     axios.post(`${API_URL}/api/customers/login`, { email, password })
       .then(response => {
         console.log('Inicio de sesión exitoso:', response.data);
-        localStorage.setItem('authToken', response.data.token); // Guardar solo el token
-        localStorage.setItem('userData', JSON.stringify(response.data.user)); // Guarda los datos del cliente
-        onLoginSuccess(); // Llamar al callback para manejar el inicio de sesión exitoso
-        setMessage('Credenciales válidas.'); // Mostrar mensaje de éxito
-        setMessageType('success'); // Establecer tipo de mensaje a éxito
+        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('userData', JSON.stringify(response.data.user));
+        onLoginSuccess();
+        setMessage('Credenciales válidas.');
+        setMessageType('success');
+        navigate('/home-page');
       })
       .catch(error => {
         console.error('Error en el inicio de sesión:', error);
-        setMessage('Credenciales inválidas. Por favor, intenta nuevamente.'); // Mostrar mensaje de error
-        setMessageType('error'); // Establecer tipo de mensaje a error
-      });
+        setMessage('Credenciales inválidas. Por favor, intenta nuevamente.');
+        setMessageType('error');
+      })
+      .finally(() => setLoading(false)); // Ocultar spinner de carga
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h1>INICIAR SESIÓN</h1>
       <h2>Login del Cliente</h2>
-      <input
-        type="email"
-        placeholder="Correo Electrónico"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button type="submit">Ingresar</button>
+      <input type="text" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required  /> 
+      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      <button type="submit" disabled={loading}>Ingresar</button> {/* Deshabilitar botón durante la carga */}
       {message && (
-        <p style={{ color: messageType === 'error' ? 'red' : 'green' }}>
+        <p className={`message ${messageType === 'error' ? 'error' : 'success'}`}>
           {message}
         </p>
-      )} {/* Mostrar mensaje con color basado en el tipo */}
-
-      {/* Enlace para "Olvidé mi contraseña" */}
+      )}
+      {loading && <div className="spinner">Cargando...</div>} {/* Mostrar spinner de carga */}
       <div style={{ textAlign: 'center', marginTop: '10px' }}>
-        <a href="/recuperar-contrasena" style={{ color: '#FF6347', textDecoration: 'none' }}>
+        <a href="/recover-password" style={{ color: '#FF6347', textDecoration: 'none' }}>
           ¿Olvidaste tu contraseña?
         </a>
       </div>

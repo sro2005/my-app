@@ -9,10 +9,8 @@ const formatDate = (dateString) => {
     return 'Fecha no válida'; // Devuelve un mensaje de error si la fecha es inválida
   }
 
-  // Obtener la fecha en formato UTC
-  const utcDate = new Date(date.toUTCString());
+  const utcDate = new Date(date.toUTCString()); // Obtener la fecha en formato UTC
 
-  // Formatear la fecha en formato DD/MM/YYYY
   const day = String(utcDate.getUTCDate()).padStart(2, '0');
   const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
   const year = utcDate.getUTCFullYear();
@@ -34,10 +32,15 @@ const PerfilCliente = () => {
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const token = localStorage.getItem('token'); // Obtener el token desde localStorage
+
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
-    axios.get(`${API_URL}/api/customers`) // Asegúrate de que esta ruta sea correcta
+
+    axios.get(`${API_URL}/api/customers`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(response => {
         setCustomer(response.data[0]); // Asegúrate de que la API retorne un array
       })
@@ -52,8 +55,7 @@ const PerfilCliente = () => {
     <div className="profile-container">
       <h2>Perfil de Cliente</h2>
       <div className="profile-picture">
-      <img src='/icono-user.png' alt="Foto del Cliente" 
-        />
+        <img src='/icono-user.png' alt="Foto del Cliente" />
       </div>
       <div className="profile-info">
         <p><strong>Cliente:</strong> {customer.firstName} {customer.lastName}</p>

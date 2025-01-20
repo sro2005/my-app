@@ -13,6 +13,7 @@ import ListadoPedidos from './components/ListadoPedidos';
 import PerfilCliente from './components/PerfilCliente';
 import RegistroCliente from './components/RegistroCliente';
 import LoginCliente from './components/LoginCliente';
+import RecoverPassword from './components/RecoverPassword';
 import './styles/styles.css';
 
 const AppContent = () => {
@@ -51,6 +52,7 @@ const AppContent = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<RegistroCliente />} />
             <Route path="/login" element={<LoginCliente onLoginSuccess={handleLoginSuccess} />} />
+            <Route path="/recover-password" element={<RecoverPassword />} />
           </>
         ) : (
           <>

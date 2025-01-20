@@ -1,37 +1,61 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const Joi = require('joi'); // Importa Joi para la validación de datos
+
+// Esquema de validación para el pedido
+const orderSchema = Joi.object({
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  email: Joi.string().email().required(),
+  phone: Joi.string().required(),
+  address: Joi.string().required(),
+  paymentMethod: Joi.string().required(),
+  deliveryDate: Joi.date().required(),
+  totalAmount: Joi.number().required(),
+  products: Joi.array().items(Joi.object({
+    productId: Joi.string().required(),
+    quantity: Joi.number().required()
+  })).required()
+});
+
+// Función para validar los productos
+const validateProducts = async (products) => {
+  for (const item of products) {
+    const product = await Product.findById(item.productId);
+    if (!product) {
+      throw new Error(`Producto con ID ${item.productId} no encontrado`);
+    }
+    if (product.quantity < item.quantity) {
+      throw new Error(`El producto ${product.name} no tiene suficiente inventario`);
+    }
+  }
+};
+
+// Función para reducir inventario de productos
+const reduceInventory = async (products) => {
+  for (const item of products) {
+    const product = await Product.findById(item.productId);
+    product.quantity -= item.quantity;
+    await product.save();
+  }
+};
 
 // Crear un nuevo pedido
 exports.createOrder = async (req, res) => {
   try {
-    // Extraer la información del cuerpo de la solicitud
+    // Validar datos de entrada
+    const { error } = orderSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
+    }
+
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
 
-    // Validaciones
-    const requiredFields = [firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products];
-    if (requiredFields.some(field => !field || field.trim() === '')) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios' });
-    }
-    // Validar que los productos tengan suficientes cantidades disponibles
-    for (const item of products) {
-      const product = await Product.findById(item.productId);
-      if (!product) {
-        return res.status(404).json({ message: `Producto con ID ${item.productId} no encontrado` });
-      }
-      if (product.quantity < item.quantity) {
-        return res.status(400).json({ message: `El producto ${product.name} no tiene suficiente inventario` });
-      }
-    }
+    // Validar los productos y reducir inventario
+    await validateProducts(products);
+    await reduceInventory(products);
 
-    // Reducir las cantidades de los productos en el inventario
-    for (const item of products) {
-      const product = await Product.findById(item.productId);
-      product.quantity -= item.quantity;
-      await product.save(); // Guardar los cambios en la base de datos
-    }
-
-
-    // Crear una nueva instancia del modelo Order con la información proporcionada
+    // Crear una nueva instancia del modelo Order
     const newOrder = new Order({
       firstName,
       lastName,
@@ -72,6 +96,12 @@ exports.getOrders = async (req, res) => {
 // Actualizar un pedido
 exports.updateOrder = async (req, res) => {
   try {
+    // Validar datos de entrada
+    const { error } = orderSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
+    }
+
     // Extraer el id del pedido y la información para actualizar desde la solicitud
     const { id } = req.params;
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
@@ -87,7 +117,7 @@ exports.updateOrder = async (req, res) => {
       deliveryDate,
       totalAmount,
       products
-    }, { new: true });
+    }, { new: true, runValidators: true });
 
     // Verificar si el pedido fue encontrado y actualizado
     if (!updatedOrder) {

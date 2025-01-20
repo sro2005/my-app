@@ -1,10 +1,27 @@
 const Product = require('../models/Product');
+const Joi = require('joi'); // Importa Joi para la validación de datos
+
+// Esquema de validación para el producto
+const productSchema = Joi.object({
+  name: Joi.string().required(),
+  description: Joi.string().required(),
+  category: Joi.string().required(),
+  price: Joi.number().required(),
+  quantity: Joi.number().required(),
+  imageUrl: Joi.string().uri().required()
+});
 
 // Crear un nuevo producto
 exports.createProduct = async (req, res) => {
   try {
+    // Validar datos de entrada
+    const { error } = productSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
+    }
+
     const { name, description, category, price, quantity, imageUrl } = req.body;
-    
+
     // Crear una nueva instancia del modelo Product
     const newProduct = new Product({ name, description, category, price, quantity, imageUrl });
 
@@ -30,12 +47,18 @@ exports.getProducts = async (req, res) => {
 // Actualizar un producto
 exports.updateProduct = async (req, res) => {
   try {
+    // Validar datos de entrada
+    const { error } = productSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
+    }
+
     const { id } = req.params;
     const { name, description, category, price, quantity, imageUrl } = req.body;
 
     const updatedProduct = await Product.findByIdAndUpdate(id, {
       name, description, category, price, quantity, imageUrl
-    }, { new: true });
+    }, { new: true, runValidators: true });
 
     if (!updatedProduct) return res.status(404).json({ message: 'Producto no encontrado' });
 

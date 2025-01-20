@@ -4,23 +4,27 @@ import { NumericFormat } from 'react-number-format'; // Importar NumericFormat
 
 // Componente funcional ProductoForm para agregar un nuevo producto
 const ProductoForm = () => {
-  // Estado para almacenar los datos del producto que se va a agregar
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Función para manejar el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
 
-  // Obtener la URL base de la variable de entorno
-  const API_URL = process.env.REACT_APP_API_BASE_URL;
-  if (!API_URL) {
-    console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
-  }
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const token = localStorage.getItem('token'); // Obtener el token desde localStorage
+
+    if (!API_URL) {
+      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+    }
+
+    setLoading(true);
+
     // Enviar datos al backend
     axios.post(`${API_URL}/api/products/agregar`, {
       name,
@@ -29,13 +33,17 @@ const ProductoForm = () => {
       price,
       quantity,
       imageUrl
+    }, {
+      headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(response => {
       console.log('Producto agregado:', response.data);
+      setLoading(false);
       alert('¡Producto agregado exitosamente!');
     })
     .catch(error => {
       console.error('Error agregando producto:', error);
+      setLoading(false);
       alert('Ocurrió un error al agregar el producto. Por favor, intenta nuevamente.');
     });
   };
@@ -95,6 +103,7 @@ const ProductoForm = () => {
         required
       />
       <button type="submit">AGREGAR</button>
+      {loading && <div className="spinner">Procesando...</div>} {/* Mostrar un spinner mientras se procesa el registro */}
     </form>
   );
 };

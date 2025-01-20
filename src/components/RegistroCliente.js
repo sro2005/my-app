@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css'; // Importa los estilos de la librería
 import axios from 'axios';
 import Select from 'react-select';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css'; // Importa los estilos de la librería
+
 
 // Función para verificar si el cliente es mayor de 18 años
 const isAdult = (birthDate) => {
@@ -56,21 +57,21 @@ const RegistroCliente = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [preferences, setPreferences] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
       alert('Las contraseñas no coinciden!');
       return;
     }
-
     if (!isAdult(birthDate)) {
       alert('Debes ser mayor de 18 años para registrarte.');
       return;
     }
+    setLoading(true);
 
     // Obtener la URL base de la variable de entorno
     const API_URL = process.env.REACT_APP_API_BASE_URL;
@@ -90,11 +91,13 @@ const RegistroCliente = () => {
     })
     .then(response => {
       console.log('Cliente registrado:', response.data);
+      setLoading(false);
       alert('¡Registro exitoso!');
       navigate('/login');
     })
     .catch(error => {
       console.error('Error registrando cliente:', error);
+      setLoading(false);
       alert('Ocurrió un error al registrar al cliente. Por favor, intenta nuevamente.');
     });
   };
@@ -129,6 +132,7 @@ const RegistroCliente = () => {
       </div>
       
       <button type="submit">Registrar</button>
+      {loading && <div className="spinner">Procesando...</div>} {/* Mostrar un spinner mientras se procesa el registro */}
     </form>
   );
 };
