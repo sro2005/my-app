@@ -14,7 +14,7 @@ import PerfilCliente from './components/PerfilCliente';
 import RegistroCliente from './components/RegistroCliente';
 import LoginCliente from './components/LoginCliente';
 import RecoverPassword from './components/RecoverPassword';
-import './styles/styles.css';
+import PrivateRoute from './components/PrivateRoute';
 
 const AppContent = () => {
   const [loading, setLoading] = useState(true);
@@ -25,18 +25,22 @@ const AppContent = () => {
       setLoading(false);
       const token = localStorage.getItem('authToken');
       if (token) {
-        setUser({ email: 'test@example.com' }); // Simulación de usuario autenticado
+        const userRole = localStorage.getItem('userRole');
+        setUser({ email: 'test@example.com', role: userRole }); // Simulación de usuario autenticado
       }
     }, 1000);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole'); // Remover el rol del `localStorage`
     setUser(null);
   };
 
-  const handleLoginSuccess = () => {
-    setUser({ email: 'test@example.com' });
+  const handleLoginSuccess = (user) => {
+    setUser(user);
+    localStorage.setItem('authToken', user.token);
+    localStorage.setItem('userRole', user.role);
   };
 
   if (loading) {
@@ -58,12 +62,20 @@ const AppContent = () => {
           <>
             <Route path="/" element={<Navigate to="/home-page" />} />
             <Route path="/home-page" element={<HomePage />} />
-            <Route path="/producto-form" element={<ProductoForm />} />
-            <Route path="/pedido-form" element={<PedidoForm />} />
-            <Route path="/listado-clientes" element={<ListadoClientes />} />
-            <Route path="/listado-productos" element={<ListadoProductos />} />
-            <Route path="/listado-pedidos" element={<ListadoPedidos />} />
-            <Route path="/perfil-cliente" element={<PerfilCliente />} />
+
+            {/* Rutas protegidas para administradores */}
+            <Route element={<PrivateRoute allowedRoles={['admin']} />}>
+              <Route path="/producto-form" element={<ProductoForm />} />
+              <Route path="/pedido-form" element={<PedidoForm />} />
+              <Route path="/listado-clientes" element={<ListadoClientes />} />
+              <Route path="/listado-productos" element={<ListadoProductos />} />
+              <Route path="/listado-pedidos" element={<ListadoPedidos />} />
+            </Route>
+
+            {/* Rutas protegidas para todos los usuarios autenticados */}
+            <Route element={<PrivateRoute allowedRoles={['user', 'admin']} />}>
+              <Route path="/perfil-cliente" element={<PerfilCliente />} />
+            </Route>
           </>
         )}
         <Route path="*" element={<Navigate to="/" />} />
