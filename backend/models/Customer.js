@@ -25,9 +25,11 @@ customerSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
     next();
   } catch (error) {
+    console.error('Error cifrando la contraseña:', error);
     next(error);
   }
 });
 
-module.exports = mongoose.model('Customer', customerSchema);
+const Customer = mongoose.model('Customer', customerSchema); 
+module.exports = Customer;
 

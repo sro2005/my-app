@@ -24,13 +24,11 @@ exports.registerCustomer = async (req, res) => {
     // Validar datos de entrada
     const { error } = customerSchema.validate(req.body);
     if (error) {
+      console.error('Error de validación:', error.details[0].message);
       return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
     }
 
     const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences, role } = req.body;
-    
-    // Cifrar la contraseña 
-    const hashedPassword = await bcrypt.hash(password, 10);
     
     // Crear un nuevo cliente
     const newCustomer = new Customer({
@@ -39,7 +37,7 @@ exports.registerCustomer = async (req, res) => {
       email,
       identificationNumber,
       birthDate,
-      password: hashedPassword, // Asegúrate de encriptar la contraseña
+      password: await bcrypt.hash(password, 10), // Asegúrate de encriptar la contraseña
       phone,
       preferences,
       role // Establecer el rol del usuario
@@ -49,6 +47,7 @@ exports.registerCustomer = async (req, res) => {
     await newCustomer.save();
     res.status(201).json({ message: 'Cliente registrado exitosamente' });
   } catch (error) {
+    console.error('Error en el registro del cliente:', error);
     res.status(400).json({ message: 'Error al registrar el cliente', error: error.message });
   }
 };
@@ -65,11 +64,13 @@ exports.loginCustomer = async (req, res) => {
       // Busca al cliente por correo 
       const customer = await Customer.findOne({ email }); 
       if (!customer) { 
+        console.error('Correo no encontrado:', email);
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       } 
       // Verifica la contraseña 
       const isMatch = await bcrypt.compare(password, customer.password); 
       if (!isMatch) { 
+        console.error('Contraseña incorrecta para:', email);
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       }
 
@@ -78,6 +79,7 @@ exports.loginCustomer = async (req, res) => {
     
     res.status(200).json({ token, user: customer, role: customer.role, message: 'Inicio de sesión exitoso' });
   } catch (error) {
+    console.error('Error en el inicio de sesión:', error);
     res.status(400).json({ message: 'Error al iniciar sesión', error: error.message });
   }
 };
