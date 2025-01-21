@@ -7,7 +7,7 @@ const Footer = () => {
   <div className="footer-sections">
     <div className="section left">
       <h3>Contacto</h3>
-      <p>Email: company@electrovibehome.com</p>
+      <p>Email: company.electrovibehome@gmail.com</p>
       <p>Teléfono: +57 601 000 0000</p>
     </div>
 
