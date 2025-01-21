@@ -29,10 +29,9 @@ exports.registerCustomer = async (req, res) => {
     }
 
     const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences, role } = req.body;
-    
+
     // Cifrar la contraseña 
-    const hashedPassword = await bcrypt.hash(password, 10); 
-    console.log('Contraseña cifrada durante el registro:', hashedPassword); // Añadir un log para confirmar el cifrado
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Crear un nuevo cliente
     const newCustomer = new Customer({
@@ -62,31 +61,22 @@ exports.loginCustomer = async (req, res) => {
     try { 
       // Verifica que el correo y la contraseña estén proporcionados 
       if (!email || !password) { 
-        return res.status(400).json({ message: 'Email y contraseña son requeridos' });
+        return res.status(400).json({ message: 'Correo y contraseña son requeridos' });
       } 
       // Busca al cliente por correo 
       const customer = await Customer.findOne({ email }); 
       if (!customer) { 
-        console.error('Correo no encontrado:', email);
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       } 
-      // Print the stored hashed password for debugging 
-      console.log('Stored hashed password:', customer.password);
-
       // Verifica la contraseña 
       const isMatch = await bcrypt.compare(password, customer.password); 
       if (!isMatch) { 
-        console.error('Contraseña incorrecta para:', email);
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       }
-      console.log('Contraseña correcta para:', email);
-
     // Generar el token JWT
     const token = jwt.sign({ id: customer._id, role: customer.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    console.log('Token generado para:', email);
     res.status(200).json({ token, user: customer, role: customer.role, message: 'Inicio de sesión exitoso' });
   } catch (error) {
-    console.error('Error en el inicio de sesión:', error);
     res.status(400).json({ message: 'Error al iniciar sesión', error: error.message });
   }
 };
