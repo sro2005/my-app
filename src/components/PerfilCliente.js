@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { ClipLoader } from 'react-spinners'; // Spinner personalizado
 
 // Función para formatear la fecha en formato DD/MM/YYYY sin hora
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-
   if (isNaN(date.getTime())) {
-    return 'Fecha no válida'; // Devuelve un mensaje de error si la fecha es inválida
+    return 'Fecha no válida';
   }
-
-  const utcDate = new Date(date.toUTCString()); // Obtener la fecha en formato UTC
-
+  const utcDate = new Date(date.toUTCString());
   const day = String(utcDate.getUTCDate()).padStart(2, '0');
-  const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0'); // Los meses empiezan en 0
+  const month = String(utcDate.getUTCMonth() + 1).padStart(2, '0');
   const year = utcDate.getUTCFullYear();
-
   return `${day}/${month}/${year}`;
 };
 
@@ -29,11 +26,13 @@ const formatPreferences = (prefs) => {
 
 const PerfilCliente = () => {
   const [customer, setCustomer] = useState(null);
+  const [loading, setLoading] = useState(true); // Añadir estado de carga
+  const [error, setError] = useState(null); // Añadir estado de error
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('token'); // Obtener el token desde localStorage
-
+    const token = localStorage.getItem('authToken');
+    
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
@@ -41,15 +40,32 @@ const PerfilCliente = () => {
     axios.get(`${API_URL}/api/customers`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-      .then(response => {
-        setCustomer(response.data[0]); // Asegúrate de que la API retorne un array
-      })
-      .catch(error => {
-        console.error('Error obteniendo perfil:', error);
-      });
+    .then(response => {
+      setCustomer(response.data[0]);
+      setLoading(false); // Terminar carga
+    })
+    .catch(error => {
+      setError('Error Al Obtener El Perfil');
+      setLoading(false); // Terminar carga
+      console.error('Error obteniendo perfil:', error);
+    });
   }, []);
 
-  if (!customer) return <p className="loading">Cargando...</p>;
+  if (loading) {
+    return (
+      <div className="spinner">
+        <ClipLoader size={50} color="#4CAF50" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-message">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -65,6 +81,7 @@ const PerfilCliente = () => {
         <p><strong>Teléfono:</strong> {customer.phone}</p>
         <p><strong>Preferencias:</strong> {formatPreferences(customer.preferences)}</p>
       </div>
+      <button className="update-button">Actualizar Información</button> {/* Botón de actualización */}
     </div>
   );
 };

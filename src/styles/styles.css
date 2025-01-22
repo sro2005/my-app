@@ -576,3 +576,55 @@ h2 {
 .select-preferences {
   margin-bottom: 1.5em;
 }
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Altura completa de la ventana */
+}
+
+/* Estilos para el mensaje de error */
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin: 10px;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid red;
+  border-radius: 8px;
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+  width: fit-content; /* Ajusta el ancho al contenido */
+  margin-left: auto;
+  margin-right: auto; /* Centra el mensaje */
+}
+
+/* Botón de actualización */
+.update-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.update-button:hover {
+  background-color: #45a049;
+}
+
+/* Estilo para centrar la imagen */
+.image-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* Estilo para ajustar el tamaño de la imagen */
+.testimonial-image {
+  max-width: 150px; /* Ajusta el tamaño máximo de la imagen según sea necesario */
+  height: auto;
+}

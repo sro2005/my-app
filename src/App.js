@@ -25,22 +25,22 @@ const AppContent = () => {
       setLoading(false);
       const token = localStorage.getItem('authToken');
       if (token) {
-        const userRole = localStorage.getItem('userRole');
-        setUser({ email: 'test@example.com', role: userRole }); // Simulación de usuario autenticado
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        setUser(userData); // Usar los datos del usuario almacenados en localStorage
       }
     }, 1000);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('userRole'); // Remover el rol del `localStorage`
+    localStorage.removeItem('userData'); // Remover los datos del usuario de `localStorage`
     setUser(null);
   };
 
   const handleLoginSuccess = (user) => {
     setUser(user);
     localStorage.setItem('authToken', user.token);
-    localStorage.setItem('userRole', user.role);
+    localStorage.setItem('userData', JSON.stringify(user)); // Guardar los datos del usuario en localStorage
   };
 
   if (loading) {
@@ -49,7 +49,7 @@ const AppContent = () => {
 
   return (
     <>
-      <Header isAuthenticated={!!user} onLogout={handleLogout} />
+      <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
       <Routes>
         {!user ? (
           <>
@@ -60,24 +60,25 @@ const AppContent = () => {
           </>
         ) : (
           <>
-            <Route path="/" element={<Navigate to="/home-page" />} />
-            <Route path="/home-page" element={<HomePage />} />
+            {/* Rutas accesibles para todos los usuarios autenticados */}
+            <Route element={<PrivateRoute allowedRoles={['user', 'admin']} />}>
+              <Route path="/" element={<Navigate to="/home-page" />} />
+              <Route path="/home-page" element={<HomePage user={user} />} />
+              <Route path="/pedido-form" element={<PedidoForm user={user} />} />
+              <Route path="/listado-productos" element={<ListadoProductos user={user} />} />
+              <Route path="/listado-pedidos" element={<ListadoPedidos user={user} />} />
+              <Route path="/perfil-cliente" element={<PerfilCliente user={user} />} />
+            </Route>
 
             {/* Rutas protegidas para administradores */}
             <Route element={<PrivateRoute allowedRoles={['admin']} />}>
-              <Route path="/producto-form" element={<ProductoForm />} />
-              <Route path="/pedido-form" element={<PedidoForm />} />
-              <Route path="/listado-clientes" element={<ListadoClientes />} />
-              <Route path="/listado-productos" element={<ListadoProductos />} />
-              <Route path="/listado-pedidos" element={<ListadoPedidos />} />
-            </Route>
-
-            {/* Rutas protegidas para todos los usuarios autenticados */}
-            <Route element={<PrivateRoute allowedRoles={['user', 'admin']} />}>
-              <Route path="/perfil-cliente" element={<PerfilCliente />} />
+              <Route path="/producto-form" element={<ProductoForm user={user} />} />
+              <Route path="/listado-clientes" element={<ListadoClientes user={user} />} />
+              <Route path="/listado-pedidos" element={<ListadoPedidos user={user} />} />
             </Route>
           </>
         )}
+        <Route path="/access-denied" element={<div>Acceso Denegado</div>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

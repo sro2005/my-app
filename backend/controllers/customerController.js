@@ -1,5 +1,5 @@
 const Customer = require('../models/Customer');
-const bcrypt = require('bcrypt'); // Asegúrate de importar bcrypt para la comparación de contraseñas
+const bcrypt = require('bcrypt');
 const Joi = require('joi'); // Importa Joi para la validación de datos
 const jwt = require('jsonwebtoken'); // Importa jwt para la generación de tokens
 const crypto = require('crypto'); // Importar crypto para generar tokens
@@ -30,8 +30,8 @@ exports.registerCustomer = async (req, res) => {
 
     const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences, role } = req.body;
 
-    // Cifrar la contraseña 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // NO cifrar la contraseña para esta prueba
+    console.log('Contraseña sin cifrar (registro):', password); // Log para confirmar el cifrado
 
     // Crear un nuevo cliente
     const newCustomer = new Customer({
@@ -40,10 +40,10 @@ exports.registerCustomer = async (req, res) => {
       email,
       identificationNumber,
       birthDate,
-      password: hashedPassword,
+      password: await bcrypt.hash(password, 10), // Cifrar la contraseña
       phone,
       preferences,
-      role // Establecer el rol del usuario
+      role: role || 'user' // Establecer el rol del usuario
     });
 
     // Guardar el cliente en la base de datos
@@ -69,7 +69,11 @@ exports.loginCustomer = async (req, res) => {
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       } 
       // Verifica la contraseña 
-      const isMatch = await bcrypt.compare(password, customer.password); 
+      const isMatch = await bcrypt.compare(password, customer.password);
+      console.log('Contraseña ingresada:', password); 
+      console.log('Contraseña en la base de datos:', customer.password); 
+      console.log('Resultado de la comparación de contraseñas:', isMatch); 
+
       if (!isMatch) { 
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import ClipLoader from 'react-spinners/ClipLoader'; // Importa el spinner
 
 // Función para formatear el precio en formato local
 const formatPrice = (price) => {
@@ -31,16 +32,20 @@ const ListadoProductos = () => {
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('token'); // Obtener el token desde localStorage
+    const token = localStorage.getItem('authToken'); // Asegúrate de que el nombre del token coincida
 
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
 
+    console.log('Inicio de la solicitud: setting loading to true');
+    setLoading(true);
+
     axios.get(`${API_URL}/api/products`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(response => {
+        console.log('Productos recibidos:', response.data); // Log para verificar datos
         setProductos(response.data);
         setLoading(false); // Detener la animación de carga
       })
@@ -51,7 +56,11 @@ const ListadoProductos = () => {
   }, []);
 
   if (loading) {
-    return <div className="spinner">Cargando...</div>; // Mostrar un spinner mientras se cargan los datos
+    return (
+      <div className="spinner">
+        <ClipLoader size={50} color="#4CAF50" /> {/* Spinner personalizado */}
+      </div>
+    );
   }
 
   return (

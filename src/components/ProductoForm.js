@@ -17,7 +17,7 @@ const ProductoForm = () => {
     e.preventDefault();
 
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('token'); // Obtener el token desde localStorage
+    const token = localStorage.getItem('authToken'); // Obtener el token desde localStorage
 
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');

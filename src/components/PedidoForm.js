@@ -99,7 +99,7 @@ const PedidoForm = () => {
 
   const handleConfirm = () => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('authToken');
 
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');

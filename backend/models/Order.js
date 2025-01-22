@@ -11,9 +11,9 @@ const orderSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, match: /\S+@\S+\.\S+/ },
-  phone: { type: String, required: true, match: /^[0-9]{10}$/ },
+  phone: { type: String, required: true, match: /^\+\d{1,3}\s\d{3}\s\d{7}$/ }, // Actualizado para aceptar + seguido por dígitos
   address: { type: String, required: true },
-  paymentMethod: { type: String, required: true, enum: ['Credit Card', 'Debit Card', 'Cash', 'PayPal'] },
+  paymentMethod: { type: String, required: true },
   deliveryDate: { type: Date, required: true },
   totalAmount: { type: Number, required: true },
   products: { type: [productSchema], required: true }
