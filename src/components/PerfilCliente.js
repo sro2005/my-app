@@ -45,7 +45,7 @@ const PerfilCliente = () => {
       setLoading(false); // Terminar carga
     })
     .catch(error => {
-      setError('Error Al Obtener El Perfil');
+      setError('ERROR AL OBTENER EL PERFIL');
       setLoading(false); // Terminar carga
       console.error('Error obteniendo perfil:', error);
     });

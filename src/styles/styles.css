@@ -60,7 +60,7 @@ header {
 }
 
 .footer .section ul li a:hover {
-  color: #ff0; /* Puedes cambiar este color si lo deseas */
+  color: #FFA500; /* Puedes cambiar este color si lo deseas */
 }
 
 .footer p {
@@ -148,47 +148,24 @@ nav ul li {
 
 nav ul li a {
   text-decoration: none;
-  color: #00FFFF; /* Color del texto en azul */
+  color: #FFA500; /* Color del texto en naranja brillante */
   padding: 10px 20px;
   font-weight: bold;
   transition: color 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease; /* Transiciones suaves para el color, opacidad y sombra */
 }
 
 nav ul li a:hover {
-  color: #4682B4; /* Cambio de color del texto al pasar el ratón (color más oscuro) */
+  color: #FF8C00; /* Cambio de color del texto al pasar el ratón (color más oscuro) */
   opacity: 0.85; /* Opacidad ligeramente reducida */
-  text-shadow: 0 1px 3px rgba(0, 0, 255, 0.2); /* Sombra de texto con un tono azul suave */
+  text-shadow: 0 1px 3px rgba(255, 140, 0, 0.2); /* Sombra de texto con un tono naranja suave */
   transform: translateY(-2px); /* Sutil movimiento hacia arriba para darle un toque de "presión" */
-  box-shadow: 0 4px 8px rgba(30, 144, 255, 0.3); /* Sombra azul suave en el fondo */
-}
-
-.goodbye-message {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  z-index: 1000;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 40px;
-  background-color: #fff; /* Fondo blanco */
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
-  text-align: left;
-  margin-bottom: 20px; /* Ajusta el valor según sea necesario */
+  box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3); /* Sombra naranja suave en el fondo */
 }
 
 .nav-container {
   display: flex;
   align-items: center;
+  justify-content: center; /* Centramos los elementos de navegación */
 }
 
 .nav-links {
@@ -200,6 +177,25 @@ nav ul li a:hover {
 
 .nav-links li {
   margin-right: 15px; /* Espacio entre los enlaces */
+}
+
+.nav-links a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit; /* Usa el color heredado */
+}
+
+.nav-icon {
+  font-size: 1.5em; /* Tamaño del icono */
+  color: #FFA500; /* Color de los iconos en naranja brillante */
+}
+
+.nav-text {
+  margin-top: 5px; /* Espacio entre el icono y el texto */
+  font-size: 1em; /* Tamaño del texto */
+  color: #FFA500; /* Color del texto debajo de los iconos en naranja brillante */
 }
 
 .nav-actions {
@@ -226,6 +222,42 @@ nav ul li a:hover {
 .logout-button:focus {
   outline: none; /* Quita el borde de enfoque (opcional) */
   background-color: transparent; /* Asegúrate de que no se aplique color de fondo */
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.goodbye-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px;
+  background-color: #fff; /* Fondo blanco */
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
+  text-align: left;
+  margin-bottom: 20px; /* Ajusta el valor según sea necesario */
 }
 
 form select {
@@ -628,3 +660,4 @@ h2 {
   max-width: 150px; /* Ajusta el tamaño máximo de la imagen según sea necesario */
   height: auto;
 }
+
