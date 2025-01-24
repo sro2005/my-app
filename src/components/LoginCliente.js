@@ -38,6 +38,7 @@ const LoginCliente = ({ onLoginSuccess }) => {
         console.log('Inicio de sesión exitoso:', response.data);
         localStorage.setItem('authToken', response.data.token);
         localStorage.setItem('userData', JSON.stringify(response.data.user)); // Guardar datos del usuario
+        console.log('Token almacenado en localStorage:', response.data.token); // Log para depuración
         onLoginSuccess(response.data.user);
         setMessage('Credenciales válidas.');
         setMessageType('success');
@@ -74,3 +75,4 @@ const LoginCliente = ({ onLoginSuccess }) => {
 };
 
 export default LoginCliente;
+

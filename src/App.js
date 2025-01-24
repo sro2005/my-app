@@ -14,7 +14,6 @@ import PerfilCliente from './components/PerfilCliente';
 import RegistroCliente from './components/RegistroCliente';
 import LoginCliente from './components/LoginCliente';
 import RecoverPassword from './components/RecoverPassword';
-import PrivateRoute from './components/PrivateRoute';
 
 const AppContent = () => {
   const [loading, setLoading] = useState(true);
@@ -38,6 +37,7 @@ const AppContent = () => {
   };
 
   const handleLoginSuccess = (user) => {
+    console.log('Token recibido:', user.token); // Asegúrate de que el token no esté vacío
     setUser(user);
     localStorage.setItem('authToken', user.token);
     localStorage.setItem('userData', JSON.stringify(user)); // Guardar los datos del usuario en localStorage
@@ -64,19 +64,23 @@ const AppContent = () => {
         ) : (
           <>
             {/* Rutas protegidas para 'user' */}
-            <Route element={<PrivateRoute allowedRoles={['user', 'admin']} />}>
-              <Route path="/home-page" element={<HomePage user={user} />} />
-              <Route path="/pedido-form" element={<PedidoForm user={user} />} />
-              <Route path="/listado-productos" element={<ListadoProductos user={user} />} />
-              <Route path="/listado-pedidos" element={<ListadoPedidos user={user} />} />
-              <Route path="/perfil-cliente" element={<PerfilCliente user={user} />} />
-            </Route>
+            {user && (
+              <>
+                <Route path="/home-page" element={<HomePage user={user} />} />
+                <Route path="/pedido-form" element={<PedidoForm user={user} />} />
+                <Route path="/listado-productos" element={<ListadoProductos user={user} />} />
+                <Route path="/listado-pedidos" element={<ListadoPedidos user={user} />} />
+                <Route path="/perfil-cliente" element={<PerfilCliente user={user} />} />
+              </>
+            )}
 
             {/* Rutas protegidas para 'admin' */}
-            <Route element={<PrivateRoute allowedRoles={['admin']} />}>
-              <Route path="/producto-form" element={<ProductoForm user={user} />} />
-              <Route path="/listado-clientes" element={<ListadoClientes user={user} />} />
-            </Route>
+            {user && user.role === 'admin' && (
+              <>
+                <Route path="/producto-form" element={<ProductoForm user={user} />} />
+                <Route path="/listado-clientes" element={<ListadoClientes user={user} />} />
+              </>
+            )}
           </>
         )}
 
@@ -94,4 +98,3 @@ const App = () => (
 );
 
 export default App;
-

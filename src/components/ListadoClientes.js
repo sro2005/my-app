@@ -43,28 +43,41 @@ const ListadoClientes = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('authToken'); // Obtener el token desde localStorage
+    const fetchCustomers = async () => {
+      const API_URL = process.env.REACT_APP_API_BASE_URL;
+      const token = localStorage.getItem('authToken'); // Obtener el token desde localStorage
 
-    if (!API_URL) {
-      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
-      setError('La variable API_URL no está configurada.');
-      setLoading(false);
-      return;
-    }
+      console.log('API_URL:', API_URL); // Log para depuración
+      console.log('Token obtenido:', token); // Log para depuración
 
-    axios.get(`${API_URL}/api/customers`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(response => {
+      if (!API_URL) {
+        console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+        setError('La variable API_URL no está configurada.');
+        setLoading(false);
+        return;
+      }
+
+      if (!token) {
+        console.warn('Token no encontrado en localStorage.');
+        setError('Token no encontrado.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API_URL}/api/customers`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         setClientes(response.data);
-        setLoading(false); // Detener la animación de carga
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error obteniendo clientes:', error.response || error.message);
         setError(error.response?.data?.message || 'Error obteniendo clientes');
-        setLoading(false); // Detener la animación de carga en caso de error
-      });
+      } finally {
+        setLoading(false); // Detener la animación de carga en caso de éxito o error
+      }
+    };
+
+    fetchCustomers();
   }, []);
 
   if (loading) {

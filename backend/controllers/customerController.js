@@ -18,6 +18,17 @@ const customerSchema = Joi.object({
   role: Joi.string().valid('user', 'admin').default('user') // Añadido el campo role
 });
 
+// Función para generar el token JWT
+const generateToken = (user) => {
+  const payload = {
+    id: user._id,
+    email: user.email,
+    role: user.role
+  };
+
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+};
+
 // Registro de un nuevo cliente
 exports.registerCustomer = async (req, res) => {
   try {
@@ -77,11 +88,12 @@ exports.loginCustomer = async (req, res) => {
       if (!isMatch) { 
         return res.status(400).json({ message: 'Correo o contraseña incorrectos' }); 
       }
-    // Generar el token JWT
-    const token = jwt.sign({ id: customer._id, role: customer.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.status(200).json({ token, user: customer, role: customer.role, message: 'Inicio de sesión exitoso' });
+      // Generar el token JWT
+      const token = generateToken(customer);
+      console.log("Token generado:", token); // Log para depuración
+      res.status(200).json({ token, user: customer, role: customer.role, message: 'Inicio de sesión exitoso' });
   } catch (error) {
-    res.status(400).json({ message: 'Error al iniciar sesión', error: error.message });
+      res.status(400).json({ message: 'Error al iniciar sesión', error: error.message });
   }
 };
 

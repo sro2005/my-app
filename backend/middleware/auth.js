@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv'); 
 dotenv.config(); // Cargar las variables de entorno desde el archivo .env
 
-const secretKey = process.env.JWT_SECRET; // Utiliza JWT_SECRET para obtener la clave secreta
+const secretKey = process.env.JWT_SECRET;
 
 const authenticate = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -13,12 +13,22 @@ const authenticate = (req, res, next) => {
   }
 
   try {
+    console.log("Token recibido:", token); // Log para depuración
     const decoded = jwt.verify(token, secretKey);
+    console.log("Token decodificado:", decoded); // Log para depuración
+
     req.user = decoded;
     next();
   } catch (error) {
     console.error("Error verificando el token:", error);
-    res.status(401).json({ message: 'Token inválido o expirado' });
+
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ message: 'Token inválido' });
+    }
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: 'Token expirado' });
+    }
+    return res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
 
@@ -30,10 +40,5 @@ const authorizeAdmin = (req, res, next) => {
   next();
 };
 
-// Middleware para el manejo centralizado de errores
-const errorHandler = (err, req, res, next) => {
-  console.error("Error interno del servidor:", err.stack);
-  res.status(500).json({ message: 'Ocurrió un error interno del servidor' });
-};
+module.exports = { authenticate, authorizeAdmin };
 
-module.exports = { authenticate, authorizeAdmin, errorHandler };
