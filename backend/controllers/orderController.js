@@ -84,7 +84,6 @@ exports.getOrders = async (req, res) => {
   try {
     // Obtener todos los pedidos desde la base de datos
     const orders = await Order.find();
-
     // Enviar una respuesta exitosa con la lista de pedidos
     res.status(200).json(orders);
   } catch (error) {

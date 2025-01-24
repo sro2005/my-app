@@ -143,15 +143,16 @@ nav ul {
 
 nav ul li {
   display: inline-block;
-  margin-right: 20px;
+  margin-right: 15px; /* Ajustar el espacio entre los enlaces */
 }
 
 nav ul li a {
   text-decoration: none;
   color: #FFA500; /* Color del texto en naranja brillante */
-  padding: 10px 20px;
+  padding: 8px 15px; /* Ajustar el padding para hacer los botones más equilibrados */
   font-weight: bold;
   transition: color 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease; /* Transiciones suaves para el color, opacidad y sombra */
+  text-transform: uppercase; /* Transforma el texto a mayúsculas */
 }
 
 nav ul li a:hover {
@@ -176,7 +177,7 @@ nav ul li a:hover {
 }
 
 .nav-links li {
-  margin-right: 15px; /* Espacio entre los enlaces */
+  margin-right: 15px; /* Espacio ajustado entre los enlaces */
 }
 
 .nav-links a {
@@ -188,13 +189,13 @@ nav ul li a:hover {
 }
 
 .nav-icon {
-  font-size: 1.5em; /* Tamaño del icono */
+  font-size: 1.3em; /* Tamaño del icono ligeramente aumentado */
   color: #FFA500; /* Color de los iconos en naranja brillante */
 }
 
 .nav-text {
-  margin-top: 5px; /* Espacio entre el icono y el texto */
-  font-size: 1em; /* Tamaño del texto */
+  margin-top: 4px; /* Espacio ligeramente aumentado entre el icono y el texto */
+  font-size: 0.85em; /* Tamaño del texto ajustado */
   color: #FFA500; /* Color del texto debajo de los iconos en naranja brillante */
 }
 
@@ -207,7 +208,7 @@ nav ul li a:hover {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 2rem; /* Ajusta el tamaño del ícono */
+  font-size: 1.7rem; /* Tamaño del ícono ligeramente aumentado */
   color: #ffffff; /* Cambia el color según tu diseño */
   display: flex;
   align-items: center;
@@ -613,7 +614,16 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Altura completa de la ventana */
+  margin-top: 20px; /* Despegue el spinner del botón */
+}
+
+/* Estilos para el contenedor del spinner */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ajusta según necesites para que no cause problemas de espaciado */
+  background-color: rgba(0, 0, 0, 0.1); /* Fondo semi-transparente */
 }
 
 /* Estilos para el mensaje de error */
@@ -661,3 +671,34 @@ h2 {
   height: auto;
 }
 
+.disabled-input {
+  background-color: #f0f0f0; /* Color de fondo gris claro */
+  cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+}
+
+/* styles.css */
+.access-denied {
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.access-denied h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.access-denied p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+.access-denied a {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 1.1rem;
+}

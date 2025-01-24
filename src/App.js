@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Loading from './components/Loading'; 
+import Loading from './components/Loading';
 import LandingPage from './components/LandingPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -51,6 +51,9 @@ const AppContent = () => {
     <>
       <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
       <Routes>
+        {/* Redirigir automáticamente si el usuario está autenticado */}
+        {user && <Route path="/" element={<Navigate to="/home-page" />} />}
+        {/* Rutas públicas */}
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
@@ -60,9 +63,8 @@ const AppContent = () => {
           </>
         ) : (
           <>
-            {/* Rutas accesibles para todos los usuarios autenticados */}
+            {/* Rutas protegidas para 'user' */}
             <Route element={<PrivateRoute allowedRoles={['user', 'admin']} />}>
-              <Route path="/" element={<Navigate to="/home-page" />} />
               <Route path="/home-page" element={<HomePage user={user} />} />
               <Route path="/pedido-form" element={<PedidoForm user={user} />} />
               <Route path="/listado-productos" element={<ListadoProductos user={user} />} />
@@ -70,15 +72,14 @@ const AppContent = () => {
               <Route path="/perfil-cliente" element={<PerfilCliente user={user} />} />
             </Route>
 
-            {/* Rutas protegidas para administradores */}
+            {/* Rutas protegidas para 'admin' */}
             <Route element={<PrivateRoute allowedRoles={['admin']} />}>
               <Route path="/producto-form" element={<ProductoForm user={user} />} />
               <Route path="/listado-clientes" element={<ListadoClientes user={user} />} />
-              <Route path="/listado-pedidos" element={<ListadoPedidos user={user} />} />
             </Route>
           </>
         )}
-        <Route path="/access-denied" element={<div>Acceso Denegado</div>} />
+
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />
@@ -93,3 +94,4 @@ const App = () => (
 );
 
 export default App;
+

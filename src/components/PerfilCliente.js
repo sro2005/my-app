@@ -26,8 +26,8 @@ const formatPreferences = (prefs) => {
 
 const PerfilCliente = () => {
   const [customer, setCustomer] = useState(null);
-  const [loading, setLoading] = useState(true); // Añadir estado de carga
-  const [error, setError] = useState(null); // Añadir estado de error
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
@@ -37,24 +37,34 @@ const PerfilCliente = () => {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
 
+    console.log("URL de la API:", API_URL); // Consola para URL
+    console.log("Token de Autenticación:", token); // Consola para el token
+
+    // Realizamos la petición GET a la API para obtener los datos del cliente
     axios.get(`${API_URL}/api/customers`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(response => {
-      setCustomer(response.data[0]);
-      setLoading(false); // Terminar carga
+      console.log("Respuesta de la API:", response.data); // Consola para la respuesta
+      if (response.data) { // Verificamos que la respuesta tenga datos
+        setCustomer(response.data);
+      } else {
+        setError('No se encontró el perfil del cliente.');
+      }
+      setLoading(false);
     })
     .catch(error => {
+      // Si el error es debido a la falta de autenticación o token
+      console.error('Error obteniendo perfil:', error.response || error);
       setError('ERROR AL OBTENER EL PERFIL');
-      setLoading(false); // Terminar carga
-      console.error('Error obteniendo perfil:', error);
+      setLoading(false);
     });
   }, []);
 
   if (loading) {
     return (
-      <div className="spinner">
-        <ClipLoader size={50} color="#4CAF50" />
+      <div className="spinner-container">
+        <ClipLoader size={50} color="#FFA500" /> {/* Spinner personalizado */}
       </div>
     );
   }
@@ -63,6 +73,14 @@ const PerfilCliente = () => {
     return (
       <div className="error-message">
         <p>{error}</p>
+      </div>
+    );
+  }
+
+  if (!customer) {
+    return (
+      <div className="error-message">
+        <p>No se encontró el perfil del cliente.</p>
       </div>
     );
   }
@@ -81,7 +99,7 @@ const PerfilCliente = () => {
         <p><strong>Teléfono:</strong> {customer.phone}</p>
         <p><strong>Preferencias:</strong> {formatPreferences(customer.preferences)}</p>
       </div>
-      <button className="update-button">Actualizar Información</button> {/* Botón de actualización */}
+      <button className="update-button">Actualizar Información</button>
     </div>
   );
 };

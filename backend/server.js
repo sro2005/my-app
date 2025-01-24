@@ -1,3 +1,5 @@
+const fs = require('fs');
+const https = require('https');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -13,7 +15,6 @@ const app = express();
 
 // Configurar puerto dinámico para producción o local
 const PORT = process.env.PORT || 5000; // Si no hay variable de entorno, usa 5000 para desarrollo
-const secretKey = process.env.JWT_SECRET; // Asegúrate de que esta variable esté correctamente definida
 
 // Configuración CORS
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
@@ -70,5 +71,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Iniciar el servidor
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Leer los certificados SSL
+const sslOptions = {
+  key: fs.readFileSync('./localhost-key.pem'),
+  cert: fs.readFileSync('./localhost.pem')
+};
+
+// Iniciar el servidor HTTPS
+https.createServer(sslOptions, app).listen(PORT, () => {
+  console.log(`Servidor HTTPS ejecutándose en https://localhost:${PORT}`);
+});

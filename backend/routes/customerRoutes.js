@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const customerController = require('../controllers/customerController');
 const { authenticate, authorizeAdmin } = require('../middleware/auth');
+const { getProfile } = require('../controllers/customerController');
 
 // Ruta para crear un nuevo cliente (accesible para todos los usuarios, incluidos los clientes)
 router.post('/register', customerController.registerCustomer);
@@ -14,6 +15,9 @@ router.post('/forgot-password', customerController.forgotPassword);
 
 // Ruta para obtener todos los clientes (protegida para admins)
 router.get('/', authenticate, authorizeAdmin, customerController.getCustomers);
+
+// Ruta para obtener el perfil del cliente (solo si está autenticado)
+router.get('/profile', authenticate, getProfile);
 
 // Ruta para actualizar un cliente (protegida para el propio cliente o admins)
 router.put('/:id', authenticate, (req, res, next) => {

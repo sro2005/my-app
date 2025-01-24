@@ -43,36 +43,46 @@ const PedidoItem = ({ pedido }) => (
   </li>
 );
 
-// Componente funcional ListadoPedidos que muestra una lista de pedidos obtenidos desde la API
-const ListadoPedidos = () => {
+const ListadoPedidos = ({ userPreferences }) => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('authToken'); // Obtener el token desde localStorage
+    const token = localStorage.getItem('authToken');
 
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
 
-    axios.get(`${API_URL}/api/orders`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(response => {
+    const fetchOrders = async () => {
+      try {
+        console.log('Inicio de la solicitud: setting loading to true');
+        setLoading(true);
+        console.log("API URL:", API_URL);
+        console.log("Token de Autenticación:", token);
+        
+        const response = await axios.get(`${API_URL}/api/orders`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        console.log('Pedidos recibidos:', response.data);
+        
+        // Filtrar pedidos basados en las preferencias del usuario si es necesario
         setPedidos(response.data);
-        setLoading(false); // Detener la animación de carga
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error obteniendo pedidos:', error);
-        setLoading(false); // Detener la animación de carga en caso de error
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
   }, []);
 
   if (loading) {
     return (
-      <div className="spinner">
-        <ClipLoader size={50} color="#4CAF50" /> {/* Spinner personalizado */}
+      <div className="spinner-container">
+        <ClipLoader size={50} color="#FFA500" /> {/* Spinner personalizado */}
       </div>
     );
   }
@@ -83,9 +93,7 @@ const ListadoPedidos = () => {
       <p><b>Definición:</b> El modelo de pedidos describe el proceso completo de solicitud, procesamiento y entrega de productos o servicios a los clientes.</p>
       <p><b>Propósito:</b> Gestiona todas las etapas del ciclo de vida del pedido, desde la recepción inicial del pedido hasta su entrega final al cliente, garantizando una experiencia de compra satisfactoria.</p>
       <p><b>Importancia:</b> Facilita la coordinación entre diferentes departamentos, como ventas, logística y servicio al cliente, para garantizar una ejecución eficiente de los pedidos y mejorar la satisfacción del cliente.</p>
-      
       <h2>Listado de Pedidos</h2>
-
       <ul className="pedidos-list">
         {pedidos.map(pedido => (
           <PedidoItem key={pedido._id} pedido={pedido} />

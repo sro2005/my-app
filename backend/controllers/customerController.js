@@ -98,6 +98,37 @@ exports.getCustomers = async (req, res) => {
   }
 };
 
+/// Obtener el perfil del cliente (solo usuarios autenticados)
+exports.getProfile = async (req, res) => {
+  try {
+    // Obtener el id del cliente desde el token (req.user ya contiene la información decodificada)
+    const customerId = req.user.id;
+
+    // Buscar el cliente en la base de datos por su ID
+    const customer = await Customer.findById(customerId);
+
+    if (!customer) {
+      return res.status(404).json({ message: 'Cliente no encontrado' });
+    }
+
+    // Enviar el perfil del cliente
+    res.status(200).json({
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      identificationNumber: customer.identificationNumber,
+      birthDate: customer.birthDate,
+      phone: customer.phone,
+      preferences: customer.preferences,
+      role: customer.role,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener el perfil', error: error.message });
+  }
+};
+
+
+
 // Actualizar la información de un cliente
 exports.updateCustomer = async (req, res) => {
   try {

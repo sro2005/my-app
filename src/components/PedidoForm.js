@@ -26,7 +26,7 @@ const PedidoForm = () => {
   const [sameRegisteredNumber, setSameRegisteredNumber] = useState(false);
   const [products, setProducts] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [orderDetails, setOrderDetails] = useState(null);
+  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
@@ -86,14 +86,14 @@ const PedidoForm = () => {
       address,
       paymentMethod: paymentMethod ? paymentMethod.label : '',
       deliveryDate,
-      products: [product ? product.value : ''],
+      products: product ? [{ productId: product.value, quantity: 1 }] : [], // Aseguramos que esté en el formato adecuado
       totalAmount,
       accountNumber: paymentMethod && (paymentMethod.label === "Tarjeta Crédito" || paymentMethod.label === "Tarjeta Débito" || !sameRegisteredNumber) ? accountNumber : undefined,
       bankName: paymentMethod && (paymentMethod.label === "Tarjeta Crédito" || paymentMethod.label === "Tarjeta Débito") ? bankName : undefined,
       sameRegisteredNumber: (paymentMethod && (paymentMethod.label === "Nequi" || paymentMethod.label === "Daviplata" || paymentMethod.label === "Transfiya")) ? sameRegisteredNumber : undefined
     };
     
-    setOrderDetails(order);
+    setOrder(order);
     setShowConfirmModal(true);
   };
 
@@ -101,13 +101,15 @@ const PedidoForm = () => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
     const token = localStorage.getItem('authToken');
 
-    if (!API_URL) {
-      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+    if (!API_URL || !token) {
+      console.warn('La variable REACT_APP_API_BASE_URL o el token de autenticación no están configurados.');
+      alert('No se pudo realizar el pedido. Por favor, intente nuevamente.');
+      return;
     }
     
     setLoading(true);
 
-    axios.post(`${API_URL}/api/orders/realizar`, orderDetails, {
+    axios.post(`${API_URL}/api/orders/realizar`, order, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(response => {
@@ -140,10 +142,10 @@ const PedidoForm = () => {
       <form onSubmit={handleSubmit}>
         <h1>Formulario</h1>
         <h2>Realizar Nuevo Pedido</h2>
-        <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-        <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-        <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="tel" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+        <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required disabled={firstName !== ""} className={firstName !== "" ? 'disabled-input' : ''} />
+        <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required disabled={lastName !== ""} className={lastName !== "" ? 'disabled-input' : ''} />
+        <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={email !== ""} className={email !== "" ? 'disabled-input' : ''} />
+        <input type="tel" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(e.target.value)} required disabled={phone !== ""} className={phone !== "" ? 'disabled-input' : ''} />
         <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
 
         <Select
@@ -255,7 +257,7 @@ const PedidoForm = () => {
                 {!sameRegisteredNumber && <p><strong>Número de Cuenta/Celular:</strong> {accountNumber}</p>}
               </>
             )}
-            <p><strong>Fecha Deseada para la Entrega:</strong> {orderDetails.deliveryDate}</p>
+            <p><strong>Fecha Deseada para la Entrega:</strong> {order.deliveryDate}</p>
             <p><strong>Producto Seleccionado:</strong> {product?.label}</p>
             <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
             <div className="button-container">

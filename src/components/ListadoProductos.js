@@ -25,40 +25,56 @@ const ProductoItem = ({ producto }) => (
   </li>
 );
 
-// Componente funcional ListadoProductos que muestra una lista de productos obtenidos desde la API
-const ListadoProductos = () => {
+const ListadoProductos = ({ userPreferences }) => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('authToken'); // Asegúrate de que el nombre del token coincida
+    const token = localStorage.getItem('authToken');
 
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
 
-    console.log('Inicio de la solicitud: setting loading to true');
-    setLoading(true);
+    const fetchProducts = async () => {
+      try {
+        console.log('Inicio de la solicitud: setting loading to true');
+        setLoading(true);
+        console.log("API URL:", API_URL);
+        console.log("Token de Autenticación:", token);
+        
+        const response = await axios.get(`${API_URL}/api/products`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        console.log('Productos recibidos:', response.data);
 
-    axios.get(`${API_URL}/api/products`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-      .then(response => {
-        console.log('Productos recibidos:', response.data); // Log para verificar datos
-        setProductos(response.data);
-        setLoading(false); // Detener la animación de carga
-      })
-      .catch(error => {
+        // Verificar que userPreferences esté definido y contenga datos
+        console.log('Preferencias del usuario:', userPreferences);
+
+        if (!Array.isArray(userPreferences) || userPreferences.length === 0) {
+          console.warn('No se encontraron preferencias del usuario, mostrando todos los productos.');
+          setProductos(response.data);
+        } else {
+          // Filtrar productos basados en las preferencias del usuario
+          const filteredProducts = response.data.filter(product => userPreferences.includes(product.category));
+          console.log('Productos filtrados:', filteredProducts);
+          setProductos(filteredProducts);
+        }
+      } catch (error) {
         console.error('Error obteniendo productos:', error);
-        setLoading(false); // Detener la animación de carga en caso de error
-      });
-  }, []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [userPreferences]);
 
   if (loading) {
     return (
-      <div className="spinner">
-        <ClipLoader size={50} color="#4CAF50" /> {/* Spinner personalizado */}
+      <div className="spinner-container">
+        <ClipLoader size={50} color="#FFA500" /> {/* Spinner personalizado */}
       </div>
     );
   }
@@ -70,7 +86,6 @@ const ListadoProductos = () => {
       <p><b>Propósito:</b> Su función principal es gestionar y mantener un registro detallado de los productos en stock, incluyendo su cantidad, ubicación, y atributos como nombre, descripción y precio.</p>
       <p><b>Importancia:</b> Permite a las empresas controlar eficientemente su inventario, optimizar la gestión de existencias, prevenir la escasez o el exceso de productos, y asegurar la disponibilidad de productos para satisfacer la demanda de los clientes.</p>
       <h2>Listado de Productos</h2>
-
       <ul className="productos-list">
         {productos.map(producto => (
           <ProductoItem key={producto._id} producto={producto} />
@@ -81,4 +96,6 @@ const ListadoProductos = () => {
 };
 
 export default ListadoProductos;
+
+
 
