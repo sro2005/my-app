@@ -4,8 +4,9 @@ dotenv.config(); // Cargar las variables de entorno desde el archivo .env
 
 const secretKey = process.env.JWT_SECRET;
 
-const authenticate = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.header('Authorization');
+  const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
     console.error("Token no proporcionado");
@@ -32,13 +33,14 @@ const authenticate = (req, res, next) => {
   }
 };
 
-const authorizeAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    console.error("Acceso denegado: no es administrador");
-    return res.status(403).json({ message: 'No autorizado, acceso reservado para administradores' });
-  }
-  next();
+const authorizeRole = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      console.error("Acceso denegado: no tiene el rol adecuado");
+      return res.status(403).json({ message: 'No autorizado, acceso reservado para ciertos roles' });
+    }
+    next();
+  };
 };
 
-module.exports = { authenticate, authorizeAdmin };
-
+module.exports = { authenticateToken, authorizeRole };
