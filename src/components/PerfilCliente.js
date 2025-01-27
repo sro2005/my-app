@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners'; // Spinner personalizado
 
-// Función para formatear la fecha en formato DD/MM/YYYY sin hora
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
@@ -30,35 +29,23 @@ const PerfilCliente = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('authToken');
-    
-    if (!API_URL) {
-      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
-    }
+    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
+    const token = localStorage.getItem('authToken'); // El token de autenticación del admin
 
-    console.log("URL de la API:", API_URL); // Consola para URL
-    console.log("Token de Autenticación:", token); // Consola para el token
-
-    // Realizamos la petición GET a la API para obtener los datos del cliente
-    axios.get(`${API_URL}/api/customers`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
-    .then(response => {
-      console.log("Respuesta de la API:", response.data); // Consola para la respuesta
-      if (response.data) { // Verificamos que la respuesta tenga datos
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/api/customers/profile`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
         setCustomer(response.data);
-      } else {
-        setError('No se encontró el perfil del cliente.');
+      } catch (error) {
+        setError('Error al obtener el perfil');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    })
-    .catch(error => {
-      // Si el error es debido a la falta de autenticación o token
-      console.error('Error obteniendo perfil:', error.response || error);
-      setError('ERROR AL OBTENER EL PERFIL');
-      setLoading(false);
-    });
+    };
+
+    fetchProfile();
   }, []);
 
   if (loading) {
@@ -105,3 +92,5 @@ const PerfilCliente = () => {
 };
 
 export default PerfilCliente;
+
+

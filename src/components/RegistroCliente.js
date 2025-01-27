@@ -5,7 +5,6 @@ import Select from 'react-select';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css'; // Importa los estilos de la librería
 
-
 // Función para verificar si el cliente es mayor de 18 años
 const isAdult = (birthDate) => {
   const today = new Date();
@@ -74,18 +73,20 @@ const RegistroCliente = () => {
     setLoading(true);
 
     // Obtener la URL base de la variable de entorno
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
+
     // Enviar datos al backend usando Axios
-    axios.post(`${API_URL}/api/customers/register`, {
+    axios.post(`${API_URL}/api/auth/register`, {
       firstName,
       lastName,
       email,
       identificationNumber,
       birthDate,
       password,
+      confirmPassword,
       phone,
       preferences: preferences.map(pref => pref.value) // Enviar los valores de las preferencias
     })
@@ -138,3 +139,4 @@ const RegistroCliente = () => {
 };
 
 export default RegistroCliente;
+

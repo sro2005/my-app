@@ -46,24 +46,28 @@ const ListadoPedidos = () => {
   // Realizar la solicitud cuando el componente se monta
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('authToken'); // Obtener el token de autenticación desde el almacenamiento local
+    const token = localStorage.getItem('authToken'); // Obtener el token de autenticación
+    const userId = localStorage.getItem('userId'); // Obtener el userId del cliente
 
-    // Verifica si la URL de la API está configurada
     if (!API_URL) {
       setError('La URL de la API no está configurada.');
       setLoading(false);
       return;
     }
 
-    // Función para obtener los pedidos desde la API
+    if (!token || !userId) {
+      setError('No se encontró información de autenticación.');
+      setLoading(false);
+      return;
+    }
+
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${API_URL}/api/orders`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const response = await axios.get(`${API_URL}/api/orders?userId=${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        
-        setPedidos(response.data); // Guardar los pedidos obtenidos
+        setPedidos(response.data);
       } catch (err) {
         setError('Hubo un error al obtener los pedidos. Intente nuevamente más tarde.');
         console.error('Error al obtener pedidos:', err);
@@ -72,7 +76,7 @@ const ListadoPedidos = () => {
       }
     };
 
-    fetchOrders(); // Llamar a la función para obtener los pedidos
+    fetchOrders();
   }, []); // Solo se ejecuta una vez al montar el componente
 
   // Mostrar el spinner de carga mientras se obtienen los datos
@@ -103,11 +107,9 @@ const ListadoPedidos = () => {
       <h2>Listado de Pedidos</h2>
       <ul className="pedidos-list">
         {pedidos.length > 0 ? (
-          pedidos.map((pedido) => (
-            <PedidoItem key={pedido._id} pedido={pedido} />
-          ))
+          pedidos.map((pedido) => <PedidoItem key={pedido._id} pedido={pedido} />)
         ) : (
-          <p>No hay pedidos disponibles.</p> // Si no hay pedidos, mostrar mensaje
+          <p>No hay pedidos disponibles.</p>
         )}
       </ul>
     </div>

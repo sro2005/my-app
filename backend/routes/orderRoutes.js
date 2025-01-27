@@ -1,20 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
-const { authenticateToken, authorizeRole } = require('../middleware/auth');
+const { authenticateAdminToken } = require('../middlewares/authMiddleware.js');
 
-// Ruta para crear un nuevo pedido (protegida para usuarios autenticados)
-router.post('/realizar', authenticateToken, orderController.createOrder);
+// Ruta para crear un nuevo pedido (abierto para usuarios normales)
+router.post('/realizar', orderController.createOrder);
 
 // Ruta para obtener todos los pedidos (protegida para admins)
-router.get('/', authenticateToken, authorizeRole('admin'), orderController.getOrders);
+router.get('/', authenticateAdminToken, orderController.getOrders);
 
 // Ruta para actualizar un pedido (protegida para admins)
-router.put('/:id', authenticateToken, authorizeRole('admin'), orderController.updateOrder);
+router.put('/:id', authenticateAdminToken, orderController.updateOrder);
 
 // Ruta para eliminar un pedido (protegida para admins)
-router.delete('/:id', authenticateToken, authorizeRole('admin'), orderController.deleteOrder);
+router.delete('/:id', authenticateAdminToken, orderController.deleteOrder);
 
 module.exports = router;
-
 

@@ -21,19 +21,13 @@ customerSchema.pre('save', async function(next) {
   if (!customer.isModified('password')) return next();
   
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(customer.password, salt);
+    const hashedPassword = await bcrypt.hash(customer.password, 10);
     customer.password = hashedPassword;
     next();
   } catch (error) {
     next(error);
   }
 });
-
-// Método para verificar la contraseña
-customerSchema.methods.comparePassword = async function(enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
 
 const Customer = mongoose.model('Customer', customerSchema);
 

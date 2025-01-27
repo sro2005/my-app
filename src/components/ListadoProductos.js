@@ -39,26 +39,15 @@ const ListadoProductos = ({ userPreferences }) => {
 
     const fetchProducts = async () => {
       try {
-        console.log('Inicio de la solicitud: setting loading to true');
         setLoading(true);
-        console.log("API URL:", API_URL);
-        console.log("Token de Autenticación:", token);
-        
         const response = await axios.get(`${API_URL}/api/products`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        console.log('Productos recibidos:', response.data);
-
-        // Verificar que userPreferences esté definido y contenga datos
-        console.log('Preferencias del usuario:', userPreferences);
 
         if (!Array.isArray(userPreferences) || userPreferences.length === 0) {
-          console.warn('No se encontraron preferencias del usuario, mostrando todos los productos.');
           setProductos(response.data);
         } else {
-          // Filtrar productos basados en las preferencias del usuario
           const filteredProducts = response.data.filter(product => userPreferences.includes(product.category));
-          console.log('Productos filtrados:', filteredProducts);
           setProductos(filteredProducts);
         }
       } catch (error) {
@@ -96,6 +85,7 @@ const ListadoProductos = ({ userPreferences }) => {
 };
 
 export default ListadoProductos;
+
 
 
 

@@ -1,17 +1,7 @@
 const Product = require('../models/Product');
-const Joi = require('joi'); // Importa Joi para la validación de datos
+const { productSchema } = require('../validations/productValidation');
 
-// Esquema de validación para el producto
-const productSchema = Joi.object({
-  name: Joi.string().required(),
-  description: Joi.string().required(),
-  category: Joi.string().required(),
-  price: Joi.number().required(),
-  quantity: Joi.number().required(),
-  imageUrl: Joi.string().uri().required()
-});
-
-// Crear un nuevo producto
+// Crear un nuevo producto (solo admins)
 exports.createProduct = async (req, res) => {
   try {
     // Validar datos de entrada
@@ -44,7 +34,7 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-// Actualizar un producto
+// Actualizar un producto (solo admins)
 exports.updateProduct = async (req, res) => {
   try {
     // Validar datos de entrada
@@ -68,7 +58,7 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// Eliminar un producto
+// Eliminar un producto (solo admins)
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -78,6 +68,6 @@ exports.deleteProduct = async (req, res) => {
 
     res.status(200).json({ message: 'Producto eliminado exitosamente' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status400.json({ error: error.message });
   }
 };

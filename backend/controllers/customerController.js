@@ -1,117 +1,9 @@
 const Customer = require('../models/Customer');
-const bcrypt = require('bcrypt');
-const Joi = require('joi');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
 
-// Esquema de validación para el registro de cliente
-const customerSchema = Joi.object({
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
-  email: Joi.string().email().required(),
-  identificationNumber: Joi.string().required(),
-  birthDate: Joi.date().required(),
-  password: Joi.string().min(6).required(),
-  phone: Joi.string().required(),
-  preferences: Joi.array().items(Joi.string()),
-  role: Joi.string().valid('user', 'admin').default('user')
-});
-
-// Función para generar el token JWT
-const generateToken = (user) => {
-  const payload = {
-    id: user._id,
-    email: user.email,
-    role: user.role
-  };
-
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-};
-
-// Configuración de Nodemailer
-const configureTransporter = (email, password) => {
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: email,
-      pass: password
-    }
-  });
-};
-
-const transporterGeneral = configureTransporter(process.env.GENERAL_EMAIL_ADDRESS, process.env.GENERAL_EMAIL_PASSWORD);
-const transporterSupport = configureTransporter(process.env.SUPPORT_EMAIL_ADDRESS, process.env.SUPPORT_EMAIL_PASSWORD);
-const transporterNoReply = configureTransporter(process.env.NO_REPLY_EMAIL_ADDRESS, process.env.NO_REPLY_EMAIL_PASSWORD);
-
-// Registro de un nuevo cliente
-exports.registerCustomer = async (req, res) => {
-  try {
-    // Validar datos de entrada
-    const { error } = customerSchema.validate(req.body);
-    if (error) {
-      console.error('Error de validación:', error.details[0].message);
-      return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
-    }
-
-    const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences, role } = req.body;
-
-    // Crear un nuevo cliente
-    const newCustomer = new Customer({
-      firstName,
-      lastName,
-      email,
-      identificationNumber,
-      birthDate,
-      password: await bcrypt.hash(password, 10),
-      phone,
-      preferences,
-      role: role || 'user'
-    });
-
-    // Guardar el cliente en la base de datos
-    await newCustomer.save();
-    res.status(201).json({ message: 'Cliente registrado exitosamente' });
-  } catch (error) {
-    console.error('Error al registrar el cliente:', error);
-    res.status(400).json({ message: 'Error al registrar el cliente', error: error.message });
-  }
-};
-
-// Inicio de sesión de un cliente
-exports.loginCustomer = async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Verifica que el correo y la contraseña estén proporcionados
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Correo y contraseña son requeridos' });
-    }
-    // Busca al cliente por correo
-    const customer = await Customer.findOne({ email });
-    if (!customer) {
-      return res.status(400).json({ message: 'Correo o contraseña incorrectos' });
-    }
-    // Verifica la contraseña
-    const isMatch = await bcrypt.compare(password, customer.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Correo o contraseña incorrectos' });
-    }
-    // Generar el token JWT
-    const token = generateToken(customer);
-    res.status(200).json({ token, user: customer, role: customer.role, message: 'Inicio de sesión exitoso' });
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    res.status(400).json({ message: 'Error al iniciar sesión', error: error.message });
-  }
-};
-
-// Obtener todos los clientes
+// Obtener todos los clientes (solo admins)
 exports.getCustomers = async (req, res) => {
   try {
-    // Obtener todos los clientes desde la base de datos
     const customers = await Customer.find();
-    // Enviar una respuesta exitosa con la lista de clientes
     res.status(200).json(customers);
   } catch (error) {
     console.error('Error al obtener los clientes:', error);
@@ -119,17 +11,16 @@ exports.getCustomers = async (req, res) => {
   }
 };
 
-// Obtener el perfil del cliente (solo usuarios autenticados)
+// Obtener el perfil del cliente
 exports.getProfile = async (req, res) => {
+  const { user } = req.params;
+
   try {
-    // Obtener el id del cliente desde el token (req.user ya contiene la información decodificada)
-    const customerId = req.user.id;
-    // Buscar el cliente en la base de datos por su ID
-    const customer = await Customer.findById(customerId);
+    const customer = await Customer.findById(user);
     if (!customer) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
-    // Enviar el perfil del cliente
+
     res.status(200).json({
       firstName: customer.firstName,
       lastName: customer.lastName,
@@ -137,22 +28,19 @@ exports.getProfile = async (req, res) => {
       identificationNumber: customer.identificationNumber,
       birthDate: customer.birthDate,
       phone: customer.phone,
-      preferences: customer.preferences,
-      role: customer.role,
+      preferences: customer.preferences
     });
   } catch (error) {
-    console.error('Error al obtener el perfil:', error);
     res.status(500).json({ message: 'Error al obtener el perfil', error: error.message });
   }
 };
 
-// Actualizar la información de un cliente
+// Actualizar la información de un cliente (solo admins)
 exports.updateCustomer = async (req, res) => {
   try {
     const { id } = req.params;
     const { firstName, lastName, email, identificationNumber, birthDate, phone, preferences } = req.body;
 
-    // Buscar y actualizar el cliente
     const updatedCustomer = await Customer.findByIdAndUpdate(
       id,
       { firstName, lastName, email, identificationNumber, birthDate, phone, preferences },
@@ -170,12 +58,11 @@ exports.updateCustomer = async (req, res) => {
   }
 };
 
-// Eliminar un cliente
+// Eliminar un cliente (solo admins)
 exports.deleteCustomer = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Buscar y eliminar el cliente
     const deletedCustomer = await Customer.findByIdAndDelete(id);
 
     if (!deletedCustomer) {
@@ -186,78 +73,5 @@ exports.deleteCustomer = async (req, res) => {
   } catch (error) {
     console.error('Error al eliminar el cliente:', error);
     res.status(400).json({ message: 'Error al eliminar el cliente', error: error.message });
-  }
-};
-
-// Ejemplo de función para enviar correo general
-const sendGeneralEmail = (to, subject, text) => {
-  const mailOptions = {
-    to,
-    from: process.env.GENERAL_EMAIL_ADDRESS,
-    subject,
-    text
-  };
-
-  transporterGeneral.sendMail(mailOptions, (err, response) => {
-    if (err) {
-      console.error('Error al enviar el correo:', err);
-    } else {
-      console.log('Correo enviado:', response);
-    }
-  });
-};
-
-// Ejemplo de función para enviar correo de soporte técnico
-const sendSupportEmail = (to, subject, text) => {
-  const mailOptions = {
-    to,
-    from: process.env.SUPPORT_EMAIL_ADDRESS,
-    subject,
-    text
-  };
-
-  transporterSupport.sendMail(mailOptions, (err, response) => {
-    if (err) {
-      console.error('Error al enviar el correo:', err);
-    } else {
-      console.log('Correo enviado:', response);
-    }
-  });
-};
-
-// Recuperar contraseña - Nuevo
-exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  try {
-    const customer = await Customer.findOne({ email });
-    if (!customer) {
-      return res.status(404).send({ message: 'Correo electrónico no encontrado' });
-    }
-
-    const token = crypto.randomBytes(20).toString('hex');
-    customer.resetPasswordToken = token;
-    customer.resetPasswordExpires = Date.now() + 3600000; // 1 hora
-    await customer.save();
-
-    const mailOptions = {
-      to: customer.email,
-      from: process.env.NO_REPLY_EMAIL_ADDRESS,
-      subject: 'Restablecimiento de contraseña',
-      text: `Recibiste esto porque tú (o alguien más) ha solicitado restablecer la contraseña de tu cuenta.\n\n
-      Haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso:\n\n
-      http://${req.headers.host}/reset-password/${token}\n\n
-      Si no solicitaste esto, ignora este correo y tu contraseña permanecerá sin cambios.\n`
-    };
-
-    transporterNoReply.sendMail(mailOptions, (err, response) => {
-      if (err) {
-        console.error('Error al enviar el correo:', err);
-        return res.status(500).send({ message: 'Error al enviar el correo' });
-      }
-      res.status(200).send({ message: 'Correo de recuperación enviado con éxito' });
-    });
-  } catch (error) {
-    console.error('Error en el proceso de recuperación:', error);
-    res.status(500).send({ message: 'Error en el proceso de recuperación' });
   }
 };

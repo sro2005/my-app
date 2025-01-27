@@ -15,7 +15,7 @@ const LoginCliente = ({ onLoginSuccess }) => {
     return re.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
     setMessageType('');
@@ -26,14 +26,14 @@ const LoginCliente = ({ onLoginSuccess }) => {
       return;
     }
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000'; // Asegurarse de que la URL sea HTTPS
     if (!API_URL) {
       console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
     }
 
     setLoading(true);
 
-    axios.post(`${API_URL}/api/customers/login`, { email, password })
+    axios.post(`${API_URL}/api/auth/login`, { email, password })
       .then(response => {
         console.log('Inicio de sesión exitoso:', response.data);
         localStorage.setItem('authToken', response.data.token);
@@ -49,15 +49,29 @@ const LoginCliente = ({ onLoginSuccess }) => {
         setMessage('Credenciales inválidas. Por favor, intenta nuevamente.');
         setMessageType('error');
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+      setLoading(false);
+      });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h1>INICIAR SESIÓN</h1>
       <h2>Login del Cliente</h2>
-      <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required /> 
-      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      <input 
+        type="email" 
+        placeholder="Correo Electrónico" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        required 
+      /> 
+      <input 
+        type="password" 
+        placeholder="Contraseña" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        required 
+      />
       <button type="submit" disabled={loading}>Ingresar</button>
       {message && (
         <p className={`message ${messageType === 'error' ? 'error' : 'success'}`}>
@@ -75,4 +89,3 @@ const LoginCliente = ({ onLoginSuccess }) => {
 };
 
 export default LoginCliente;
-
