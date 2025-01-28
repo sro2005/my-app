@@ -26,9 +26,8 @@ const PedidoForm = () => {
   const [sameRegisteredNumber, setSameRegisteredNumber] = useState(false);
   const [products, setProducts] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+  const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,8 +56,7 @@ const PedidoForm = () => {
         value: product._id,
         label: `${product.name} - ${formatPrice(product.price)}`,
         price: product.price
-      }))))
-      .catch(error => console.error('Error cargando productos:', error));
+      })))) .catch(error => console.error('Error cargando productos:', error));
   }, []);
 
   // Maneja el cambio de selección de producto
@@ -72,13 +70,12 @@ const PedidoForm = () => {
     setPaymentMethod(selectedOption);
     setAccountNumber("");
     setBankName("");
-    setSameRegisteredNumber(false);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const order = {
+    const newOrder = {
       firstName,
       lastName,
       email,
@@ -93,8 +90,8 @@ const PedidoForm = () => {
       sameRegisteredNumber: (paymentMethod && (paymentMethod.label === "Nequi" || paymentMethod.label === "Daviplata" || paymentMethod.label === "Transfiya")) ? sameRegisteredNumber : undefined
     };
     
-    setOrder(order);
-    setShowConfirmModal(true);
+    setOrder(newOrder); // Guardamos el pedido en el estado
+    setShowConfirmModal(true); // Mostramos el modal de confirmación
   };
 
   const handleConfirm = () => {
@@ -148,31 +145,12 @@ const PedidoForm = () => {
         <input type="tel" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(e.target.value)} required disabled={phone !== ""} className={phone !== "" ? 'disabled-input' : ''} />
         <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
 
-        <Select
-          placeholder="Selecciona un método de pago"
-          options={paymentMethods}
-          onChange={handlePaymentMethodChange}
-          value={paymentMethod}
-          isClearable
-        />
+        <Select placeholder="Selecciona un método de pago" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable />
                       
         {(paymentMethod && (paymentMethod.value === "Tarjeta de Crédito" || paymentMethod.value === "Tarjeta de Débito")) && (
           <>
-            <input
-              type="text"
-              placeholder="Nombre del Banco"
-              value={bankName}
-              onChange={(e) => setBankName(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Número de Cuenta"
-              value={accountNumber}
-              onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 20))}
-              maxLength="20"
-              required
-            />
+            <input type="text" placeholder="Nombre del Banco" value={bankName} onChange={(e) => setBankName(e.target.value)} required />
+            <input type="text" placeholder="Número de Cuenta" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 20))} maxLength="20" required />
           </>
         )}
 
@@ -180,66 +158,41 @@ const PedidoForm = () => {
           <div className="payment-options">
             <p>¿Es el mismo número registrado?</p>
             <label>
-              <input
-                type="radio"
-                value="Sí"
-                checked={sameRegisteredNumber === true}
-                onChange={() => setSameRegisteredNumber(true)}
-              />
+              <input type="radio" value="Sí" checked={sameRegisteredNumber === true} onChange={() => setSameRegisteredNumber(true)} />
               Sí
             </label>
             <label>
-              <input
-                type="radio"
-                value="No"
-                checked={sameRegisteredNumber === false}
-                onChange={() => setSameRegisteredNumber(false)}
-              />
+              <input type="radio" value="No" checked={sameRegisteredNumber === false} onChange={() => setSameRegisteredNumber(false)} />
               No
             </label>
             {!sameRegisteredNumber && (
-              <input
-                type="text"
-                placeholder="Número de Cuenta"
-                value={accountNumber}
-                onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                maxLength="10"
-                required
-              />
+              <input type="text" placeholder="Número de Cuenta" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength="10" required />
             )}
           </div>
         )}
         
         <div className="date-field">
           <label htmlFor="deliveryDate">Fecha deseada para la entrega:</label>
-          <input
-            type="date"
-            id="deliveryDate"
-            name="deliveryDate"
-            value={deliveryDate}
-            onChange={(e) => setDeliveryDate(e.target.value)}
-            min={today}
-            required
-          />
+          <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
         </div>
         
-        <Select
-          placeholder="Selecciona un producto"
-          options={products}
-          onChange={handleProductChange}
-          value={product}
-          isClearable
-        />
+        <Select placeholder="Selecciona un producto" options={products} onChange={handleProductChange} value={product} isClearable />
         
         <h3>Total a Pagar: {formatPrice(totalAmount)}</h3>
         <button type="submit">REALIZAR</button>
       </form>
-      
+
       {showConfirmModal && (
         <div className="modal">
-          <div className="modal-content">
-            <h3>CONFIRMACIÓN DEL PEDIDO</h3>
-            <p><strong>Nombre:</strong> {firstName} {lastName}</p>
+        <div className="modal-content">
+          <h3 className="modal-title">CONFIRMACIÓN DEL PEDIDO</h3>
+          <hr className="modal-divider" />
+        <div className="modal-details">
+          {loading ? (
+        <div className="spinner">Procesando...</div>
+        ) : (
+          <>
+            <p><strong>Cliente:</strong> {firstName} {lastName}</p>
             <p><strong>Correo Electrónico:</strong> {email}</p>
             <p><strong>Número de Celular:</strong> {phone}</p>
             <p><strong>Dirección:</strong> {address}</p>
@@ -260,18 +213,20 @@ const PedidoForm = () => {
             <p><strong>Fecha Deseada para la Entrega:</strong> {order.deliveryDate}</p>
             <p><strong>Producto Seleccionado:</strong> {product?.label}</p>
             <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
-            <div className="button-container">
-              <button className="cancel-button" onClick={handleCancel}>CANCELAR</button>
-              <button className="confirm-button" onClick={handleConfirm}>CONFIRMAR</button>
-            </div>
-          </div>
+          </>
+        )}
+      </div>
+
+      {!loading && (
+        <div className="button-container">
+          <button className="cancel-button" onClick={handleCancel}>CANCELAR</button>
+          <button className="confirm-button" onClick={handleConfirm}>CONFIRMAR</button>
         </div>
       )}
-      
-      {loading && <div className="spinner">Procesando...</div>}
     </div>
-  );
-};
+  </div>
+)}
+  </div>
+)}
 
 export default PedidoForm;
-
