@@ -1,6 +1,6 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const Customer = require('../models/Customer');
-const LoginLog = require('../models/LoginLog');
+const { registerOrUpdateLoginLog } = require('../models/LoginLog');
 const { generateToken } = require('../utils/tokenUtils');
 
 // Registro de un nuevo cliente
@@ -12,6 +12,7 @@ exports.registerCustomer = async (req, res) => {
 
     // Eliminar espacios adicionales en la contraseña
     const trimmedPassword = password.trim();
+    console.log('Contraseña recibida para registrar:', trimmedPassword); // Agregado para ver la contraseña sin espacios
 
     // Comprobamos si el email ya está registrado
     const existingCustomer = await Customer.findOne({ email });
@@ -61,6 +62,7 @@ exports.loginCustomer = async (req, res) => {
 
     // Eliminar espacios adicionales en la contraseña proporcionada
     const trimmedPassword = password.trim();
+    console.log('Contraseña recibida para login:', trimmedPassword); // Verifica la contraseña recibida
 
     // Comparar la contraseña proporcionada con el hash almacenado
     const comparisonResult = await bcrypt.compare(trimmedPassword, customer.password);
@@ -70,9 +72,8 @@ exports.loginCustomer = async (req, res) => {
       return res.status(400).json({ message: 'Incorrect email or password' });
     }
 
-    // Registrar el intento de inicio de sesión en LoginLog para todos los usuarios
-    const loginLog = new LoginLog({ userId: customer._id, email: customer.email });
-    await loginLog.save();
+    // Registrar o actualizar el intento de inicio de sesión en LoginLog
+    await registerOrUpdateLoginLog(customer);
 
     // Generar el token de autenticación
     const token = generateToken(customer);

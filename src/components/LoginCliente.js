@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext'; // Ajusta la ruta si es necesario
 
-const LoginCliente = ({ onLoginSuccess }) => {
+const LoginCliente = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const [loading, setLoading] = useState(false);
+  const { handleLoginSuccess } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const isValidEmail = (email) => {
@@ -26,32 +28,39 @@ const LoginCliente = ({ onLoginSuccess }) => {
       return;
     }
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000'; // Asegurarse de que la URL sea HTTPS
-    if (!API_URL) {
-      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
-    }
+    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
 
     setLoading(true);
 
-    axios.post(`${API_URL}/api/auth/login`, { email, password })
-      .then(response => {
-        console.log('Inicio de sesión exitoso:', response.data);
-        localStorage.setItem('authToken', response.data.token);
-        localStorage.setItem('userData', JSON.stringify(response.data.user)); // Guardar datos del usuario
-        console.log('Token almacenado en localStorage:', response.data.token); // Log para depuración
-        onLoginSuccess(response.data.user);
-        setMessage('Credenciales válidas.');
-        setMessageType('success');
-        navigate('/home-page');
-      })
-      .catch(error => {
-        console.error('Error en el inicio de sesión:', error);
+    try {
+      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+      console.log('Inicio de sesión exitoso:', response.data);
+      
+      // Guardar datos en localStorage
+      localStorage.setItem('authToken', response.data.token);
+      localStorage.setItem('userData', JSON.stringify(response.data.user));
+      console.log('Token almacenado en localStorage:', response.data.token);
+
+      // Llamar a handleLoginSuccess (para actualizar el estado en AuthContext)
+      handleLoginSuccess(response.data.user);
+
+      setMessage('Credenciales válidas.');
+      setMessageType('success');
+
+      // Redirigir a la página de inicio (Home Page)
+      navigate('/home-page');
+
+    } catch (error) {
+      console.error('Error en el inicio de sesión:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+        setMessage(error.response.data.message);
+      } else {
         setMessage('Credenciales inválidas. Por favor, intenta nuevamente.');
-        setMessageType('error');
-      })
-      .finally(() => {
+      }
+      setMessageType('error');
+    } finally {
       setLoading(false);
-      });
+    }
   };
 
   return (
@@ -89,3 +98,4 @@ const LoginCliente = ({ onLoginSuccess }) => {
 };
 
 export default LoginCliente;
+

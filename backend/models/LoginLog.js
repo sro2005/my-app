@@ -6,4 +6,28 @@ const loginLogSchema = new mongoose.Schema({
   loginTime: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('LoginLog', loginLogSchema);
+const LoginLog = mongoose.model('LoginLog', loginLogSchema);
+
+// Función para registrar o actualizar el log de login
+async function registerOrUpdateLoginLog(customer) {
+  try {
+    // Verificar si ya existe un registro para este usuario
+    const existingLog = await LoginLog.findOne({ userId: customer._id });
+
+    if (existingLog) {
+      // Si ya existe, actualiza el loginTime
+      existingLog.loginTime = new Date();
+      await existingLog.save();
+      console.log('Login log actualizado:', existingLog);
+    } else {
+      // Si no existe, crea un nuevo registro
+      const loginLog = new LoginLog({ userId: customer._id, email: customer.email });
+      await loginLog.save();
+      console.log('Nuevo login log registrado:', loginLog);
+    }
+  } catch (error) {
+    console.error('Error registrando el login log:', error);
+  }
+}
+
+module.exports = { LoginLog, registerOrUpdateLoginLog };

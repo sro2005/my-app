@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import Loading from './components/Loading';
 import LandingPage from './components/LandingPage';
@@ -15,7 +15,7 @@ import PerfilCliente from './components/PerfilCliente';
 import RegistroCliente from './components/RegistroCliente';
 import LoginCliente from './components/LoginCliente';
 import RecoverPassword from './components/RecoverPassword';
-import AuthProvider from './contexts/AuthContext'; // Importa el AuthProvider
+import AuthProvider from './contexts/AuthContext';
 
 const AppContent = () => {
   const { user, loading, handleLogout } = useContext(AuthContext);
@@ -24,13 +24,14 @@ const AppContent = () => {
     return <Loading />;
   }
 
+  const ProtectedRoute = ({ element: Component }) => {
+    return user ? <Component /> : <Navigate to="/login" />;
+  };
+
   return (
     <>
       <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
       <Routes>
-        {/* Redirigir automáticamente si el usuario está autenticado */}
-        {user && <Route path="/" element={<Navigate to="/home-page" />} />}
-        {/* Rutas públicas */}
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
@@ -40,18 +41,18 @@ const AppContent = () => {
           </>
         ) : (
           <>
-            {/* Rutas protegidas para 'user' */}
-            <Route path="/home-page" element={<HomePage user={user} />} />
-            <Route path="/pedido-form" element={<PedidoForm user={user} />} />
-            <Route path="/listado-productos" element={<ListadoProductos user={user} />} />
-            <Route path="/listado-pedidos" element={<ListadoPedidos user={user} />} />
-            <Route path="/perfil-cliente" element={<PerfilCliente user={user} />} />
+          {/* Redirigir a la página de inicio si el usuario está autenticado y está en la raíz */}
+            <Route path="/" element={<Navigate to="/home-page" />} />
+            <Route path="/home-page" element={<ProtectedRoute element={HomePage} />} />
+            <Route path="/pedido-form" element={<ProtectedRoute element={PedidoForm} />} />
+            <Route path="/listado-productos" element={<ProtectedRoute element={ListadoProductos} />} />
+            <Route path="/listado-pedidos" element={<ProtectedRoute element={ListadoPedidos} />} />
+            <Route path="/perfil-cliente" element={<ProtectedRoute element={PerfilCliente} />} />
 
-            {/* Rutas protegidas para 'admin' */}
-            {user.role === 'admin' && (
+            {user?.role === 'admin' && (
               <>
-                <Route path="/producto-form" element={<ProductoForm user={user} />} />
-                <Route path="/listado-clientes" element={<ListadoClientes user={user} />} />
+                <Route path="/producto-form" element={<ProtectedRoute element={ProductoForm} />} />
+                <Route path="/listado-clientes" element={<ProtectedRoute element={ListadoClientes} />} />
               </>
             )}
           </>
