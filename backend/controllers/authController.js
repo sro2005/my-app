@@ -1,43 +1,47 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Customer = require('../models/Customer');
-const LoginLog = require('../models/LoginLog'); // Importar el modelo de Log de Inicio de Sesión
+const LoginLog = require('../models/LoginLog');
 const { generateToken } = require('../utils/tokenUtils');
-const { registerSchema, loginSchema } = require('../validations/customerValidation');
 
 // Registro de un nuevo cliente
 exports.registerCustomer = async (req, res) => {
   try {
-    const { error } = registerSchema.validate(req.body);
-    if (error) return res.status(400).json({ message: 'Invalid data', error: error.details[0].message });
+    console.log('Datos recibidos para registrar cliente:', req.body); // Verifica que los datos recibidos contengan la contraseña
+    // Desestructuramos los datos del body
+    const { firstName, lastName, email, identificationNumber, birthDate, password, phone, preferences, role } = req.body;
 
-    const { firstName, lastName, email, identificationNumber, birthDate, password, confirmPassword, phone, preferences, role } = req.body;
+    // Eliminar espacios adicionales en la contraseña
+    const trimmedPassword = password.trim();
 
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
-    }
-
+    // Comprobamos si el email ya está registrado
     const existingCustomer = await Customer.findOne({ email });
     if (existingCustomer) {
       return res.status(400).json({ message: 'Email is already registered' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Hasheamos la contraseña
+    const hashedPassword = await bcrypt.hash(trimmedPassword, 10); // Hasheo de la contraseña
+    console.log('Contraseña hasheada durante el registro:', hashedPassword); // Agregado para ver el hash
 
-    const newCustomer = new Customer({ 
-      firstName, 
-      lastName, 
-      email, 
-      identificationNumber, 
-      birthDate, 
-      password: hashedPassword, 
-      phone, 
-      preferences, 
-      role 
+    // Asignar el rol: Si no se pasa, por defecto será "user", si es admin, se toma desde el body
+    const userRole = role === "admin" ? "admin" : "user"; 
+
+    const newCustomer = new Customer({
+      firstName,
+      lastName,
+      email,
+      identificationNumber,
+      birthDate,
+      password: hashedPassword, // Siempre incluimos la contraseña hasheada
+      phone,
+      preferences,
+      role: userRole,
     });
 
     await newCustomer.save();
     res.status(201).json({ message: 'Customer registered successfully' });
   } catch (error) {
+    console.error('Error en el registro:', error); // Mensaje de error más detallado
     res.status(400).json({ message: 'Error registering customer', error: error.message });
   }
 };
@@ -46,30 +50,42 @@ exports.registerCustomer = async (req, res) => {
 exports.loginCustomer = async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    const { error } = loginSchema.validate(req.body);
-    if (error) return res.status(400).json({ message: 'Invalid data', error: error.details[0].message });
+  console.log('Datos de login recibidos:', req.body); // Verifica que se está recibiendo correctamente el email y la contraseña
 
+  try {
+    // Buscar al cliente por correo electrónico
     const customer = await Customer.findOne({ email });
     if (!customer) {
       return res.status(400).json({ message: 'Incorrect email or password' });
     }
 
-    // Verificación simplificada de la contraseña
-    const isMatch = await bcrypt.compare(password, customer.password);
-    if (!isMatch) {
+    // Eliminar espacios adicionales en la contraseña proporcionada
+    const trimmedPassword = password.trim();
+
+    // Comparar la contraseña proporcionada con el hash almacenado
+    const comparisonResult = await bcrypt.compare(trimmedPassword, customer.password);
+    console.log('Resultado de comparación de contraseñas:', comparisonResult); // Verifica el resultado de la comparación de la contraseña
+
+    if (!comparisonResult) {
       return res.status(400).json({ message: 'Incorrect email or password' });
     }
 
-    // Registrar el inicio de sesión
+    // Registrar el intento de inicio de sesión en LoginLog para todos los usuarios
     const loginLog = new LoginLog({ userId: customer._id, email: customer.email });
     await loginLog.save();
 
-    console.log('Generating token...');
+    // Generar el token de autenticación
     const token = generateToken(customer);
-    res.status(200).json({ token, user: customer, role: customer.role, message: 'Login successful' });
+
+    return res.status(200).json({
+      token,
+      user: customer,
+      role: customer.role,
+      message: 'Login successful',
+    });
+
   } catch (error) {
-    console.error('Error during login:', error.message);
+    console.error('Error en el inicio de sesión:', error.message); // Log para errores
     res.status(400).json({ message: 'Error logging in', error: error.message });
   }
 };

@@ -675,30 +675,3 @@ h2 {
   background-color: #f0f0f0; /* Color de fondo gris claro */
   cursor: not-allowed; /* Cambia el cursor a "no permitido" */
 }
-
-/* styles.css */
-.access-denied {
-  text-align: center;
-  margin-top: 50px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.access-denied h1 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.access-denied p {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-.access-denied a {
-  color: #007bff;
-  text-decoration: none;
-  font-size: 1.1rem;
-}

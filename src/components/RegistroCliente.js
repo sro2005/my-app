@@ -53,7 +53,6 @@ const RegistroCliente = () => {
   const [identificationNumber, setIdentificationNumber] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [phone, setPhone] = useState('');
   const [preferences, setPreferences] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,14 +61,13 @@ const RegistroCliente = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert('Las contraseñas no coinciden!');
-      return;
-    }
+
+    // Verificación de edad
     if (!isAdult(birthDate)) {
       alert('Debes ser mayor de 18 años para registrarte.');
       return;
     }
+
     setLoading(true);
 
     // Obtener la URL base de la variable de entorno
@@ -86,7 +84,6 @@ const RegistroCliente = () => {
       identificationNumber,
       birthDate,
       password,
-      confirmPassword,
       phone,
       preferences: preferences.map(pref => pref.value) // Enviar los valores de las preferencias
     })
@@ -116,22 +113,12 @@ const RegistroCliente = () => {
         <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
       </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <input type="password" placeholder="Confirmar Contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
       <PhoneInput placeholder="Número de Celular" value={phone} onChange={setPhone} defaultCountry="CO" required />
       
       <div>
         <label htmlFor="preferences">Preferencias de Productos:</label>
-        <Select
-          id="preferences"
-          isMulti
-          options={options}
-          value={preferences}
-          onChange={setPreferences}
-          placeholder="Selecciona tus preferencias"
-          className="select-preferences"
-        />
+        <Select id="preferences" isMulti options={options} value={preferences} onChange={setPreferences} placeholder="Selecciona tus preferencias" className="select-preferences" />
       </div>
-      
       <button type="submit">Registrar</button>
       {loading && <div className="spinner">Procesando...</div>} {/* Mostrar un spinner mientras se procesa el registro */}
     </form>
@@ -139,4 +126,3 @@ const RegistroCliente = () => {
 };
 
 export default RegistroCliente;
-
