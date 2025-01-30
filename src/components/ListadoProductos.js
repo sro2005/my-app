@@ -82,21 +82,21 @@ const ListadoProductos = ({ userPreferences }) => {
 
   return (
     <div className="container">
-      <h2>Módulo de Inventario</h2>
+      <h2>Gestión de Inventario</h2>
       <div className="module-description">
         <p><strong>Definición:</strong> Un módulo de inventario es un sistema que ayuda a administrar los productos disponibles en un negocio, proporcionando detalles como su cantidad, ubicación, precio y otros atributos importantes.</p>
         <p><strong>Propósito:</strong> Su función principal es llevar un registro detallado de los productos, optimizando la gestión de existencias y evitando problemas como desabastecimiento o exceso de productos.</p>
         <p><strong>Importancia:</strong> Un buen manejo de inventarios asegura que los productos estén disponibles cuando los clientes los necesiten, lo que mejora la satisfacción y optimiza la rentabilidad.</p>
       </div>
 
-      <h2>Listado de Productos</h2>
+      <h2>Listado de Inventario</h2>
       <ul className="productos-list">
         {productos.length > 0 ? (
           productos.map(producto => (
             <ProductoItem key={producto._id} producto={producto} />
           ))
         ) : (
-          <p>No hay productos disponibles para mostrar.</p>
+          <p>No hay productos disponibles.</p>
         )}
       </ul>
     </div>

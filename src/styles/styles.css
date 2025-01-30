@@ -735,3 +735,68 @@ input:disabled {
   border: 1px solid #dcdcdc; /* Borde gris */
 }
 
+.search-container {
+  display: flex;
+  justify-content: center; /* Centra el contenedor */
+  align-items: center; /* Centra verticalmente */
+  margin-bottom: 20px; /* Espacio debajo */
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 25px; /* Borde redondeado */
+  padding: 5px 15px; /* Espaciado alrededor del input */
+  width: 100%;
+  max-width: 400px; /* Tamaño máximo para el input */
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 10px; /* Ajustar padding para alinear mejor */
+  border: none;
+  font-size: 16px;
+  border-radius: 25px; /* Borde redondeado */
+  box-sizing: border-box;
+  margin-left: 5px; /* Alinea el input con la lupa */
+}
+
+.search-box::before {
+  content: '\1F50D'; /* Unicode de la lupa */
+  font-size: 20px;
+  margin-right: 10px;
+  margin-top: 2px; /* Ajustar la posición de la lupa */
+}
+
+.stats-container {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.stats-container p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.stats-container b {
+  color: #333;
+}
+
+.fecha-hora {
+  font-size: 1rem;
+  color: #444; /* Color general para el texto */
+  display: inline-flex; /* Asegura que se mantenga todo en una sola línea */
+  align-items: center;
+}
+
+.fecha, .hora {
+  color: #555; /* Gris oscuro para las palabras Fecha y Hora */
+}
+
+.separador {
+  color: #777; /* Gris más claro para el separador */
+  margin: 0 8px; /* Espaciado entre Fecha y Hora */
+}

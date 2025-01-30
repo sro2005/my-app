@@ -40,14 +40,15 @@ const Header = ({ isAuthenticated, onLogout, user }) => {
                     </Link>
                   </li>
                 )}
-
+                {/* Solo mostrar "Realizar Pedidos" si el rol es user */}
+                {user?.role === 'user' && (
                 <li>
                   <Link to="/pedido-form">
                     <div className="nav-icon"><FontAwesomeIcon icon={faCheckSquare} /></div>
                     <div className="nav-text">REALIZAR PEDIDOS</div>
                   </Link>
                 </li>
-
+                )}
                 {/* Solo mostrar "Gestión de Clientes" si el rol es admin */}
                 {user?.role === 'admin' && (
                   <li>

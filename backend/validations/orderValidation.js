@@ -5,7 +5,7 @@ exports.orderSchema = Joi.object({
   firstName: Joi.string().min(1).required(), // Asegura que el nombre no esté vacío
   lastName: Joi.string().min(1).required(), // Asegura que el apellido no esté vacío
   email: Joi.string().email().required(), // Validación del formato de correo
-  phone: Joi.string().pattern(/^\+?\d{1,2}(\s?)\d{3}(\s?)\d{7}$/).required(), // Validación de teléfono con formato internacional, con o sin el '+'
+  phone: Joi.string().required().messages({ 'string.empty': 'Phone number is required' }),
   address: Joi.string().min(1).required(), // Asegura que la dirección no esté vacía
   paymentMethod: Joi.string().valid('Tarjeta de Crédito', 'Tarjeta de Débito', 'Nequi', 'Daviplata', 'Transfiya').required(),
   deliveryDate: Joi.date().required(), // Asegura que la fecha de entrega sea futura

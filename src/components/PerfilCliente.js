@@ -48,6 +48,10 @@ const PerfilCliente = () => {
     fetchProfile();
   }, []);
 
+  const formatIdentificationNumber = (number) => {
+    return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
   const handleError = (message) => {
     setError(message);
     setLoading(false);
@@ -103,7 +107,7 @@ const PerfilCliente = () => {
           </div>
           <div className="profile-field">
             <strong>Número de Identificación (C.C):</strong> 
-            <p>{customer.identificationNumber || 'No disponible'}</p>
+            <p>{formatIdentificationNumber(customer.identificationNumber) || 'No disponible'}</p>
           </div>
           <div className="profile-field">
             <strong>Número de Celular:</strong> 

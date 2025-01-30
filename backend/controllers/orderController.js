@@ -50,10 +50,10 @@ exports.getOrders = async (req, res) => {
 
 // Obtener pedidos de un usuario
 exports.getUserOrders = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user?.id;  // El ID del usuario proviene del token
 
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ message: 'ID de usuario no válido' });
+  if (!userId) {
+    return res.status(400).json({ message: 'ID de usuario no encontrado en el token' });
   }
 
   try {

@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, match: /\S+@\S+\.\S+/ },
-  phone: { type: String, required: true, match: /^\+?[0-9]{10,15}$/ }, // Validación de formato de teléfono
+  phone: { type: String, required: true },
   address: { type: String, required: true },
   paymentMethod: { type: String, required: true },
   deliveryDate: { type: Date, required: true },
