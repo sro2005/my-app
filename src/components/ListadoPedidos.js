@@ -98,7 +98,7 @@ const ListadoPedidos = () => {
   return (
     <div className="container">
       <h2>Gestión de Pedidos</h2>
-      <p><b>✨ Definición:</b> La gestión de pedidos es el proceso que permite recibir, procesar y entregar productos a los clientes de manera organizada y eficiente. Incluye:</p>
+      <p><b>✨ DEFINICIÓN:</b> La Gestión de Pedidos es el proceso que permite recibir, procesar y entregar productos a los clientes de manera organizada y eficiente. Incluye:</p>
         <ul>
           <li>Captura de información del cliente.</li>
           <li>Validación del pedido.</li>
@@ -106,15 +106,15 @@ const ListadoPedidos = () => {
           <li>Preparación del producto para su envío.</li>
           <li>Entrega final.</li>
         </ul>
-      <p><b>🌟 Objetivo:</b> Asegurar que cada pedido se procese correctamente, sin errores ni retrasos, garantizando que el cliente reciba su compra en el tiempo esperado y en las condiciones adecuadas.</p>
-      <b>📈 Importancia:</b>
+      <p><b>🌟 OBJETIVO:</b> Asegurar que cada pedido se procese correctamente, sin errores ni retrasos, garantizando que el cliente reciba su compra en el tiempo esperado y en las condiciones adecuadas.</p>
+      <b>📈 IMPORTANCIA:</b>
         <ul>
           <li><b>Optimización del flujo de trabajo:</b> Permite manejar múltiples pedidos simultáneamente sin confusiones.</li>
           <li><b>Mejora en la satisfacción del cliente:</b> Reduce tiempos de espera y mejora la experiencia de usuario.</li>
           <li><b>Control y trazabilidad:</b> Cada pedido tiene un estado actualizado, permitiendo su seguimiento en tiempo real.</li>
           <li><b>Reducción de errores:</b> Minimiza problemas como envíos incorrectos, productos agotados o pagos fallidos.</li>
         </ul>
-      <p><b>🔍 Proceso de Gestión de Pedidos:</b></p>
+      <p><b>🔍 PROCESO DE GESTIÓN DE PEDIDOS:</b></p>
         <ol>
           <li><b>Recepción del pedido:</b> El cliente selecciona los productos y genera la solicitud de compra en la plataforma.</li>
           <li><b>Validación:</b> Se verifica la disponibilidad de los productos y la información ingresada por el usuario.</li>
@@ -123,14 +123,14 @@ const ListadoPedidos = () => {
           <li><b>Envió y entrega:</b> El pedido es enviado por un servicio de logística y entregado al cliente dentro del plazo estipulado.</li>
           <li><b>Confirmación y cierre:</b> El cliente recibe su pedido y puede calificar la experiencia de compra.</li>
         </ol>
-      <p><b>🚀 Beneficios de una buena Gestión de Pedidos:</b></p>
+      <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE PEDIDOS:</b></p>
         <ul>
           <li>✅<b>Rapidez en el procesamiento:</b> Disminuye los tiempos de espera entre la compra y la entrega.</li>
           <li>✅<b>Mayor confianza del cliente:</b> Transparencia en el estado del pedido y tiempos de entrega exactos.</li>
           <li>✅<b>Reducción de costos operativos:</b> Optimiza los recursos logísticos y evita reprocesos innecesarios.</li>
           <li>✅<b>Mejora en la gestión de inventarios:</b> Permite tener control de los productos disponibles y evitar sobreventas.</li>
         </ul>
-      <p><b>👥 ¿Cómo interactúan los usuarios con la gestión de pedidos?</b></p>
+      <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE PEDIDOS?</b></p>
         <ul>
           <li><b>Clientes:</b> Realizan pedidos, consultan el estado y reciben notificaciones de entrega.</li>
           <li><b>Administradores:</b> Gestionan los pedidos, verifican pagos, actualizan estados y resuelven incidencias.</li>

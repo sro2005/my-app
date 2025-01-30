@@ -10,8 +10,8 @@ const HomePage = () => {
 
       {/* Introducción de la empresa */}
       <p>
-        En ⚡ELECTROVIBEHOME⚡, nos enorgullece ser líderes en la gestión de inventarios y proporcionar soluciones innovadoras para transformar la manera en que
-        administras y accedes a tus productos. Desde nuestra fundación en 2023, hemos estado dedicados a ofrecer servicios de calidad que no solo facilitan la gestión
+        En <strong>⚡ELECTROVIBEHOME⚡</strong>, nos enorgullece ser líderes en la gestión de inventarios y proporcionar soluciones innovadoras para transformar la manera en que
+        administras y accedes a tus productos. Desde nuestra fundación en el año <strong>2023</strong>, hemos estado dedicados a ofrecer servicios de calidad que no solo facilitan la gestión
         de tus inventarios, sino que también elevan la experiencia de nuestros clientes.
       </p>
       <hr />
@@ -37,7 +37,7 @@ const HomePage = () => {
       {/* ¿Quiénes Somos? */}
       <h3>¿QUIÉNES SOMOS?</h3>
       <p>
-        Somos ⚡ELECTROVIBEHOME⚡, una empresa comprometida con la excelencia y la innovación en la gestión de inventarios. No producimos electrodomésticos; 
+        Somos <strong>⚡ELECTROVIBEHOME⚡</strong>, una empresa comprometida con la excelencia y la innovación en la gestión de inventarios. No producimos electrodomésticos; 
         en cambio, proporcionamos soluciones y servicios que te ayudan a mantener tus productos organizados y accesibles. Nuestro enfoque está en la 
         integración de tecnologías avanzadas y prácticas sostenibles para ofrecerte las mejores herramientas de inventario.
       </p>
@@ -60,7 +60,7 @@ const HomePage = () => {
           <img src="/testimonial-image-1.png" alt="Cliente satisfecho" className="testimonial-image" />
         </div>
         <blockquote>
-          "Desde que comenzamos a utilizar los servicios de ELECTROVIBEHOME, nuestra eficiencia en la gestión de inventarios ha mejorado notablemente.
+          "Desde que comenzamos a utilizar los servicios de <strong>⚡ELECTROVIBEHOME⚡</strong>, nuestra eficiencia en la gestión de inventarios ha mejorado notablemente.
           Sus soluciones tecnológicas son intuitivas y efectivas. ¡Altamente recomendado!"
         </blockquote>
         <p>- Juan Pérez</p>
@@ -70,7 +70,7 @@ const HomePage = () => {
           <img src="/testimonial-image-2.png" alt="Cliente satisfecho" className="testimonial-image" />
         </div>
         <blockquote>
-          "El equipo de ELECTROVIBEHOME ha sido increíblemente útil y profesional. Sus soluciones han transformado nuestra operación diaria."
+          "El equipo de <strong>⚡ELECTROVIBEHOME⚡</strong> ha sido increíblemente útil y profesional. Sus soluciones han transformado nuestra operación diaria."
         </blockquote>
         <p>- Laura Gómez</p>
       </div>
@@ -79,7 +79,7 @@ const HomePage = () => {
           <img src="/testimonial-image-3.png" alt="Cliente satisfecho" className="testimonial-image" />
         </div>
         <blockquote>
-          "Gracias a ELECTROVIBEHOME, hemos optimizado nuestro inventario de una manera que nunca creímos posible. ¡Estamos muy contentos con los resultados!"
+          "Gracias a <strong>⚡ELECTROVIBEHOME⚡</strong>, hemos optimizado nuestro inventario de una manera que nunca creímos posible. ¡Estamos muy contentos con los resultados!"
         </blockquote>
         <p>- Carlos Martinez</p>
       </div>
@@ -88,12 +88,12 @@ const HomePage = () => {
       {/* Descubre Más Con Nosotros */}
       <h3>DESCUBRE MÁS CON NOSOTROS</h3>
       <p>
-        En ⚡ELECTROVIBEHOME⚡, cada solución cuenta una historia de precisión y dedicación al detalle. Nuestro equipo de expertos trabaja incansablemente para 
+        En <strong>⚡ELECTROVIBEHOME⚡</strong>, cada solución cuenta una historia de precisión y dedicación al detalle. Nuestro equipo de expertos trabaja incansablemente para 
         garantizar que cada servicio cumpla con tus expectativas de rendimiento y fiabilidad. Creemos que la verdadera calidad se encuentra en la combinación 
         perfecta de funcionalidad y eficiencia, y nos esforzamos por lograr esa perfección en cada una de nuestras ofertas.
       </p>
       <p>
-        Únete a nosotros en nuestro viaje hacia el futuro de la gestión de inventarios. Descubre cómo ⚡ELECTROVIBEHOME⚡ puede transformar tu experiencia con 
+        Únete a nosotros en nuestro viaje hacia el futuro de la gestión de inventarios. Descubre cómo nuestra marca y compañia <strong>⚡ELECTROVIBEHOME⚡</strong> puede transformar tu experiencia con 
         soluciones diseñadas para durar e impresionar.
       </p>
     </div>
