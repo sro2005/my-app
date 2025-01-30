@@ -28,6 +28,7 @@ const ProductoItem = ({ producto }) => (
 const ListadoProductos = ({ userPreferences }) => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // Agregamos estado para el error
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
@@ -40,17 +41,20 @@ const ListadoProductos = ({ userPreferences }) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        setError(null); // Reseteamos cualquier error antes de la solicitud
+
         const response = await axios.get(`${API_URL}/api/products`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (!Array.isArray(userPreferences) || userPreferences.length === 0) {
-          setProductos(response.data);
-        } else {
-          const filteredProducts = response.data.filter(product => userPreferences.includes(product.category));
-          setProductos(filteredProducts);
-        }
+        // Filtramos productos basados en las preferencias del usuario, si existen
+        const filteredProducts = Array.isArray(userPreferences) && userPreferences.length
+          ? response.data.filter(product => userPreferences.includes(product.category))
+          : response.data;
+
+        setProductos(filteredProducts);
       } catch (error) {
+        setError('Hubo un error al obtener los productos. Intenta nuevamente.');
         console.error('Error obteniendo productos:', error);
       } finally {
         setLoading(false);
@@ -68,24 +72,35 @@ const ListadoProductos = ({ userPreferences }) => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="error-message">
+        <p>{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <h2>Módulo de Inventario</h2>
-      <p><b>Definición:</b> El modelo de inventario es una representación estructurada de los productos disponibles en un sistema o negocio.</p>
-      <p><b>Propósito:</b> Su función principal es gestionar y mantener un registro detallado de los productos en stock, incluyendo su cantidad, ubicación, y atributos como nombre, descripción y precio.</p>
-      <p><b>Importancia:</b> Permite a las empresas controlar eficientemente su inventario, optimizar la gestión de existencias, prevenir la escasez o el exceso de productos, y asegurar la disponibilidad de productos para satisfacer la demanda de los clientes.</p>
+      <div className="module-description">
+        <p><strong>Definición:</strong> Un módulo de inventario es un sistema que ayuda a administrar los productos disponibles en un negocio, proporcionando detalles como su cantidad, ubicación, precio y otros atributos importantes.</p>
+        <p><strong>Propósito:</strong> Su función principal es llevar un registro detallado de los productos, optimizando la gestión de existencias y evitando problemas como desabastecimiento o exceso de productos.</p>
+        <p><strong>Importancia:</strong> Un buen manejo de inventarios asegura que los productos estén disponibles cuando los clientes los necesiten, lo que mejora la satisfacción y optimiza la rentabilidad.</p>
+      </div>
+
       <h2>Listado de Productos</h2>
       <ul className="productos-list">
-        {productos.map(producto => (
-          <ProductoItem key={producto._id} producto={producto} />
-        ))}
+        {productos.length > 0 ? (
+          productos.map(producto => (
+            <ProductoItem key={producto._id} producto={producto} />
+          ))
+        ) : (
+          <p>No hay productos disponibles para mostrar.</p>
+        )}
       </ul>
     </div>
   );
 };
 
 export default ListadoProductos;
-
-
-
-

@@ -1,3 +1,4 @@
+// src/components/ProductoForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { NumericFormat } from 'react-number-format'; // Importar NumericFormat
@@ -11,19 +12,29 @@ const ProductoForm = () => {
   const [quantity, setQuantity] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Función para manejar el envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(''); // Limpiar errores previos
 
     const API_URL = process.env.REACT_APP_API_BASE_URL;
     const token = localStorage.getItem('authToken'); // Obtener el token desde localStorage
 
+    // Validación de la API URL y token
     if (!API_URL) {
-      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+      setError('La URL de la API no está configurada.');
+      setLoading(false);
+      return;
     }
 
-    setLoading(true);
+    if (!token) {
+      setError('No se encontró el token de autenticación.');
+      setLoading(false);
+      return;
+    }
 
     // Enviar datos al backend
     axios.post(`${API_URL}/api/products/agregar`, {
@@ -36,22 +47,22 @@ const ProductoForm = () => {
     }, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
-    .then(response => {
-      console.log('Producto agregado:', response.data);
-      setLoading(false);
-      alert('¡Producto agregado exitosamente!');
-    })
-    .catch(error => {
-      console.error('Error agregando producto:', error);
-      setLoading(false);
-      alert('Ocurrió un error al agregar el producto. Por favor, intenta nuevamente.');
-    });
+      .then(() => {
+        setLoading(false);
+        alert('¡Producto agregado exitosamente!');
+      })
+      .catch((error) => {
+        setLoading(false);
+        const errorMsg = error.response?.data?.message || 'Ocurrió un error al agregar el producto. Por favor, intenta nuevamente.';
+        setError(errorMsg);
+      });
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h1>Formulario</h1>
       <h2>Agregar Nuevo Producto</h2>
+
       <input
         type="text"
         placeholder="Nombre del Producto"
@@ -79,10 +90,7 @@ const ProductoForm = () => {
           value={price}
           thousandSeparator={true}
           prefix={'$'}
-          onValueChange={(values) => {
-            const { value } = values;
-            setPrice(value);
-          }}
+          onValueChange={(values) => setPrice(values.value)}
           placeholder="Ingrese el precio"
           className="price-input"
           required
@@ -94,6 +102,7 @@ const ProductoForm = () => {
         value={quantity}
         onChange={(e) => setQuantity(e.target.value)}
         required
+        min="1"
       />
       <input
         type="text"
@@ -102,11 +111,12 @@ const ProductoForm = () => {
         onChange={(e) => setImageUrl(e.target.value)}
         required
       />
-      <button type="submit">AGREGAR</button>
-      {loading && <div className="spinner">Procesando...</div>} {/* Mostrar un spinner mientras se procesa el registro */}
+      <button type="submit" disabled={loading}>AGREGAR</button>
+
+      {loading && <div className="spinner">Procesando...</div>}
+      {error && <p className="error-message">{error}</p>}
     </form>
   );
 };
 
-// Exportar el componente ProductoForm para su uso en otros archivos
 export default ProductoForm;

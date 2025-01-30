@@ -278,47 +278,156 @@ form select {
 }
 
 .profile-container {
-  max-width: 400px;
-  margin: 30px auto;
-  padding: 10px;
+  max-width: 450px;
+  margin: 40px auto;
+  padding: 20px;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .profile-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
   font-size: 2em;
   color: #333;
+  margin-bottom: 20px;
 }
 
 .profile-picture {
-  text-align: center;
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
 .profile-picture img {
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #ccc;
+  border: 3px solid #ffa500;
 }
 
 .profile-info {
-  font-size: 1.2em;
-  color: #333;
+  font-size: 1.1em;
+  color: #444;
+  text-align: center; /* Centrar la información */
+  padding: 0 20px;
 }
 
 .profile-info p {
   margin: 10px 0;
+  text-align: center;
 }
 
 .profile-info strong {
   color: #555;
+}
+
+.edit-button {
+  background-color: #ffa500;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: block;
+  width: 60%;
+  margin-top: 15px;
+}
+
+.edit-button:hover {
+  background-color: #cc8400;
+}
+
+.profile-field {
+  margin-bottom: 15px; /* Espaciado entre los campos */
+}
+
+.profile-field strong {
+  display: block; /* Hace que el título ocupe una línea completa */
+  font-size: 18px;
+  color: #333;
+}
+
+.profile-field p {
+  margin: 5px 0 0; /* Ajusta el espacio entre el título y el contenido */
+  font-size: 18px; /* Igual tamaño de fuente que los títulos */
+  color: #666;
+  font-weight: bold; /* Hace que los valores se vean más destacados */
+}
+
+.profile-edit-field label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.profile-edit-field input {
+  width: 80%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: border 0.3s;
+  text-align: center; /* Centrar texto dentro de los inputs */
+}
+
+.profile-edit-field input:focus {
+  border-color: #ffa500;
+}
+
+.profile-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-button,
+.cancel-button-profile {
+  padding: 12px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 50%;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.cancel-button-profile {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-button-profile:hover {
+  background-color: #c82333;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  font-size: 1.2em;
+  margin-top: 20px;
 }
 
 /* Estilo para cada elemento de la lista de clientes y productos */
@@ -618,7 +727,11 @@ form select {
   height: auto;
 }
 
-.disabled-input {
+/* Estilos para los inputs deshabilitados */
+input:disabled {
   background-color: #f0f0f0; /* Color de fondo gris claro */
   cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+  color: #a0a0a0; /* Color del texto gris */
+  border: 1px solid #dcdcdc; /* Borde gris */
 }
+

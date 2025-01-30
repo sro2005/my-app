@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 
 // Esquema de Cliente
 const customerSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  identificationNumber: { type: String, required: true, unique: true },
+  firstName: { type: String, required: true, trim: true },
+  lastName: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true, match: [/^\S+@\S+\.\S+$/, 'Correo electrónico no válido'] },
+  identificationNumber: { type: String, required: true, unique: true, match: [/^\d{10}$/, 'Número de identificación debe tener 10 dígitos'] },
   birthDate: { type: Date, required: true },
   password: { type: String, required: true },
   phone: { type: String, required: true },
@@ -18,3 +17,4 @@ const customerSchema = new mongoose.Schema({
 const Customer = mongoose.model('Customer', customerSchema);
 
 module.exports = Customer;
+

@@ -12,19 +12,22 @@ const formatPrice = (price) => {
 const today = new Date().toISOString().split('T')[0];
 
 const PedidoForm = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [customerData, setCustomerData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  });
+
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState(null); // Cambiado a objeto para React-Select
   const [deliveryDate, setDeliveryDate] = useState("");
-  const [product, setProduct] = useState(null); // Cambiado a objeto para React-Select
+  const [selectedProduct, setSelectedProduct] = useState(null); // Cambiado a objeto para React-Select
   const [totalAmount, setTotalAmount] = useState(0);
   const [accountNumber, setAccountNumber] = useState("");
   const [bankName, setBankName] = useState("");
   const [sameRegisteredNumber, setSameRegisteredNumber] = useState(false);
-  const [products, setProducts] = useState([]);
+  const [availableProducts, setAvailableProducts] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
@@ -32,37 +35,33 @@ const PedidoForm = () => {
 
   useEffect(() => {
     const savedCustomerData = localStorage.getItem('userData');
-    
     if (savedCustomerData) {
       try {
         const userData = JSON.parse(savedCustomerData);
-        if (userData && userData.firstName && userData.lastName && userData.email && userData.phone) {
-          setFirstName(userData.firstName);
-          setLastName(userData.lastName);
-          setEmail(userData.email);
-          setPhone(userData.phone);
-        }
+        setCustomerData({
+          firstName: userData.firstName || "",
+          lastName: userData.lastName || "",
+          email: userData.email || "",
+          phone: userData.phone || "",
+        });
       } catch (error) {
         console.error('Error al analizar los datos del cliente desde localStorage:', error);
       }
     }
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
-    if (!API_URL) {
-      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
-    }
-    axios.get(`${API_URL}/api/products`) // Solicita la lista de productos desde el backend
-      .then(response => setProducts(response.data.map(product => ({
+    const API_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:5000"; // Reemplaza con tu URL local si es necesario
+    axios.get(`${API_URL}/api/products`) 
+      .then(response => setAvailableProducts(response.data.map(product => ({
         value: product._id,
         label: `${product.name} - ${formatPrice(product.price)}`,
         price: product.price
-      })))) .catch(error => console.error('Error cargando productos:', error));
+      })))).catch(error => console.error('Error cargando productos:', error));
   }, []);
 
   // Maneja el cambio de selección de producto
   const handleProductChange = (selectedOption) => {
-    setProduct(selectedOption);
-    setTotalAmount(selectedOption ? selectedOption.price : 0);
+    setSelectedProduct(selectedOption);
+    setTotalAmount(selectedOption?.price > 0 ? selectedOption.price : 0);
   };
 
   // Maneja el cambio en el método de pago
@@ -75,50 +74,72 @@ const PedidoForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validación antes de enviar el pedido
+    if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || !selectedProduct || totalAmount <= 0) {
+     alert("Por favor, complete todos los campos correctamente.");
+     return;
+    }
+
+    // Validación de métodos de pago
+    if ((paymentMethod.value === "Tarjeta de Crédito" || paymentMethod.value === "Tarjeta de Débito") && (!bankName || !accountNumber)) {
+      alert("Por favor, ingrese los datos de la cuenta bancaria.");
+      return;
+    }
+    
+    // Validación para Nequi, Daviplata y Transfiya
+    if ((paymentMethod.value === "Nequi" || paymentMethod.value === "Daviplata" || paymentMethod.value === "Transfiya")) {
+      if (!sameRegisteredNumber && !accountNumber) { // Si el número no es el mismo registrado y no se ingresa un número de cuenta o celular
+        alert("Por favor, ingrese el número de cuenta o celular.");
+        return;
+      }
+    }
+
     const newOrder = {
-      firstName,
-      lastName,
-      email,
-      phone,
+      firstName: customerData.firstName,
+      lastName: customerData.lastName,
+      email: customerData.email,
+      phone: customerData.phone,
       address,
-      paymentMethod: paymentMethod ? paymentMethod.label : '',
+      paymentMethod: paymentMethod.value, 
       deliveryDate,
-      products: product ? [{ productId: product.value, quantity: 1 }] : [], // Aseguramos que esté en el formato adecuado
+      products: [{ productId: selectedProduct.value, quantity: 1 }],
       totalAmount,
-      accountNumber: paymentMethod && (paymentMethod.label === "Tarjeta Crédito" || paymentMethod.label === "Tarjeta Débito" || !sameRegisteredNumber) ? accountNumber : undefined,
-      bankName: paymentMethod && (paymentMethod.label === "Tarjeta Crédito" || paymentMethod.label === "Tarjeta Débito") ? bankName : undefined,
-      sameRegisteredNumber: (paymentMethod && (paymentMethod.label === "Nequi" || paymentMethod.label === "Daviplata" || paymentMethod.label === "Transfiya")) ? sameRegisteredNumber : undefined
+      accountNumber: sameRegisteredNumber ? customerData.phone : accountNumber || undefined, // Si el número es el mismo, usamos el número registrado del cliente
+      bankName: bankName || undefined,
+      sameRegisteredNumber: sameRegisteredNumber, // Verifica que aquí no sea undefined
     };
+
+    // Verificar el pedido antes de continuar
+    console.log('Datos del pedido antes de la confirmación:', newOrder);
     
     setOrder(newOrder); // Guardamos el pedido en el estado
     setShowConfirmModal(true); // Mostramos el modal de confirmación
   };
 
   const handleConfirm = () => {
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('authToken');
-
-    if (!API_URL || !token) {
-      console.warn('La variable REACT_APP_API_BASE_URL o el token de autenticación no están configurados.');
-      alert('No se pudo realizar el pedido. Por favor, intente nuevamente.');
-      return;
-    }
-    
+    const API_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:5000";
     setLoading(true);
 
-    axios.post(`${API_URL}/api/orders/realizar`, order, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    })
+    // Obtener el token de localStorage
+    const token = localStorage.getItem("authToken");
+
+    // Verificar la estructura del pedido antes de enviarlo
+    console.log('Enviando pedido:', order);
+
+    axios.post(`${API_URL}/api/orders/realizar`, order, { 
+      headers: { Authorization: `Bearer ${token}` }, // Incluir el token en los headers
+      })
       .then(response => {
-        console.log('Pedido realizado:', response.data);
-        setLoading(false);
         alert('¡Pedido realizado exitosamente!');
         navigate('/confirmacion-pedido', { state: { order: response.data } });
       })
       .catch(error => {
         console.error('Error realizando pedido:', error);
-        setLoading(false);
         alert('Ocurrió un error al realizar el pedido. Por favor, intenta nuevamente.');
+      })
+      .finally(() => {
+        setLoading(false);
+        setShowConfirmModal(false);
       });
   };
 
@@ -127,11 +148,11 @@ const PedidoForm = () => {
   };
 
   const paymentMethods = [
-    { value: 'Tarjeta de Crédito', label: 'Tarjeta Crédito' },
-    { value: 'Tarjeta de Débito', label: 'Tarjeta Débito' },
+    { value: 'Tarjeta de Crédito', label: 'Tarjeta de Crédito' },
+    { value: 'Tarjeta de Débito', label: 'Tarjeta de Débito' },
     { value: 'Nequi', label: 'Nequi' },
     { value: 'Daviplata', label: 'Daviplata' },
-    { value: 'Transfiya', label: 'Transfiya' }
+    { value: 'Transfiya', label: 'Transfiya' },
   ];
 
   return (
@@ -139,10 +160,10 @@ const PedidoForm = () => {
       <form onSubmit={handleSubmit}>
         <h1>Formulario</h1>
         <h2>Realizar Nuevo Pedido</h2>
-        <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required disabled={firstName !== ""} className={firstName !== "" ? 'disabled-input' : ''} />
-        <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required disabled={lastName !== ""} className={lastName !== "" ? 'disabled-input' : ''} />
-        <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required disabled={email !== ""} className={email !== "" ? 'disabled-input' : ''} />
-        <input type="tel" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(e.target.value)} required disabled={phone !== ""} className={phone !== "" ? 'disabled-input' : ''} />
+        <input type="text" placeholder="Nombre(s)" value={customerData.firstName} onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })} required disabled className="disabled-input"/>
+        <input type="text" placeholder="Apellidos" value={customerData.lastName} onChange={(e) => setCustomerData({ ...customerData, lastName: e.target.value })} required disabled className="disabled-input"/>
+        <input type="email" placeholder="Correo Electrónico" value={customerData.email} onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })} required disabled className="disabled-input"/>
+        <input type="tel" placeholder="Número de Celular" value={customerData.phone} onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })} required disabled className="disabled-input"/>
         <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
 
         <Select placeholder="Selecciona un método de pago" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable />
@@ -176,10 +197,10 @@ const PedidoForm = () => {
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
         </div>
         
-        <Select placeholder="Selecciona un producto" options={products} onChange={handleProductChange} value={product} isClearable />
+        <Select placeholder="Selecciona un producto" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable />
         
         <h3>Total a Pagar: {formatPrice(totalAmount)}</h3>
-        <button type="submit">REALIZAR</button>
+        <button type="submit" disabled={loading}>REALIZAR</button>
       </form>
 
       {showConfirmModal && (
@@ -192,26 +213,26 @@ const PedidoForm = () => {
         <div className="spinner">Procesando...</div>
         ) : (
           <>
-            <p><strong>Cliente:</strong> {firstName} {lastName}</p>
-            <p><strong>Correo Electrónico:</strong> {email}</p>
-            <p><strong>Número de Celular:</strong> {phone}</p>
+            <p><strong>Cliente:</strong> {customerData.firstName} {customerData.lastName}</p>
+            <p><strong>Correo Electrónico:</strong> {customerData.email}</p>
+            <p><strong>Número de Celular:</strong> {customerData.phone}</p>
             <p><strong>Dirección:</strong> {address}</p>
-            <p><strong>Método de Pago:</strong> {paymentMethod ? paymentMethod.label : ''}</p>
+            <p><strong>Método de Pago:</strong> {paymentMethod ? paymentMethod.value : ''}</p>
 
-            {paymentMethod && (paymentMethod.label === "Tarjeta Crédito" || paymentMethod.label === "Tarjeta Débito") && (
+            {paymentMethod && (paymentMethod.value === "Tarjeta Crédito" || paymentMethod.value === "Tarjeta Débito") && (
               <>
                 <p><strong>Banco:</strong> {bankName}</p>
                 <p><strong>Número de Cuenta:</strong> {accountNumber}</p>
               </>
             )}
-            {(paymentMethod && (paymentMethod.label === "Nequi" || paymentMethod.label === "Daviplata" || paymentMethod.label === "Transfiya")) && (
+            {(paymentMethod && (paymentMethod.value === "Nequi" || paymentMethod.value === "Daviplata" || paymentMethod.value === "Transfiya")) && (
               <>
                 <p><strong>¿Mismo Número Registrado?:</strong> {sameRegisteredNumber ? "Sí" : "No"}</p>
                 {!sameRegisteredNumber && <p><strong>Número de Cuenta/Celular:</strong> {accountNumber}</p>}
               </>
             )}
-            <p><strong>Fecha Deseada para la Entrega:</strong> {order.deliveryDate}</p>
-            <p><strong>Producto Seleccionado:</strong> {product?.label}</p>
+            <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
+            <p><strong>Producto Seleccionado:</strong> {selectedProduct ? selectedProduct.label : ''}</p>
             <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
           </>
         )}

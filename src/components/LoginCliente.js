@@ -34,21 +34,25 @@ const LoginCliente = () => {
 
     try {
       const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
-      console.log('Inicio de sesión exitoso:', response.data);
+      console.log('Respuesta del backend:', response.data); // Asegúrate de que esta línea se ejecute y muestra la respuesta completa.
       
-      // Guardar datos en localStorage
-      localStorage.setItem('authToken', response.data.token);
-      localStorage.setItem('userData', JSON.stringify(response.data.user));
-      console.log('Token almacenado en localStorage:', response.data.token);
+      // Verificar si la respuesta contiene el token y el usuario
+      if (response.data && response.data.token && response.data.user) {
+        console.log('Token recibido:', response.data.token);
+        
+        // Llamar a handleLoginSuccess para actualizar el estado en AuthContext
+        handleLoginSuccess(response.data.user, response.data.token);
 
-      // Llamar a handleLoginSuccess (para actualizar el estado en AuthContext)
-      handleLoginSuccess(response.data.user);
+        setMessage('Credenciales válidas.');
+        setMessageType('success');
 
-      setMessage('Credenciales válidas.');
-      setMessageType('success');
-
-      // Redirigir a la página de inicio (Home Page)
-      navigate('/home-page');
+        // Redirigir a la página de inicio (Home Page)
+        navigate('/home-page');
+      } else {
+        console.log('No se encontró el token o los datos del usuario en la respuesta.');
+        setMessage('Error en la autenticación. Intenta nuevamente.');
+        setMessageType('error');
+      }
 
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
@@ -98,4 +102,5 @@ const LoginCliente = () => {
 };
 
 export default LoginCliente;
+
 

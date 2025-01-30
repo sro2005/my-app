@@ -3,21 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Select from 'react-select';
 import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css'; // Importa los estilos de la librería
+import { isValidPhoneNumber, formatPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
-// Función para verificar si el cliente es mayor de 18 años
 const isAdult = (birthDate) => {
   const today = new Date();
   const birthDateObj = new Date(birthDate);
-  let age = today.getFullYear() - birthDateObj.getFullYear();
-  const month = today.getMonth() - birthDateObj.getMonth();
-
-  // Ajuste de edad si el cumpleaños no ha pasado aún este año
-  if (month < 0 || (month === 0 && today.getDate() < birthDateObj.getDate())) {
-    age--;
-  }
-
-  return age >= 18;
+  const age = today.getFullYear() - birthDateObj.getFullYear();
+  return age >= 18 || (age === 18 && today.getMonth() >= birthDateObj.getMonth());
 };
 
 const options = [
@@ -56,27 +49,30 @@ const RegistroCliente = () => {
   const [phone, setPhone] = useState('');
   const [preferences, setPreferences] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Verificación de edad
     if (!isAdult(birthDate)) {
-      alert('Debes ser mayor de 18 años para registrarte.');
+      setError('Debes ser mayor de 18 años para registrarte.');
       return;
     }
 
     setLoading(true);
+    setError(''); // Reset error message
 
-    // Obtener la URL base de la variable de entorno
-    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
-    if (!API_URL) {
-      console.warn('La variable REACT_APP_API_BASE_URL no está configurada.');
+  // Formatear el número de teléfono y verificar su validez
+  const formattedPhone = phone ? formatPhoneNumber(phone) : ''; 
+    if (!isValidPhoneNumber(formattedPhone)) {
+      setLoading(false);
+      return;
     }
 
-    // Enviar datos al backend usando Axios
+    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
+
     axios.post(`${API_URL}/api/auth/register`, {
       firstName,
       lastName,
@@ -84,19 +80,16 @@ const RegistroCliente = () => {
       identificationNumber,
       birthDate,
       password,
-      phone,
-      preferences: preferences.map(pref => pref.value) // Enviar los valores de las preferencias
+      phone: formattedPhone, // Usar el número de teléfono formateado
+      preferences: preferences.map(pref => pref.value)
     })
     .then(response => {
-      console.log('Cliente registrado:', response.data);
       setLoading(false);
-      alert('¡Registro exitoso!');
       navigate('/login');
     })
     .catch(error => {
-      console.error('Error registrando cliente:', error);
       setLoading(false);
-      alert('Ocurrió un error al registrar al cliente. Por favor, intenta nuevamente.');
+      setError('Ocurrió un error al registrar al cliente. Por favor, intenta nuevamente.');
     });
   };
 
@@ -113,14 +106,14 @@ const RegistroCliente = () => {
         <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
       </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <PhoneInput placeholder="Número de Celular" value={phone} onChange={setPhone} defaultCountry="CO" required />
-      
+      <PhoneInput internacional defaultCountry="CO" value={phone} onChange={setPhone} placeholder="Número de Celular" required />
       <div>
         <label htmlFor="preferences">Preferencias de Productos:</label>
         <Select id="preferences" isMulti options={options} value={preferences} onChange={setPreferences} placeholder="Selecciona tus preferencias" className="select-preferences" />
       </div>
       <button type="submit">Registrar</button>
-      {loading && <div className="spinner">Procesando...</div>} {/* Mostrar un spinner mientras se procesa el registro */}
+      {loading && <div className="spinner">Procesando...</div>}
+      {error && <div className="error-message">{error}</div>} {/* Mensaje de error */}
     </form>
   );
 };

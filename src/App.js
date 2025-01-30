@@ -24,7 +24,7 @@ const AppContent = () => {
     return <Loading />;
   }
 
-  const ProtectedRoute = ({ element: Component }) => {
+  const ProtectedRoute = ({ component: Component }) => {
     return user ? <Component /> : <Navigate to="/login" />;
   };
 
@@ -41,18 +41,17 @@ const AppContent = () => {
           </>
         ) : (
           <>
-          {/* Redirigir a la página de inicio si el usuario está autenticado y está en la raíz */}
             <Route path="/" element={<Navigate to="/home-page" />} />
-            <Route path="/home-page" element={<ProtectedRoute element={HomePage} />} />
-            <Route path="/pedido-form" element={<ProtectedRoute element={PedidoForm} />} />
-            <Route path="/listado-productos" element={<ProtectedRoute element={ListadoProductos} />} />
-            <Route path="/listado-pedidos" element={<ProtectedRoute element={ListadoPedidos} />} />
-            <Route path="/perfil-cliente" element={<ProtectedRoute element={PerfilCliente} />} />
+            <Route path="/home-page" element={<ProtectedRoute component={HomePage} />} />
+            <Route path="/pedido-form" element={<ProtectedRoute component={PedidoForm} />} />
+            <Route path="/listado-productos" element={<ProtectedRoute component={ListadoProductos} />} />
+            <Route path="/listado-pedidos" element={<ProtectedRoute component={ListadoPedidos} />} />
+            <Route path="/perfil-cliente" element={<ProtectedRoute component={PerfilCliente} />} />
 
             {user?.role === 'admin' && (
               <>
-                <Route path="/producto-form" element={<ProtectedRoute element={ProductoForm} />} />
-                <Route path="/listado-clientes" element={<ProtectedRoute element={ListadoClientes} />} />
+                <Route path="/producto-form" element={<ProtectedRoute component={ProductoForm} />} />
+                <Route path="/listado-clientes" element={<ProtectedRoute component={ListadoClientes} />} />
               </>
             )}
           </>

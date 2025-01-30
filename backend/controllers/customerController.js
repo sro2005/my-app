@@ -11,12 +11,9 @@ exports.getCustomers = async (req, res) => {
   }
 };
 
-// Obtener el perfil del cliente
 exports.getProfile = async (req, res) => {
-  const { user } = req.params;
-
   try {
-    const customer = await Customer.findById(user);
+    const customer = await Customer.findById(req.user.id);
     if (!customer) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
@@ -31,9 +28,11 @@ exports.getProfile = async (req, res) => {
       preferences: customer.preferences
     });
   } catch (error) {
+    console.error('Error al obtener el perfil:', error);
     res.status(500).json({ message: 'Error al obtener el perfil', error: error.message });
   }
 };
+
 
 // Actualizar la información de un cliente (solo admins)
 exports.updateCustomer = async (req, res) => {

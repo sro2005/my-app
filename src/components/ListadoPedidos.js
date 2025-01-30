@@ -31,7 +31,7 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>ID del Pedido:</strong> {pedido._id}</p>
         <p><strong>Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
-        <p><strong>Fecha Estimada de Entrega del Pedido:</strong> {formatDate(pedido.deliveryDate)}</p>
+        <p><strong>Fecha Estimada de Entrega:</strong> {formatDate(pedido.deliveryDate)}</p>
         <p><strong>Estado del Pedido:</strong> {pedido.status || 'Estado no disponible'}</p>
       </div>
     </div>
@@ -41,22 +41,16 @@ const PedidoItem = ({ pedido }) => (
 const ListadoPedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [error, setError] = useState(null);
 
   // Realizar la solicitud cuando el componente se monta
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
-    const token = localStorage.getItem('authToken'); // Obtener el token de autenticación
-    const userId = localStorage.getItem('userId'); // Obtener el userId del cliente
+    const token = localStorage.getItem('authToken');
+    const userId = localStorage.getItem('userId');
 
-    if (!API_URL) {
-      setError('La URL de la API no está configurada.');
-      setLoading(false);
-      return;
-    }
-
-    if (!token || !userId) {
-      setError('No se encontró información de autenticación.');
+    if (!API_URL || !token || !userId) {
+      setError('Faltan datos esenciales: URL de API, token o userId.');
       setLoading(false);
       return;
     }
@@ -70,7 +64,6 @@ const ListadoPedidos = () => {
         setPedidos(response.data);
       } catch (err) {
         setError('Hubo un error al obtener los pedidos. Intente nuevamente más tarde.');
-        console.error('Error al obtener pedidos:', err);
       } finally {
         setLoading(false);
       }
@@ -117,3 +110,4 @@ const ListadoPedidos = () => {
 };
 
 export default ListadoPedidos;
+

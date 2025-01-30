@@ -6,8 +6,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
-const rfs = require('rotating-file-stream');
-require('dotenv').config(); // Cargar las variables de entorno
+const dotenv = require('dotenv');
+dotenv.config(); // Cargar variables de entorno
 
 // Importar rutas
 const productRoutes = require('./routes/productRoutes');
@@ -16,23 +16,15 @@ const orderRoutes = require('./routes/orderRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 const app = express();
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGODB_URI;
+const isProduction = process.env.NODE_ENV === 'production';
 
-// Configurar puerto dinámico para producción o local
-const PORT = process.env.PORT || 5000; // Si no hay variable de entorno, usa 5000 para desarrollo
-
-// Configuración CORS
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://localhost:3000'];
+// Configurar CORS
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (allowedOrigins.includes(origin) || !origin) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+    credentials: true, // Permitir cookies y autenticación en solicitudes cross-origin
   })
 );
 
@@ -40,79 +32,51 @@ app.use(
 app.use(helmet());
 app.use(express.json());
 
-// Configuración de logging
-const logDirectory = path.join(__dirname, 'log');
-fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
-
-const accessLogStream = rfs.createStream('access.log', {
-  interval: '1d', // rotar diariamente
-  path: logDirectory
-});
-
-app.use(morgan('combined', { stream: accessLogStream }));
+// Logging (solo en desarrollo)
+if (!isProduction) {
+  const logDirectory = path.join(__dirname, 'log');
+  if (!fs.existsSync(logDirectory)) fs.mkdirSync(logDirectory);
+  const accessLogStream = fs.createWriteStream(path.join(logDirectory, 'access.log'), { flags: 'a' });
+  app.use(morgan('dev', { stream: accessLogStream }));
+}
 
 // Conexión a MongoDB
-console.log('Connecting to MongoDB...');
 mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log('Successfully connected to MongoDB'))
-  .catch((err) => {
-    console.error('Failed to connect to MongoDB', err);
-    process.exit(1);
-  });
+  .connect(MONGO_URI)
+  .then(() => console.log('✅ MongoDB conectado correctamente'))
+  .catch((err) => console.error('❌ Error al conectar con MongoDB:', err));
 
-// Middleware para verificar la conexión a la base de datos
-const checkDbConnection = (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(500).json({ message: 'Database connection failed' });
-  }
-  next();
-};
-
-app.use(checkDbConnection);
-
-// Definición de rutas
+// Rutas de la API
 app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 
-// Ruta para la raíz
-app.get('/', (req, res) => {
-  res.send('Welcome to ⚡ELECTROVIBEHOME⚡ API');
+app.get('/', (req, res) => res.send('Bienvenido a ⚡ELECTROVIBEHOME⚡ API'));
+app.get('/health', (req, res) => res.status(200).send('API funcionando'));
+
+// Middleware de error centralizado
+app.use((req, res) => res.status(404).json({ message: 'Ruta no encontrada' }));
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  res.status(err.status || 500).json({ message: err.message || 'Error interno del servidor' });
 });
 
-// Ruta de prueba
-app.get('/health', (req, res) => res.status(200).send('API running'));
-
-// Manejo de errores de rutas no encontradas
-app.use((req, res, next) => {
-  const error = new Error('Not Found');
-  error.status = 404;
-  next(error);
-});
-
-// Middleware de manejo de errores centralizado
-const errorHandler = (err, req, res, next) => {
-  console.error(err.message);
-  res.status(err.status || 500).json({
-    message: err.message,
-  });
-};
-
-app.use(errorHandler);
-
-// Leer los certificados SSL
-const sslOptions = {};
+// Opcional: Servidor HTTPS solo si los certificados están disponibles
+let server;
 try {
-  sslOptions.key = fs.readFileSync('./localhost-key.pem');
-  sslOptions.cert = fs.readFileSync('./localhost.pem');
+  const sslOptions = {
+    key: fs.readFileSync('./localhost-key.pem'),
+    cert: fs.readFileSync('./localhost.pem'),
+  };
+  server = https.createServer(sslOptions, app);
+  console.log('✅ Servidor HTTPS activado');
 } catch (error) {
-  console.error('Error reading SSL certificates:', error);
-  process.exit(1);
+  console.warn('⚠️ No se encontraron certificados SSL. Usando HTTP.');
+  server = app;
 }
 
-// Iniciar el servidor HTTPS
-https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`HTTPS server running at https://localhost:${PORT}`);
+// Iniciar el servidor
+server.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en ${server === app ? 'http' : 'https'}://localhost:${PORT}`);
 });

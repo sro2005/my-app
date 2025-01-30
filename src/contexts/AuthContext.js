@@ -6,31 +6,32 @@ export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
+    const storedToken = localStorage.getItem('authToken');
+    const storedUser = JSON.parse(localStorage.getItem('userData'));
 
-    if (token) {
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      if (userData) {
-        setUser(userData); // Si el usuario está en localStorage, se establece
-      }
+    if (storedToken && storedUser) {
+      setUser(storedUser);
+      setToken(storedToken); // Almacenar también el token
     }
 
-    // Para detener el loading después de la verificación
-    setLoading(false);
+    setLoading(false); // Detener el loading después de la verificación
   }, []);
 
-  const handleLoginSuccess = (user) => {
+  const handleLoginSuccess = (user, token) => {
     setUser(user);
-    localStorage.setItem('authToken', user.token);
-    localStorage.setItem('userData', JSON.stringify(user)); // Asegúrate de que el objeto user tenga un campo 'role'
+    setToken(token); // Establecer el token en el estado
+    localStorage.setItem('authToken', token); // Guardar el token en localStorage
+    localStorage.setItem('userData', JSON.stringify(user)); // Guardar los datos del usuario
   };
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userData');
     setUser(null);
+    setToken(null); // Limpiar el token al hacer logout
   };
 
   if (loading) {
@@ -38,11 +39,12 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, handleLoginSuccess, handleLogout }}>
+    <AuthContext.Provider value={{ user, token, handleLoginSuccess, handleLogout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export default AuthProvider;
+
 
