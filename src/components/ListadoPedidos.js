@@ -27,10 +27,10 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
         <p><strong>💳 Método de Pago:</strong> {pedido.paymentMethod || 'No especificado'}</p>
-        <p><strong>📅 Fecha del Pedido:</strong> {formatDate(pedido.orderDate)}</p>
+        <p><strong>📅 Fecha del Pedido:</strong> {new Date(pedido.orderDate).toLocaleDateString('es-CO')}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDate(pedido.deliveryDate)}</p>
         <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
-        <p><strong>📦 Estado del Pedido:</strong> {pedido.status || 'Estado no disponible'}</p>
+        <p><strong>📦 Estado del Pedido:</strong> {pedido.status}</p>
 
       </div>
     </div>
@@ -58,7 +58,10 @@ const ListadoPedidos = () => {
       try {
         setLoading(true);
         const isAdmin = user?.role === 'admin'; // Obtener el rol del usuario desde el contexto
-        const endpoint = isAdmin ? '/api/orders/all' : `/api/orders/${userId}`;
+        const endpoint = isAdmin 
+          ? '/api/orders/all' // Admin ve todos los pedidos
+          : `/api/orders/${userId}`; // Usuario ve solo sus pedidos
+  
         const response = await axios.get(`${API_URL}${endpoint}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -71,8 +74,12 @@ const ListadoPedidos = () => {
       }
     };
 
-    if (user) {  // Verificar que el usuario esté disponible antes de realizar la solicitud
+    // Solo realizar la solicitud si el usuario está disponible
+    if (user && user._id) {
       fetchOrders();
+    } else {
+      setError('Usuario no autenticado o datos de usuario inválidos.');
+      setLoading(false);
     }
 
   }, [user]);  // Dependencia de `user` para que se ejecute cada vez que cambie
@@ -98,6 +105,7 @@ const ListadoPedidos = () => {
   return (
     <div className="container">
       <h2>Gestión de Pedidos</h2>
+      <hr />
       <p><b>✨ DEFINICIÓN:</b> La Gestión de Pedidos es el proceso que permite recibir, procesar y entregar productos a los clientes de manera organizada y eficiente. Incluye:</p>
         <ul>
           <li>Captura de información del cliente.</li>
@@ -106,14 +114,17 @@ const ListadoPedidos = () => {
           <li>Preparación del producto para su envío.</li>
           <li>Entrega final.</li>
         </ul>
+      <hr />
       <p><b>🌟 OBJETIVO:</b> Asegurar que cada pedido se procese correctamente, sin errores ni retrasos, garantizando que el cliente reciba su compra en el tiempo esperado y en las condiciones adecuadas.</p>
-      <b>📈 IMPORTANCIA:</b>
+      <hr />
+      <p><b>📈 IMPORTANCIA:</b></p>
         <ul>
           <li><b>Optimización del flujo de trabajo:</b> Permite manejar múltiples pedidos simultáneamente sin confusiones.</li>
           <li><b>Mejora en la satisfacción del cliente:</b> Reduce tiempos de espera y mejora la experiencia de usuario.</li>
           <li><b>Control y trazabilidad:</b> Cada pedido tiene un estado actualizado, permitiendo su seguimiento en tiempo real.</li>
           <li><b>Reducción de errores:</b> Minimiza problemas como envíos incorrectos, productos agotados o pagos fallidos.</li>
         </ul>
+      <hr />
       <p><b>🔍 PROCESO DE GESTIÓN DE PEDIDOS:</b></p>
         <ol>
           <li><b>Recepción del pedido:</b> El cliente selecciona los productos y genera la solicitud de compra en la plataforma.</li>
@@ -123,6 +134,7 @@ const ListadoPedidos = () => {
           <li><b>Envió y entrega:</b> El pedido es enviado por un servicio de logística y entregado al cliente dentro del plazo estipulado.</li>
           <li><b>Confirmación y cierre:</b> El cliente recibe su pedido y puede calificar la experiencia de compra.</li>
         </ol>
+      <hr />
       <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE PEDIDOS:</b></p>
         <ul>
           <li>✅<b>Rapidez en el procesamiento:</b> Disminuye los tiempos de espera entre la compra y la entrega.</li>
@@ -130,12 +142,14 @@ const ListadoPedidos = () => {
           <li>✅<b>Reducción de costos operativos:</b> Optimiza los recursos logísticos y evita reprocesos innecesarios.</li>
           <li>✅<b>Mejora en la gestión de inventarios:</b> Permite tener control de los productos disponibles y evitar sobreventas.</li>
         </ul>
+      <hr />
       <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE PEDIDOS?</b></p>
         <ul>
           <li><b>Clientes:</b> Realizan pedidos, consultan el estado y reciben notificaciones de entrega.</li>
           <li><b>Administradores:</b> Gestionan los pedidos, verifican pagos, actualizan estados y resuelven incidencias.</li>
           <li><b>Almacén/Logística:</b> Reciben las órdenes, preparan los productos y coordinan el envío.</li>
         </ul>
+      <hr />
       <h2>Listado de Pedidos</h2>
       <ul className="pedidos-list">
         {pedidos.length > 0 ? (

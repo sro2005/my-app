@@ -7,43 +7,44 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
-  const [userRole, setUserRole] = useState(null);
+  const [userRole, setUserRole] = useState(null); // Cambiado de "guest" a null
 
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
-    const storedUser = JSON.parse(localStorage.getItem('userData'));
-    const storedRole = localStorage.getItem('userRole');
+    const storedUser = localStorage.getItem('userData');
 
-    if (storedToken && storedUser && storedRole) {
-      setUser(storedUser);
-      setToken(storedToken); // Almacenar también el token
-      setUserRole(storedRole); // Almacenar el rol
+    if (storedToken && storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+      setToken(storedToken);
+      setUserRole(parsedUser?.role || null); // En caso de que no haya rol, se mantiene null
     }
 
-    setLoading(false); // Detener el loading después de la verificación
+    setLoading(false);
   }, []);
 
-  const handleLoginSuccess = (user, token, role) => {
+  const handleLoginSuccess = (user, token) => {
+    if (!user?.role || !token) {
+      console.error("Error: Datos de usuario o token inválidos");
+      return;
+    }
+
     setUser(user);
-    setToken(token); // Establecer el token en el estado
-    setUserRole(role); // Establecer el rol en el estado
-    localStorage.setItem('authToken', token); // Guardar el token en localStorage
-    localStorage.setItem('userData', JSON.stringify(user)); // Guardar los datos del usuario
-    localStorage.setItem('userRole', role); // Guardar el rol en localStorage
+    setToken(token);
+    setUserRole(user.role);
+
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('userData', JSON.stringify(user));
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    localStorage.removeItem('userRole'); // Eliminar el rol al hacer logout
+    localStorage.clear();
     setUser(null);
-    setToken(null); // Limpiar el token al hacer logout
-    setUserRole(null); // Limpiar el rol
+    setToken(null);
+    setUserRole(null);
   };
 
-  if (loading) {
-    return <Loading />; // Mostrar el componente de carga mientras se verifica el estado de autenticación
-  }
+  if (loading) return <Loading />;
 
   return (
     <AuthContext.Provider value={{ user, token, userRole, handleLoginSuccess, handleLogout }}>
@@ -53,5 +54,4 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-
 

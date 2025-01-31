@@ -11,7 +11,9 @@ const customerSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   preferences: { type: [String], required: true },
   registrationDate: { type: Date, default: Date.now },
-  role: { type: String, enum: ['user', 'admin'], default: 'user' }
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  lastActivityDate: { type: Date, default: Date.now }, // Campo para la última actividad
+  status: { type: String, default: 'Inactive', enum: ['Active', 'Inactive'] } // Campo para el estado del cliente
 });
 
 const Customer = mongoose.model('Customer', customerSchema);

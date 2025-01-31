@@ -82,14 +82,57 @@ const ListadoProductos = ({ userPreferences }) => {
 
   return (
     <div className="container">
-      <h2>Gestión de Inventario</h2>
+      <h2>Gestión de Inventarios</h2>
+      <hr />
       <div className="module-description">
-        <p><strong>Definición:</strong> Un módulo de inventario es un sistema que ayuda a administrar los productos disponibles en un negocio, proporcionando detalles como su cantidad, ubicación, precio y otros atributos importantes.</p>
-        <p><strong>Propósito:</strong> Su función principal es llevar un registro detallado de los productos, optimizando la gestión de existencias y evitando problemas como desabastecimiento o exceso de productos.</p>
-        <p><strong>Importancia:</strong> Un buen manejo de inventarios asegura que los productos estén disponibles cuando los clientes los necesiten, lo que mejora la satisfacción y optimiza la rentabilidad.</p>
+        <p><b>✨ DEFINICIÓN:</b> La Gestión de Inventarios es el proceso clave que permite controlar y mantener el stock de productos de manera eficiente y organizada. Incluye:</p>
+          <ul>
+            <li>Recepción de productos en el almacén.</li>
+            <li>Control y registro de entradas y salidas.</li>
+            <li>Monitoreo de niveles de stock.</li>
+            <li>Gestión de reposición y órdenes de compra.</li>
+            <li>Optimización del espacio de almacenamiento.</li>
+            <li>Control de productos deteriorados o fuera de servicio.</li>
+          </ul>
+        <hr />
+        <p><b>🌟 OBJETIVO:</b> Asegurar que siempre haya suficiente stock disponible para satisfacer la demanda de los clientes, evitar desabastecimientos o exceso de inventario, y mantener una gestión eficiente de los productos en todo momento.</p>
+        <hr />
+        <p><b>📈 IMPORTANCIA:</b></p>
+          <ul>
+            <li><b>Optimización de recursos:</b> Mantener niveles de inventario adecuados evita tanto los desabastecimientos como los costos asociados con el exceso de productos.</li>
+            <li><b>Mejora en la satisfacción del cliente:</b> Asegura que los productos estén disponibles para la venta o entrega sin retrasos.</li>
+            <li><b>Visibilidad en tiempo real:</b> El sistema permite conocer el estado actual del inventario, lo que facilita la toma de decisiones.</li>
+            <li><b>Reducción de costos operativos:</b> Minimiza la necesidad de almacenar productos innecesarios y ayuda a evitar pérdidas por productos vencidos o dañados.</li>
+          </ul>
+        <hr />
+        <p><b>🔍 PROCESO DE GESTIÓN DE INVENTARIOS:</b></p>
+          <ol>
+            <li><b>Recepción de productos:</b> Los productos son recibidos en el almacén, inspeccionados y registrados en el sistema.</li>
+            <li><b>Control de stock:</b> Se realiza un seguimiento de la cantidad disponible de cada producto y se actualiza el inventario en tiempo real.</li>
+            <li><b>Reposición y compras:</b> Cuando los niveles de stock son bajos, se generan órdenes de compra para asegurar la reposición de productos.</li>
+            <li><b>Gestión de salidas:</b> Cuando los productos son vendidos o utilizados en pedidos, el inventario se actualiza para reflejar las cantidades restantes.</li>
+            <li><b>Control de calidad:</b> Se realiza un seguimiento para asegurarse de que los productos no estén deteriorados o fuera de servicio, y se gestionan devoluciones si es necesario.</li>
+            <li><b>Optimización del espacio:</b> El espacio de almacenamiento se organiza para mejorar el acceso a los productos y reducir tiempos de búsqueda.</li>
+          </ol>
+        <hr />
+        <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE INVENTARIOS:</b></p>
+          <ul>
+            <li><b>✅ Reducción de costos:</b> Evita la sobrecompra y la acumulación innecesaria de productos.</li>
+            <li><b>✅ Mayor precisión:</b> Mantiene un control exacto sobre el stock, reduciendo errores de inventario.</li>
+            <li><b>✅ Mejor respuesta a la demanda:</b> Permite tener productos disponibles para satisfacer las necesidades del cliente de forma rápida y precisa.</li>
+            <li><b>✅ Eficiencia operativa:</b> Mejora la organización del almacén y facilita la gestión de pedidos y devoluciones.</li>
+          </ul>
+        <hr />
+        <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE INVENTARIOS?</b></p>
+          <ul>
+            <li><b>Administradores:</b> Supervisan el inventario, gestionan los niveles de stock y ordenan la reposición de productos.</li>
+            <li><b>Almacén/Logística:</b> Se encargan de recibir, almacenar, organizar y despachar los productos según las órdenes.</li>
+            <li><b>Ventas:</b> Consultan el inventario para verificar la disponibilidad de productos y realizar ventas sin inconvenientes.</li>
+          </ul>
+        <hr />
       </div>
 
-      <h2>Listado de Inventario</h2>
+      <h2>Listado de Inventarios</h2>
       <ul className="productos-list">
         {productos.length > 0 ? (
           productos.map(producto => (

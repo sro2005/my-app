@@ -106,7 +106,7 @@ const RegistroCliente = () => {
         <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
       </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <PhoneInput internacional defaultCountry="CO" value={phone} onChange={setPhone} placeholder="Número de Celular" required />
+      <PhoneInput international defaultCountry="CO" value={phone} onChange={setPhone} placeholder="Número de Celular" required />
       <div>
         <label htmlFor="preferences">Preferencias de Productos:</label>
         <Select id="preferences" isMulti options={options} value={preferences} onChange={setPreferences} placeholder="Selecciona tus preferencias" className="select-preferences" />

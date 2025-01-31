@@ -102,7 +102,7 @@ const PedidoForm = () => {
       address,
       paymentMethod: paymentMethod.value, 
       deliveryDate,
-      products: [{ productId: selectedProduct.value, quantity: 1 }],
+      products: [{ productId: selectedProduct.value, quantity: "" }],
       totalAmount,
       accountNumber: sameRegisteredNumber ? customerData.phone : accountNumber || undefined, // Si el número es el mismo, usamos el número registrado del cliente
       bankName: bankName || undefined,

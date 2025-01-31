@@ -17,7 +17,20 @@ exports.validateProducts = async (products) => {
 exports.reduceInventory = async (products) => {
   for (const item of products) {
     const product = await Product.findById(item.productId);
+    console.log(`Reduciendo inventario para ${product.name}: cantidad actual ${product.quantity}, reduciendo por ${item.quantity}`);
     product.quantity -= item.quantity;
     await product.save();
+    console.log(`Nuevo inventario para ${product.name}: ${product.quantity}`);
+  }
+};
+
+// Función para restaurar inventario de productos
+exports.restoreInventory = async (products) => {
+  for (const item of products) {
+    const product = await Product.findById(item.productId);
+    console.log(`Restaurando inventario para ${product.name}: cantidad actual ${product.quantity}, aumentando por ${item.quantity}`);
+    product.quantity += item.quantity;
+    await product.save();
+    console.log(`Nuevo inventario para ${product.name}: ${product.quantity}`);
   }
 };

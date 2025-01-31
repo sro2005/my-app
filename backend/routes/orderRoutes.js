@@ -9,8 +9,8 @@ router.post('/realizar', authenticateToken, orderController.createOrder);
 // Ruta para obtener todos los pedidos (solo para administradores)
 router.get('/all', authenticateAdminToken, orderController.getOrders);
 
-// Ruta para obtener los pedidos de un usuario (solo para usuarios normales)
-router.get('/:userId', authenticateToken, orderController.getUserOrders);
+// Ruta para obtener un pedido específico por su ID (abierto para usuarios autenticados)
+router.get('/:orderId', authenticateToken, orderController.getOrderById);
 
 // Ruta para actualizar un pedido (solo para administradores)
 router.put('/:id', authenticateAdminToken, orderController.updateOrder);
