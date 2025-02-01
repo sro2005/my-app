@@ -10,10 +10,11 @@ router.post('/realizar', authenticateToken, orderController.createOrder);
 router.get('/all', authenticateAdminToken, orderController.getOrders);
 
 // Ruta para obtener un pedido específico por su ID (abierto para usuarios autenticados)
-router.get('/:orderId', authenticateToken, orderController.getOrderById);
+router.get('/:id', authenticateToken, orderController.getOrderById);
 
 // Ruta para actualizar un pedido (solo para administradores)
-router.put('/:id', authenticateAdminToken, orderController.updateOrder);
+// Ruta para actualizar automáticamente el estado de un pedido
+router.put('/:id/status', authenticateAdminToken, orderController.updateOrderStatusAutomatically);
 
 // Ruta para eliminar un pedido (solo para administradores)
 router.delete('/:id', authenticateAdminToken, orderController.deleteOrder);

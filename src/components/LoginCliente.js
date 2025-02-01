@@ -49,7 +49,6 @@ const LoginCliente = () => {
         // Redirigir a la página de inicio (Home Page)
         setTimeout(() => {
           navigate('/home-page');
-          setLoading(false);
         }, 3000); // Tiempo de espera antes de la redirección
       } else {
         throw new Error('Error en la autenticación. Intenta nuevamente.');
@@ -58,7 +57,6 @@ const LoginCliente = () => {
       console.error('Error en el inicio de sesión:', error);
       setMessage(error.response?.data?.message || 'Credenciales inválidas. Por favor, intenta nuevamente.');
       setMessageType('error');
-      setLoading(false);
     }
   };
 
@@ -81,8 +79,14 @@ const LoginCliente = () => {
         required 
       />
       <button type="submit" disabled={loading}>Ingresar</button>
-      {message && <p className={`message ${messageType}`}>{message}</p>}
+      {message && (
+        <p className={`message ${messageType === 'error' ? 'error' : 'success'}`}>
+          {message}
+        </p>
+      )}
+      
       {loading && <div className="spinner">Cargando...</div>}
+
       <div style={{ textAlign: 'center', marginTop: '10px' }}>
         <a href="/recover-password" style={{ color: '#FF6347', textDecoration: 'none' }}>
           ¿Olvidaste tu contraseña?

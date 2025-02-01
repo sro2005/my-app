@@ -61,8 +61,10 @@ const PedidoForm = () => {
   // Maneja el cambio de selección de producto
   const handleProductChange = (selectedOption) => {
     setSelectedProduct(selectedOption);
-    setTotalAmount(selectedOption?.price > 0 ? selectedOption.price : 0);
-  };
+    if (selectedOption?.price > 0) {
+      setTotalAmount(selectedOption.price);
+    }
+  };  
 
   // Maneja el cambio en el método de pago
   const handlePaymentMethodChange = (selectedOption) => {
@@ -100,13 +102,13 @@ const PedidoForm = () => {
       email: customerData.email,
       phone: customerData.phone,
       address,
-      paymentMethod: paymentMethod.value, 
+      paymentMethod, 
       deliveryDate,
-      products: [{ productId: selectedProduct.value, quantity: "" }],
+      products: selectedProduct && selectedProduct.value ? [{ productId: selectedProduct.value, quantity: 1 }] : [],
       totalAmount,
-      accountNumber: sameRegisteredNumber ? customerData.phone : accountNumber || undefined, // Si el número es el mismo, usamos el número registrado del cliente
-      bankName: bankName || undefined,
-      sameRegisteredNumber: sameRegisteredNumber, // Verifica que aquí no sea undefined
+      accountNumber,
+      bankName,
+      sameRegisteredNumber, 
     };
 
     // Verificar el pedido antes de continuar
@@ -200,11 +202,13 @@ const PedidoForm = () => {
         <Select placeholder="Selecciona un producto" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable />
         
         <h3>Total a Pagar: {formatPrice(totalAmount)}</h3>
-        <button type="submit" disabled={loading}>REALIZAR</button>
-      </form>
+      <button type="submit" disabled={loading || totalAmount === 0}>
+        REALIZAR
+      </button>
+    </form>
 
       {showConfirmModal && (
-        <div className="modal">
+        <div className="modal" aria-live="assertive">
         <div className="modal-content">
           <h3 className="modal-title">CONFIRMACIÓN DEL PEDIDO</h3>
           <hr className="modal-divider" />
@@ -217,7 +221,7 @@ const PedidoForm = () => {
             <p><strong>Correo Electrónico:</strong> {customerData.email}</p>
             <p><strong>Número de Celular:</strong> {customerData.phone}</p>
             <p><strong>Dirección:</strong> {address}</p>
-            <p><strong>Método de Pago:</strong> {paymentMethod ? paymentMethod.value : ''}</p>
+            <p><strong>Método de Pago:</strong> {paymentMethod ? paymentMethod.value : 'No especificado'}</p>
 
             {paymentMethod && (paymentMethod.value === "Tarjeta Crédito" || paymentMethod.value === "Tarjeta Débito") && (
               <>
@@ -232,7 +236,7 @@ const PedidoForm = () => {
               </>
             )}
             <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
-            <p><strong>Producto Seleccionado:</strong> {selectedProduct ? selectedProduct.label : ''}</p>
+            <p><strong>Producto Seleccionado:</strong> {selectedProduct ? selectedProduct.label : 'No seleccionado'}</p>
             <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
           </>
         )}

@@ -4,6 +4,8 @@ const { validateProducts, reduceInventory, restoreInventory } = require('../util
 
 // Función para actualizar el estado del pedido automáticamente
 const updateOrderStatus = async (order) => {
+  const previousStatus = order.status;
+
   if (order.status === 'Pendiente' && order.paymentConfirmed) {
     order.status = 'Procesando';
   } else if (order.status === 'Procesando' && order.packed) {
@@ -11,7 +13,9 @@ const updateOrderStatus = async (order) => {
   } else if (order.status === 'Enviado' && order.delivered) {
     order.status = 'Entregado';
   }
-  await order.save();
+  if (previousStatus !== order.status) {
+    await order.save();
+  }
 };
 
 // Crear un nuevo pedido
@@ -31,7 +35,7 @@ exports.createOrder = async (req, res) => {
     const newOrder = new Order({
       firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products,
       orderDate: new Date(), // Registrar la fecha del pedido
-      userId: userId  // Asignar el usuario que hizo el pedido
+      userId  // Asignar el usuario que hizo el pedido
     });
 
     await newOrder.save();
@@ -48,7 +52,7 @@ exports.getOrderById = async (req, res) => {
     const userId = req.user._id;  // Obtener el ID del usuario desde el token decodificado
     const isAdmin = req.user.role === 'admin';  // Comprobar si el usuario es admin
 
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId).populate('products'); // Poblar productos
 
     if (!order) {
       return res.status(404).json({ message: 'Pedido no encontrado' });
@@ -68,9 +72,10 @@ exports.getOrderById = async (req, res) => {
 // Obtener todos los pedidos (solo admins)
 exports.getOrders = async (req, res) => {
   try {
-    res.status(200).json(await Order.find());
+    const orders = await Order.find().populate('products');
+    res.status(200).json(orders);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ message: 'Error al obtener los pedidos', error: error.message });
   }
 };
 
@@ -86,13 +91,16 @@ exports.updateOrder = async (req, res) => {
     const existingOrder = await Order.findById(id);
     if (!existingOrder) return res.status(404).json({ message: 'Pedido no encontrado' });
 
-    await restoreInventory(existingOrder.products);
-    const updatedOrder = await Order.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-    await reduceInventory(req.body.products);
+    // Si los productos han cambiado, restaurar el inventario del pedido anterior
+    if (JSON.stringify(existingOrder.products) !== JSON.stringify(req.body.products)) {
+      await restoreInventory(existingOrder.products);
+      await reduceInventory(req.body.products);
+    }
 
+    const updatedOrder = await Order.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
     res.status(200).json({ message: 'Pedido actualizado exitosamente', order: updatedOrder });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ message: 'Error al actualizar el pedido', error: error.message });
   }
 };
 
@@ -108,20 +116,26 @@ exports.deleteOrder = async (req, res) => {
     
     res.status(200).json({ message: 'Pedido eliminado exitosamente' });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ message: 'Error al eliminar el pedido', error: error.message });
   }
 };
 
 // Actualizar el estado del pedido automáticamente
 exports.updateOrderStatusAutomatically = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Pedido no encontrado' });
 
+    const previousStatus = order.status;
     await updateOrderStatus(order);
+
+    if (previousStatus === order.status) {
+      return res.status(200).json({ message: 'El estado del pedido ya estaba actualizado', order });
+    }
+
     res.status(200).json({ message: 'Estado del pedido actualizado automáticamente', order });
   } catch (error) {
-    res.status(400).json({ message: 'Error al actualizar el estado del pedido automáticamente', error: error.message });
+    res.status(500).json({ message: 'Error al actualizar el estado del pedido', error: error.message });
   }
 };

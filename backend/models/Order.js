@@ -1,11 +1,5 @@
 const mongoose = require('mongoose');
 
-// Esquema anidado para productos en el pedido
-const productSchema = new mongoose.Schema({
-  productId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' },
-  quantity: { type: Number, required: true } 
-});
-
 // Definición del esquema del pedido
 const orderSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
@@ -16,12 +10,12 @@ const orderSchema = new mongoose.Schema({
   paymentMethod: { type: String, required: true },
   deliveryDate: { type: Date, required: true },
   totalAmount: { type: Number, required: true, min: 0 },
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }], // Referencia a los productos
   orderDate: { type: Date, default: Date.now }, // Campo para la fecha del pedido
   status: { type: String, default: 'Pendiente', enum: ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado'] }, // Añadir estados posibles
   paymentConfirmed: { type: Boolean, default: false },
   packed: { type: Boolean, default: false },
   delivered: { type: Boolean, default: false },
-  products: { type: [productSchema], required: true },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } // Referencia al usuario que realizó el pedido
 });
 
