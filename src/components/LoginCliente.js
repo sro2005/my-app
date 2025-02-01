@@ -29,7 +29,6 @@ const LoginCliente = () => {
     }
 
     const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
-
     setLoading(true);
 
     try {
@@ -42,28 +41,23 @@ const LoginCliente = () => {
         
         // Llamar a handleLoginSuccess para actualizar el estado en AuthContext
         handleLoginSuccess(response.data.user, response.data.token);
+        
+        // Primero, desactivamos el "Cargando..." y mostramos el mensaje
         setMessage('Inicio de sesión exitoso. Redirigiendo...');
         setMessageType('success');
 
         // Redirigir a la página de inicio (Home Page)
         setTimeout(() => {
           navigate('/home-page');
+          setLoading(false);
         }, 3000); // Tiempo de espera antes de la redirección
       } else {
-        console.log('No se encontró el token o los datos del usuario en la respuesta.');
-        setMessage('Error en la autenticación. Intenta nuevamente.');
-        setMessageType('error');
+        throw new Error('Error en la autenticación. Intenta nuevamente.');
       }
-
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
-      if (error.response && error.response.data && error.response.data.message) {
-        setMessage(error.response.data.message);
-      } else {
-        setMessage('Credenciales inválidas. Por favor, intenta nuevamente.');
-      }
+      setMessage(error.response?.data?.message || 'Credenciales inválidas. Por favor, intenta nuevamente.');
       setMessageType('error');
-    } finally {
       setLoading(false);
     }
   };
@@ -87,11 +81,7 @@ const LoginCliente = () => {
         required 
       />
       <button type="submit" disabled={loading}>Ingresar</button>
-      {message && (
-        <p className={`message ${messageType === 'error' ? 'error' : 'success'}`}>
-          {message}
-        </p>
-      )}
+      {message && <p className={`message ${messageType}`}>{message}</p>}
       {loading && <div className="spinner">Cargando...</div>}
       <div style={{ textAlign: 'center', marginTop: '10px' }}>
         <a href="/recover-password" style={{ color: '#FF6347', textDecoration: 'none' }}>
