@@ -45,27 +45,27 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// Obtener un pedido específico por ID
-exports.getOrderById = async (req, res) => {
+// Obtener todos los pedidos de un usuario por userId
+exports.getOrdersByUserId = async (req, res) => {
   try {
-    const { orderId } = req.params;
     const userId = req.user._id;  // Obtener el ID del usuario desde el token decodificado
     const isAdmin = req.user.role === 'admin';  // Comprobar si el usuario es admin
 
-    const order = await Order.findById(orderId).populate('products'); // Poblar productos
-
-    if (!order) {
-      return res.status(404).json({ message: 'Pedido no encontrado' });
+    // Si el usuario es administrador, puede ver todos los pedidos
+    let orders;
+    if (isAdmin) {
+      orders = await Order.find().populate('products'); // Poblar productos
+    } else {
+      orders = await Order.find({ userId }).populate('products'); // Solo los pedidos del usuario
     }
 
-    // Verificar que el usuario que solicita el pedido sea el propietario o un administrador
-    if (order.userId.toString() !== userId && !isAdmin) {
-      return res.status(403).json({ message: 'No tienes permisos para ver este pedido' });
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron pedidos' });
     }
 
-    res.status(200).json(order);
+    res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener el pedido', error: error.message });
+    res.status(500).json({ message: 'Error al obtener los pedidos', error: error.message });
   }
 };
 

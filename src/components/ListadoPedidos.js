@@ -60,7 +60,7 @@ const ListadoPedidos = () => {
         const isAdmin = user?.role === 'admin'; // Obtener el rol del usuario desde el contexto
         const endpoint = isAdmin 
           ? '/api/orders/all' // Admin ve todos los pedidos
-          : `/api/orders/:id`; // Usuario ve solo sus pedidos
+          : `/api/orders/user/${userId}`; // Obtener pedidos por userId
   
         const response = await axios.get(`${API_URL}${endpoint}`, {
           headers: { Authorization: `Bearer ${token}` },

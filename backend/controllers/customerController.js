@@ -47,12 +47,23 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// Actualizar la información de un cliente (solo admins)
+// Actualizar la información de un cliente (solo el usuario o un admin pueden hacerlo)
 exports.updateCustomer = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { firstName, lastName, email, identificationNumber, birthDate, phone, preferences } = req.body;
+  const { id } = req.params; // ID del cliente a actualizar
+  const { firstName, lastName, email, identificationNumber, birthDate, phone, preferences } = req.body;
 
+  try {
+    // Si el ID en la URL no coincide con el ID del usuario autenticado, solo un admin puede hacer la actualización
+    if (req.user.id !== id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'No tienes permisos para actualizar esta información' });
+    }
+
+    // Validar que los campos obligatorios no estén vacíos
+    if (!firstName || !lastName || !email || !identificationNumber || !birthDate || !phone) {
+      return res.status(400).json({ message: 'Todos los campos obligatorios deben ser completados' });
+    }
+
+    // Actualizar el cliente
     const updatedCustomer = await Customer.findByIdAndUpdate(
       id,
       { firstName, lastName, email, identificationNumber, birthDate, phone, preferences },
@@ -63,10 +74,11 @@ exports.updateCustomer = async (req, res) => {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
+    // Retornar el cliente actualizado
     res.status(200).json({ message: 'Cliente actualizado exitosamente', updatedCustomer });
   } catch (error) {
     console.error('Error al actualizar el cliente:', error);
-    res.status(400).json({ message: 'Error al actualizar el cliente', error: error.message });
+    res.status(500).json({ message: 'Error al actualizar el cliente', error: error.message });
   }
 };
 

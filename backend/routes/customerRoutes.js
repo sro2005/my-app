@@ -14,15 +14,7 @@ router.get('/all', authenticateAdminToken, customerController.getCustomers);
 router.get('/profile', authenticateToken, customerController.getProfile);
 
 // Ruta para actualizar un cliente (solo el usuario o un admin pueden hacerlo)
-router.put('/:id', authenticateToken, (req, res, next) => {
-  const { id, role } = req.user;
-  
-  if (id !== req.params.id && role !== 'admin') {
-    return res.status(403).json({ message: 'No autorizado' });
-  }
-  
-  next();
-}, customerController.updateCustomer);
+router.put('/:id', authenticateToken, customerController.updateCustomer); // Validación de autorización ya hecha en el controlador
 
 // Ruta para eliminar un cliente (solo para admins)
 router.delete('/:id', authenticateAdminToken, customerController.deleteCustomer);

@@ -30,6 +30,16 @@ const PerfilCliente = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCustomer(data);
+        // Actualiza formData con los datos cargados del cliente
+        setFormData({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          birthDate: data.birthDate,
+          identificationNumber: data.identificationNumber,
+          phone: data.phone,
+          preferences: data.preferences,
+        });
       } catch (err) {
         if (err.response?.status === 401) {
           setError('Tu sesión ha expirado. Inicia sesión nuevamente.');
@@ -127,7 +137,7 @@ const PerfilCliente = () => {
               <input
                 type={field === 'FECHA DE NACIMIENTO' ? 'date' : 'text'}
                 name={field.toLowerCase().replace(/ /g, '')} // Para evitar problemas con nombres de campos
-                value={formData[field.toLowerCase().replace(/ /g, '')] || ''}
+                value={formData[field.toLowerCase().replace(/ /g, '')] || ''} // Se asegura de mostrar el valor actual
                 onChange={handleInputChange}
               />
             </div>

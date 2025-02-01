@@ -10,10 +10,7 @@ const orderSchema = new mongoose.Schema({
   paymentMethod: { type: String, required: true },
   deliveryDate: { type: Date, required: true },
   totalAmount: { type: Number, required: true, min: 0 },
-  products: [{
-    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-    quantity: { type: Number, required: true }
-  }],
+  products: [{ productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, quantity: { type: Number, required: true } }],
   orderDate: { type: Date, default: Date.now }, // Campo para la fecha del pedido
   status: { type: String, default: 'Pendiente', enum: ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado'] }, // Añadir estados posibles
   paymentConfirmed: { type: Boolean, default: false },
