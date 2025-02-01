@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Select from 'react-select';
 import PhoneInput from 'react-phone-number-input';
-import { isValidPhoneNumber, formatPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 
 const isAdult = (birthDate) => {
@@ -39,6 +38,9 @@ const options = [
   { value: 'Ventiladores', label: 'Ventiladores' }
 ];
 
+// Ordenar las opciones alfabéticamente por el label
+const sortedOptions = options.sort((a, b) => a.label.localeCompare(b.label));
+
 const RegistroCliente = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -50,8 +52,15 @@ const RegistroCliente = () => {
   const [preferences, setPreferences] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const navigate = useNavigate();
+
+  // Validación para asegurarse de que el número de identificación no exceda los 10 dígitos
+  const isValidIdentification = (idNumber) => {
+    const cleanValue = idNumber.replace(/[^\d]/g, ''); // Elimina los puntos antes de validar
+    return cleanValue.length <= 10;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,15 +70,13 @@ const RegistroCliente = () => {
       return;
     }
 
-    setLoading(true);
-    setError(''); // Reset error message
-
-  // Formatear el número de teléfono y verificar su validez
-  const formattedPhone = phone ? formatPhoneNumber(phone) : ''; 
-    if (!isValidPhoneNumber(formattedPhone)) {
-      setLoading(false);
+    if (!isValidIdentification(identificationNumber)) {
+      setError('El número de identificación debe ser de 10 dígitos.');
       return;
     }
+
+    setLoading(true);
+    setError(''); // Reset error message
 
     const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
 
@@ -80,19 +87,35 @@ const RegistroCliente = () => {
       identificationNumber,
       birthDate,
       password,
-      phone: formattedPhone, // Usar el número de teléfono formateado
+      phone,
       preferences: preferences.map(pref => pref.value)
     })
     .then(response => {
-      setLoading(false);
-      navigate('/login');
+      console.log('Cliente registrado:', response.data); // Verifica la respuesta
+      setSuccessMessage('¡Registro exitoso! Redirigiendo...');
+      setTimeout(() => {
+        navigate('/login'); // Redirigir después de 2 segundos
+      }, 3000);
     })
     .catch(error => {
-      setLoading(false);
+      console.error('Error registrando cliente', error); // Verifica el error en caso de fallo
       setError('Ocurrió un error al registrar al cliente. Por favor, intenta nuevamente.');
     });
   };
 
+  const formatIdentificationNumber = (value) => {
+    let cleanValue = value.replace(/[^\d]/g, ''); // Elimina todo lo que no sea número
+  
+    // Limita a 10 dígitos
+    if (cleanValue.length > 10) {
+      cleanValue = cleanValue.slice(0, 10);
+    }
+  
+    // Formatear con puntos
+    return cleanValue
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Este patrón agrega puntos cada 3 dígitos
+  };
+  
   return (
     <form onSubmit={handleSubmit}>
       <h1>CREAR CUENTA</h1>
@@ -100,20 +123,29 @@ const RegistroCliente = () => {
       <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
       <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
       <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="text" placeholder="Número de Identificación (Cédula de Ciudadanía)" value={identificationNumber} onChange={(e) => setIdentificationNumber(e.target.value)} required />
+      <input type="text" placeholder="Número de Identificación (Cédula de Ciudadanía)" value={identificationNumber} onChange={(e) => setIdentificationNumber(formatIdentificationNumber(e.target.value))}  required />
       <div>
         <label htmlFor="birthDate">Fecha de Nacimiento:</label>
         <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
       </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <PhoneInput international defaultCountry="CO" value={phone} onChange={setPhone} placeholder="Número de Celular" required />
+      <PhoneInput defaultCountry="CO" value={phone} onChange={setPhone} placeholder="Número de Celular" required />
       <div>
         <label htmlFor="preferences">Preferencias de Productos:</label>
-        <Select id="preferences" isMulti options={options} value={preferences} onChange={setPreferences} placeholder="Selecciona tus preferencias" className="select-preferences" />
+        <Select 
+          id="preferences" 
+          isMulti 
+          options={sortedOptions} // Usamos las opciones ordenadas
+          value={preferences} 
+          onChange={setPreferences} 
+          placeholder="Selecciona tus preferencias" 
+          className="select-preferences" 
+        />
       </div>
       <button type="submit">Registrar</button>
       {loading && <div className="spinner">Procesando...</div>}
       {error && <div className="error-message">{error}</div>} {/* Mensaje de error */}
+      {successMessage && <div className="success-message">{successMessage}</div>} {/* Mensaje de éxito */}
     </form>
   );
 };

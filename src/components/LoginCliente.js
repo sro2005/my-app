@@ -42,12 +42,13 @@ const LoginCliente = () => {
         
         // Llamar a handleLoginSuccess para actualizar el estado en AuthContext
         handleLoginSuccess(response.data.user, response.data.token);
-
-        setMessage('Credenciales válidas.');
+        setMessage('Inicio de sesión exitoso. Redirigiendo...');
         setMessageType('success');
 
         // Redirigir a la página de inicio (Home Page)
-        navigate('/home-page');
+        setTimeout(() => {
+          navigate('/home-page');
+        }, 3000); // Tiempo de espera antes de la redirección
       } else {
         console.log('No se encontró el token o los datos del usuario en la respuesta.');
         setMessage('Error en la autenticación. Intenta nuevamente.');
@@ -102,5 +103,3 @@ const LoginCliente = () => {
 };
 
 export default LoginCliente;
-
-

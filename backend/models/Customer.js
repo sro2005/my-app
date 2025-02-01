@@ -5,7 +5,7 @@ const customerSchema = new mongoose.Schema({
   firstName: { type: String, required: true, trim: true },
   lastName: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true, match: [/^\S+@\S+\.\S+$/, 'Correo electrónico no válido'] },
-  identificationNumber: { type: String, required: true, unique: true, match: [/^\d{10}$/, 'Número de identificación debe tener 10 dígitos'] },
+  identificationNumber: { type: String, required: true, unique: true, match: [/^\d{1,3}(\.\d{3})*$/, 'Número de identificación no válido']  },
   birthDate: { type: Date, required: true },
   password: { type: String, required: true },
   phone: { type: String, required: true },

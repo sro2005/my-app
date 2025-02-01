@@ -22,7 +22,7 @@ const orderSchema = new mongoose.Schema({
   packed: { type: Boolean, default: false },
   delivered: { type: Boolean, default: false },
   products: { type: [productSchema], required: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Referencia al usuario que realizó el pedido
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } // Referencia al usuario que realizó el pedido
 });
 
 module.exports = mongoose.model('Order', orderSchema);
