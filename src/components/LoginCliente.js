@@ -57,6 +57,11 @@ const LoginCliente = () => {
       console.error('Error en el inicio de sesión:', error);
       setMessage(error.response?.data?.message || 'Credenciales inválidas. Por favor, intenta nuevamente.');
       setMessageType('error');
+      // Opcional: limpiar el campo de contraseña
+      setPassword('');
+    } finally {
+      // Siempre desactivamos el estado de carga, tanto si la operación fue exitosa como si no.
+      setLoading(false);
     }
   };
 

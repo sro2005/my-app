@@ -13,4 +13,7 @@ exports.orderSchema = Joi.object({
   products: Joi.array().items( Joi.object({ productId: Joi.string().hex().length(24).required(), // ID de producto válido
   quantity: Joi.number().integer().positive().min(1).required() }) // Asegura que la cantidad sea positiva y mayor a cero
   ).min(1).required(), // Al menos un producto en el pedido 
+  accountNumber: Joi.string().trim().min(1).optional(),
+  bankName: Joi.string().optional().allow(''),
+  sameRegisteredNumber: Joi.boolean().optional() // Campo opcional
 });

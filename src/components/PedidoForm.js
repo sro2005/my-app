@@ -102,14 +102,22 @@ const PedidoForm = () => {
       email: customerData.email,
       phone: customerData.phone,
       address,
-      paymentMethod, 
+      paymentMethod: paymentMethod.value,
       deliveryDate,
-      products: selectedProduct && selectedProduct.value ? [{ productId: selectedProduct.value, quantity: 1 }] : [],
+      products: [{ productId: selectedProduct.value, quantity: 1 }],
       totalAmount,
-      accountNumber,
-      bankName,
       sameRegisteredNumber, 
     };
+
+    // Incluir bankName solo si no es una cadena vacía
+    if (bankName.trim() !== "") {
+    newOrder.bankName = bankName;
+    }
+
+    // Agregar accountNumber solo si no es una cadena vacía
+    if (accountNumber.trim() !== "") {
+    newOrder.accountNumber = accountNumber;
+    }
 
     // Verificar el pedido antes de continuar
     console.log('Datos del pedido antes de la confirmación:', newOrder);
@@ -133,7 +141,8 @@ const PedidoForm = () => {
       })
       .then(response => {
         alert('¡Pedido realizado exitosamente!');
-        navigate('/confirmacion-pedido', { state: { order: response.data } });
+      // Redirigir a la página de Gestión de Pedidos
+      navigate('/listado-pedidos');  // Aquí es donde rediriges después de confirmar el pedido
       })
       .catch(error => {
         console.error('Error realizando pedido:', error);
