@@ -27,7 +27,7 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
         <p><strong>💳 Método de Pago:</strong> {pedido.paymentMethod || 'No especificado'}</p>
-        <p><strong>📅 Fecha del Pedido:</strong> {new Date(pedido.orderDate).toLocaleDateString('es-CO')}</p>
+        <p><strong>📅 Fecha del Pedido:</strong> {new Date(pedido.orderDate).toLocaleString('es-CO')}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDate(pedido.deliveryDate)}</p>
         <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
         <p><strong>📦 Estado del Pedido:</strong> {pedido.status}</p>

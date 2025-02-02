@@ -2,19 +2,23 @@ const Customer = require('../models/Customer');
 const Order = require('../models/Order');
 const { calculateCustomerStatus } = require('../utils/calculateCustomerStatus');
 
+// Función auxiliar para manejar errores
+const handleError = (res, error, message, statusCode = 400) => {
+  console.error(message, error);
+  res.status(statusCode).json({ message, error: error.message });
+};
+
 // Obtener todos los clientes (solo admins)
 exports.getCustomers = async (req, res) => {
   try {
     const customers = await Customer.find();
     const customersWithStatus = await Promise.all(customers.map(async (customer) => {
       const orders = await Order.find({ userId: customer._id });
-      const status = calculateCustomerStatus(customer.lastActivityDate);
-      return { ...customer._doc, status, orders };
+      return { ...customer._doc, status: calculateCustomerStatus(customer.lastActivityDate), orders };
     }));
     res.status(200).json(customersWithStatus);
   } catch (error) {
-    console.error('Error al obtener los clientes:', error);
-    res.status(400).json({ message: 'Error al obtener los clientes', error: error.message });
+    handleError(res, error, 'Error al obtener los clientes');
   }
 };
 
@@ -22,63 +26,36 @@ exports.getCustomers = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const customer = await Customer.findById(req.user.id);
-    if (!customer) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
-    }
+    if (!customer) return res.status(404).json({ message: 'Cliente no encontrado' });
 
     const orders = await Order.find({ userId: req.user.id });
-    const status = calculateCustomerStatus(customer.lastActivityDate);
-
-    res.status(200).json({
-      firstName: customer.firstName,
-      lastName: customer.lastName,
-      email: customer.email,
-      identificationNumber: customer.identificationNumber,
-      birthDate: customer.birthDate,
-      phone: customer.phone,
-      preferences: customer.preferences,
-      lastActivityDate: customer.lastActivityDate,
-      status,
-      orders
-    });
+    res.status(200).json({ ...customer._doc, status: calculateCustomerStatus(customer.lastActivityDate), orders });
   } catch (error) {
-    console.error('Error al obtener el perfil:', error);
-    res.status(500).json({ message: 'Error al obtener el perfil', error: error.message });
+    handleError(res, error, 'Error al obtener el perfil', 500);
   }
 };
 
-// Actualizar la información de un cliente (solo el usuario o un admin pueden hacerlo)
+// Actualizar la información de un cliente (solo usuario o admin)
 exports.updateCustomer = async (req, res) => {
-  const { id } = req.params; // ID del cliente a actualizar
+  const { id } = req.params;
   const { firstName, lastName, email, identificationNumber, birthDate, phone, preferences } = req.body;
 
   try {
-    // Si el ID en la URL no coincide con el ID del usuario autenticado, solo un admin puede hacer la actualización
     if (req.user.id !== id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No tienes permisos para actualizar esta información' });
     }
 
-    // Validar que los campos obligatorios no estén vacíos
-    if (!firstName || !lastName || !email || !identificationNumber || !birthDate || !phone) {
-      return res.status(400).json({ message: 'Todos los campos obligatorios deben ser completados' });
-    }
-
-    // Actualizar el cliente
     const updatedCustomer = await Customer.findByIdAndUpdate(
       id,
       { firstName, lastName, email, identificationNumber, birthDate, phone, preferences },
       { new: true, runValidators: true }
     );
 
-    if (!updatedCustomer) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
-    }
+    if (!updatedCustomer) return res.status(404).json({ message: 'Cliente no encontrado' });
 
-    // Retornar el cliente actualizado
     res.status(200).json({ message: 'Cliente actualizado exitosamente', updatedCustomer });
   } catch (error) {
-    console.error('Error al actualizar el cliente:', error);
-    res.status(500).json({ message: 'Error al actualizar el cliente', error: error.message });
+    handleError(res, error, 'Error al actualizar el cliente', 500);
   }
 };
 
@@ -88,14 +65,13 @@ exports.deleteCustomer = async (req, res) => {
     const { id } = req.params;
 
     const deletedCustomer = await Customer.findByIdAndDelete(id);
+    if (!deletedCustomer) return res.status(404).json({ message: 'Cliente no encontrado' });
 
-    if (!deletedCustomer) {
-      return res.status(404).json({ message: 'Cliente no encontrado' });
-    }
+    // Opcional: eliminar pedidos asociados
+    await Order.deleteMany({ userId: id });
 
     res.status(200).json({ message: 'Cliente eliminado exitosamente' });
   } catch (error) {
-    console.error('Error al eliminar el cliente:', error);
-    res.status(400).json({ message: 'Error al eliminar el cliente', error: error.message });
+    handleError(res, error, 'Error al eliminar el cliente');
   }
 };

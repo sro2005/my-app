@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react'; // Importar useContext
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt, faHome, faPlusCircle, faCheckSquare, faUser, faUsers, faBoxOpen, faClipboardList, faUserPlus, faDoorOpen } from '@fortawesome/free-solid-svg-icons';
+import { AuthContext } from '../contexts/AuthContext'; // Asegúrate de que esta sea la ruta correcta
 
-const Header = ({ isAuthenticated, onLogout, user }) => {
+const Header = () => {
+  const { user, handleLogout } = useContext(AuthContext); // Obtener user y handleLogout desde el contexto
   const [showGoodbyeMessage, setShowGoodbyeMessage] = React.useState(false);
 
   const logout = () => {
     setShowGoodbyeMessage(true);
     setTimeout(() => {
       setShowGoodbyeMessage(false);
-      onLogout(); // Asegúrate de usar onLogout
+      handleLogout(); // Llamar a handleLogout para manejar la lógica de logout
     }, 3000);
   };
 
@@ -21,7 +23,7 @@ const Header = ({ isAuthenticated, onLogout, user }) => {
       <h4>• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</h4>
       <nav aria-label="Main Navigation">
         <ul>
-          {isAuthenticated ? (
+          {user ? (
             <div className="nav-container">
               <ul className="nav-links">
                 <li>
