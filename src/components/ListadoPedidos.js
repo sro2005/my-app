@@ -2,19 +2,23 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import ClipLoader from 'react-spinners/ClipLoader'; // Importar el spinner
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
+import moment from 'moment-timezone';
 
 // Función para formatear el precio en formato local (COP)
 const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
 };
 
-// Función para formatear la fecha en formato DD/MM/YYYY
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? 'Fecha no válida' : `${String(date.getUTCDate()).padStart(2, '0')}/${String(date.getUTCMonth() + 1).padStart(2, '0')}/${date.getUTCFullYear()}`;
+// Función para formatear la fecha en formato 12 horas con AM/PM
+const formatOrderDate = (dateString) => {
+  return moment(dateString).tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss'); // Hora en formato militar (24 horas)
 };
 
-// Componente para cada pedido individual
+// Función para formatear la fecha estimada de entrega
+const formatDeliveryDate = (deliveryDate) => {
+  return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY'); // 12 horas con AM/PM
+};
+
 const PedidoItem = ({ pedido }) => (
   <li className="pedido-item">
     <div className="pedido-info">
@@ -27,11 +31,18 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
         <p><strong>💳 Método de Pago:</strong> {pedido.paymentMethod || 'No especificado'}</p>
-        <p><strong>📅 Fecha del Pedido:</strong> {new Date(pedido.orderDate).toLocaleString('es-CO')}</p>
-        <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDate(pedido.deliveryDate)}</p>
+        <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
+        <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
         <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
         <p><strong>📦 Estado del Pedido:</strong> {pedido.status}</p>
-
+        <p><strong>🛍️ Producto Escogido: </strong> 
+          {pedido.products.length > 0 ? pedido.products.map((item, index) => (
+            <span key={index}>
+              {item.productId?.name || "Producto desconocido"} (Cantidad: {item.quantity})
+              {index < pedido.products.length - 1 ? ', ' : ''}
+            </span>
+          )) : " No hay productos en este pedido."}
+        </p>
       </div>
     </div>
   </li>

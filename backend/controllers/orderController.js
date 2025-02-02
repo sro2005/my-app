@@ -56,7 +56,7 @@ exports.getOrdersByUserId = async (req, res) => {
     if (isAdmin) {
       orders = await Order.find().populate('products'); // Poblar productos
     } else {
-      orders = await Order.find({ userId }).populate('products'); // Solo los pedidos del usuario
+      orders = await Order.find({ userId }).populate('products.productId'); // Solo los pedidos del usuario
     }
 
     if (!orders || orders.length === 0) {
@@ -72,7 +72,7 @@ exports.getOrdersByUserId = async (req, res) => {
 // Obtener todos los pedidos (solo admins)
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate('products');
+    const orders = await Order.find().populate('products.productId');
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los pedidos', error: error.message });
