@@ -38,7 +38,7 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>🛍️ Producto Escogido: </strong> 
           {pedido.products.length > 0 ? pedido.products.map((item, index) => (
             <span key={index}>
-              {item.productId?.name || "Producto desconocido"} (Cantidad: {item.quantity})
+              {item.productId?.name || "Producto desconocido"} -  Cantidad: ({item.quantity})
               {index < pedido.products.length - 1 ? ', ' : ''}
             </span>
           )) : " No hay productos en este pedido."}
@@ -117,7 +117,7 @@ const ListadoPedidos = () => {
     <div className="container">
       <h2>Gestión de Pedidos</h2>
       <hr />
-      <p><b>✨ DEFINICIÓN:</b> La Gestión de Pedidos es el proceso que permite recibir, procesar y entregar productos a los clientes de manera organizada y eficiente. Incluye:</p>
+      <p><strong>📖 DEFINICIÓN:</strong> La <strong>Gestión de Pedidos</strong> en <strong>ElectroVibeHome</strong> es el proceso mediante el cual se <strong>reciben, procesan y entregan</strong> electrodomésticos y productos tecnológicos a nuestros clientes de manera <strong>organizada, segura y eficiente.</strong></p>
         <ul>
           <li>Captura de información del cliente.</li>
           <li>Validación del pedido.</li>
@@ -126,7 +126,7 @@ const ListadoPedidos = () => {
           <li>Entrega final.</li>
         </ul>
       <hr />
-      <p><b>🌟 OBJETIVO:</b> Asegurar que cada pedido se procese correctamente, sin errores ni retrasos, garantizando que el cliente reciba su compra en el tiempo esperado y en las condiciones adecuadas.</p>
+      <p><b>🎯 OBJETIVO:</b> Asegurar que cada pedido se procese correctamente, sin errores ni retrasos, garantizando que el cliente reciba su compra en el tiempo esperado y en las condiciones adecuadas.</p>
       <hr />
       <p><b>📈 IMPORTANCIA:</b></p>
         <ul>
@@ -148,10 +148,10 @@ const ListadoPedidos = () => {
       <hr />
       <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE PEDIDOS:</b></p>
         <ul>
-          <li>✅<b>Rapidez en el procesamiento:</b> Disminuye los tiempos de espera entre la compra y la entrega.</li>
-          <li>✅<b>Mayor confianza del cliente:</b> Transparencia en el estado del pedido y tiempos de entrega exactos.</li>
-          <li>✅<b>Reducción de costos operativos:</b> Optimiza los recursos logísticos y evita reprocesos innecesarios.</li>
-          <li>✅<b>Mejora en la gestión de inventarios:</b> Permite tener control de los productos disponibles y evitar sobreventas.</li>
+          <li><b>Rapidez en el procesamiento:</b> Disminuye los tiempos de espera entre la compra y la entrega.</li>
+          <li><b>Mayor confianza del cliente:</b> Transparencia en el estado del pedido y tiempos de entrega exactos.</li>
+          <li><b>Reducción de costos operativos:</b> Optimiza los recursos logísticos y evita reprocesos innecesarios.</li>
+          <li><b>Mejora en la gestión de inventarios:</b> Permite tener control de los productos disponibles y evitar sobreventas.</li>
         </ul>
       <hr />
       <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE PEDIDOS?</b></p>

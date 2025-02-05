@@ -16,7 +16,6 @@ const orderSchema = new mongoose.Schema({
   paymentConfirmed: { type: Boolean, default: false },
   packed: { type: Boolean, default: false },
   delivered: { type: Boolean, default: false },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } // Referencia al usuario que realizó el pedido
 });
 
 module.exports = mongoose.model('Order', orderSchema);

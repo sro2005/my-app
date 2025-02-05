@@ -7,7 +7,16 @@ const { generateToken } = require('../utils/tokenUtils');
 const registerUser = async (req, res, role) => {
   try {
     console.log(`Datos recibidos para registrar ${role}:`, req.body);
-    const { firstName, lastName, email, password, identificationNumber, birthDate, phone, preferences } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      identificationNumber,
+      birthDate,
+      phone,
+      preferences
+    } = req.body;
 
     // Verificar si el correo ya está registrado
     const existingUser = await Customer.findOne({ email });
@@ -18,25 +27,36 @@ const registerUser = async (req, res, role) => {
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(password.trim(), 10);
 
-    // Crear nuevo usuario
-    const newUser = new Customer({
-      firstName,
-      lastName,
+    // Crear el objeto de datos para el nuevo usuario
+    const newUserData = {
       email,
       password: hashedPassword,
-      role,
-      ...(role === 'user' && { identificationNumber, birthDate, phone, preferences }), // Solo agregar estos datos si es usuario
-    });
+      role
+    };
+
+    // Si se trata de un usuario (cliente), agregar los demás campos
+    if (role === 'user') {
+      newUserData.firstName = firstName;
+      newUserData.lastName = lastName;
+      newUserData.identificationNumber = identificationNumber;
+      newUserData.birthDate = birthDate;
+      newUserData.phone = phone;
+      newUserData.preferences = preferences;
+    }
+
+    const newUser = new Customer(newUserData);
 
     await newUser.save();
-    res.status(201).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} registered successfully` });
+    res.status(201).json({
+      message: `${role.charAt(0).toUpperCase() + role.slice(1)} registered successfully`
+    });
   } catch (error) {
     console.error(`Error en el registro de ${role}:`, error);
     res.status(400).json({ message: `Error registering ${role}`, error: error.message });
   }
 };
 
-// Registro de un cliente
+// Registro de un cliente (usuario normal)
 exports.registerCustomer = (req, res) => registerUser(req, res, 'user');
 
 // Registro de un administrador
@@ -44,21 +64,29 @@ exports.registerAdmin = (req, res) => registerUser(req, res, 'admin');
 
 // Inicio de sesión de un usuario (cliente o admin)
 exports.loginCustomer = async (req, res) => {
-  const { email, password } = req.body; // No aplicar trim aquí
+  const { email, password, role } = req.body; // Se puede enviar role opcionalmente desde el frontend
 
   try {
+    // Buscar al usuario por correo
     const user = await Customer.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Incorrect email or password' });
     }
 
-    // Comparar contraseña
+    // Comparar la contraseña
     const isMatch = await bcrypt.compare(password.trim(), user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Incorrect email or password' });
     }
 
-    // Activar usuario y actualizar última actividad
+    // Si se envía un rol, verificar que coincida con el rol del usuario
+    if (role && user.role !== role) {
+      return res.status(403).json({
+        message: `Access denied. Expected ${role}, but got ${user.role}`
+      });
+    }
+
+    // Actualizar el estado y la última actividad
     user.status = "Active";
     user.lastActivityDate = new Date();
     await user.save();
@@ -66,10 +94,9 @@ exports.loginCustomer = async (req, res) => {
     // Registrar el intento de inicio de sesión
     await registerOrUpdateLoginLog(user);
 
-    // Generar token de autenticación
+    // Generar el token JWT con el payload que incluye role
     const token = generateToken(user);
-    return res.status(200).json({ token, user, role: user.role, message: 'Login successful' });
-
+    return res.status(200).json({ token, user, message: 'Login successful' });
   } catch (error) {
     console.error('Error en el inicio de sesión:', error.message);
     res.status(400).json({ message: 'Error logging in', error: error.message });

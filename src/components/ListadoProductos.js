@@ -85,7 +85,7 @@ const ListadoProductos = ({ userPreferences }) => {
       <h2>Gestión de Inventarios</h2>
       <hr />
       <div className="module-description">
-        <p><b>✨ DEFINICIÓN:</b> La Gestión de Inventarios es el proceso clave que permite controlar y mantener el stock de productos de manera eficiente y organizada. Incluye:</p>
+        <p><b>📖 DEFINICIÓN:</b> La Gestión de Inventarios es el proceso clave que permite controlar y mantener el stock de productos de manera eficiente y organizada. Incluye:</p>
           <ul>
             <li>Recepción de productos en el almacén.</li>
             <li>Control y registro de entradas y salidas.</li>
@@ -95,7 +95,7 @@ const ListadoProductos = ({ userPreferences }) => {
             <li>Control de productos deteriorados o fuera de servicio.</li>
           </ul>
         <hr />
-        <p><b>🌟 OBJETIVO:</b> Asegurar que siempre haya suficiente stock disponible para satisfacer la demanda de los clientes, evitar desabastecimientos o exceso de inventario, y mantener una gestión eficiente de los productos en todo momento.</p>
+        <p><b>🎯 OBJETIVO:</b> Asegurar que siempre haya suficiente stock disponible para satisfacer la demanda de los clientes, evitar desabastecimientos o exceso de inventario, y mantener una gestión eficiente de los productos en todo momento.</p>
         <hr />
         <p><b>📈 IMPORTANCIA:</b></p>
           <ul>
@@ -117,10 +117,10 @@ const ListadoProductos = ({ userPreferences }) => {
         <hr />
         <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE INVENTARIOS:</b></p>
           <ul>
-            <li><b>✅ Reducción de costos:</b> Evita la sobrecompra y la acumulación innecesaria de productos.</li>
-            <li><b>✅ Mayor precisión:</b> Mantiene un control exacto sobre el stock, reduciendo errores de inventario.</li>
-            <li><b>✅ Mejor respuesta a la demanda:</b> Permite tener productos disponibles para satisfacer las necesidades del cliente de forma rápida y precisa.</li>
-            <li><b>✅ Eficiencia operativa:</b> Mejora la organización del almacén y facilita la gestión de pedidos y devoluciones.</li>
+            <li><b>Reducción de costos:</b> Evita la sobrecompra y la acumulación innecesaria de productos.</li>
+            <li><b>Mayor precisión:</b> Mantiene un control exacto sobre el stock, reduciendo errores de inventario.</li>
+            <li><b>Mejor respuesta a la demanda:</b> Permite tener productos disponibles para satisfacer las necesidades del cliente de forma rápida y precisa.</li>
+            <li><b>Eficiencia operativa:</b> Mejora la organización del almacén y facilita la gestión de pedidos y devoluciones.</li>
           </ul>
         <hr />
         <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE INVENTARIOS?</b></p>
