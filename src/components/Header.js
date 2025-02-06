@@ -71,7 +71,9 @@ const Header = () => {
                 <li>
                   <Link to="/listado-pedidos">
                     <div className="nav-icon"><FontAwesomeIcon icon={faClipboardList} /></div>
-                    <div className="nav-text">GESTIÓN DE PEDIDOS</div>
+                    <div className="nav-text">
+                {user?.role === 'admin' ? 'GESTIÓN DE PEDIDOS' : 'MIS ÓRDENES'}
+                    </div>
                   </Link>
                 </li>
                 

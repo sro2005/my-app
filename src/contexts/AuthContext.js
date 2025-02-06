@@ -31,6 +31,10 @@ const AuthProvider = ({ children }) => {
     setUser(user);
     localStorage.setItem('authToken', token);
     localStorage.setItem('userData', JSON.stringify(user));
+    // Guardamos el userId en localStorage
+    if (user._id) {
+      localStorage.setItem("userId", user._id.toString());
+    }
   };
 
   const handleLogout = () => {
@@ -48,5 +52,3 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-
-

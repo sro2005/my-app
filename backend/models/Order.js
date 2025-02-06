@@ -16,6 +16,7 @@ const orderSchema = new mongoose.Schema({
   paymentConfirmed: { type: Boolean, default: false },
   packed: { type: Boolean, default: false },
   delivered: { type: Boolean, default: false },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true }, // Agregado para asociar al usuario
 });
 
 module.exports = mongoose.model('Order', orderSchema);

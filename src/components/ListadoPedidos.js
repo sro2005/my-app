@@ -27,6 +27,7 @@ const PedidoItem = ({ pedido }) => (
       </div>
       <div className="pedido-details">
         <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
+        <p><strong>🆔 ID del Usuario:</strong> {pedido.user?._id}</p>
         <p><strong>🙍‍♂️ Nombre del Cliente:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
@@ -53,38 +54,48 @@ const ListadoPedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [emptyOrders, setEmptyOrders] = useState(false); // Declarar emptyOrders
 
   useEffect(() => {
     const fetchOrders = async () => {
       const token = localStorage.getItem('authToken');
       const userId = user?._id;  // Acceder al id del usuario desde el contexto
       const API_URL = process.env.REACT_APP_API_BASE_URL;
-
+  
       if (!token || !userId || !API_URL) {
         setError('Faltan datos esenciales: URL de API, token o userId.');
         setLoading(false);
         return;
       }
-
+  
       try {
         setLoading(true);
         const isAdmin = user?.role === 'admin'; // Obtener el rol del usuario desde el contexto
         const endpoint = isAdmin 
           ? '/api/orders/all' // Admin ve todos los pedidos
-          : `/api/orders/user/${userId}`; // Obtener pedidos por userId
-  
+          : `/api/orders/user/${userId}`; // Obtener pedidos del cliente autenticado
+    
         const response = await axios.get(`${API_URL}${endpoint}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        setPedidos(response.data);
+        if (response.data && Array.isArray(response.data.orders)) {
+          if (response.data.orders.length === 0) {
+            setEmptyOrders(true);
+          } else {
+            setPedidos(response.data.orders);
+          }
+        } else {
+          setEmptyOrders(true);
+        }        
+  
       } catch (err) {
         setError('Hubo un error al obtener los pedidos. Intente nuevamente más tarde.');
       } finally {
         setLoading(false);
       }
     };
-
+  
     // Solo realizar la solicitud si el usuario está disponible
     if (user && user._id) {
       fetchOrders();
@@ -92,8 +103,9 @@ const ListadoPedidos = () => {
       setError('Usuario no autenticado o datos de usuario inválidos.');
       setLoading(false);
     }
-
+  
   }, [user]);  // Dependencia de `user` para que se ejecute cada vez que cambie
+  
 
   // Mostrar el spinner de carga mientras se obtienen los datos
   if (loading) {
@@ -162,6 +174,9 @@ const ListadoPedidos = () => {
         </ul>
       <hr />
       <h2>Listado de Pedidos</h2>
+    {emptyOrders ? (
+      <p>Aún no has realizado ningún pedido. ¡Comienza a explorar nuestros productos y haz tu primera compra!</p>
+    ) : (
       <ul className="pedidos-list">
         {pedidos.length > 0 ? (
           pedidos.map((pedido) => <PedidoItem key={pedido._id} pedido={pedido} />)
@@ -169,8 +184,9 @@ const ListadoPedidos = () => {
           <p>No hay pedidos disponibles.</p>
         )}
       </ul>
+    )}
     </div>
   );
-};
+}
 
 export default ListadoPedidos;

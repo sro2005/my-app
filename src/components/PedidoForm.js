@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select'; // Importa React-Select
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 // Función para formatear el precio en formato local
 const formatPrice = (price) => {
@@ -19,6 +21,9 @@ const PedidoForm = () => {
     phone: "",
   });
 
+const { user } = useContext(AuthContext);
+const userId = user?._id;  // Usar userId desde el contexto 
+  
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState(null); // Cambiado a objeto para React-Select
   const [deliveryDate, setDeliveryDate] = useState("");
@@ -74,7 +79,10 @@ const PedidoForm = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault();   
+
+    // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
+    console.log("userId desde el contexto:", userId);
 
     // Validación antes de enviar el pedido
     if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || !selectedProduct || totalAmount <= 0) {
@@ -97,6 +105,7 @@ const PedidoForm = () => {
     }
 
     const newOrder = {
+      userId, // Añadimos el userId al pedido
       firstName: customerData.firstName,
       lastName: customerData.lastName,
       email: customerData.email,
@@ -141,6 +150,13 @@ const PedidoForm = () => {
       })
       .then(response => {
         alert('¡Pedido realizado exitosamente!');
+        // Obtenemos el orderId desde la respuesta de la API
+        const orderData = response.data;
+        // Actualizamos el estado con el orderId recibido de la respuesta
+        setOrder({
+          ...order, // Aquí usamos la variable order que contiene los datos del pedido
+        orderId: orderData.orderId, // Añadimos el orderId de la respuesta
+      });
       // Redirigir a la página de Gestión de Pedidos
       navigate('/listado-pedidos');  // Aquí es donde rediriges después de confirmar el pedido
       })
@@ -246,7 +262,6 @@ const PedidoForm = () => {
             )}
             <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
             <p><strong>Producto Seleccionado:</strong> {selectedProduct ? selectedProduct.label : 'No seleccionado'}</p>
-            <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
           </>
         )}
       </div>

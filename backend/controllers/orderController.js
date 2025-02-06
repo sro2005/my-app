@@ -21,17 +21,23 @@ const updateOrderStatus = async (order) => {
 // Crear un nuevo pedido
 exports.createOrder = async (req, res) => {
   try {
+    // Asegurarse de que userId esté en formato string
+    const userId = req.body.userId || req.user._id;
+    // Convierte el userId a string
+    req.body.userId = userId.toString();
+    // Validar los datos del pedido
     const { error } = orderSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(err => err.message) });
     }
 
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
-    const userId = req.user._id;  // Obtener el ID del usuario autenticado
 
+    // Validar los productos y reducir el inventario
     await validateProducts(products);
     await reduceInventory(products);
 
+    // Crear y guardar el nuevo pedido
     const newOrder = new Order({
       firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products,
       orderDate: new Date(), // Registrar la fecha del pedido
@@ -39,6 +45,7 @@ exports.createOrder = async (req, res) => {
     });
 
     await newOrder.save();
+    console.log('Pedido guardado:', newOrder);
     res.status(201).json({ message: 'Pedido realizado exitosamente', order: newOrder });
   } catch (error) {
     res.status(400).json({ message: 'Error al crear el pedido', error: error.message });
@@ -48,21 +55,9 @@ exports.createOrder = async (req, res) => {
 // Obtener todos los pedidos de un usuario por userId
 exports.getOrdersByUserId = async (req, res) => {
   try {
-    const userId = req.user._id;  // Obtener el ID del usuario desde el token decodificado
-    const isAdmin = req.user.role === 'admin';  // Comprobar si el usuario es admin
-
-    // Si el usuario es administrador, puede ver todos los pedidos
-    let orders;
-    if (isAdmin) {
-      orders = await Order.find().populate('products'); // Poblar productos
-    } else {
-      orders = await Order.find({ userId }).populate('products.productId'); // Solo los pedidos del usuario
-    }
-
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron pedidos' });
-    }
-
+    const userId = req.user._id;  // Se obtiene del token
+    const orders = await Order.find({ userId }).populate('products.productId');
+    // Si no hay pedidos, devolvemos un arreglo vacío
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los pedidos', error: error.message });

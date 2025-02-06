@@ -15,5 +15,6 @@ exports.orderSchema = Joi.object({
   ).min(1).required(), // Al menos un producto en el pedido 
   accountNumber: Joi.string().trim().min(1).optional(),
   bankName: Joi.string().optional().allow(''),
-  sameRegisteredNumber: Joi.boolean().optional() // Campo opcional
+  sameRegisteredNumber: Joi.boolean().optional(), // Campo opcional
+  userId: Joi.string().hex().length(24).required() // Validación de userId (debe ser un ObjectId de MongoDB)
 });
