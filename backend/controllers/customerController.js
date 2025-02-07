@@ -25,23 +25,27 @@ exports.getCustomers = async (req, res) => {
 // Obtener el perfil del cliente
 exports.getProfile = async (req, res) => {
   try {
-    const customer = await Customer.findById(req.user.id);
+    const customer = await Customer.findById(req.user);
     if (!customer) return res.status(404).json({ message: 'Cliente no encontrado' });
 
-    const orders = await Order.find({ userId: req.user.id });
-    res.status(200).json({ ...customer._doc, status: calculateCustomerStatus(customer.lastActivityDate), orders });
+    res.status(200).json({ ...customer._doc, status: calculateCustomerStatus(customer.lastActivityDate) });
   } catch (error) {
-    handleError(res, error, 'Error al obtener el perfil', 500);
+    handleError(res, error, 'Error al obtener el perfil');
   }
 };
 
 // Actualizar la información de un cliente (solo usuario o admin)
 exports.updateCustomer = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // ID del cliente a actualizar
   const { firstName, lastName, email, identificationNumber, birthDate, phone, preferences } = req.body;
 
   try {
-    if (req.user.id !== id && req.user.role !== 'admin') {
+    // Convertir ambos valores a string para evitar problemas de tipo
+    const userId = req.user._id.toString();
+    const paramId = id.toString();
+
+    // Verificar permisos (el usuario solo puede actualizar su propio perfil, a menos que sea admin)
+    if (userId !== paramId && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No tienes permisos para actualizar esta información' });
     }
 

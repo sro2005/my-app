@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import ClipLoader from 'react-spinners/ClipLoader';
+import moment from 'moment-timezone';
 
 // Función para formatear fechas
 const formatDate = (dateString) => {
@@ -24,6 +25,11 @@ const formatDateTime = (dateString) => {
       <span className="hora">Hora: {formattedTime}</span>
     </span>
   );
+};
+
+// Función para formatear la fecha en formato 12 horas con AM/PM
+const formatOrderDate = (dateString) => {
+  return moment(dateString).tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss'); // Hora en formato militar (24 horas)
 };
 
 // Formatear número de identificación
@@ -113,8 +119,9 @@ const ListadoClientes = () => {
     const clienteMasPedidos = clientesFiltrados.reduce((max, cliente) =>
       cliente.orders?.length > max.orders?.length ? cliente : max, clientesFiltrados[0]
     );
-    const ultimoPedido = clientesFiltrados.flatMap(cliente => cliente.orders || [])
-      .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))[0]?.orderDate || 'Ninguno';
+    const ultimoPedido = formatOrderDate(
+      clientesFiltrados.flatMap(cliente => cliente.orders || [])
+      .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))[0]?.orderDate || 'Ninguno');
 
     return { activos, inactivos, pedidosTotales, clienteMasPedidos, ultimoPedido };
   }, [clientesFiltrados]);

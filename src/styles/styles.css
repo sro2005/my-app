@@ -924,3 +924,37 @@ h2 {
   color: #333;
   font-weight: bold;
 }
+
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #fff;
+  height: 40px; /* Mantiene la altura compacta */
+  margin: 0.5rem 0;
+}
+
+.phone-input-prefix {
+  background-color: #eee;
+  padding: 0 10px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 40px; /* Centra verticalmente */
+  border-right: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+.phone-input-field {
+  width: 100%;
+  padding: 0 10px; /* Ajuste del padding */
+  border: none;
+  outline: none;
+  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  font-size: 14px;
+  margin: 0; /* Eliminamos el margin-bottom que desalineaba el texto */
+  display: flex;
+  align-items: center;
+}

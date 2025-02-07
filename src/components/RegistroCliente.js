@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Select from 'react-select';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
 
 const isAdult = (birthDate) => {
   const today = new Date();
@@ -18,18 +16,18 @@ const options = [
   { value: 'Microondas', label: 'Microondas' },
   { value: 'Lavadoras', label: 'Lavadoras' },
   { value: 'Aspiradoras', label: 'Aspiradoras' },
-  { value: 'Aires Acondicionados', label: 'Aires acondicionados' },
+  { value: 'Aires Acondicionados', label: 'Aires Acondicionados' },
   { value: 'Sandwicheras', label: 'Sandwicheras' },
   { value: 'Televisores', label: 'Televisores' },
-  { value: 'Secadores de Cabello', label: 'Secadores de cabello' },
-  { value: 'Planchas de Ropa', label: 'Planchas de ropa' },
+  { value: 'Secadores de Cabello', label: 'Secadores de Cabello' },
+  { value: 'Planchas de Ropa', label: 'Planchas de Ropa' },
   { value: 'Cafeteras', label: 'Cafeteras' },
   { value: 'Computadores de Escritorio', label: 'Computadores de Escritorio' },
   { value: 'Computadores Portátiles', label: 'Computadores Portátiles' },
   { value: 'Tabletas/Tablets', label: 'Tabletas/Tablets' },
   { value: 'Impresoras', label: 'Impresoras' },
   { value: 'Consola de Videojuegos', label: 'Consola de Videojuegos' },
-  { value: 'Bocinas Inteligentes o Parlantes Bluetooth', label: 'Bocinas inteligentes o parlantes Bluetooth' },
+  { value: 'Bocinas Inteligentes o Parlantes Bluetooth', label: 'Bocinas Inteligentes o Parlantes Bluetooth' },
   { value: 'Celulares', label: 'Celulares' },
   { value: 'Tostadoras', label: 'Tostadoras' },
   { value: 'Batidoras', label: 'Batidoras' },
@@ -115,6 +113,18 @@ const RegistroCliente = () => {
     return cleanValue
       .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Este patrón agrega puntos cada 3 dígitos
   };
+
+  // Función para formatear el número de celular (por ejemplo, insertando un espacio después de 3 dígitos)
+  const formatPhoneNumber = (value) => {
+    const digits = value.replace(/\D/g, ''); // Elimina todo lo que no sea número
+    if (digits.length > 10) {
+      return digits.slice(0, 10); // Limita a 10 dígitos
+    }
+    if (digits.length > 3) {
+      return digits.slice(0, 3) + ' ' + digits.slice(3, 10); // Formato 302 0000000
+    }
+    return digits; // Muestra el número sin formato si es menor a 3 dígitos
+  };
   
   return (
     <form onSubmit={handleSubmit}>
@@ -129,7 +139,10 @@ const RegistroCliente = () => {
         <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
       </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <PhoneInput defaultCountry="CO" value={phone} onChange={setPhone} placeholder="Número de Celular" required />
+      <div className="phone-input-wrapper">
+        <div className="phone-input-prefix">+57</div>
+        <input type="text" className="phone-input-field" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required />
+      </div>
       <div>
         <label htmlFor="preferences">Preferencias de Productos:</label>
         <Select 

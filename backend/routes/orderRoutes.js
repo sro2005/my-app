@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
-const { authenticateToken, authenticateAdminToken } = require('../middlewares/authMiddleware.js');
+const { authenticateToken, authenticateAdminToken } = require('../middlewares/authMiddleware');
 
 // Ruta para crear un nuevo pedido (abierto para usuarios normales, pero con autenticación)
 router.post('/realizar', authenticateToken, orderController.createOrder);
@@ -10,7 +10,7 @@ router.post('/realizar', authenticateToken, orderController.createOrder);
 router.get('/all', authenticateAdminToken, orderController.getOrders);
 
 // Ruta para obtener un pedido específico por su ID (abierto para usuarios autenticados)
-router.get('/user/:userId', authenticateToken, orderController.getOrdersByUserId);
+router.get('/my-orders', authenticateToken, orderController.getOrdersByUserId);
 
 // Ruta para actualizar un pedido (solo para administradores)
 // Ruta para actualizar automáticamente el estado de un pedido

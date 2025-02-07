@@ -52,12 +52,13 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// Obtener todos los pedidos de un usuario por userId
+// Obtener todos los pedidos del usuario (para clientes)
 exports.getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.user._id;  // Se obtiene del token
-    const orders = await Order.find({ userId }).populate('products.productId');
-    // Si no hay pedidos, devolvemos un arreglo vacío
+    // Filtrar solo los pedidos que tengan el userId del usuario autenticado
+    const orders = await Order.find({ userId: userId }).populate('products.productId');
+    // Devolver el arreglo (vacío si no hay pedidos)
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener los pedidos', error: error.message });

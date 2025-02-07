@@ -27,7 +27,6 @@ const PedidoItem = ({ pedido }) => (
       </div>
       <div className="pedido-details">
         <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
-        <p><strong>🆔 ID del Usuario:</strong> {pedido.user?._id}</p>
         <p><strong>🙍‍♂️ Nombre del Cliente:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
@@ -73,17 +72,17 @@ const ListadoPedidos = () => {
         const isAdmin = user?.role === 'admin'; // Obtener el rol del usuario desde el contexto
         const endpoint = isAdmin 
           ? '/api/orders/all' // Admin ve todos los pedidos
-          : `/api/orders/user/${userId}`; // Obtener pedidos del cliente autenticado
+          : '/api/orders/my-orders'; // Obtener pedidos del cliente autenticado
     
         const response = await axios.get(`${API_URL}${endpoint}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         
-        if (response.data && Array.isArray(response.data.orders)) {
-          if (response.data.orders.length === 0) {
+        if (response.data && Array.isArray(response.data)) {
+          if (response.data.length === 0) {
             setEmptyOrders(true);
           } else {
-            setPedidos(response.data.orders);
+            setPedidos(response.data);
           }
         } else {
           setEmptyOrders(true);
