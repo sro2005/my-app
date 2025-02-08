@@ -10,8 +10,13 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
 };
 
-// Fecha de hoy en formato YYYY-MM-DD
-const today = new Date().toISOString().split('T')[0];
+// Función para obtener la fecha de hoy en Colombia en formato YYYY-MM-DD
+const getColombianToday = () => {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
+};
+
+// Dentro de tu componente, antes de renderizar:
+const today = getColombianToday();
 
 const PedidoForm = () => {
   const [customerData, setCustomerData] = useState({

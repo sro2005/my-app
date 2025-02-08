@@ -12,7 +12,7 @@ const formatDate = (dateString) => {
 // Función para formatear fecha y hora
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return 'Fecha no válida';
+  if (isNaN(date.getTime())) return 'No hay Fecha Disponible';
   
   const formattedDate = date.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const formattedTime = date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Bogota' });
@@ -105,25 +105,54 @@ const ListadoClientes = () => {
     fetchClientes();
   }, [fetchClientes]);
 
+  // Filtrar clientes según el texto de búsqueda y el filtro activo
   const clientesFiltrados = useMemo(() => {
     const searchLower = search.toLowerCase();
-    return clientes.filter(cliente => 
-      cliente._id.toLowerCase().includes(searchLower) || cliente.email.toLowerCase().includes(searchLower)
-    ).filter(cliente => filtroActivo === null || calcularEstado(cliente.lastActivityDate) === filtroActivo);
+    return clientes
+      .filter(cliente =>
+        cliente._id.toLowerCase().includes(searchLower) ||
+        cliente.email.toLowerCase().includes(searchLower)
+      )
+      .filter(cliente => filtroActivo === null || calcularEstado(cliente.lastActivityDate) === filtroActivo);
   }, [clientes, search, filtroActivo]);
 
+  // Calcular estadísticas basadas en los clientes filtrados
   const { activos, inactivos, pedidosTotales, clienteMasPedidos, ultimoPedido } = useMemo(() => {
-    const activos = clientesFiltrados.filter(cliente => calcularEstado(cliente.lastActivityDate)).length;
-    const inactivos = clientesFiltrados.length - activos;
-    const pedidosTotales = clientesFiltrados.reduce((total, cliente) => total + (cliente.orders?.length || 0), 0);
-    const clienteMasPedidos = clientesFiltrados.reduce((max, cliente) =>
-      cliente.orders?.length > max.orders?.length ? cliente : max, clientesFiltrados[0]
-    );
-    const ultimoPedido = formatOrderDate(
-      clientesFiltrados.flatMap(cliente => cliente.orders || [])
-      .sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate))[0]?.orderDate || 'Ninguno');
-
-    return { activos, inactivos, pedidosTotales, clienteMasPedidos, ultimoPedido };
+    // Cantidad de clientes activos
+    const activosCount = clientesFiltrados.filter(cliente => calcularEstado(cliente.lastActivityDate)).length;
+    const inactivosCount = clientesFiltrados.length - activosCount;
+    
+    // Total de pedidos de todos los clientes filtrados
+    const pedidosTotalesCount = clientesFiltrados.reduce((total, cliente) => total + (cliente.orders?.length || 0), 0);
+    
+    // Determinar el cliente con más pedidos
+    let clienteConMasPedidos = null;
+    if (clientesFiltrados.length > 0) {
+      clienteConMasPedidos = clientesFiltrados.reduce((max, cliente) =>
+        (cliente.orders?.length || 0) > (max.orders?.length || 0) ? cliente : max,
+        clientesFiltrados[0]
+      );
+    }
+    const clienteMasPedidosResult =
+      (clienteConMasPedidos && (clienteConMasPedidos.orders?.length || 0) > 0)
+        ? clienteConMasPedidos
+        : null;
+    
+    // Determinar el último pedido de todos los clientes filtrados
+    const ordersArray = clientesFiltrados.flatMap(cliente => cliente.orders || []);
+    let ultimoPedidoFormatted = "No hay pedidos disponibles";
+    if (ordersArray.length > 0) {
+      ordersArray.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+      ultimoPedidoFormatted = formatOrderDate(ordersArray[0].orderDate);
+    }
+    
+    return {
+      activos: activosCount,
+      inactivos: inactivosCount,
+      pedidosTotales: pedidosTotalesCount,
+      clienteMasPedidos: clienteMasPedidosResult,
+      ultimoPedido: ultimoPedidoFormatted
+    };
   }, [clientesFiltrados]);
 
   if (loading) return <div className="spinner-container"><ClipLoader size={50} color="#FFA500" /></div>;

@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const { orderSchema } = require('../validations/orderValidation');
 const { validateProducts, reduceInventory, restoreInventory } = require('../utils/productUtils');
+const moment = require('moment-timezone'); // Importa moment-timezone
 
 // Función para actualizar el estado del pedido automáticamente
 const updateOrderStatus = async (order) => {
@@ -37,9 +38,13 @@ exports.createOrder = async (req, res) => {
     await validateProducts(products);
     await reduceInventory(products);
 
+    // Convertir la fecha de entrega a la zona horaria de Colombia.
+    // Se asume que deliveryDate viene en formato "YYYY-MM-DD".
+    const deliveryDateColombia = moment.tz(deliveryDate, "YYYY-MM-DD", "America/Bogota").toDate();
+
     // Crear y guardar el nuevo pedido
     const newOrder = new Order({
-      firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products,
+      firstName, lastName, email, phone, address, paymentMethod, deliveryDate: deliveryDateColombia, totalAmount, products,
       orderDate: new Date(), // Registrar la fecha del pedido
       userId  // Asignar el usuario que hizo el pedido
     });

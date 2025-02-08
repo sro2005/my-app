@@ -167,9 +167,28 @@ const ListadoPedidos = () => {
       <hr />
       <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE PEDIDOS?</b></p>
         <ul>
-          <li><b>Clientes:</b> Realizan pedidos, consultan el estado y reciben notificaciones de entrega.</li>
-          <li><b>Administradores:</b> Gestionan los pedidos, verifican pagos, actualizan estados y resuelven incidencias.</li>
-          <li><b>Almacén/Logística:</b> Reciben las órdenes, preparan los productos y coordinan el envío.</li>
+          <li><b>Clientes:</b>
+            <ul>
+              <li>Realizan pedidos</li>
+              <li>Consultan el estado</li>
+              <li>Reciben notificaciones de entrega</li>
+            </ul>
+          </li>
+          <li><b>Administradores:</b>
+            <ul>
+              <li>Gestionan los pedidos</li>
+              <li>Verifican pagos</li>
+              <li>Actualizan estados</li>
+              <li>Resuelven incidencias</li>
+            </ul>
+          </li>
+          <li><b>Almacén / Logística:</b>
+            <ul>
+              <li>Reciben las órdenes</li>
+              <li>Preparan los productos</li>
+              <li>Coordinan el envío</li>
+            </ul>
+          </li>
         </ul>
       <hr />
       <h2>Listado de Pedidos</h2>

@@ -85,7 +85,7 @@ const ListadoProductos = ({ userPreferences }) => {
       <h2>Gestión de Inventarios</h2>
       <hr />
       <div className="module-description">
-        <p><b>📖 DEFINICIÓN:</b> La Gestión de Inventarios es el proceso clave que permite controlar y mantener el stock de productos de manera eficiente y organizada. Incluye:</p>
+        <p><b>📖 DEFINICIÓN:</b> La <strong>Gestión de Inventarios</strong> en <strong>ElectroVibeHome</strong> es el proceso clave que permite <strong>controlar</strong> y <strong>mantener</strong> el <strong>stock</strong> de productos de manera <strong>eficiente</strong> y <strong>organizada</strong>. Incluye:</p>
           <ul>
             <li>Recepción de productos en el almacén.</li>
             <li>Control y registro de entradas y salidas.</li>
@@ -94,7 +94,7 @@ const ListadoProductos = ({ userPreferences }) => {
             <li>Optimización del espacio de almacenamiento.</li>
             <li>Control de productos deteriorados o fuera de servicio.</li>
           </ul>
-        <hr />
+      <hr />
         <p><b>🎯 OBJETIVO:</b> Asegurar que siempre haya suficiente stock disponible para satisfacer la demanda de los clientes, evitar desabastecimientos o exceso de inventario, y mantener una gestión eficiente de los productos en todo momento.</p>
         <hr />
         <p><b>📈 IMPORTANCIA:</b></p>
@@ -104,7 +104,7 @@ const ListadoProductos = ({ userPreferences }) => {
             <li><b>Visibilidad en tiempo real:</b> El sistema permite conocer el estado actual del inventario, lo que facilita la toma de decisiones.</li>
             <li><b>Reducción de costos operativos:</b> Minimiza la necesidad de almacenar productos innecesarios y ayuda a evitar pérdidas por productos vencidos o dañados.</li>
           </ul>
-        <hr />
+      <hr />
         <p><b>🔍 PROCESO DE GESTIÓN DE INVENTARIOS:</b></p>
           <ol>
             <li><b>Recepción de productos:</b> Los productos son recibidos en el almacén, inspeccionados y registrados en el sistema.</li>
@@ -114,7 +114,7 @@ const ListadoProductos = ({ userPreferences }) => {
             <li><b>Control de calidad:</b> Se realiza un seguimiento para asegurarse de que los productos no estén deteriorados o fuera de servicio, y se gestionan devoluciones si es necesario.</li>
             <li><b>Optimización del espacio:</b> El espacio de almacenamiento se organiza para mejorar el acceso a los productos y reducir tiempos de búsqueda.</li>
           </ol>
-        <hr />
+      <hr />
         <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE INVENTARIOS:</b></p>
           <ul>
             <li><b>Reducción de costos:</b> Evita la sobrecompra y la acumulación innecesaria de productos.</li>
@@ -122,16 +122,32 @@ const ListadoProductos = ({ userPreferences }) => {
             <li><b>Mejor respuesta a la demanda:</b> Permite tener productos disponibles para satisfacer las necesidades del cliente de forma rápida y precisa.</li>
             <li><b>Eficiencia operativa:</b> Mejora la organización del almacén y facilita la gestión de pedidos y devoluciones.</li>
           </ul>
-        <hr />
+      <hr />
         <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE INVENTARIOS?</b></p>
           <ul>
-            <li><b>Administradores:</b> Supervisan el inventario, gestionan los niveles de stock y ordenan la reposición de productos.</li>
-            <li><b>Almacén/Logística:</b> Se encargan de recibir, almacenar, organizar y despachar los productos según las órdenes.</li>
-            <li><b>Ventas:</b> Consultan el inventario para verificar la disponibilidad de productos y realizar ventas sin inconvenientes.</li>
+            <li><b>Administradores:</b>
+              <ul>
+                <li>Supervisan el inventario.</li>
+                <li>Gestionan los niveles de stock.</li>
+                <li>Ordenan la reposición de productos.</li>
+              </ul>
+            </li>
+            <li><b>Almacén / Logística:</b>
+              <ul>
+                <li>Reciben</li>
+                <li>Almacenan</li>
+                <li>Organizan y despachan los productos según las órdenes.</li>
+              </ul>
+            </li>
+            <li><b>Clientes:</b>
+              <ul>
+                <li>Consultan el inventario para verificar la disponibilidad de productos.</li>
+                <li>Realizan compras sin inconvenientes.</li>
+              </ul>
+            </li>
           </ul>
-        <hr />
+      <hr />
       </div>
-
       <h2>Listado de Inventarios</h2>
       <ul className="productos-list">
         {productos.length > 0 ? (

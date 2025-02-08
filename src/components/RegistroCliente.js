@@ -26,7 +26,7 @@ const options = [
   { value: 'Computadores Portátiles', label: 'Computadores Portátiles' },
   { value: 'Tabletas/Tablets', label: 'Tabletas/Tablets' },
   { value: 'Impresoras', label: 'Impresoras' },
-  { value: 'Consola de Videojuegos', label: 'Consola de Videojuegos' },
+  { value: 'Consolas de Videojuegos', label: 'Consolas de Videojuegos' },
   { value: 'Bocinas Inteligentes o Parlantes Bluetooth', label: 'Bocinas Inteligentes o Parlantes Bluetooth' },
   { value: 'Celulares', label: 'Celulares' },
   { value: 'Tostadoras', label: 'Tostadoras' },
