@@ -39,6 +39,16 @@ const options = [
 // Ordenar las opciones alfabéticamente por el label
 const sortedOptions = options.sort((a, b) => a.label.localeCompare(b.label));
 
+// Definimos una opción deshabilitada que se mostrará en el listado
+const defaultOption = { 
+  value: "", 
+  label: "SELECCIONA TUS PREFERENCIAS:", 
+  isDisabled: true 
+};
+
+// Combinamos la opción deshabilitada con el resto de opciones
+const optionsWithDefault = [defaultOption, ...sortedOptions];
+
 const RegistroCliente = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -134,8 +144,8 @@ const RegistroCliente = () => {
       <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
       <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
       <input type="text" placeholder="Número de Identificación (Cédula de Ciudadanía)" value={identificationNumber} onChange={(e) => setIdentificationNumber(formatIdentificationNumber(e.target.value))}  required />
-      <div>
-        <label htmlFor="birthDate">Fecha de Nacimiento:</label>
+      <div className="date-field-DOB">
+        <label htmlFor="birthDate">DATE OF BIRTH:</label>
         <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
       </div>
       <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
@@ -144,16 +154,7 @@ const RegistroCliente = () => {
         <input type="text" className="phone-input-field" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required />
       </div>
       <div>
-        <label htmlFor="preferences">Preferencias de Productos:</label>
-        <Select 
-          id="preferences" 
-          isMulti 
-          options={sortedOptions} // Usamos las opciones ordenadas
-          value={preferences} 
-          onChange={setPreferences} 
-          placeholder="Selecciona tus preferencias" 
-          className="select-preferences" 
-        />
+        <Select id="preferences" isMulti options={optionsWithDefault} value={preferences} onChange={setPreferences} placeholder="Preferencias de Productos" className="select-preferences" />
       </div>
       <button type="submit">Registrar</button>
       {loading && <div className="spinner">Procesando...</div>}

@@ -530,25 +530,80 @@ form select {
   height: auto; /* Mantiene la relación de aspecto de la imagen */
 }
 
-.date-field label {
-  display: block;
-  margin-bottom: 5px;
+/* Estilos para "Fecha deseada para la entrega" */
+.date-field {
+  display: flex;       /* Coloca la etiqueta y el input en línea */
+  align-items: center; /* Centra verticalmente la etiqueta e input */
 }
 
-/* Estilos para los botones de selección de 'Sí' y 'No' */
+.date-field label {
+  margin-right: 10px;  /* Espacio entre la etiqueta y el input */
+  white-space: nowrap; /* Evita que el texto se divida en dos líneas */
+  font-weight: bold;   /* Opcional: resalta la etiqueta */
+  position: relative;    /* Permite desplazar la etiqueta respecto a su posición normal */
+  top: -8px;             /* Ajusta este valor (puede ser -2px, -4px, etc.) para subir la etiqueta */
+}
+
+/* Estilos para "DATE OF BIRTH:" */
+.date-field-DOB {
+  display: flex;       /* Coloca la etiqueta y el input en línea */
+  align-items: center; /* Centra verticalmente la etiqueta e input */
+}
+
+.date-field-DOB label {
+  margin-right: 10px;  /* Espacio entre la etiqueta y el input */
+  white-space: nowrap; /* Evita que el texto se divida en dos líneas */
+  font-weight: bold;   /* Opcional: resalta la etiqueta */
+  position: relative;    /* Permite desplazar la etiqueta respecto a su posición normal */
+  top: -7px;             /* Ajusta este valor (puede ser -2px, -4px, etc.) para subir la etiqueta */
+}
+
+/* Contenedor del selector de método de pago */
+.payment-method-container {
+  margin-bottom: 20px; /* Separa este campo del siguiente bloque */
+}
+
+/* Contenedor para los campos de banco (Nombre del Banco y Número de Cuenta) */
+.bank-fields {
+  display: flex;
+  flex-direction: column; /* Los inputs se ubican uno debajo del otro */
+  gap: 10px;            /* Espacio entre cada input */
+  margin-bottom: 20px;  /* Separa este grupo del siguiente bloque */
+}
+
+/* Opciones de pago para Nequi, Daviplata o Transfiya */
 .payment-options {
   display: flex;
-  align-items: center;
-  gap: 20px; /* Espacio entre los botones */
+  flex-direction: column;
+  align-items: center; /* Centra horizontalmente todo el bloque */
+  gap: 10px;
+  margin-top: 20px; /* Separa este grupo de los campos anteriores */
 }
 
+/* Estilos existentes para los botones de radio */
+.payment-options p {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Contenedor específico para los botones de radio */
+.radio-group {
+  display: flex;
+  justify-content: center; /* Centra los elementos dentro de este contenedor */
+  gap: 20px; /* Espacio entre "Sí" y "No" */
+}
+
+/* Estilos para cada label de los botones de radio */
 .payment-options label {
   display: flex;
   align-items: center;
   cursor: pointer;
-  gap: 8px; /* Espacio entre el botón de radio y el texto */
+  gap: 8px;
 }
 
+/* Estilos para los inputs de tipo radio */
 .payment-options input[type="radio"] {
   appearance: none;
   background-color: #f0f0f0;
@@ -559,30 +614,23 @@ form select {
   position: relative;
 }
 
+/* Cuando se selecciona el radio, quitamos el borde */
 .payment-options input[type="radio"]:checked {
   border-color: transparent;
 }
 
+/* Estilos específicos para el botón "Sí" cuando está seleccionado */
 .payment-options input[type="radio"][value="Sí"]:checked {
   background-color: #4caf50; /* Verde para Sí */
 }
 
-.payment-options input[type="radio"][value="Sí"]:checked::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background-color: #fff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
+/* Estilos específicos para el botón "No" cuando está seleccionado */
 .payment-options input[type="radio"][value="No"]:checked {
   background-color: #f44336; /* Rojo para No */
 }
 
+/* Añadimos un pseudo-elemento para indicar la selección en ambos botones */
+.payment-options input[type="radio"][value="Sí"]:checked::after,
 .payment-options input[type="radio"][value="No"]:checked::after {
   content: "";
   position: absolute;
@@ -663,7 +711,7 @@ form select {
 
 /* Estilo para el campo de selección de preferencias */
 .select-preferences {
-  margin-bottom: 1.5em;
+  margin-bottom: 1em;
 }
 
 .spinner {
@@ -715,16 +763,47 @@ form select {
   background-color: #45a049;
 }
 
-/* Estilo para centrar la imagen */
-.image-container {
-  text-align: center;
-  margin: 20px 0;
+/* Contenedor general de los testimonios */
+.testimonials-wrapper {
+  display: flex;
+  flex-wrap: wrap;         /* En pantallas pequeñas, se pueden ajustar a varias filas */
+  justify-content: space-between; /* Distribuye el espacio horizontal */
+  gap: 20px;               /* Espacio entre cada testimonial */
+  margin: 20px 0;          /* Separación vertical respecto a otros contenidos */
 }
 
-/* Estilo para ajustar el tamaño de la imagen */
+/* Cada tarjeta testimonial */
+.testimonial {
+  flex: 1 1 30%;           /* Cada testimonial ocupará alrededor del 30% del ancho (ajusta según convenga) */
+  background: #f9f9f9;      /* Fondo opcional para destacar la tarjeta */
+  border: 1px solid #ccc;  /* Borde opcional */
+  border-radius: 4px;
+  padding: 15px;
+  box-sizing: border-box;
+  text-align: center;      /* Centra el contenido interno (opcional) */
+}
+
+/* Contenedor de la imagen */
+.image-container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 .testimonial-image {
-  max-width: 150px; /* Ajusta el tamaño máximo de la imagen según sea necesario */
+  max-width: 100%;
   height: auto;
+  display: inline-block;
+}
+
+/* Estilos para el blockquote y el párrafo */
+.testimonial blockquote {
+  font-style: italic;
+  margin: 0 0 10px;
+}
+
+.testimonial p {
+  margin: 0;
+  font-weight: bold;
 }
 
 /* Estilos para los inputs deshabilitados */
@@ -929,11 +1008,13 @@ h2 {
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
   background-color: #fff;
   height: 40px; /* Mantiene la altura compacta */
   margin: 0.5rem 0;
+  position: relative; /* Permite mover el contenedor con top */
+  top: -7px; /* Ajusta este valor hasta que se alinee como deseas */
 }
 
 .phone-input-prefix {

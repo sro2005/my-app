@@ -192,19 +192,19 @@ const userId = user?._id;  // Usar userId desde el contexto
         <input type="email" placeholder="Correo Electrónico" value={customerData.email} onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })} required disabled className="disabled-input"/>
         <input type="tel" placeholder="Número de Celular" value={customerData.phone} onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })} required disabled className="disabled-input"/>
         <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
-
+        <div className="payment-method-container">
         <Select placeholder="Selecciona un método de pago" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable />
-                      
+        </div>           
         {(paymentMethod && (paymentMethod.value === "Tarjeta de Crédito" || paymentMethod.value === "Tarjeta de Débito")) && (
-          <>
+          <div className="bank-fields">
             <input type="text" placeholder="Nombre del Banco" value={bankName} onChange={(e) => setBankName(e.target.value)} required />
             <input type="text" placeholder="Número de Cuenta" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 20))} maxLength="20" required />
-          </>
+          </div>
         )}
-
         {(paymentMethod && (paymentMethod.value === "Nequi" || paymentMethod.value === "Daviplata" || paymentMethod.value === "Transfiya")) && (
           <div className="payment-options">
             <p>¿Es el mismo número registrado?</p>
+              <div className="radio-group">
             <label>
               <input type="radio" value="Sí" checked={sameRegisteredNumber === true} onChange={() => setSameRegisteredNumber(true)} />
               Sí
@@ -213,6 +213,7 @@ const userId = user?._id;  // Usar userId desde el contexto
               <input type="radio" value="No" checked={sameRegisteredNumber === false} onChange={() => setSameRegisteredNumber(false)} />
               No
             </label>
+              </div>
             {!sameRegisteredNumber && (
               <input type="text" placeholder="Número de Cuenta" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength="10" required />
             )}

@@ -55,33 +55,35 @@ const HomePage = () => {
 
       {/* Testimonios */}
       <h3>TESTIMONIOS</h3>
-      <div className="testimonial">
-        <div className="image-container">
-          <img src="/testimonial-image-1.png" alt="Cliente satisfecho" className="testimonial-image" />
-        </div>
+      <div className="testimonials-wrapper">
+        <div className="testimonial">
+          <div className="image-container">
+            <img src="/testimonial-image-1.png" alt="Cliente satisfecho" className="testimonial-image" />
+          </div>
         <blockquote>
           "Desde que comenzamos a utilizar los servicios de <strong>⚡ELECTROVIBEHOME⚡</strong>, nuestra eficiencia en la gestión de inventarios ha mejorado notablemente.
           Sus soluciones tecnológicas son intuitivas y efectivas. ¡Altamente recomendado!"
         </blockquote>
-        <p>- Juan Pérez</p>
-      </div>
-      <div className="testimonial">
-        <div className="image-container">
-          <img src="/testimonial-image-2.png" alt="Cliente satisfecho" className="testimonial-image" />
+          <p>- Juan Pérez</p>
         </div>
+        <div className="testimonial">
+          <div className="image-container">
+            <img src="/testimonial-image-2.png" alt="Cliente satisfecho" className="testimonial-image" />
+          </div>
         <blockquote>
           "El equipo de <strong>⚡ELECTROVIBEHOME⚡</strong> ha sido increíblemente útil y profesional. Sus soluciones han transformado nuestra operación diaria."
         </blockquote>
-        <p>- Laura Gómez</p>
-      </div>
-      <div className="testimonial">
-        <div className="image-container">
-          <img src="/testimonial-image-3.png" alt="Cliente satisfecho" className="testimonial-image" />
+          <p>- Laura Gómez</p>
         </div>
+        <div className="testimonial">
+          <div className="image-container">
+            <img src="/testimonial-image-3.png" alt="Cliente satisfecho" className="testimonial-image" />
+          </div>
         <blockquote>
           "Gracias a <strong>⚡ELECTROVIBEHOME⚡</strong>, hemos optimizado nuestro inventario de una manera que nunca creímos posible. ¡Estamos muy contentos con los resultados!"
         </blockquote>
-        <p>- Carlos Martinez</p>
+          <p>- Carlos Martinez</p>
+        </div>
       </div>
       <hr />
 

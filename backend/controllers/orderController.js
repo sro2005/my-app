@@ -55,7 +55,7 @@ exports.createOrder = async (req, res) => {
 // Obtener todos los pedidos del usuario (para clientes)
 exports.getOrdersByUserId = async (req, res) => {
   try {
-    const userId = req.user._id;  // Se obtiene del token
+    const userId = req.user;  // Se obtiene del token
     // Filtrar solo los pedidos que tengan el userId del usuario autenticado
     const orders = await Order.find({ userId: userId }).populate('products.productId');
     // Devolver el arreglo (vacío si no hay pedidos)

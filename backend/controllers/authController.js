@@ -3,6 +3,19 @@ const Customer = require('../models/Customer');
 const { registerOrUpdateLoginLog } = require('../models/LoginLog');
 const { generateToken } = require('../utils/tokenUtils');
 
+// Función para formatear el número de teléfono al formato "+57 302 0000000"
+const formatPhoneNumber = (value) => {
+  let digits = value.replace(/\D/g, '');
+  if (digits.startsWith('57')) {
+    digits = digits.slice(2);
+  }
+  digits = digits.slice(0, 10);
+  if (digits.length > 3) {
+    return `+57 ${digits.slice(0, 3)} ${digits.slice(3)}`;
+  }
+  return `+57 ${digits}`;
+};
+
 // Función genérica para registrar usuarios
 const registerUser = async (req, res, role) => {
   try {
@@ -11,9 +24,9 @@ const registerUser = async (req, res, role) => {
       firstName,
       lastName,
       email,
-      password,
       identificationNumber,
       birthDate,
+      password,
       phone,
       preferences
     } = req.body;
@@ -40,7 +53,7 @@ const registerUser = async (req, res, role) => {
       newUserData.lastName = lastName;
       newUserData.identificationNumber = identificationNumber;
       newUserData.birthDate = birthDate;
-      newUserData.phone = phone;
+      newUserData.phone = formatPhoneNumber(phone);
       newUserData.preferences = preferences;
     }
 
