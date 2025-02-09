@@ -23,9 +23,9 @@ const Footer = () => {
     <div className="section right">
       <h3>Redes Sociales</h3>
       <ul className="social-links">
-        <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><span className="iconify" data-icon="fa6-brands:facebook" data-inline="false"></span></a></li>
-        <li><a href="https://x.com" target="_blank" rel="noopener noreferrer"><span className="iconify" data-icon="fa6-brands:twitter" data-inline="false"></span></a></li>
-        <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><span className="iconify" data-icon="fa6-brands:instagram" data-inline="false"></span></a></li>
+        <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-facebook"></i></a></li>
+        <li><a href="https://x.com" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-x-twitter"></i></a></li>
+        <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-instagram"></i></a></li>
       </ul>
     </div>
   </div>
