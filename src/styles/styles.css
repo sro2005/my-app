@@ -146,83 +146,86 @@ nav ul li {
   margin-right: 15px; /* Ajustar el espacio entre los enlaces */
 }
 
-nav ul li a {
+/* Estilos comunes para los enlaces dentro de .nav-links y para el botón de logout */
+.nav-links a, 
+.logout-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-decoration: none;
   color: #FFA500; /* Color del texto en naranja brillante */
-  padding: 8px 15px; /* Ajustar el padding para hacer los botones más equilibrados */
+  padding: 8px 15px; /* Espaciado interno para equilibrar los botones */
   font-weight: bold;
-  transition: color 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease; /* Transiciones suaves para el color, opacidad y sombra */
-  text-transform: uppercase; /* Transforma el texto a mayúsculas */
+  text-transform: uppercase;
+  transition: color 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-nav ul li a:hover {
-  color: #FF8C00; /* Cambio de color del texto al pasar el ratón (color más oscuro) */
+/* Efecto hover unificado para enlaces y botón de logout */
+.nav-links a:hover {
+  color: #FF8C00; /* Color más oscuro al pasar el ratón */
   opacity: 0.85; /* Opacidad ligeramente reducida */
-  text-shadow: 0 1px 3px rgba(255, 140, 0, 0.2); /* Sombra de texto con un tono naranja suave */
-  transform: translateY(-2px); /* Sutil movimiento hacia arriba para darle un toque de "presión" */
-  box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3); /* Sombra naranja suave en el fondo */
+  text-shadow: 0 1px 3px rgba(255, 140, 0, 0.2); /* Sombra suave para el texto */
+  transform: translateY(-2px); /* Sutil movimiento hacia arriba */
+  box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3); /* Sombra de fondo con tono naranja */
 }
 
+/* Estilos específicos para el botón de logout */
+.logout-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ffffff; /* Fuerza el color blanco para el botón de logout */
+  transition: none; /* Sin transición para evitar cambios al pasar el cursor */
+}
+
+.logout-button:hover {
+  background: none;
+  color: #ffffff;
+  opacity: 1;
+  text-shadow: none;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Contenedor principal de la navegación */
 .nav-container {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centramos los elementos de navegación */
+  justify-content: center; /* Centra los elementos de navegación */
 }
 
+/* Lista de enlaces de navegación */
 .nav-links {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
+  align-items: center;
 }
 
+/* Espaciado entre elementos dentro de la lista */
 .nav-links li {
-  margin-right: 15px; /* Espacio ajustado entre los enlaces */
+  margin-right: 15px;
 }
 
-.nav-links a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: inherit; /* Usa el color heredado */
-}
-
+/* Estilo para los íconos de navegación */
 .nav-icon {
-  font-size: 1.3em; /* Tamaño del icono ligeramente aumentado */
-  color: #FFA500; /* Color de los iconos en naranja brillante */
+  font-size: 1.3em; /* Tamaño ligeramente aumentado */
+  color: inherit;; /* Color en naranja brillante */
 }
 
+/* Estilo para el texto debajo de los íconos */
 .nav-text {
-  margin-top: 4px; /* Espacio ligeramente aumentado entre el icono y el texto */
-  font-size: 0.85em; /* Tamaño del texto ajustado */
-  color: #FFA500; /* Color del texto debajo de los iconos en naranja brillante */
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-}
-
-.logout-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.7rem; /* Tamaño del ícono ligeramente aumentado */
-  color: #ffffff; /* Cambia el color según tu diseño */
-  display: flex;
-  align-items: center;
-  transition: background-color 0.3s ease; /* Opcional: para un efecto suave */
-}
-
-.logout-button:hover {
-  background-color: transparent; /* Asegúrate de que no se aplique color de fondo */
-  color: #ffffff; /* Asegúrate de que el color no cambie al pasar el cursor */
-}
-
-.logout-button:focus {
-  outline: none; /* Quita el borde de enfoque (opcional) */
-  background-color: transparent; /* Asegúrate de que no se aplique color de fondo */
+  margin-top: 4px; /* Espacio entre el ícono y el texto */
+  font-size: 0.85em; /* Tamaño de fuente ajustado */
+  color: inherit; /* Color consistente con los íconos */
 }
 
 /* Estilos responsivos */
@@ -230,10 +233,9 @@ nav ul li a:hover {
   .nav-container {
     flex-direction: column;
   }
-
   .nav-links {
     flex-direction: column;
-    gap: 10px;
+    gap: 10px; /* Espaciado vertical entre enlaces */
   }
 }
 
