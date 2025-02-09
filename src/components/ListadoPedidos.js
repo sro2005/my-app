@@ -129,6 +129,7 @@ const ListadoPedidos = () => {
       <h2>Gestión de Pedidos</h2>
       <hr />
       <p><strong>📖 DEFINICIÓN:</strong> La <strong>Gestión de Pedidos</strong> en <strong>ElectroVibeHome</strong> es el proceso mediante el cual se <strong>reciben, procesan y entregan</strong> electrodomésticos y productos tecnológicos a nuestros clientes de manera <strong>organizada, segura y eficiente.</strong></p>
+      <p><b>Pasos del Proceso:</b></p>
         <ul>
           <li>Captura de información del cliente.</li>
           <li>Validación del pedido.</li>
@@ -160,7 +161,7 @@ const ListadoPedidos = () => {
       <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE PEDIDOS:</b></p>
         <ul>
           <li><b>Rapidez en el procesamiento:</b> Disminuye los tiempos de espera entre la compra y la entrega.</li>
-          <li><b>Mayor confianza del cliente:</b> Transparencia en el estado del pedido y tiempos de entrega exactos.</li>
+          <li><b>Mayor confianza del cliente:</b> Ofrece transparencia en el estado del pedido y tiempos de entrega exactos.</li>
           <li><b>Reducción de costos operativos:</b> Optimiza los recursos logísticos y evita reprocesos innecesarios.</li>
           <li><b>Mejora en la gestión de inventarios:</b> Permite tener control de los productos disponibles y evitar sobreventas.</li>
         </ul>
@@ -169,24 +170,24 @@ const ListadoPedidos = () => {
         <ul>
           <li><b>Clientes:</b>
             <ul>
-              <li>Realizan pedidos</li>
-              <li>Consultan el estado</li>
-              <li>Reciben notificaciones de entrega</li>
+              <li>Realizan pedidos.</li>
+              <li>Consultan el estado del pedido.</li>
+              <li>Reciben notificaciones de entrega.</li>
             </ul>
           </li>
           <li><b>Administradores:</b>
             <ul>
-              <li>Gestionan los pedidos</li>
-              <li>Verifican pagos</li>
-              <li>Actualizan estados</li>
-              <li>Resuelven incidencias</li>
+              <li>Gestionan los pedidos.</li>
+              <li>Verifican pagos.</li>
+              <li>Actualizan estados.</li>
+              <li>Resuelven incidencias.</li>
             </ul>
           </li>
           <li><b>Almacén / Logística:</b>
             <ul>
-              <li>Reciben las órdenes</li>
-              <li>Preparan los productos</li>
-              <li>Coordinan el envío</li>
+              <li>Reciben las órdenes.</li>
+              <li>Preparan los productos.</li>
+              <li>Coordinan el envío.</li>
             </ul>
           </li>
         </ul>

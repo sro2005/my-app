@@ -67,25 +67,24 @@ exports.forgotPassword = async (req, res) => {
     customer.resetPasswordExpires = Date.now() + 3600000; // 1 hora
     await customer.save();
 
+    // Construir la URL de restablecimiento usando FRONTEND_URL o el host de la petición
+    const resetUrl = `${process.env.FRONTEND_URL || `https://${req.headers.host}`}/reset-password/${token}`;
+
     const mailOptions = {
       to: customer.email,
       from: process.env.NO_REPLY_EMAIL_ADDRESS,
       subject: 'Restablecimiento de contraseña',
-      text: `Recibiste esto porque tú (o alguien más) ha solicitado restablecer la contraseña de tu cuenta.\n\n
-      Haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso:\n\n
-      http://${req.headers.host}/reset-password/${token}\n\n
-      Si no solicitaste esto, ignora este correo y tu contraseña permanecerá sin cambios.\n`
+      text: `Recibiste este correo porque tú (o alguien más) solicitaste restablecer la contraseña de tu cuenta.\n\n` +
+            `Haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso:\n\n` +
+            `${resetUrl}\n\n` +
+            `Si no solicitaste este cambio, ignora este correo y tu contraseña permanecerá sin cambios.\n`
     };
 
-    transporterNoReply.sendMail(mailOptions, (err, response) => {
-      if (err) {
-        console.error('Error al enviar el correo:', err);
-        return res.status(500).send({ message: 'Error al enviar el correo' });
-      }
-      res.status(200).send({ message: 'Correo de recuperación enviado con éxito' });
-    });
+    // Enviar el correo utilizando async/await
+    await transporterNoReply.sendMail(mailOptions);
+    res.status(200).json({ message: 'Correo de recuperación enviado con éxito' });
   } catch (error) {
     console.error('Error en el proceso de recuperación:', error);
-    res.status(500).send({ message: 'Error en el proceso de recuperación' });
+    res.status(500).json({ message: 'Error en el proceso de recuperación' });
   }
 };

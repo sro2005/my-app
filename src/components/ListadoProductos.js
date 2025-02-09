@@ -85,7 +85,7 @@ const ListadoProductos = ({ userPreferences }) => {
       <h2>Gestión de Inventarios</h2>
       <hr />
       <div className="module-description">
-        <p><b>📖 DEFINICIÓN:</b> La <strong>Gestión de Inventarios</strong> en <strong>ElectroVibeHome</strong> es el proceso clave que permite <strong>controlar</strong> y <strong>mantener</strong> el <strong>stock</strong> de productos de manera <strong>eficiente</strong> y <strong>organizada</strong>. Incluye:</p>
+        <p><b>📖 DEFINICIÓN:</b> La <strong>Gestión de Inventarios</strong> en <strong>ElectroVibeHome</strong> es el proceso clave que permite <strong>controlar</strong> y <strong>mantener</strong> el <strong>stock</strong> de productos de manera <strong>eficiente</strong> y <strong>organizada</strong>. Este proceso incluye:</p>
           <ul>
             <li>Recepción de productos en el almacén.</li>
             <li>Control y registro de entradas y salidas.</li>
@@ -95,13 +95,13 @@ const ListadoProductos = ({ userPreferences }) => {
             <li>Control de productos deteriorados o fuera de servicio.</li>
           </ul>
       <hr />
-        <p><b>🎯 OBJETIVO:</b> Asegurar que siempre haya suficiente stock disponible para satisfacer la demanda de los clientes, evitar desabastecimientos o exceso de inventario, y mantener una gestión eficiente de los productos en todo momento.</p>
+        <p><b>🎯 OBJETIVO:</b> Asegurar que siempre haya suficiente stock disponible para satisfacer la demanda de los clientes, evitando desabastecimientos o exceso de inventario, y manteniendo una gestión eficiente de los productos en todo momento.</p>
         <hr />
         <p><b>📈 IMPORTANCIA:</b></p>
           <ul>
-            <li><b>Optimización de recursos:</b> Mantener niveles de inventario adecuados evita tanto los desabastecimientos como los costos asociados con el exceso de productos.</li>
-            <li><b>Mejora en la satisfacción del cliente:</b> Asegura que los productos estén disponibles para la venta o entrega sin retrasos.</li>
-            <li><b>Visibilidad en tiempo real:</b> El sistema permite conocer el estado actual del inventario, lo que facilita la toma de decisiones.</li>
+            <li><b>Optimización de recursos:</b> Mantener niveles adecuados de inventario evita tanto los desabastecimientos como los costos asociados al exceso de productos.</li>
+            <li><b>Mejora en la satisfacción del cliente:</b> Garantiza que los productos estén disponibles para la venta o entrega sin retrasos.</li>
+            <li><b>Visibilidad en tiempo real:</b> Permite conocer el estado actual del inventario, facilitando la toma de decisiones.</li>
             <li><b>Reducción de costos operativos:</b> Minimiza la necesidad de almacenar productos innecesarios y ayuda a evitar pérdidas por productos vencidos o dañados.</li>
           </ul>
       <hr />
@@ -110,17 +110,17 @@ const ListadoProductos = ({ userPreferences }) => {
             <li><b>Recepción de productos:</b> Los productos son recibidos en el almacén, inspeccionados y registrados en el sistema.</li>
             <li><b>Control de stock:</b> Se realiza un seguimiento de la cantidad disponible de cada producto y se actualiza el inventario en tiempo real.</li>
             <li><b>Reposición y compras:</b> Cuando los niveles de stock son bajos, se generan órdenes de compra para asegurar la reposición de productos.</li>
-            <li><b>Gestión de salidas:</b> Cuando los productos son vendidos o utilizados en pedidos, el inventario se actualiza para reflejar las cantidades restantes.</li>
-            <li><b>Control de calidad:</b> Se realiza un seguimiento para asegurarse de que los productos no estén deteriorados o fuera de servicio, y se gestionan devoluciones si es necesario.</li>
-            <li><b>Optimización del espacio:</b> El espacio de almacenamiento se organiza para mejorar el acceso a los productos y reducir tiempos de búsqueda.</li>
+            <li><b>Gestión de salidas:</b> Al venderse o utilizarse en pedidos, el inventario se actualiza para reflejar las cantidades restantes.</li>
+            <li><b>Control de calidad:</b> Se verifica que los productos no estén deteriorados o fuera de servicio y se gestionan las devoluciones cuando es necesario.</li>
+            <li><b>Optimización del espacio:</b> El área de almacenamiento se organiza para mejorar el acceso a los productos y reducir los tiempos de búsqueda.</li>
           </ol>
       <hr />
         <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE INVENTARIOS:</b></p>
           <ul>
             <li><b>Reducción de costos:</b> Evita la sobrecompra y la acumulación innecesaria de productos.</li>
-            <li><b>Mayor precisión:</b> Mantiene un control exacto sobre el stock, reduciendo errores de inventario.</li>
-            <li><b>Mejor respuesta a la demanda:</b> Permite tener productos disponibles para satisfacer las necesidades del cliente de forma rápida y precisa.</li>
-            <li><b>Eficiencia operativa:</b> Mejora la organización del almacén y facilita la gestión de pedidos y devoluciones.</li>
+            <li><b>Mayor precisión:</b> Mantiene un control exacto del stock, reduciendo errores en el inventario.</li>
+            <li><b>Mejor respuesta a la demanda:</b> Permite disponer de productos para satisfacer rápidamente las necesidades del cliente.</li>
+            <li><b>Eficiencia operativa:</b> Facilita la organización del almacén y la gestión de pedidos y devoluciones.</li>
           </ul>
       <hr />
         <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE INVENTARIOS?</b></p>
@@ -134,8 +134,7 @@ const ListadoProductos = ({ userPreferences }) => {
             </li>
             <li><b>Almacén / Logística:</b>
               <ul>
-                <li>Reciben</li>
-                <li>Almacenan</li>
+                <li>Reciben y almacenan los productos.</li>
                 <li>Organizan y despachan los productos según las órdenes.</li>
               </ul>
             </li>
