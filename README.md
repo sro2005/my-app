@@ -98,6 +98,6 @@ Si deseas contribuir, ¡siéntete libre de hacer un fork y enviar un pull reques
 ---
 
 ## 📞 Contacto
-Si tienes dudas o sugerencias, puedes escribirme a **electrovibehome@soporte.com** 📩
+Si tienes dudas o sugerencias, puedes escribirme a **company.electrovibehome@gmail.com** 📩
 
 ⚡ *Gracias por visitar ElectroVibeHome. ¡Esperamos que disfrutes tu experiencia!* ⚡
