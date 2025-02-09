@@ -1,70 +1,103 @@
-# Getting Started with Create React App
+# ⚡ ElectroVibeHome
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Bienvenido a **ElectroVibeHome**, una plataforma moderna e intuitiva para la compra de electrodomésticos. Nuestro objetivo es ofrecer innovación, calidad y comodidad en cada compra.
 
-## Available Scripts
+## 🌟 Descripción del Proyecto
+ElectroVibeHome es una aplicación web diseñada para facilitar la compra de productos para el hogar. Proporcionamos una experiencia fluida y segura para los clientes, con múltiples opciones de pago y una interfaz optimizada.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 Tecnologías Utilizadas
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### **Frontend:**
+- React.js
+- CSS (Diseño responsive)
+- Google Fonts
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### **Backend:**
+- Node.js
+- Express.js
 
-### `npm test`
+### **Base de Datos:**
+- MongoDB
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### **Herramientas Adicionales:**
+- Postman (para pruebas de API)
+- GitHub (control de versiones)
+- JSON Web Tokens (JWT) para autenticación
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🎯 Características Principales
+✅ Registro e inicio de sesión de usuarios
+✅ Gestión de productos con imágenes, descripciones y precios
+✅ Carrito de compras con total dinámico
+✅ Métodos de pago variados: tarjeta, billeteras virtuales (Nequi, Daviplata), Transfiya
+✅ Historial de pedidos para los clientes
+✅ Panel de administración para gestionar productos y pedidos
+✅ Notificaciones y alertas en la compra
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📂 Instalación y Uso
 
-### `npm run eject`
+Sigue estos pasos para ejecutar el proyecto en tu entorno local:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 1️⃣ **Clonar el repositorio**
+```bash
+  git clone https://github.com/sro2005/my-app.git
+  cd my-app
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 2️⃣ **Instalar dependencias**
+```bash
+  npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3️⃣ **Configurar variables de entorno**
+Crea un archivo `.env` en la raíz del proyecto y define las variables necesarias.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 4️⃣ **Iniciar la aplicación**
+```bash
+  npm start
+```
+Luego, abre **http://localhost:3000** en tu navegador para ver la aplicación en acción.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📜 Documentación de la API
+La API de **ElectroVibeHome** permite realizar operaciones CRUD en los módulos principales. Aquí están algunos de los endpoints clave:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 🔹 **Autenticación**
+- `POST /api/auth/register` → Registrar un nuevo usuario
+- `POST /api/auth/login` → Iniciar sesión y obtener un token JWT
 
-### Code Splitting
+### 🔹 **Gestión de Productos**
+- `GET /api/products` → Obtener todos los productos
+- `POST /api/products` → Agregar un nuevo producto (requiere rol de administrador)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### 🔹 **Pedidos**
+- `GET /api/orders` → Obtener pedidos del usuario autenticado
+- `POST /api/orders` → Crear un nuevo pedido
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🛠️ **Mantenimiento y Actualizaciones**
+- Se realizan pruebas periódicas con **Postman** y **Jest**.
+- Implementación de mejoras en la UI/UX.
+- Integración de nuevas pasarelas de pago en el futuro.
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 👥 **Contribuidores**
+📌 **Desarrollador principal:** SANTYRO  
+📌 **Repositorio en GitHub:** [ElectroVibeHome](https://github.com/sro2005/my-app)
 
-### Advanced Configuration
+Si deseas contribuir, ¡siéntete libre de hacer un fork y enviar un pull request! 🚀
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 📞 Contacto
+Si tienes dudas o sugerencias, puedes escribirme a **electrovibehome@soporte.com** 📩
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+⚡ *Gracias por visitar ElectroVibeHome. ¡Esperamos que disfrutes tu experiencia!* ⚡
