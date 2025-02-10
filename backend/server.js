@@ -7,7 +7,12 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
-dotenv.config(); // Cargar variables de entorno
+
+// Define el archivo de entorno a usar según NODE_ENV
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+// Cargar las variables de entorno desde el archivo correspondiente
+dotenv.config({ path: envFile });
+console.log('Cargando variables de entorno desde:', envFile);
 
 // Importar rutas
 const productRoutes = require('./routes/productRoutes');

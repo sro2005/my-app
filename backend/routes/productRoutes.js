@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
-const { authenticateAdminToken } = require('../middlewares/authMiddleware.js');
+const { authenticateAdminToken } = require('../middlewares/authMiddleware');
 
 // Definir las rutas
 // Ruta para obtener todos los productos (accesible para todos los usuarios)

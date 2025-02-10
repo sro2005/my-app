@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const customerController = require('../controllers/customerController');
 const emailController = require('../controllers/emailController');
-const { authenticateToken, authenticateAdminToken } = require('../middlewares/authMiddleware.js');
+const { authenticateToken, authenticateAdminToken } = require('../middlewares/authMiddleware');
 
 // Ruta para manejar la solicitud de recuperación de contraseña
 router.post('/forgot-password', emailController.forgotPassword);
