@@ -13,7 +13,7 @@ const RecoverPassword = () => {
     setMessage('');
     setLoading(true);
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000'; // Valor predeterminado si no está configurado
+    const API_URL = process.env.REACT_APP_API_BASE_URL; // Valor predeterminado si no está configurado
 
     axios.post(`${API_URL}/api/customers/forgot-password`, { email })
       .then(() => {

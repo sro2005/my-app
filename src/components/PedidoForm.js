@@ -59,7 +59,7 @@ const userId = user?._id;  // Usar userId desde el contexto
       }
     }
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:5000"; // Reemplaza con tu URL local si es necesario
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
     axios.get(`${API_URL}/api/products`) 
       .then(response => setAvailableProducts(response.data.map(product => ({
         value: product._id,
@@ -141,7 +141,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const handleConfirm = () => {
-    const API_URL = process.env.REACT_APP_API_BASE_URL || "https://localhost:5000";
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
     setLoading(true);
 
     // Obtener el token de localStorage

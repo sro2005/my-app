@@ -23,7 +23,7 @@ const LoginCliente = () => {
     setLoading(true);
 
     try {
-      const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
+      const API_URL = process.env.REACT_APP_API_BASE_URL;
       const { data } = await axios.post(`${API_URL}/api/auth/login`, { email, password });
 
       if (data?.token && data?.user) {

@@ -86,7 +86,7 @@ const RegistroCliente = () => {
     setLoading(true);
     setError(''); // Reset error message
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL || 'https://localhost:5000';
+    const API_URL = process.env.REACT_APP_API_BASE_URL;
 
     axios.post(`${API_URL}/api/auth/register`, {
       firstName,
