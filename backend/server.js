@@ -64,6 +64,7 @@ app.use((err, req, res, next) => {
 
 // Opcional: Servidor HTTPS solo si los certificados están disponibles
 let server;
+if (!isProduction) {
 try {
   const sslOptions = {
     key: fs.readFileSync('./localhost-key.pem'),
@@ -73,6 +74,10 @@ try {
   console.log('✅ Servidor HTTPS activado');
 } catch (error) {
   console.warn('⚠️ No se encontraron certificados SSL. Usando HTTP.');
+  server = app;
+}
+} else {
+  // En producción se usa HTTP (el proxy reverso se encarga de HTTPS)
   server = app;
 }
 
