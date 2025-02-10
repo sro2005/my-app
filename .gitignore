@@ -17,14 +17,13 @@
 
 # ⚙️ Archivos de configuración de entorno 
 .env.local             # Variables de entorno locales
-.env.development.local # Variables de entorno para desarrollo
 .env.test.local        # Variables de entorno para pruebas
 .env.production.local  # Variables de entorno para producción
 
 # ⚠️ Ignorar cualquier archivo .env (para evitar subir credenciales sensibles)
 .env
+.env.development
 .env.production
-backend/.env
 
 # 📄 Archivos de logs generados por npm/yarn
 npm-debug.log*   # Archivos de depuración de npm
@@ -33,4 +32,3 @@ yarn-error.log*  # Archivos de errores de Yarn
 
 # 🔧 Backend - Ignorar logs y dependencias del backend
 /backend/log/     # Carpeta de logs del backend
-
