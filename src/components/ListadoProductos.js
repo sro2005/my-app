@@ -145,7 +145,7 @@ const ListadoProductos = () => {
           </ul>
       <hr />
       </div>
-      <h2>Listado de Inventarios</h2>
+      <h2>Listado de Productos</h2>
       <ul className="productos-list">
         {productos.length > 0 ? (
           productos.map(producto => (

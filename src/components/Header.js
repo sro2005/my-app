@@ -63,7 +63,9 @@ const Header = () => {
                 <li>
                   <Link to="/listado-productos">
                     <div className="nav-icon"><FontAwesomeIcon icon={faBoxOpen} /></div>
-                    <div className="nav-text">GESTIÓN DE INVENTARIOS</div>
+                    <div className="nav-text">
+              {user?.role === 'admin' ? 'GESTIÓN DE INVENTARIOS' : 'MIS PREFERENCIAS'}
+                    </div>
                   </Link>
                 </li>
 

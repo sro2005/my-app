@@ -128,8 +128,7 @@ const ListadoPedidos = () => {
     <div className="container">
       <h2>Gestión de Pedidos</h2>
       <hr />
-      <p><strong>📖 DEFINICIÓN:</strong> La <strong>Gestión de Pedidos</strong> en <strong>ElectroVibeHome</strong> es el proceso mediante el cual se <strong>reciben, procesan y entregan</strong> electrodomésticos y productos tecnológicos a nuestros clientes de manera <strong>organizada, segura y eficiente.</strong></p>
-      <p><b>Pasos del Proceso:</b></p>
+      <p><strong>📖 DEFINICIÓN:</strong> La <strong>Gestión de Pedidos</strong> en <strong>ElectroVibeHome</strong> es el proceso mediante el cual se <strong>reciben, procesan y entregan</strong> electrodomésticos y productos tecnológicos a nuestros clientes de manera <strong>organizada, segura y eficiente.</strong> Este proceso incluye:</p>
         <ul>
           <li>Captura de información del cliente.</li>
           <li>Validación del pedido.</li>
