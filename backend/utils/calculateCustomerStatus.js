@@ -4,5 +4,4 @@ const calculateCustomerStatus = (lastActivityDate) => {
     return differenceInDays <= 30 ? 'Active' : 'Inactive';
   };
   
-  module.exports = { calculateCustomerStatus };
-  
+module.exports = { calculateCustomerStatus };

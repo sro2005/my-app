@@ -38,4 +38,3 @@ const Footer = () => {
 
 // Exportar el componente Footer para que pueda ser utilizado en otros archivos
 export default Footer;
-
