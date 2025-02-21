@@ -7614,3 +7614,8 @@
 [0mGET /api/products/preferences [36m304[0m 165.210 ms - -[0m
 [0mGET /api/customers/profile [36m304[0m 98.257 ms - -[0m
 [0mGET /api/customers/profile [36m304[0m 89.204 ms - -[0m
+[0mGET /api/customers/profile [36m304[0m 90.322 ms - -[0m
+[0mGET /api/customers/profile [36m304[0m 108.106 ms - -[0m
+[0mGET /api/customers/profile [36m304[0m 96.645 ms - -[0m
+[0mGET /api/customers/profile [36m304[0m 89.739 ms - -[0m
+[0mPOST /api/auth/login [32m200[0m 460.828 ms - 620[0m

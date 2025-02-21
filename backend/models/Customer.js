@@ -18,6 +18,16 @@ const customerSchema = new mongoose.Schema({
   status: { type: String, default: 'Active', enum: ['Active', 'Inactive'] }
 });
 
-const Customer = mongoose.model('Customer', customerSchema);
+customerSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    // Si el rol es admin, eliminamos el campo 'preferences'
+    if (ret.role === 'admin') {
+      delete ret.preferences;
+    }
+    return ret;
+  }
+});
 
-module.exports = Customer;
+module.exports = mongoose.model('Customer', customerSchema);
