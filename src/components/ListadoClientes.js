@@ -204,16 +204,22 @@ const ListadoClientes = () => {
               ) : (
                 <p>No se encontró un cliente con más pedidos.</p>
               )}
-            </div>
           </div>
         </div>
       </div>
-      <h2>Listado de Clientes</h2>
-      <ul className="clientes-list">
-        {clientesFiltrados.map(cliente => <ClienteItem key={cliente._id} cliente={cliente} />)}
-      </ul>
     </div>
-  );
-};
+
+    <h2>Listado de Clientes</h2>
+    {clientesFiltrados.length > 0 ? (
+      <ul className="clientes-list">
+        {clientesFiltrados.map(cliente => (
+          <ClienteItem key={cliente._id} cliente={cliente} />
+        ))}
+      </ul>
+    ) : (
+      <p>No hay clientes disponibles.</p>
+   )}
+    </div>
+)};
 
 export default ListadoClientes;
