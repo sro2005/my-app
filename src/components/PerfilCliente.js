@@ -1,6 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import Select from 'react-select';
 import { ClipLoader } from 'react-spinners';
+import { AuthContext } from '../contexts/AuthContext';
+
+const preferencesOptions = [
+  { value: 'Aires Acondicionados', label: 'Aires Acondicionados' },
+  { value: 'Aspiradoras', label: 'Aspiradoras' },
+  { value: 'Batidoras', label: 'Batidoras' },
+  { value: 'Bocinas Inteligentes o Parlantes Bluetooth', label: 'Bocinas Inteligentes o Parlantes Bluetooth' },
+  { value: 'Cafeteras', label: 'Cafeteras' },
+  { value: 'Celulares', label: 'Celulares' },
+  { value: 'Computadores de Escritorio', label: 'Computadores de Escritorio' },
+  { value: 'Computadores Portátiles', label: 'Computadores Portátiles' },
+  { value: 'Consolas de Videojuegos', label: 'Consolas de Videojuegos' },
+  { value: 'Estufas', label: 'Estufas' },
+  { value: 'Impresoras', label: 'Impresoras' },
+  { value: 'Lavadoras', label: 'Lavadoras' },
+  { value: 'Licuadoras', label: 'Licuadoras' },
+  { value: 'Microondas', label: 'Microondas' },
+  { value: 'Planchas de Ropa', label: 'Planchas de Ropa' },
+  { value: 'Refrigeradores', label: 'Refrigeradores' },
+  { value: 'Sandwicheras', label: 'Sandwicheras' },
+  { value: 'Secadores de Cabello', label: 'Secadores de Cabello' },
+  { value: 'Tablets', label: 'Tablets' },
+  { value: 'Televisores', label: 'Televisores' },
+  { value: 'Tostadoras', label: 'Tostadoras' },
+  { value: 'Ventiladores', label: 'Ventiladores' }
+];
 
 const PerfilCliente = () => {
   const [customer, setCustomer] = useState(null);
@@ -14,8 +41,10 @@ const PerfilCliente = () => {
     birthDate: '',
     identificationNumber: '',
     phone: '',
-    preferences: '',
+    preferences: []
   });
+  
+  const { updateUser } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -40,7 +69,7 @@ const PerfilCliente = () => {
           birthDate: formatDateInput(data.birthDate),
           identificationNumber: data.identificationNumber || '',
           phone: data.phone || '',
-          preferences: data.preferences || '',
+          preferences: data.preferences ? data.preferences.map(pref => preferencesOptions.find(option => option.value === pref)).filter(Boolean) : []
         });
       } catch (err) {
         console.error('Error al obtener el perfil:', err);
@@ -72,7 +101,7 @@ const PerfilCliente = () => {
         birthDate: formatDateInput(customer.birthDate),
         identificationNumber: customer.identificationNumber || '',
         phone: customer.phone || '',
-        preferences: customer.preferences || '',
+        preferences: customer.preferences ? customer.preferences.map(pref => preferencesOptions.find(option => option.value === pref)).filter(Boolean) : []
      });
   }
    setIsEditing(true);
@@ -98,11 +127,20 @@ const PerfilCliente = () => {
     }
 
     try {
-      const { data } = await axios.put(`${API_URL}/api/customers/${customer._id}`, formData, {
+    // Convertir el arreglo de objetos de preferencias a un arreglo de strings
+      const updatedData = {
+        ...formData,
+        preferences: Array.isArray(formData.preferences)
+        ? formData.preferences.map(option => option.value)
+        : []
+      };
+      const { data } = await axios.put(`${API_URL}/api/customers/${customer._id}`, updatedData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-    // Verificar si `updatedCustomer` existe, si no, usar `data`
-      setCustomer(data.updatedCustomer || data);
+    // Actualizamos el cliente con la respuesta
+      const updatedCustomer = data.updatedCustomer || data;
+      setCustomer(updatedCustomer);
+      updateUser(updatedCustomer);  // Actualiza el usuario en el contexto
       setIsEditing(false);
     } catch (err) {
       console.error('Error al guardar la información:', err);
@@ -181,7 +219,7 @@ const PerfilCliente = () => {
           </div>
           <div className="profile-edit-field">
             <label>PREFERENCIAS:</label>
-            <input type="text" name="preferences" value={formData.preferences.join(', ')} onChange={handleInputChange} />
+            <Select isMulti options={preferencesOptions} value={formData.preferences} onChange={(selectedOptions) => setFormData(prev => ({ ...prev, preferences: selectedOptions }))} placeholder="SELECCIONAR NUEVAS PREFERENCIAS" className="select-preferences" />
           </div>
           <div className="profile-buttons">
             <button className="cancel-button-profile" onClick={handleCancelClick}>CANCELAR</button>

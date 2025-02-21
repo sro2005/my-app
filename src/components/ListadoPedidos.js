@@ -38,7 +38,7 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>🛍️ Producto Escogido: </strong> 
           {pedido.products.length > 0 ? pedido.products.map((item, index) => (
             <span key={index}>
-              {item.productId?.name || "Producto desconocido"} -  Cantidad: ({item.quantity})
+              {item.productId?.name || "Producto desconocido"} -  {item.productId?.category || "Sin categoría"}
               {index < pedido.products.length - 1 ? ', ' : ''}
             </span>
           )) : " No hay productos en este pedido."}

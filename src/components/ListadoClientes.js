@@ -163,7 +163,7 @@ const ListadoClientes = () => {
       <h2>Gestión de Clientes</h2>
 
       <div className="search-container">
-        <input type="text" placeholder="🔍 Buscar por ID... / Buscar por e-mail..." 
+        <input type="text" placeholder="🔍 Buscar por ID... / Buscar por E-MAIL..." 
           value={search} onChange={(e) => setSearch(e.target.value)} className="search-input" />
       </div>
 

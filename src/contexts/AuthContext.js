@@ -37,6 +37,11 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('userData', JSON.stringify(updatedUser));
+  };  
+
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
@@ -45,7 +50,7 @@ const AuthProvider = ({ children }) => {
   if (loading) return <Loading />;
 
   return (
-    <AuthContext.Provider value={{ user, handleLoginSuccess, handleLogout }}>
+    <AuthContext.Provider value={{ user, handleLoginSuccess, handleLogout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

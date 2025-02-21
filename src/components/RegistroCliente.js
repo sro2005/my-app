@@ -10,43 +10,40 @@ const isAdult = (birthDate) => {
   return age >= 18 || (age === 18 && today.getMonth() >= birthDateObj.getMonth());
 };
 
-const options = [
-  { value: 'Refrigeradores', label: 'Refrigeradores' },
-  { value: 'Estufas', label: 'Estufas' },
-  { value: 'Microondas', label: 'Microondas' },
-  { value: 'Lavadoras', label: 'Lavadoras' },
-  { value: 'Aspiradoras', label: 'Aspiradoras' },
+// Opciones de preferencias ordenadas alfabéticamente
+const sortedOptions = [
   { value: 'Aires Acondicionados', label: 'Aires Acondicionados' },
-  { value: 'Sandwicheras', label: 'Sandwicheras' },
-  { value: 'Televisores', label: 'Televisores' },
-  { value: 'Secadores de Cabello', label: 'Secadores de Cabello' },
-  { value: 'Planchas de Ropa', label: 'Planchas de Ropa' },
+  { value: 'Aspiradoras', label: 'Aspiradoras' },
+  { value: 'Batidoras', label: 'Batidoras' },
+  { value: 'Bocinas Inteligentes o Parlantes Bluetooth', label: 'Bocinas Inteligentes o Parlantes Bluetooth' },
   { value: 'Cafeteras', label: 'Cafeteras' },
+  { value: 'Celulares', label: 'Celulares' },
   { value: 'Computadores de Escritorio', label: 'Computadores de Escritorio' },
   { value: 'Computadores Portátiles', label: 'Computadores Portátiles' },
-  { value: 'Tabletas/Tablets', label: 'Tabletas/Tablets' },
-  { value: 'Impresoras', label: 'Impresoras' },
   { value: 'Consolas de Videojuegos', label: 'Consolas de Videojuegos' },
-  { value: 'Bocinas Inteligentes o Parlantes Bluetooth', label: 'Bocinas Inteligentes o Parlantes Bluetooth' },
-  { value: 'Celulares', label: 'Celulares' },
-  { value: 'Tostadoras', label: 'Tostadoras' },
-  { value: 'Batidoras', label: 'Batidoras' },
-  { value: 'Hornos', label: 'Hornos' },
+  { value: 'Estufas', label: 'Estufas' },
+  { value: 'Impresoras', label: 'Impresoras' },
+  { value: 'Lavadoras', label: 'Lavadoras' },
   { value: 'Licuadoras', label: 'Licuadoras' },
+  { value: 'Microondas', label: 'Microondas' },
+  { value: 'Planchas de Ropa', label: 'Planchas de Ropa' },
+  { value: 'Refrigeradores', label: 'Refrigeradores' },
+  { value: 'Sandwicheras', label: 'Sandwicheras' },
+  { value: 'Secadores de Cabello', label: 'Secadores de Cabello' },
+  { value: 'Tablets', label: 'Tablets' },
+  { value: 'Televisores', label: 'Televisores' },
+  { value: 'Tostadoras', label: 'Tostadoras' },
   { value: 'Ventiladores', label: 'Ventiladores' }
 ];
 
-// Ordenar las opciones alfabéticamente por el label
-const sortedOptions = options.sort((a, b) => a.label.localeCompare(b.label));
-
-// Definimos una opción deshabilitada que se mostrará en el listado
+// Opción deshabilitada que se mostrará por defecto
 const defaultOption = { 
   value: "", 
   label: "SELECCIONA TUS PREFERENCIAS:", 
   isDisabled: true 
 };
 
-// Combinamos la opción deshabilitada con el resto de opciones
+// Combinamos la opción deshabilitada con las opciones ordenadas
 const optionsWithDefault = [defaultOption, ...sortedOptions];
 
 const RegistroCliente = () => {
@@ -64,9 +61,9 @@ const RegistroCliente = () => {
 
   const navigate = useNavigate();
 
-  // Validación para asegurarse de que el número de identificación no exceda los 10 dígitos
+  // Validación: El número de identificación no debe exceder los 10 dígitos
   const isValidIdentification = (idNumber) => {
-    const cleanValue = idNumber.replace(/[^\d]/g, ''); // Elimina los puntos antes de validar
+    const cleanValue = idNumber.replace(/[^\d]/g, '');
     return cleanValue.length <= 10;
   };
 

@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import ClipLoader from 'react-spinners/ClipLoader'; // Importa el spinner
-
-// Función para formatear el precio en formato local
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
-};
+import ClipLoader from 'react-spinners/ClipLoader'; 
+import { AuthContext } from '../contexts/AuthContext';
 
 // Componente funcional para mostrar cada producto
 const ProductoItem = ({ producto }) => (
@@ -17,7 +13,7 @@ const ProductoItem = ({ producto }) => (
       <div className="producto-details">
         <p><strong>Nombre del Producto:</strong> {producto.name}</p>
         <p><strong>Descripción:</strong> {producto.description}</p>
-        <p><strong>Precio:</strong> {formatPrice(producto.price)}</p>
+        <p><strong>Precio:</strong> {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(producto.price)}</p>
         <p><strong>Categoría:</strong> {producto.category}</p>
         <p><strong>Cantidad disponible:</strong> {producto.quantity > 0 ? `${producto.quantity} unidades` : 'Producto agotado'}</p>
       </div>
@@ -25,10 +21,11 @@ const ProductoItem = ({ producto }) => (
   </li>
 );
 
-const ListadoProductos = ({ userPreferences }) => {
+const ListadoProductos = () => {
+  const { user } = useContext(AuthContext); // Obtenemos el usuario del contexto
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Agregamos estado para el error
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
@@ -41,18 +38,19 @@ const ListadoProductos = ({ userPreferences }) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        setError(null); // Reseteamos cualquier error antes de la solicitud
+        setError(null);
 
-        const response = await axios.get(`${API_URL}/api/products`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        // Si hay token, asumimos que el backend filtrará según las preferencias del usuario
+        const endpoint = 
+          token && user && user.preferences && user.preferences.length > 0
+            ? `${API_URL}/api/products/preferences` 
+            : `${API_URL}/api/products`;
+
+        const response = await axios.get(endpoint, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
-
-        // Filtramos productos basados en las preferencias del usuario, si existen
-        const filteredProducts = Array.isArray(userPreferences) && userPreferences.length
-          ? response.data.filter(product => userPreferences.includes(product.category))
-          : response.data;
-
-        setProductos(filteredProducts);
+        
+        setProductos(response.data);
       } catch (error) {
         setError('Hubo un error al obtener los productos. Intenta nuevamente.');
         console.error('Error obteniendo productos:', error);
@@ -62,7 +60,7 @@ const ListadoProductos = ({ userPreferences }) => {
     };
 
     fetchProducts();
-  }, [userPreferences]);
+  }, [user]);
 
   if (loading) {
     return (
