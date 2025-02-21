@@ -58,15 +58,31 @@ const userId = user?._id;  // Usar userId desde el contexto
         console.error('Error al analizar los datos del cliente desde localStorage:', error);
       }
     }
-
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
-    axios.get(`${API_URL}/api/products`) 
-      .then(response => setAvailableProducts(response.data.map(product => ({
-        value: product._id,
-        label: `${product.name} - ${formatPrice(product.price)}`,
-        price: product.price
-      })))).catch(error => console.error('Error cargando productos:', error));
   }, []);
+
+    // Cargar productos disponibles filtrados según las preferencias del usuario
+    useEffect(() => {
+      const API_URL = process.env.REACT_APP_API_BASE_URL;
+      const token = localStorage.getItem('authToken');
+  
+      // Si hay token y el usuario tiene preferencias, usamos el endpoint filtrado
+      const endpoint =
+        token && user && user.preferences && user.preferences.length > 0
+          ? `${API_URL}/api/products/preferences`
+          : `${API_URL}/api/products`;
+  
+      axios.get(endpoint, {
+        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+      })
+        .then(response => {
+          setAvailableProducts(response.data.map(product => ({
+            value: product._id,
+            label: `Producto: ${product.name} | Categoría: ${product.category} | Stock: ${product.quantity} unidades`,
+            price: product.price
+          })));
+        })
+        .catch(error => console.error('Error cargando productos:', error));
+    }, [user]);
 
   // Maneja el cambio de selección de producto
   const handleProductChange = (selectedOption) => {

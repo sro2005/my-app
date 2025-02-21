@@ -219,7 +219,7 @@ const PerfilCliente = () => {
           </div>
           <div className="profile-edit-field">
             <label>PREFERENCIAS:</label>
-            <Select isMulti options={preferencesOptions} value={formData.preferences} onChange={(selectedOptions) => setFormData(prev => ({ ...prev, preferences: selectedOptions }))} placeholder="SELECCIONAR NUEVAS PREFERENCIAS" className="select-preferences" />
+            <Select isMulti options={preferencesOptions} value={formData.preferences} onChange={(selectedOptions) => setFormData(prev => ({ ...prev, preferences: selectedOptions }))} placeholder="Seleccionar Nuevas Preferencias" className="select-preferences" classNamePrefix="select-preferences" />
           </div>
           <div className="profile-buttons">
             <button className="cancel-button-profile" onClick={handleCancelClick}>CANCELAR</button>

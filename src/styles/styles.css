@@ -379,6 +379,30 @@ form select {
   text-align: center; /* Centrar texto dentro de los inputs */
 }
 
+.select-preferences__control {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  transition: border 0.3s;
+  margin: 0 auto; /* Esto centra el select */
+}
+
+.select-preferences__control:hover {
+  border: 1px solid #ccc;
+}
+
+.select-preferences__placeholder {
+  text-align: center;
+  font-size: 1em;
+}
+
+.select-preferences__input {
+  text-align: center;
+  font-size: 1em;
+}
+
 .profile-edit-field input:focus {
   border-color: #ffa500;
 }
