@@ -77,7 +77,11 @@ const userId = user?._id;  // Usar userId desde el contexto
         .then(response => {
           setAvailableProducts(response.data.map(product => ({
             value: product._id,
-            label: `Producto: ${product.name} | Categoría: ${product.category} | Stock: ${product.quantity} unidades`,
+            label: (
+              <span>
+                <strong>Producto:</strong> {product.name} | <strong>Categoría:</strong> {product.category} | <strong>Stock:</strong> {product.quantity} unidades
+              </span>
+            ),
             price: product.price
           })));
         })
@@ -87,7 +91,9 @@ const userId = user?._id;  // Usar userId desde el contexto
   // Maneja el cambio de selección de producto
   const handleProductChange = (selectedOption) => {
     setSelectedProduct(selectedOption);
-    if (selectedOption?.price > 0) {
+    if (!selectedOption) {
+      setTotalAmount(0);
+    } else if (selectedOption.price > 0) {
       setTotalAmount(selectedOption.price);
     }
   };  
@@ -249,9 +255,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         <Select placeholder="Selecciona un producto" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable />
         
         <h3>Total a Pagar: {formatPrice(totalAmount)}</h3>
-      <button type="submit" disabled={loading || totalAmount === 0}>
-        REALIZAR
-      </button>
+      <button type="submit" disabled={loading || totalAmount === 0}>REALIZAR</button>
     </form>
 
       {showConfirmModal && (
@@ -283,7 +287,11 @@ const userId = user?._id;  // Usar userId desde el contexto
               </>
             )}
             <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
-            <p><strong>Producto Seleccionado:</strong> {selectedProduct ? selectedProduct.label : 'No seleccionado'}</p>
+            <div>
+              <p><strong>Producto Seleccionado:</strong></p>
+              <div>{selectedProduct ? selectedProduct.label : 'No seleccionado'}</div>
+            </div>
+            <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
           </>
         )}
       </div>
