@@ -1,23 +1,35 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# 📌 Ver más sobre archivos ignorados en Git: 
+# https://help.github.com/articles/ignoring-files/
 
-# dependencies
+# 📦 Dependencias y archivos generados por npm/yarn
 /node_modules
-/.pnp
-.pnp.js
+/.pnp           # Archivo de resolución de dependencias de Yarn Plug'n'Play
+.pnp.js         # Archivo de configuración de Yarn Plug'n'Play
 
-# testing
-/coverage
+# 🧪 Archivos de pruebas
+/coverage       # Carpeta generada por herramientas de cobertura de código
 
-# production
-/build
+# 🚀 Archivos de producción
+/build         # Carpeta con los archivos de la versión final de la app
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# 🗂 Archivos misceláneos que no deben subirse al repositorio
+.DS_Store      # Archivo generado por macOS para metadatos de carpetas
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ⚙️ Archivos de configuración de entorno 
+.env.local             # Variables de entorno locales
+.env.test.local        # Variables de entorno para pruebas
+.env.production.local  # Variables de entorno para producción
+
+# ⚠️ Ignorar cualquier archivo .env (para evitar subir credenciales sensibles)
+.env
+.env.development
+.env.production
+
+# 📄 Archivos de logs generados por npm/yarn
+npm-debug.log*   # Archivos de depuración de npm
+yarn-debug.log*  # Archivos de depuración de Yarn
+yarn-error.log*  # Archivos de errores de Yarn
+
+# 🔧 Backend - Ignorar logs y dependencias del backend
+/backend/log
+/backend/node_modules

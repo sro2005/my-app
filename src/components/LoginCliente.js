@@ -1,50 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
+import { AuthContext } from '../contexts/AuthContext';
 
-// Componente funcional LoginCliente para el formulario de inicio de sesión de cliente
 const LoginCliente = () => {
-  // Estado para almacenar las credenciales del cliente (email y contraseña)
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { handleLoginSuccess } = useContext(AuthContext);
 
-  // Función para manejar cambios en los campos del formulario
-  const handleChange = (e) => {
-    // Actualizar el estado de credentials con los valores ingresados
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  };
+  const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
-  // Función para manejar el envío del formulario
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevenir comportamiento por defecto del formulario
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage('');
 
-    // Petición POST a la API para iniciar sesión con las credenciales actuales
-    axios.post('/api/login', credentials)
-      .then(response => {
-        // Manejar la respuesta exitosa de la API (cliente logueado)
-        console.log('Cliente logueado:', response.data);
-      })
-      .catch(error => {
-        // Manejar errores en caso de que falle la petición POST
-        console.error('Error iniciando sesión:', error);
-      });
+    if (!isValidEmail(email)) {
+      setMessage('Por favor, ingresa un correo electrónico válido.');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const API_URL = process.env.REACT_APP_API_BASE_URL;
+      const { data } = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+
+      if (data?.token && data?.user) {
+        handleLoginSuccess(data.user, data.token);
+        setMessage('Inicio de sesión exitoso. Redirigiendo...');
+      } else {
+        setMessage('Error en la autenticación. Intenta nuevamente.');
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || 'Credenciales inválidas. Por favor, intenta nuevamente.');
+      setPassword('');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Campo de correo electrónico */}
-      <input type="email" name="email" placeholder="Correo Electrónico" onChange={handleChange} required />
+      <h1>INICIAR SESIÓN</h1>
+      <h2>Login del Cliente</h2>
+      <input 
+        type="email" 
+        placeholder="Correo Electrónico" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        required 
+      /> 
+      <input 
+        type="password" 
+        placeholder="Contraseña" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        required 
+      />
+      <button type="submit" disabled={loading}>Ingresar</button>
+      {loading ? (
+        <div className="spinner">Cargando...</div>
+      ) : (
+        message && (
+          <p className={`message ${message.includes('error') ? 'error' : 'success'}`}>
+            {message}
+          </p>
+        )
+      )}
 
-      {/* Campo de contraseña */}
-      <input type="password" name="password" placeholder="Contraseña" onChange={handleChange} required />
-
-      {/* Botón para enviar el formulario */}
-      <button type="submit">Iniciar Sesión</button>
+      <div style={{ textAlign: 'center', marginTop: '10px' }}>
+        <a href="/recover-password" style={{ color: '#FF6347', textDecoration: 'none' }}>
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
     </form>
   );
 };
 
-// Exportar el componente LoginCliente para que pueda ser utilizado en otros archivos
 export default LoginCliente;
-

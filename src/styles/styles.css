@@ -1,32 +1,138 @@
 /* Añade aquí los estilos globales de tu aplicación */
 body {
-  font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+  font-family: 'Roboto Slab', serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5dc;
 }
 
-header, footer {
-  background-color: #f8f8f8;
+header {
+  background-color: #222;
+  color: white;
   padding: 1em;
   text-align: center;
 }
 
+.separator-shadow {
+  width: 50%;
+  height: 3px;
+  background-color: #ffffff;
+  margin: 15px auto;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Efecto sombra */
+}
+
+.footer {
+  background-color: #222;
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.footer-sections {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.section {
+  margin: 10px;
+  flex: 1;
+}
+
+.footer .section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.footer .section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.footer .section ul li {
+  margin: 5px 0;
+}
+
+.footer .section ul li a {
+  color: #f0f0f0;
+  text-decoration: none;
+}
+
+.footer .section ul li a:hover {
+  color: #FFA500; /* Puedes cambiar este color si lo deseas */
+}
+
+.footer p {
+  font-size: 0.9rem;
+  margin-top: 20px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .footer-sections {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer .section {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}
+
 form {
-  max-width: 600px;
+  max-width: 400px;
   margin: 2em auto;
-  padding: 1em;
+  padding: 1.5em;
+  background-color: #ffffff;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 input {
-  display: block;
-  width: calc(100% - 20px);
-  margin: 0.5em 0;
-  padding: 0.5em;
+  font-family: 'Roboto Slab', serif;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  font-family: 'Roboto Slab', serif;
+  width: 34%;
+  padding: 12px 25px; /* Ajusté el padding para un mejor espaciado */
+  color: white; /* Color del texto */
+  background-color: #FFA500; /* Naranja estándar */
+  border: none;
+  border-radius: 50px;
+  font-size: 18px; /* Ajusté el tamaño de la fuente para una mejor legibilidad */
+  font-weight: bold; /* Asegura que el texto se vea claro */
+  text-align: center; /* Alineación centrada */
+  display: inline-block; /* Permite que el texto se acomode bien dentro del botón */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin: auto;
+}
+
+button:hover {
+  background-color: #FF8C00; /* Dark Orange en hover */
+  transform: scale(1.05); /* Efecto de agrandado en hover */
+}
+
+button:active {
+  transform: scale(0.98); /* Efecto de retroceso al hacer clic */
 }
 
 /* Estilos para los enlaces de navegación */
 nav {
-  margin-top: 20px; /* Añade margen superior para separar la navegación del contenido superior */
+  width: 100%; /* Asegura que el nav ocupe el ancho completo */
+  display: flex;
+  justify-content: center; /* Centra el nav horizontalmente */
 }
 
 nav ul {
@@ -37,20 +143,925 @@ nav ul {
 
 nav ul li {
   display: inline-block;
-  margin-right: 50px; /* Ajusta el margen derecho para separar los enlaces */
-  margin: 1em;
+  margin-right: 15px; /* Ajustar el espacio entre los enlaces */
 }
 
-nav ul li a {
+/* Estilos comunes para los enlaces dentro de .nav-links y para el botón de logout */
+.nav-links a, 
+.logout-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-decoration: none;
-  color: #000000;
-  padding: 8px 16px;
-  border-radius: 16px;
-  background-color: #f0f0f0;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px; /* Añade margen inferior para separar los enlaces del contenido */
+  color: #FFA500; /* Color del texto en naranja brillante */
+  padding: 8px 15px; /* Espaciado interno para equilibrar los botones */
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: color 0.3s ease, opacity 0.3s ease, text-shadow 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-nav ul li a:hover {
-  background-color: #6dfff3;
+/* Efecto hover unificado para enlaces y botón de logout */
+.nav-links a:hover {
+  color: #FF8C00; /* Color más oscuro al pasar el ratón */
+  opacity: 0.85; /* Opacidad ligeramente reducida */
+  text-shadow: 0 1px 3px rgba(255, 140, 0, 0.2); /* Sombra suave para el texto */
+  transform: translateY(-2px); /* Sutil movimiento hacia arriba */
+  box-shadow: 0 4px 8px rgba(255, 165, 0, 0.3); /* Sombra de fondo con tono naranja */
+}
+
+/* Estilos específicos para el botón de logout */
+.logout-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  padding: 8px 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ffffff; /* Fuerza el color blanco para el botón de logout */
+  transition: none; /* Sin transición para evitar cambios al pasar el cursor */
+}
+
+.logout-button:hover {
+  background: none;
+  color: #ffffff;
+  opacity: 1;
+  text-shadow: none;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Contenedor principal de la navegación */
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centra los elementos de navegación */
+}
+
+/* Lista de enlaces de navegación */
+.nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+/* Espaciado entre elementos dentro de la lista */
+.nav-links li {
+  margin-right: 15px;
+}
+
+/* Estilo para los íconos de navegación */
+.nav-icon {
+  font-size: 1.3em; /* Tamaño ligeramente aumentado */
+  color: inherit;; /* Color en naranja brillante */
+}
+
+/* Estilo para el texto debajo de los íconos */
+.nav-text {
+  margin-top: 4px; /* Espacio entre el ícono y el texto */
+  font-size: 0.85em; /* Tamaño de fuente ajustado */
+  color: inherit; /* Color consistente con los íconos */
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+  }
+  .nav-links {
+    flex-direction: column;
+    gap: 10px; /* Espaciado vertical entre enlaces */
+  }
+}
+
+.goodbye-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 40px;
+  background-color: #fff; /* Fondo blanco */
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
+  text-align: left;
+  margin-bottom: 20px; /* Ajusta el valor según sea necesario */
+}
+
+form select {
+  width: 70%;
+  padding: 12px;
+  margin: 0px 0px 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.loading {
+  font-size: 1.5em;
+  color: #555;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.profile-container {
+  max-width: 450px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile-container h2 {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.profile-picture {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.profile-picture img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ffa500;
+}
+
+.profile-info {
+  font-size: 1.1em;
+  color: #444;
+  text-align: center; /* Centrar la información */
+  padding: 0 20px;
+}
+
+.profile-info p {
+  margin: 10px 0;
+  text-align: center;
+}
+
+.profile-info strong {
+  color: #555;
+}
+
+.edit-button {
+  background-color: #ffa500;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: block;
+  width: 60%;
+  margin-top: 15px;
+}
+
+.edit-button:hover {
+  background-color: #cc8400;
+}
+
+.profile-field {
+  margin-bottom: 15px; /* Espaciado entre los campos */
+}
+
+.profile-field strong {
+  display: block; /* Hace que el título ocupe una línea completa */
+  font-size: 18px;
+  color: #333;
+}
+
+.profile-field p {
+  margin: 5px 0 0; /* Ajusta el espacio entre el título y el contenido */
+  font-size: 18px; /* Igual tamaño de fuente que los títulos */
+  color: #666;
+  font-weight: bold; /* Hace que los valores se vean más destacados */
+}
+
+.profile-edit-field label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.profile-edit-field input {
+  width: 80%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: border 0.3s;
+  text-align: center; /* Centrar texto dentro de los inputs */
+}
+
+.select-preferences__control {
+  width: 80%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  transition: border 0.3s;
+  margin: 0 auto; /* Esto centra el select */
+}
+
+.select-preferences__control:hover {
+  border: 1px solid #ccc;
+}
+
+.select-preferences__placeholder {
+  text-align: center;
+  font-size: 1em;
+}
+
+.select-preferences__input {
+  text-align: center;
+  font-size: 1em;
+}
+
+.profile-edit-field input:focus {
+  border-color: #ffa500;
+}
+
+.profile-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.save-button,
+.cancel-button-profile {
+  padding: 12px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 50%;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.cancel-button-profile {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-button-profile:hover {
+  background-color: #c82333;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  font-size: 1.2em;
+  margin-top: 20px;
+}
+
+/* Estilo para cada elemento de la lista de clientes y productos */
+.cliente-item,
+.producto-item,
+.pedido-item {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s; /* Agrega una transición suave al efecto de resaltado */
+  box-sizing: border-box; /* Asegura que el padding y el border se incluyan en el tamaño total del elemento */
+}
+
+/* Estilo para el contenedor de la información del cliente y producto */
+.cliente-info,
+.producto-info,
+.pedido-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Estilo para el avatar del cliente y la imagen del producto */
+.cliente-avatar,
+.producto-image,
+.pedido-image {
+  margin-right: 15px;
+}
+
+.cliente-avatar img,
+.producto-image img,
+.pedido-image img {
+  max-width: 100px; /* Ajusta el tamaño según sea necesario */
+  max-height: 100px;
+  object-fit: cover; /* Asegura que la imagen se ajuste sin distorsión */
+  border-radius: 5px;
+}
+
+/* Estilo para los detalles del cliente y producto */
+.cliente-details,
+.producto-details,
+.pedido-details {
+  flex: 1;
+}
+
+/* Alineación de los párrafos dentro de los detalles */
+.cliente-details p,
+.producto-details p,
+.pedido-details p {
+  margin: 0; /* Elimina el margen para una mejor alineación */
+  padding: 0; /* Elimina el padding para una mejor alineación */
+}
+
+/* Efecto de resaltado al pasar el ratón */
+.cliente-item:hover,
+.producto-item:hover,
+.pedido-item:hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilo para la lista de productos */
+.clientes-list,
+.productos-list,
+.pedidos-list {
+  list-style: none;
+  padding: 0;
+}
+
+/* Estilo para cada elemento de la lista de productos */
+.clientes-list li,
+.productos-list li,
+.pedidos-list li {
+  margin-bottom: 15px;
+}
+
+/* Estilos de carga */
+.loading {
+  font-size: 1.5em;
+  color: #555;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.landing-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff6d8; /* Color de fondo azul si es necesario */
+  flex-direction: column;
+}
+
+.landing-page .logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* Ajusta la imagen para que no se recorte */
+  width: auto; /* Mantiene la relación de aspecto de la imagen */
+  height: auto; /* Mantiene la relación de aspecto de la imagen */
+}
+
+/* Estilos para "Fecha deseada para la entrega" */
+.date-field {
+  display: flex;       /* Coloca la etiqueta y el input en línea */
+  align-items: center; /* Centra verticalmente la etiqueta e input */
+}
+
+.date-field label {
+  margin-right: 10px;  /* Espacio entre la etiqueta y el input */
+  white-space: nowrap; /* Evita que el texto se divida en dos líneas */
+  font-weight: bold;   /* Opcional: resalta la etiqueta */
+  position: relative;    /* Permite desplazar la etiqueta respecto a su posición normal */
+  top: -8px;             /* Ajusta este valor (puede ser -2px, -4px, etc.) para subir la etiqueta */
+}
+
+/* Estilos para "DATE OF BIRTH:" */
+.date-field-DOB {
+  display: flex;       /* Coloca la etiqueta y el input en línea */
+  align-items: center; /* Centra verticalmente la etiqueta e input */
+}
+
+.date-field-DOB label {
+  margin-right: 10px;  /* Espacio entre la etiqueta y el input */
+  white-space: nowrap; /* Evita que el texto se divida en dos líneas */
+  font-weight: bold;   /* Opcional: resalta la etiqueta */
+  position: relative;    /* Permite desplazar la etiqueta respecto a su posición normal */
+  top: -7px;             /* Ajusta este valor (puede ser -2px, -4px, etc.) para subir la etiqueta */
+}
+
+/* Contenedor del selector de método de pago */
+.payment-method-container {
+  margin-bottom: 20px; /* Separa este campo del siguiente bloque */
+}
+
+/* Contenedor para los campos de banco (Nombre del Banco y Número de Cuenta) */
+.bank-fields {
+  display: flex;
+  flex-direction: column; /* Los inputs se ubican uno debajo del otro */
+  gap: 10px;            /* Espacio entre cada input */
+  margin-bottom: 20px;  /* Separa este grupo del siguiente bloque */
+}
+
+/* Opciones de pago para Nequi, Daviplata o Transfiya */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra horizontalmente todo el bloque */
+  gap: 10px;
+  margin-top: 20px; /* Separa este grupo de los campos anteriores */
+}
+
+/* Estilos existentes para los botones de radio */
+.payment-options p {
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Contenedor específico para los botones de radio */
+.radio-group {
+  display: flex;
+  justify-content: center; /* Centra los elementos dentro de este contenedor */
+  gap: 20px; /* Espacio entre "Sí" y "No" */
+}
+
+/* Estilos para cada label de los botones de radio */
+.payment-options label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+/* Estilos para los inputs de tipo radio */
+.payment-options input[type="radio"] {
+  appearance: none;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+/* Cuando se selecciona el radio, quitamos el borde */
+.payment-options input[type="radio"]:checked {
+  border-color: transparent;
+}
+
+/* Estilos específicos para el botón "Sí" cuando está seleccionado */
+.payment-options input[type="radio"][value="Sí"]:checked {
+  background-color: #4caf50; /* Verde para Sí */
+}
+
+/* Estilos específicos para el botón "No" cuando está seleccionado */
+.payment-options input[type="radio"][value="No"]:checked {
+  background-color: #f44336; /* Rojo para No */
+}
+
+/* Añadimos un pseudo-elemento para indicar la selección en ambos botones */
+.payment-options input[type="radio"][value="Sí"]:checked::after,
+.payment-options input[type="radio"][value="No"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Estilo para el contenedor del modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilo para el contenido del modal */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Título del modal */
+.modal-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+/* Línea divisoria */
+.modal-divider {
+  border: none;
+  border-top: 2px solid #ddd;
+  margin: 10px 0;
+}
+
+/* Detalles del modal */
+.modal-details {
+  text-align: center;
+}
+
+/* Estilo para el contenedor de los botones */
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Estilos para el botón de confirmar */
+.confirm-button {
+  background-color: #28a745; /* Verde */
+}
+
+.confirm-button:hover {
+  background-color: #218838; /* Verde más oscuro en hover */
+}
+
+/* Estilos para el botón de cancelar */
+.cancel-button {
+  background-color: #dc3545; /* Rojo */
+}
+
+.cancel-button:hover {
+  background-color: #c82333; /* Rojo más oscuro en hover */
+}
+
+/* Estilo para el campo de selección de preferencias */
+.select-preferences {
+  margin-bottom: 1em;
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Despegue el spinner del botón */
+}
+
+/* Estilos para el contenedor del spinner */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Ajusta según necesites para que no cause problemas de espaciado */
+  background-color: rgba(0, 0, 0, 0.1); /* Fondo semi-transparente */
+}
+
+/* Estilos para el mensaje de error */
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin: 10px;
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid red;
+  border-radius: 8px;
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+  width: fit-content; /* Ajusta el ancho al contenido */
+  margin-left: auto;
+  margin-right: auto; /* Centra el mensaje */
+}
+
+/* Botón de actualización */
+.update-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.update-button:hover {
+  background-color: #45a049;
+}
+
+/* Contenedor general de los testimonios */
+.testimonials-wrapper {
+  display: flex;
+  flex-wrap: wrap;         /* En pantallas pequeñas, se pueden ajustar a varias filas */
+  justify-content: space-between; /* Distribuye el espacio horizontal */
+  gap: 20px;               /* Espacio entre cada testimonial */
+  margin: 20px 0;          /* Separación vertical respecto a otros contenidos */
+}
+
+/* Cada tarjeta testimonial */
+.testimonial {
+  flex: 1 1 30%;           /* Cada testimonial ocupará alrededor del 30% del ancho (ajusta según convenga) */
+  background: #f9f9f9;      /* Fondo opcional para destacar la tarjeta */
+  border: 1px solid #ccc;  /* Borde opcional */
+  border-radius: 4px;
+  padding: 15px;
+  box-sizing: border-box;
+  text-align: center;      /* Centra el contenido interno (opcional) */
+}
+
+/* Contenedor de la imagen */
+.image-container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.testimonial-image {
+  max-width: 100%;
+  height: auto;
+  display: inline-block;
+}
+
+/* Estilos para el blockquote y el párrafo */
+.testimonial blockquote {
+  font-style: italic;
+  margin: 0 0 10px;
+}
+
+.testimonial p {
+  margin: 0;
+  font-weight: bold;
+}
+
+/* Estilos para los inputs deshabilitados */
+input:disabled {
+  background-color: #f0f0f0; /* Color de fondo gris claro */
+  cursor: not-allowed; /* Cambia el cursor a "no permitido" */
+  color: #a0a0a0; /* Color del texto gris */
+  border: 1px solid #dcdcdc; /* Borde gris */
+}
+
+.search-container {
+  display: flex;
+  justify-content: center; /* Centra el contenedor */
+  align-items: center; /* Centra verticalmente */
+  margin-bottom: 20px; /* Espacio debajo */
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 25px; /* Borde redondeado */
+  padding: 5px 15px; /* Espaciado alrededor del input */
+  width: 100%;
+  max-width: 400px; /* Tamaño máximo para el input */
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 10px; /* Ajustar padding para alinear mejor */
+  border: none;
+  font-size: 16px;
+  border-radius: 25px; /* Borde redondeado */
+  box-sizing: border-box;
+  margin-left: 5px; /* Alinea el input con la lupa */
+}
+
+.search-box::before {
+  content: '\1F50D'; /* Unicode de la lupa */
+  font-size: 20px;
+  margin-right: 10px;
+  margin-top: 2px; /* Ajustar la posición de la lupa */
+}
+
+.stats-container {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.stats-container p {
+  margin: 5px 0;
+  font-size: 16px;
+}
+
+.stats-container b {
+  color: #333;
+}
+
+.fecha-hora {
+  font-size: 1rem;
+  color: #444; /* Color general para el texto */
+  display: inline-flex; /* Asegura que se mantenga todo en una sola línea */
+  align-items: center;
+}
+
+.fecha, .hora {
+  color: #555; /* Gris oscuro para las palabras Fecha y Hora */
+}
+
+.separador {
+  color: #777; /* Gris más claro para el separador */
+  margin: 0 8px; /* Espaciado entre Fecha y Hora */
+}
+
+.filters-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Espacio entre los botones */
+  margin-bottom: 20px;
+}
+
+.filters-container button {
+  padding: 10px 20px;
+  background-color: #FFA500;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 100px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.filters-container button:hover {
+  background-color: #ff7f00;
+}
+
+.filters-container button:focus {
+  outline: none;
+}
+
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.client-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-item {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.stat-item h3 {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.stat-item p {
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.active {
+  background-color: #e0f7e0;
+  border-left: 5px solid #4caf50;
+}
+
+.inactive {
+  background-color: #f8d7da;
+  border-left: 5px solid #f44336;
+}
+
+.top-client {
+  background-color: #fff3e0;
+  border-left: 5px solid #ff9800;
+}
+
+.category-performance {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.category-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.category-item {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.category-item h3 {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.category-item p {
+  font-size: 1.25rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+  height: 40px; /* Mantiene la altura compacta */
+  margin: 0.5rem 0;
+  position: relative; /* Permite mover el contenedor con top */
+  top: -7px; /* Ajusta este valor hasta que se alinee como deseas */
+}
+
+.phone-input-prefix {
+  background-color: #eee;
+  padding: 0 10px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 40px; /* Centra verticalmente */
+  border-right: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+}
+
+.phone-input-field {
+  width: 100%;
+  padding: 0 10px; /* Ajuste del padding */
+  border: none;
+  outline: none;
+  height: 100%; /* Asegura que ocupe toda la altura del contenedor */
+  font-size: 14px;
+  margin: 0; /* Eliminamos el margin-bottom que desalineaba el texto */
+  display: flex;
+  align-items: center;
 }
