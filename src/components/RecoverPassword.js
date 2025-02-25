@@ -6,23 +6,25 @@ const RecoverPassword = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const API_URL = process.env.REACT_APP_API_BASE_URL; 
 
-    // Restablece los mensajes al inicio
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setMessage('');
     setLoading(true);
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL; // Valor predeterminado si no está configurado
-
-    axios.post(`${API_URL}/api/customers/forgot-password`, { email })
-      .then(() => {
-        setMessage('Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico.');
-      })
-      .catch(() => {
-        setMessage('Ocurrió un error. Por favor, intenta nuevamente.');
-      })
-      .finally(() => setLoading(false));
+    try {
+      const response = await axios.post(`${API_URL}/api/customers/forgot-password`, { email });
+      setMessage(response.data.message || 'Se ha enviado un enlace para restablecer tu contraseña.');
+    } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data.message || 'Ocurrió un error inesperado.');
+      } else {
+        setMessage('Error de conexión. Verifica tu conexión a internet.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,9 +37,11 @@ const RecoverPassword = () => {
         onChange={(e) => setEmail(e.target.value)}
         required
       />
-      <button type="submit" disabled={loading}>Enviar Enlace</button>
+      <button type="submit" disabled={loading}>
+        {loading ? "Enviando..." : "Enviar Enlace"}
+      </button>
       {message && <p className="message">{message}</p>}
-      {loading && <div className="spinner">Procesando...</div>}
+      {loading && <div className="spinner"><i className="fas fa-spinner fa-spin"></i></div>}
     </form>
   );
 };
