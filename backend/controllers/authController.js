@@ -3,7 +3,7 @@ const Customer = require('../models/Customer');
 const { registerOrUpdateLoginLog } = require('../models/LoginLog');
 const { generateToken } = require('../utils/tokenUtils');
 
-// Función para formatear el número de teléfono al formato "+57 302 0000000"
+// Función para formatear el número de teléfono
 const formatPhoneNumber = (value) => {
   let digits = value.replace(/\D/g, '');
   if (digits.startsWith('57')) {
