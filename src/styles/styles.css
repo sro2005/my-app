@@ -4,6 +4,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f5f5dc;
+  overflow-x: hidden;
 }
 
 header {
@@ -69,15 +70,63 @@ header {
 }
 
 /* Estilos responsivos */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .container {
+    max-width: 90%;
+  }
+
   .footer-sections {
     flex-direction: column;
     align-items: center;
   }
 
-  .footer .section {
+  .section {
     text-align: center;
     margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  form {
+    max-width: 95%;
+    padding: 1em;
+  }
+
+  input, select, button {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 12px;
+  }
+
+  .footer-sections {
+    flex-direction: column;
+  }
+
+  .section {
+    min-width: 100%;
+  }
+
+  button {
+    font-size: 14px;
+    padding: 10px;
+    width: 100%;
   }
 }
 
@@ -104,7 +153,8 @@ input {
 
 button {
   font-family: 'Roboto Slab', serif;
-  width: 34%;
+  width: auto;
+  min-width: 120px;
   padding: 12px 25px; /* Ajusté el padding para un mejor espaciado */
   color: white; /* Color del texto */
   background-color: #FFA500; /* Naranja estándar */
