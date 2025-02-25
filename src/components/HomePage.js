@@ -5,7 +5,7 @@ const HomePage = () => {
   return (
     <div className="container">
       {/* Título principal de la página de inicio */}
-      <h2>¡BIENVENID@ A ⚡ELECTROVIBEHOME⚡!</h2>
+      <h2 className="home-title">¡BIENVENID@ A ⚡ELECTROVIBEHOME⚡!</h2>
       <hr />
 
       {/* Introducción de la empresa */}
