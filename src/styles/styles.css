@@ -193,6 +193,17 @@ header {
     text-align: center;
     gap: 0.5rem; /* Espacio opcional entre elementos */
   }
+  .cliente-details,
+  .pedido-details {
+    /* Se puede centrar el contenido y agregar un poco de padding */
+    text-align: center;
+    padding: 0.5rem;
+  }
+  .cliente-details p,
+  .pedido-details p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+  }
   .dashboard-container {
     padding: 1rem;
     gap: 1rem;
