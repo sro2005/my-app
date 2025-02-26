@@ -32,12 +32,12 @@ const AppContent = () => {
     <>
       <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
       <Routes>
+            <Route path="/recover-password" element={<RecoverPassword />} />
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<RegistroCliente />} />
             <Route path="/login" element={<LoginCliente />} />
-            <Route path="/recover-password" element={<RecoverPassword />} />
           </>
         ) : (
           <>
