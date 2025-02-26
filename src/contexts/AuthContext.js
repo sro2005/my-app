@@ -19,8 +19,11 @@ const AuthProvider = ({ children }) => {
         console.error('Error al parsear los datos del usuario', error);
       }
     }
-    setLoading(false);
-  }, []);
+    // Retrasa el fin de la carga 2 segundos (2000ms)
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+}, []);
 
   const handleLoginSuccess = (user, token) => {
     if (!user?.role || !token) {

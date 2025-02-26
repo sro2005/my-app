@@ -15,7 +15,7 @@ header {
 }
 
 .header-title {
-  font-size: clamp(1.8rem, 6vw, 3rem); /* Adapta el tamaño del título */
+  font-size: 2rem;
   text-align: center;
   max-width: 90%;
   margin: 0 auto;
@@ -88,7 +88,7 @@ header {
 
 .home-title {
   text-align: center;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
   margin-top: 20px;
 }
@@ -253,7 +253,7 @@ nav ul li {
 }
 
 .goodbye-message {
-  position: fixed;
+  position: fixed; /* Fija el mensaje respecto a la pantalla */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -265,6 +265,14 @@ nav ul li {
   z-index: 1000;
   max-width: 90%;
   box-sizing: border-box;
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 480px) {
+  .goodbye-message {
+    padding: 15px;
+    font-size: 0.9rem; /* Reduce el tamaño de la fuente si es necesario */
+  }
 }
 
 .container {
@@ -287,11 +295,55 @@ form select {
   font-size: 16px;
 }
 
-.loading {
-  font-size: 1.5em;
-  color: #555;
-  text-align: center;
-  margin-top: 50px;
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  background-color: #f5f5dc; /* Puedes ajustar el fondo para que coincida con tu app */
+}
+
+.custom-spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  animation: spin 2s linear infinite; /* Gira en 2 segundos */
+}
+
+.dot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: #FFA500; /* Color naranja */
+  border-radius: 50%;
+}
+
+/* Ubicación de los puntos en forma de triángulo */
+.dot1 {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+.dot2 {
+  top: 50%;
+  left: 100%;
+  transform: translate(-100%, -50%);
+}
+
+.dot3 {
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .profile-container {

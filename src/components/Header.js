@@ -117,7 +117,7 @@ const Header = () => {
       </nav>
       {showGoodbyeMessage && (
         <div className="goodbye-message">
-          <h1>Gracias por visitarnos, vuelve pronto</h1>
+          <h1>¡Gracias por visitarnos! Te esperamos de vuelta pronto.</h1>
         </div>
       )}
     </header>
