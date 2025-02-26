@@ -18,7 +18,7 @@ const Header = () => {
 
   return (
     <header>
-      <h1>⚡ELECTROVIBEHOME⚡</h1>
+      <h1 className="header-title">⚡ELECTROVIBEHOME⚡</h1>
       <div className="separator-shadow"></div>
       <h4>• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</h4>
       <nav aria-label="Main Navigation">

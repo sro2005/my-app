@@ -14,6 +14,16 @@ header {
   text-align: center;
 }
 
+.header-title {
+  font-size: clamp(2rem, 6vw, 3rem); /* Se ajusta al tamaño de la pantalla */
+  text-align: center;
+  word-wrap: break-word;
+  white-space: normal;
+  max-width: 90%;
+  margin: 0 auto; /* Centrar el título */
+  padding: 5px;
+}
+
 .separator-shadow {
   width: 50%;
   min-width: 200px;
@@ -107,6 +117,10 @@ header {
   body {
     font-size: auto;
   }
+  .header-title {
+    font-size: 1.8rem;
+    max-width: 85%;
+  }
   .home-title {
     font-size: 2rem;
   }
@@ -131,6 +145,10 @@ header {
 @media (max-width: 480px) {
   body {
     font-size: auto;
+  }
+  .header-title {
+    font-size: 1.5rem;
+    max-width: 80%;
   }
   .home-title {
     font-size: 1.5rem;
