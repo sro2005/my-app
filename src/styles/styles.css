@@ -15,13 +15,15 @@ header {
 }
 
 .header-title {
-  font-size: clamp(2rem, 6vw, 3rem); /* Se ajusta al tamaño de la pantalla */
+  font-size: clamp(1.8rem, 6vw, 3rem); /* Se ajusta dinámicamente */
   text-align: center;
-  word-wrap: break-word;
-  white-space: normal;
+  white-space: nowrap; /* Evita saltos de línea innecesarios */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Agrega "..." si el texto es demasiado largo */
   max-width: 90%;
-  margin: 0 auto; /* Centrar el título */
+  margin: 0 auto; /* Centra el título */
   padding: 5px;
+  display: block;
 }
 
 .separator-shadow {
@@ -94,81 +96,112 @@ header {
   margin-top: 20px;
 }
 
-/* Responsive Adjustments */
+/* 🔹 Ajustes Responsive */
 @media (max-width: 1024px) {
   .container {
-    max-width: auto;
+    max-width: 90%;
   }
+  
   .separator-shadow {
-    width: auto;
+    width: 60%;
   }
+
   .footer-sections {
     flex-direction: column;
-    align-items: auto;
-    text-align: auto;
+    align-items: center;
+    text-align: center;
   }
+
   .section {
-    width: auto;
-    max-width: auto;
-    margin-bottom: auto;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
   }
 }
+
 @media (max-width: 768px) {
   body {
-    font-size: auto;
+    font-size: 14px;
   }
+
+  /* 📌 Ajuste del título en Header */
   .header-title {
     font-size: 1.8rem;
-    max-width: 85%;
+    max-width: 90%;
+    white-space: nowrap; /* Evita cortes de texto en varias líneas */
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+
   .home-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
+
   .separator-shadow {
-    width: auto;
+    width: 70%;
+    min-width: 150px;
   }
+
   form {
-    max-width: auto;
-    padding: auto;
+    max-width: 95%;
+    padding: 1em;
   }
+
   input, select, button {
-    font-size: auto;
+    font-size: 16px;
+    padding: 10px;
   }
+
   .nav-links {
     flex-direction: column;
-    align-items: auto;
+    align-items: center;
   }
+
   .footer {
-    padding: auto;
+    padding: 20px;
   }
 }
+
 @media (max-width: 480px) {
   body {
-    font-size: auto;
+    font-size: 12px;
   }
+
+  /* 📌 Ajuste para títulos en pantallas pequeñas */
   .header-title {
     font-size: 1.5rem;
-    max-width: 80%;
+    max-width: 85%;
+    text-align: center;
   }
+
   .home-title {
     font-size: 1.5rem;
   }
+
   .separator-shadow {
-    width: auto;
+    width: 80%;
+    min-width: 120px;
   }
+
   input, select, button {
-    font-size: auto;
+    font-size: 14px;
+    padding: 8px;
   }
+
   .footer-sections {
     flex-direction: column;
+    align-items: center;
   }
+
   .section {
-    min-width: auto;
+    width: 100%;
+    max-width: 300px;
   }
+
   button {
-    font-size: auto;
-    padding: auto;
-    width: auto;
+    font-size: 14px;
+    padding: 10px;
+    width: 100%;
   }
 }
 
