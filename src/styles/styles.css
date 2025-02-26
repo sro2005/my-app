@@ -204,18 +204,39 @@ header {
     margin: 0.2rem 0;
     font-size: 0.9rem;
   }
+  .cliente-avatar,
+  .pedido-image {
+    margin-right: 8px;
+  }
+  .cliente-avatar img,
+  .pedido-image img {
+    max-width: 80px;  /* Reduce el tamaño para móviles */
+    max-height: 80px;
+  }
+  .search-container {
+    margin-bottom: 10px;
+  }
+  .search-input {
+    font-size: 14px;
+    padding: 8px;
+  }
+  .filters-container button {
+    padding: 8px 12px;
+    font-size: 14px;
+    margin: 5px;
+  }
   .dashboard-container {
     padding: 1rem;
-    gap: 1rem;
   }
-  .dashboard-card {
-    padding: 1rem;
+  .dashboard-card h2 {
+    font-size: 1.5rem;
   }
-  .client-stats, .category-stats {
-    grid-template-columns: 1fr;
+  .client-stats {
+    grid-template-columns: 1fr; /* Una sola columna para mejorar la legibilidad */
+    gap: 10px;
   }
   .stat-item {
-    font-size: 1rem;
+    font-size: 0.9rem;
     padding: 0.6rem;
   }
 }
