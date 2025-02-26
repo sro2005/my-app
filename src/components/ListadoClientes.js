@@ -23,6 +23,7 @@ const formatDateTime = (dateString) => {
       <span className="fecha">Fecha: {formattedDate}</span>
       <span className="separador"> | </span>
       <span className="hora">Hora: {formattedTime}</span>
+      <span className="separador"> | </span>
     </span>
   );
 };
