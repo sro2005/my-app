@@ -93,7 +93,7 @@ header {
     width: 70%;
   }
   .footer-sections {
-    flex-direction: auto;
+    flex-direction: column;
     align-items: auto;
     text-align: auto;
   }
@@ -121,7 +121,7 @@ header {
     font-size: auto;
   }
   .nav-links {
-    flex-direction: auto;
+    flex-direction: column;
     align-items: auto;
   }
   .footer {
@@ -142,7 +142,7 @@ header {
     font-size: auto;
   }
   .footer-sections {
-    flex-direction: auto;
+    flex-direction: column;
   }
   .section {
     min-width: auto;
