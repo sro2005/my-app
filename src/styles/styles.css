@@ -14,6 +14,15 @@ header {
   text-align: center;
 }
 
+.header-title {
+  font-size: clamp(1.8rem, 6vw, 3rem); /* Adapta el tamaño del título */
+  text-align: center;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 5px;
+  display: block;
+}
+
 .separator-shadow {
   width: 50%;
   min-width: 200px;
@@ -84,73 +93,105 @@ header {
   margin-top: 20px;
 }
 
+
 /* Responsive Adjustments */
+
+/* Para pantallas de hasta 1024px */
 @media (max-width: 1024px) {
   .container {
-    max-width: auto;
+    max-width: 95%;
+  }
+  .separator-shadow {
+    width: 60%;
+  }
+  .footer-sections {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .section {
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
+  }
+}
+
+/* Para pantallas de hasta 768px */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  .header-title {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    max-width: 85%;
   }
   .separator-shadow {
     width: 70%;
   }
-  .footer-sections {
-    flex-direction: column;
-    align-items: auto;
-    text-align: auto;
-  }
-  .section {
-    width: auto;
-    max-width: auto;
-    margin-bottom: auto;
-  }
-}
-@media (max-width: 768px) {
-  body {
-    font-size: auto;
-  }
-  .home-title {
-    font-size: auto;
-  }
-  .separator-shadow {
-    width: 80%;
-  }
   form {
-    max-width: auto;
-    padding: auto;
+    max-width: 90%;
+    padding: 1em;
   }
   input, select, button {
-    font-size: auto;
+    font-size: 16px;
+    padding: 10px;
   }
   .nav-links {
     flex-direction: column;
-    align-items: auto;
+    gap: 10px;
   }
   .footer {
-    padding: auto;
+    padding: 20px;
+  }
+  /* Ajuste para listados y tarjetas */
+  .client-stats, .category-stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .stat-item {
+    font-size: 1.2rem;
+    padding: 0.8rem;
   }
 }
+
+/* Para pantallas de hasta 480px */
 @media (max-width: 480px) {
   body {
-    font-size: auto;
+    font-size: 12px;
+  }
+  header h1 {
+    font-size: 1.5rem;
+    max-width: 85%;
   }
   .home-title {
-    font-size: auto;
+    font-size: 1.5rem;
+    max-width: 85%;
   }
   .separator-shadow {
     width: 80%;
+    min-width: 120px;
   }
   input, select, button {
-    font-size: auto;
+    font-size: 14px;
+    padding: 8px;
   }
   .footer-sections {
     flex-direction: column;
+    align-items: center;
   }
   .section {
-    min-width: auto;
+    max-width: 300px;
   }
   button {
-    font-size: auto;
-    padding: auto;
-    width: auto;
+    font-size: 14px;
+    padding: 10px;
+    width: 100%;
+  }
+  .client-stats, .category-stats {
+    grid-template-columns: 1fr;
+  }
+  .stat-item {
+    font-size: 1rem;
+    padding: 0.6rem;
   }
 }
 
