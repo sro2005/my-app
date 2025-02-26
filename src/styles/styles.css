@@ -99,50 +99,58 @@ header {
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
   .container {
-    max-width: auto;
-  }
-  .separator-shadow {
-    width: auto;
+    max-width: 95%;
   }
   .footer-sections {
     flex-direction: column;
-    align-items: auto;
-    text-align: auto;
+    align-items: center;
   }
   .section {
-    width: auto;
-    max-width: auto;
-    margin-bottom: auto;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
   }
 }
+
 @media (max-width: 768px) {
   body {
-    font-size: auto;
+    font-size: 14px;
   }
-  .home-title {
-    font-size: 2rem;
+  .header-title {
+    font-size: 1.8rem;
+    max-width: 85%;
   }
   .separator-shadow {
-    width: auto;
+    width: 60%;
   }
   form {
-    max-width: auto;
-    padding: auto;
+    max-width: 90%;
+    padding: 1em;
   }
   input, select, button {
-    font-size: auto;
+    font-size: 16px;
+    padding: 10px;
   }
   .nav-links {
     flex-direction: column;
-    align-items: auto;
+    align-items: center;
   }
   .footer {
-    padding: auto;
+    padding: 20px;
+  }
+  .client-stats,
+  .category-stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .stat-item {
+    font-size: 1.2rem;
+    padding: 0.8rem;
   }
 }
+
 @media (max-width: 480px) {
   body {
-    font-size: auto;
+    font-size: 12px;
   }
   header h1 {
     font-size: 1.5rem;
@@ -150,23 +158,35 @@ header {
   }
   .home-title {
     font-size: 1.5rem;
+    max-width: 85%;
   }
   .separator-shadow {
-    width: auto;
+    width: 70%;
+    min-width: 120px;
   }
   input, select, button {
-    font-size: auto;
+    font-size: 14px;
+    padding: 8px;
   }
   .footer-sections {
     flex-direction: column;
+    align-items: center;
   }
   .section {
-    min-width: auto;
+    width: 100%;
+    max-width: 300px;
   }
   button {
-    font-size: auto;
-    padding: auto;
-    width: auto;
+    font-size: 14px;
+    padding: 10px;
+    width: 100%;
+  }
+  .client-stats, .category-stats {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .stat-item {
+    font-size: 0.9rem;
+    padding: 0.5rem;   
   }
 }
 
