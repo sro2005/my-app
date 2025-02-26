@@ -96,112 +96,77 @@ header {
   margin-top: 20px;
 }
 
-/* 🔹 Ajustes Responsive */
+/* Responsive Adjustments */
 @media (max-width: 1024px) {
   .container {
-    max-width: 90%;
+    max-width: auto;
   }
-  
   .separator-shadow {
-    width: 60%;
+    width: auto;
   }
-
   .footer-sections {
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    align-items: auto;
+    text-align: auto;
   }
-
   .section {
-    width: 100%;
-    max-width: 500px;
-    margin-bottom: 20px;
+    width: auto;
+    max-width: auto;
+    margin-bottom: auto;
   }
 }
-
 @media (max-width: 768px) {
   body {
-    font-size: 14px;
+    font-size: auto;
   }
-
-  /* 📌 Ajuste del título en Header */
-  .header-title {
-    font-size: 1.8rem;
-    max-width: 90%;
-    white-space: nowrap; /* Evita cortes de texto en varias líneas */
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
   .home-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
-
   .separator-shadow {
-    width: 70%;
-    min-width: 150px;
+    width: auto;
   }
-
   form {
-    max-width: 95%;
-    padding: 1em;
+    max-width: auto;
+    padding: auto;
   }
-
   input, select, button {
-    font-size: 16px;
-    padding: 10px;
+    font-size: auto;
   }
-
   .nav-links {
     flex-direction: column;
-    align-items: center;
+    align-items: auto;
   }
-
   .footer {
-    padding: 20px;
+    padding: auto;
   }
 }
-
 @media (max-width: 480px) {
   body {
-    font-size: 12px;
+    font-size: auto;
   }
-
-  /* 📌 Ajuste para títulos en pantallas pequeñas */
-  .header-title {
+  header h1 {
     font-size: 1.5rem;
     max-width: 85%;
-    text-align: center;
   }
-
   .home-title {
     font-size: 1.5rem;
   }
-
   .separator-shadow {
-    width: 80%;
-    min-width: 120px;
+    width: auto;
   }
-
   input, select, button {
-    font-size: 14px;
-    padding: 8px;
+    font-size: auto;
   }
-
   .footer-sections {
     flex-direction: column;
-    align-items: center;
   }
-
   .section {
-    width: 100%;
-    max-width: 300px;
+    min-width: auto;
   }
-
   button {
-    font-size: 14px;
-    padding: 10px;
-    width: 100%;
+    font-size: auto;
+    padding: auto;
+    width: auto;
   }
 }
 
