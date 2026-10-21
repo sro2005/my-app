@@ -19,7 +19,6 @@ const formatPhoneNumber = (value) => {
 // Función genérica para registrar usuarios
 const registerUser = async (req, res, role) => {
   try {
-    console.log(`Datos recibidos para registrar ${role}:`, req.body);
     const {
       firstName,
       lastName,
@@ -65,7 +64,7 @@ const registerUser = async (req, res, role) => {
     });
   } catch (error) {
     console.error(`Error en el registro de ${role}:`, error);
-    res.status(400).json({ message: `Error registering ${role}`, error: error.message });
+    res.status(400).json({ message: `Error registering ${role}` });
   }
 };
 
@@ -112,6 +111,6 @@ exports.loginCustomer = async (req, res) => {
     return res.status(200).json({ token, user, message: 'Login successful' });
   } catch (error) {
     console.error('Error en el inicio de sesión:', error.message);
-    res.status(400).json({ message: 'Error logging in', error: error.message });
+    res.status(400).json({ message: 'Error logging in' });
   }
 };
