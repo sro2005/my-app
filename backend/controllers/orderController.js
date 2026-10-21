@@ -111,29 +111,46 @@ exports.getOrders = async (req, res) => {
   }
 };
 
-// Actualizar un pedido (solo admins)
+// Actualizar datos logísticos/de contacto de un pedido (solo admins).
+// Los importes, productos, usuario y datos del pago nunca se aceptan desde req.body.
 exports.updateOrder = async (req, res) => {
   try {
-    const { error } = orderSchema.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(err => err.message) });
-    }
-    
     const { id } = req.params;
-    const existingOrder = await Order.findById(id);
-    if (!existingOrder) return res.status(404).json({ message: 'Pedido no encontrado' });
-
-    // Si los productos han cambiado, restaurar el inventario del pedido anterior
-    if (JSON.stringify(existingOrder.products) !== JSON.stringify(req.body.products)) {
-      await restoreInventory(existingOrder.products);
-      await reduceInventory(req.body.products);
+    const allowedFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'deliveryDate'];
+    const updates = {};
+    for (const field of allowedFields) {
+      if (Object.prototype.hasOwnProperty.call(req.body, field)) updates[field] = req.body[field];
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
-    res.status(200).json({ message: 'Pedido actualizado exitosamente', order: updatedOrder });
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No hay campos editables válidos.' });
+    }
+
+    const updateSchema = require('joi').object({
+      firstName: require('joi').string().trim().min(1).max(100),
+      lastName: require('joi').string().trim().min(1).max(100),
+      email: require('joi').string().trim().email().max(254),
+      phone: require('joi').string().trim().min(5).max(30),
+      address: require('joi').string().trim().min(1).max(300),
+      deliveryDate: require('joi').date().iso().min('now')
+    }).min(1).unknown(false);
+
+    const { error, value } = updateSchema.validate(updates, { abortEarly: false, stripUnknown: true });
+    if (error) {
+      return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(item => item.message) });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(id, { $set: value }, {
+      new: true,
+      runValidators: true,
+      context: 'query'
+    });
+    if (!updatedOrder) return res.status(404).json({ message: 'Pedido no encontrado' });
+
+    return res.status(200).json({ message: 'Datos del pedido actualizados.', order: updatedOrder });
   } catch (error) {
     console.error('Error al actualizar el pedido:', error.message);
-    res.status(500).json({ message: 'Error al actualizar el pedido' });
+    return res.status(500).json({ message: 'Error al actualizar el pedido' });
   }
 };
 
