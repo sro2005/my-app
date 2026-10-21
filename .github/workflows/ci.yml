@@ -24,7 +24,7 @@ jobs:
           path: npm-audit-frontend.json
           if-no-files-found: warn
           retention-days: 14
-      - run: CI=true npm test -- --watchAll=false --passWithNoTests
+      - run: CI=true npm test -- --watchAll=false
       - run: npm run build
 
   backend:
