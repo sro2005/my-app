@@ -55,6 +55,10 @@ const defaultOption = {
 
 // Combinamos la opción deshabilitada con las opciones ordenadas
 const optionsWithDefault = [defaultOption, ...sortedOptions];
+const preferenceSelectStyles = {
+  menuPortal: base => ({ ...base, zIndex: 10000 }),
+  menuList: base => ({ ...base, maxHeight: 240, padding: '6px' })
+};
 
 const RegistroCliente = () => {
   const [firstName, setFirstName] = useState('');
@@ -190,7 +194,7 @@ const RegistroCliente = () => {
         </div>
         <div className="evh-form-field evh-form-field-wide">
           <label htmlFor="preferences">¿Qué te interesa para tu hogar?</label>
-          <Select inputId="preferences" isMulti options={optionsWithDefault.filter(option => option.value)} value={preferences} onChange={setPreferences} placeholder="Elige una o varias categorías" className="select-preferences" classNamePrefix="evh-select" />
+          <Select inputId="preferences" isMulti options={optionsWithDefault.filter(option => option.value)} value={preferences} onChange={setPreferences} placeholder="Elige una o varias categorías" className="select-preferences" classNamePrefix="evh-select" menuPortalTarget={document.body} menuPosition="fixed" styles={preferenceSelectStyles} />
         </div>
       </div>
       <button className="evh-form-submit" type="submit" disabled={loading}>
