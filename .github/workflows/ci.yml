@@ -1,7 +1,10 @@
 name: ElectroVibeHome CI
 
 on:
-  # Ejecución manual para evitar correos automáticos de cada actualización.
+  # Ejecuta CI solo en la rama aislada de preparación; no en cada rama ni en producción.
+  push:
+    branches:
+      - security/electrovibehome-hardening
   workflow_dispatch:
 
 jobs:
