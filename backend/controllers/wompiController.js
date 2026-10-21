@@ -94,18 +94,46 @@ exports.handleWebhook = async (req, res) => {
     }
 
     const status = String(transaction.status).toUpperCase();
+    // Compare-and-set evita que webhooks repetidos liberen el mismo inventario más de una vez.
+    const pendingOrderFilter = {
+      _id: order._id,
+      paymentStatus: 'PENDING',
+      paymentConfirmed: false,
+      status: { $ne: 'Cancelado' }
+    };
+
     if (status === 'APPROVED') {
-      order.paymentStatus = 'APPROVED';
-      order.paymentConfirmed = true;
-      order.paymentTransactionId = String(transaction.id || '');
-      if (order.status === 'Pendiente') order.status = 'Procesando';
-      await order.save();
-    } else if (['DECLINED', 'ERROR', 'VOIDED'].includes(status) && order.paymentStatus === 'PENDING') {
-      order.paymentStatus = status;
-      order.paymentTransactionId = String(transaction.id || '');
-      order.status = 'Cancelado';
-      await order.save();
-      await restoreInventory(order.products);
+      const approvedOrder = await Order.findOneAndUpdate(
+        pendingOrderFilter,
+        {
+          $set: {
+            paymentStatus: 'APPROVED',
+            paymentConfirmed: true,
+            paymentTransactionId: String(transaction.id || ''),
+            ...(order.status === 'Pendiente' ? { status: 'Procesando' } : {})
+          }
+        },
+        { new: true, runValidators: true }
+      );
+      if (!approvedOrder) {
+        return res.status(200).json({ received: true, ignored: true });
+      }
+    } else if (['DECLINED', 'ERROR', 'VOIDED'].includes(status)) {
+      const cancelledOrder = await Order.findOneAndUpdate(
+        pendingOrderFilter,
+        {
+          $set: {
+            paymentStatus: status,
+            paymentTransactionId: String(transaction.id || ''),
+            status: 'Cancelado'
+          }
+        },
+        { new: true, runValidators: true }
+      );
+      if (cancelledOrder) {
+        // Solo el proceso que logró cambiar PENDING a estado terminal libera el stock.
+        await restoreInventory(cancelledOrder.products);
+      }
     }
     return res.status(200).json({ received: true });
   } catch (error) {
