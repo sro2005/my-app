@@ -84,7 +84,7 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!/^[a-f\\d]{24}$/i.test(id)) {
+    if (!Product.base.isValidObjectId(id)) {
       return res.status(400).json({ message: 'Identificador de producto inválido.' });
     }
 
