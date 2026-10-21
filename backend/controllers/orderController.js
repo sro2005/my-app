@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const { orderSchema } = require('../validations/orderValidation');
 const Joi = require('joi');
@@ -158,36 +159,58 @@ exports.updateOrder = async (req, res) => {
 
 // Eliminar un pedido (solo admins)
 exports.deleteOrder = async (req, res) => {
+  const session = await mongoose.startSession();
   try {
     const { id } = req.params;
-    const order = await Order.findById(id);
-    if (!order) return res.status(404).json({ message: 'Pedido no encontrado' });
+    let outcome = 'not-found';
 
-    // No borrar pedidos con referencia de pago ni pedidos terminales: se debe conservar
-    // la trazabilidad y evitar perder una aprobación que llegue de forma tardía.
-    if (order.paymentReference || order.paymentStatus !== 'PENDING' || order.paymentConfirmed || order.status === 'Cancelado') {
+    // El borrado y la devolución de inventario deben ser atómicos para evitar
+    // perder el pedido sin devolver unidades si falla una operación de MongoDB.
+    await session.withTransaction(async () => {
+      const order = await Order.findById(id).session(session);
+      if (!order) {
+        outcome = 'not-found';
+        return;
+      }
+
+      // Conservar pedidos con referencias o historial de pago para auditoría.
+      if (order.paymentReference || order.paymentStatus !== 'PENDING' || order.paymentConfirmed || order.status === 'Cancelado') {
+        outcome = 'protected';
+        return;
+      }
+
+      const deletedOrder = await Order.findOneAndDelete({
+        _id: id,
+        paymentStatus: 'PENDING',
+        paymentConfirmed: false,
+        paymentReference: { $exists: false },
+        status: { $ne: 'Cancelado' }
+      }, { session });
+
+      if (!deletedOrder) {
+        outcome = 'conflict';
+        return;
+      }
+
+      await restoreInventory(deletedOrder.products, { session });
+      outcome = 'deleted';
+    });
+
+    if (outcome === 'not-found') return res.status(404).json({ message: 'Pedido no encontrado' });
+    if (outcome === 'protected') {
       return res.status(409).json({
         message: 'Este pedido tiene un estado de pago o historial que debe conservarse; no se puede eliminar.'
       });
     }
-
-    // Borrado condicional: si checkout asignó una referencia concurrentemente, no se borra.
-    const deletedOrder = await Order.findOneAndDelete({
-      _id: id,
-      paymentStatus: 'PENDING',
-      paymentConfirmed: false,
-      paymentReference: { $exists: false },
-      status: { $ne: 'Cancelado' }
-    });
-    if (!deletedOrder) {
+    if (outcome === 'conflict') {
       return res.status(409).json({ message: 'El pedido cambió mientras se procesaba. Actualiza la lista e inténtalo de nuevo.' });
     }
-
-    await restoreInventory(deletedOrder.products);
     return res.status(200).json({ message: 'Pedido eliminado exitosamente' });
   } catch (error) {
     console.error('Error al eliminar el pedido:', error.message);
     return res.status(500).json({ message: 'Error al eliminar el pedido' });
+  } finally {
+    await session.endSession();
   }
 };
 
