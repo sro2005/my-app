@@ -36,8 +36,14 @@ exports.createOrder = async (req, res) => {
     }
 
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = req.body;
-    if (!process.env.WOMPI_PUBLIC_KEY || !process.env.WOMPI_INTEGRITY_SECRET || !process.env.FRONTEND_URL) {
-      return res.status(503).json({ message: 'Los pagos no están configurados todavía. El pedido no se ha creado.' });
+    if (
+      !process.env.WOMPI_PUBLIC_KEY ||
+      !process.env.WOMPI_INTEGRITY_SECRET ||
+      !process.env.WOMPI_EVENTS_SECRET ||
+      !process.env.FRONTEND_URL ||
+      !/^https:\/\//.test(process.env.FRONTEND_URL)
+    ) {
+      return res.status(503).json({ message: 'Los pagos no están configurados por completo. El pedido no se ha creado.' });
     }
 
     // El precio se calcula siempre en el servidor, nunca se confía en el total del navegador.
