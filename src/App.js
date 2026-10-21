@@ -33,6 +33,7 @@ const AppContent = () => {
       <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
       <Routes>
             <Route path="/recover-password" element={<RecoverPassword />} />
+        <Route path="/catalogo" element={<ListadoProductos />} />
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
