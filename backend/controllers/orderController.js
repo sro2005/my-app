@@ -22,6 +22,8 @@ const updateOrderStatus = async (order) => {
 
 // Crear un nuevo pedido
 exports.createOrder = async (req, res) => {
+  let inventoryReduced = false;
+  let reservedProducts = [];
   try {
     // Asegurarse de que userId esté en formato string
     const userId = req.user._id;
@@ -34,6 +36,9 @@ exports.createOrder = async (req, res) => {
     }
 
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = req.body;
+    if (!process.env.WOMPI_PUBLIC_KEY || !process.env.WOMPI_INTEGRITY_SECRET || !process.env.FRONTEND_URL) {
+      return res.status(503).json({ message: 'Los pagos no están configurados todavía. El pedido no se ha creado.' });
+    }
 
     // El precio se calcula siempre en el servidor, nunca se confía en el total del navegador.
     await validateProducts(products);
@@ -47,6 +52,8 @@ exports.createOrder = async (req, res) => {
     }, 0);
     if (!Number.isSafeInteger(Math.round(totalAmount * 100))) throw new Error('Importe inválido');
     await reduceInventory(products);
+    inventoryReduced = true;
+    reservedProducts = products;
 
     // Convertir la fecha de entrega a la zona horaria de Colombia.
     // Se asume que deliveryDate viene en formato "YYYY-MM-DD".
@@ -62,9 +69,14 @@ exports.createOrder = async (req, res) => {
     });
 
     await newOrder.save();
+    inventoryReduced = false;
     res.status(201).json({ message: 'Pedido realizado exitosamente', order: newOrder });
   } catch (error) {
-    res.status(400).json({ message: 'Error al crear el pedido', error: error.message });
+    if (inventoryReduced) {
+      try { await restoreInventory(reservedProducts); } catch (restoreError) { console.error('No se pudo revertir la reserva de inventario:', restoreError.message); }
+    }
+    console.error('Error al crear pedido:', error.message);
+    res.status(400).json({ message: 'No fue posible crear el pedido. Verifica los datos e inténtalo nuevamente.' });
   }
 };
 
