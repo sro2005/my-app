@@ -1,7 +1,7 @@
 name: ElectroVibeHome CI
 
 on:
-  # Solo ejecución manual: no genera correos por cada commit.
+  # Solo ejecución manual para evitar correos en cada commit.
   workflow_dispatch:
 
 jobs:
@@ -14,6 +14,16 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Capture frontend dependency audit
+        run: npm audit --json > npm-audit-frontend.json || true
+      - name: Upload frontend audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dependency-audit
+          path: npm-audit-frontend.json
+          if-no-files-found: warn
+          retention-days: 14
       - run: CI=true npm test -- --watchAll=false --passWithNoTests
       - run: npm run build
 
@@ -30,6 +40,16 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
       - run: npm ci
+      - name: Capture backend dependency audit
+        run: npm audit --json > npm-audit-backend.json || true
+      - name: Upload backend audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dependency-audit
+          path: backend/npm-audit-backend.json
+          if-no-files-found: warn
+          retention-days: 14
       - name: Check JavaScript syntax
         run: |
           find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
