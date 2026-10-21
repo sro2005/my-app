@@ -106,7 +106,8 @@ exports.getOrders = async (req, res) => {
     const orders = await Order.find().populate('products.productId');
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener los pedidos', error: error.message });
+    console.error('Error al obtener todos los pedidos:', error.message);
+    res.status(500).json({ message: 'Error al obtener los pedidos' });
   }
 };
 
