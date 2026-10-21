@@ -80,9 +80,9 @@ const ListadoProductos = () => {
 
   return (
     <div className="container">
-      <h2>Gestión de Inventarios</h2>
+      <h2>{user?.role === 'admin' ? 'Gestión de Inventarios' : 'Explora nuestros productos'}</h2>
       <hr />
-      <div className="module-description">
+      {user?.role === 'admin' && <div className="module-description">
         <p><b>📖 DEFINICIÓN:</b> La <strong>Gestión de Inventarios</strong> en <strong>ElectroVibeHome</strong> es el proceso clave que permite <strong>controlar</strong> y <strong>mantener</strong> el <strong>stock</strong> de productos de manera <strong>eficiente</strong> y <strong>organizada</strong>. Este proceso incluye:</p>
           <ul>
             <li>Recepción de productos en el almacén.</li>
@@ -144,7 +144,7 @@ const ListadoProductos = () => {
             </li>
           </ul>
       <hr />
-      </div>
+      </div>}
       <h2>Listado de Productos</h2>
       <ul className="productos-list">
         {productos.length > 0 ? (
