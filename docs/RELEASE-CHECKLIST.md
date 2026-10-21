@@ -1,7 +1,8 @@
 # ElectroVibeHome — checklist de publicación segura
 
 ## Antes de publicar
-- [ ] Ejecutar el workflow de CI: compilación del frontend y validaciones del backend.
+- [ ] Confirmar que el workflow de CI de esta rama termina en verde; revisar el build de producción del frontend y la sintaxis del backend.
+- [ ] Añadir y ejecutar pruebas automatizadas reales de pedidos, inventario, permisos, recuperación y webhooks antes de aprobar la publicación.
 - [ ] Confirmar que `FRONTEND_URL` y `ALLOWED_ORIGINS` contienen el dominio HTTPS real.
 - [ ] Configurar `WOMPI_PUBLIC_KEY`, `WOMPI_INTEGRITY_SECRET` y `WOMPI_EVENTS_SECRET` en el hosting; nunca en el frontend ni en Git.
 - [ ] Empezar con credenciales Sandbox de Wompi (prefijos de prueba). No aceptar pagos reales hasta completar pruebas.
@@ -9,7 +10,10 @@
 - [ ] Confirmar que la API y MongoDB están conectados en el entorno de pruebas.
 - [ ] Probar recuperación de contraseña con un buzón real y verificar vencimiento y uso único del enlace.
 - [ ] Probar un pago aprobado, rechazado y pendiente; confirmar pedido, importe, stock y webhooks.
+- [ ] Definir y probar una reconciliación segura de pedidos pendientes abandonados. Hoy no se debe liberar automáticamente el inventario de un pedido con referencia Wompi sin verificar el resultado real de la transacción.
 - [ ] Verificar que un usuario no puede leer o pagar pedidos ajenos.
+- [ ] Verificar que respuestas de perfil/listado nunca incluyen hashes de contraseña ni campos de recuperación.
+- [ ] Verificar que los webhooks duplicados no duplican la devolución de inventario y que no se pueden borrar pedidos con pagos en curso o historial terminal.
 - [ ] Revisar que no hay certificados privados, contraseñas SMTP, secretos JWT ni claves Wompi en el repositorio.
 - [ ] Hacer despliegue gradual solo después de aprobar pruebas y revisar el estado de la rama.
 
