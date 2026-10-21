@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/orderController');
 const { authenticateToken, authenticateAdminToken } = require('../middlewares/authMiddleware');
+const paymentController = require('../controllers/wompiController');
 
 // Ruta para crear un nuevo pedido (abierto para usuarios normales, pero con autenticación)
 router.post('/realizar', authenticateToken, orderController.createOrder);
+router.post('/:id/wompi-checkout', authenticateToken, paymentController.createCheckout);
+router.post('/wompi/webhook', paymentController.handleWebhook);
 
 // Ruta para obtener todos los pedidos (solo para administradores)
 router.get('/all', authenticateAdminToken, orderController.getOrders);
