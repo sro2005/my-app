@@ -163,17 +163,31 @@ exports.deleteOrder = async (req, res) => {
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Pedido no encontrado' });
 
-    // Solo liberar stock si seguía reservado para un pedido sin pago.
-    // Los pedidos cancelados ya liberaron inventario en el webhook; los aprobados lo consumieron.
-    if (order.paymentStatus === 'PENDING' && order.status !== 'Cancelado' && !order.paymentConfirmed) {
-      await restoreInventory(order.products);
+    // No borrar pedidos con referencia de pago ni pedidos terminales: se debe conservar
+    // la trazabilidad y evitar perder una aprobación que llegue de forma tardía.
+    if (order.paymentReference || order.paymentStatus !== 'PENDING' || order.paymentConfirmed || order.status === 'Cancelado') {
+      return res.status(409).json({
+        message: 'Este pedido tiene un estado de pago o historial que debe conservarse; no se puede eliminar.'
+      });
     }
-    await Order.findByIdAndDelete(id);
-    
-    res.status(200).json({ message: 'Pedido eliminado exitosamente' });
+
+    // Borrado condicional: si checkout asignó una referencia concurrentemente, no se borra.
+    const deletedOrder = await Order.findOneAndDelete({
+      _id: id,
+      paymentStatus: 'PENDING',
+      paymentConfirmed: false,
+      paymentReference: { $exists: false },
+      status: { $ne: 'Cancelado' }
+    });
+    if (!deletedOrder) {
+      return res.status(409).json({ message: 'El pedido cambió mientras se procesaba. Actualiza la lista e inténtalo de nuevo.' });
+    }
+
+    await restoreInventory(deletedOrder.products);
+    return res.status(200).json({ message: 'Pedido eliminado exitosamente' });
   } catch (error) {
     console.error('Error al eliminar el pedido:', error.message);
-    res.status(500).json({ message: 'Error al eliminar el pedido' });
+    return res.status(500).json({ message: 'Error al eliminar el pedido' });
   }
 };
 
