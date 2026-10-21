@@ -5,9 +5,9 @@ const productSchema = new mongoose.Schema({
   name: { type: String, required: true, index: true }, // Nombre del producto con índice
   description: { type: String, required: true }, // Descripción del producto
   category: { type: String, required: true, index: true }, // Categoría del producto con índice
-  price: { type: Number, required: true, min: 0 }, // Precio del producto, asegurando que sea al menos 0
+  price: { type: Number, required: true, min: 0.01, max: 1000000000 }, // Precio positivo con límite para evitar importes fuera de rango
   quantity: { type: Number, required: true, min: 0 }, // Cantidad disponible en inventario, asegurando que sea al menos 0
-  imageUrl: { type: String, required: true, match: /^https?:\/\/.*\.(jpeg|jpg|gif|png)$/ } // Validación de URL de imagen
+  imageUrl: { type: String, required: true, match: /^https?:\/\/[^/\s?#]+\/[^\s?#]*\.(?:jpe?g|gif|png)(?:\?[^\s#]*)?(?:#[^\s]*)?$/i } // Validación de URL de imagen
 }, {
   timestamps: true // Agregar createdAt y updatedAt automáticamente
 });

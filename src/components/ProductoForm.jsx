@@ -102,7 +102,8 @@ const ProductoForm = () => {
         value={quantity}
         onChange={(e) => setQuantity(e.target.value)}
         required
-        min="1"
+        min="0"
+        step="1"
       />
       <input
         type="text"

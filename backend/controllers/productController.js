@@ -6,12 +6,12 @@ const { productSchema } = require('../validations/productValidation');
 // Crear un nuevo producto (solo admins)
 exports.createProduct = async (req, res) => {
   try {
-    const { error } = productSchema.validate(req.body);
+    const { error, value } = productSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
     }
 
-    const { name, description, category, price, quantity, imageUrl } = req.body;
+    const { name, description, category, price, quantity, imageUrl } = value;
     const newProduct = new Product({ name, description, category, price, quantity, imageUrl });
     await newProduct.save();
 
@@ -61,13 +61,13 @@ exports.getProductsByPreferences = async (req, res) => {
 // Actualizar un producto (solo admins)
 exports.updateProduct = async (req, res) => {
   try {
-    const { error } = productSchema.validate(req.body);
+    const { error, value } = productSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
     }
 
     const { id } = req.params;
-    const { name, description, category, price, quantity, imageUrl } = req.body;
+    const { name, description, category, price, quantity, imageUrl } = value;
     const updatedProduct = await Product.findByIdAndUpdate(id, {
       name, description, category, price, quantity, imageUrl
     }, { new: true, runValidators: true });
