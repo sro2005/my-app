@@ -33,3 +33,6 @@ yarn-error.log*  # Archivos de errores de Yarn
 # 🔧 Backend - Ignorar logs y dependencias del backend
 /backend/log
 /backend/node_modules
+# Certificados y claves privadas locales
+*.pem
+*.key
