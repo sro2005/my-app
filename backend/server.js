@@ -28,14 +28,14 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Configurar CORS
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
-    credentials: true, // Permitir cookies y autenticación en solicitudes cross-origin
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()).filter(Boolean) : '*',
+    credentials: false, // La autenticación usa Bearer tokens; no se necesitan cookies cross-origin
   })
 );
 
 // Seguridad
 app.use(helmet());
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
 
 // Logging (solo en desarrollo)
 if (!isProduction) {
