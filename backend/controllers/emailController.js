@@ -51,7 +51,7 @@ exports.forgotPassword = async (req, res) => {
       const frontendUrl = process.env.FRONTEND_URL;
       if (!frontendUrl || !/^https:\/\//.test(frontendUrl)) {
         console.error('FRONTEND_URL debe configurarse con una dirección HTTPS.');
-        return res.status(503).json({ message: 'La recuperación no está disponible temporalmente.' });
+        return res.status(200).json({ message: recoveryMessage });
       }
       const token = crypto.randomBytes(32).toString('hex');
       customer.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
@@ -70,7 +70,7 @@ exports.forgotPassword = async (req, res) => {
         customer.resetPasswordExpires = undefined;
         await customer.save();
         console.error('No fue posible enviar el correo de recuperación.');
-        return res.status(503).json({ message: 'El correo no está disponible temporalmente. Inténtalo más tarde.' });
+        return res.status(200).json({ message: recoveryMessage });
       }
     }
     return res.status(200).json({ message: recoveryMessage });
