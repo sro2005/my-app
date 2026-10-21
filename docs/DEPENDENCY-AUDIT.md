@@ -7,7 +7,7 @@ The last recorded GitHub Actions install logs reported:
 - Frontend root (`npm ci`, 1,552 packages audited): **112 advisories** — 6 low, 17 moderate, 85 high, 4 critical.
 - Backend (`backend/npm ci`, 224 packages audited): **24 advisories** — 1 low, 5 moderate, 16 high, 2 critical.
 - These totals come from a previous run and must be refreshed; they are not a current per-package inventory.
-- The backend JavaScript syntax check passed in that run. The frontend job stopped at “No tests found”, so its build step was skipped. The workflow was later changed to allow an empty frontend test suite, but that revised workflow has not yet been confirmed in a new run.
+- The backend JavaScript syntax check and four backend unit tests passed in the most recent available run. Frontend tests exited successfully only because the repository has no frontend tests yet. The frontend production build then failed because `src/components/PedidoForm.js` declared an unused `navigate` variable; that unused import and variable have now been removed on the feature branch, but the build has not yet been rerun against the fix.
 
 ## New audit-report collection
 
@@ -29,7 +29,7 @@ The Wompi checkout controller now reuses a persisted payment reference for a pen
 ## Release blockers
 
 - No refreshed per-package audit output has been reviewed yet, so vulnerable package versions have **not** been upgraded as part of this work.
-- Full frontend production build and updated CI have not been confirmed.
+- The last available frontend build failed on an unused `navigate` variable; the variable/import have been removed on this branch, but the fixed build is not yet confirmed. The frontend currently has no tests, so the green test step is not evidence of functional coverage.
 - Configure Wompi Sandbox and its HTTPS webhook; verify SMTP password reset and MongoDB connectivity; test approved, declined, pending, and abandoned payment flows.
 - Define safe reconciliation for abandoned pending orders. Do not restore reserved stock for a Wompi reference until its payment outcome is verified.
 - Rotate any real private key that was ever committed. Removing a key from the current branch does not purge it from Git history.
