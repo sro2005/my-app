@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - security/electrovibehome-hardening
 
 jobs:
   frontend:
