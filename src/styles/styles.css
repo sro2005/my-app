@@ -1432,15 +1432,15 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-site-header .goodbye-message p { margin: 0; }
 
 .evh-site-footer { display: block; padding: 3rem 1.5rem 1.25rem; color: #e9e9eb; background: #202124; text-align: left; }
-.evh-footer-inner { display: grid; grid-template-columns: 1.2fr 1.1fr 1fr 1.4fr; gap: 2rem; width: min(100%, 1180px); margin: 0 auto; }
+.evh-footer-inner { display: grid; grid-template-columns: 1.2fr 1.55fr .9fr 1.4fr; gap: 2rem; width: min(100%, 1180px); margin: 0 auto; }
 .evh-footer-brand a { color: #fff; font-size: .86rem; font-weight: 900; letter-spacing: .06em; text-decoration: none; }
 .evh-footer-brand a span { color: #f39435; font-size: 1.25rem; }
-.evh-footer-brand p { max-width: 26ch; margin: .7rem 0 0; color: #c3c5c9; font-size: .72rem; font-weight: 700; letter-spacing: .08em; line-height: 1.6; }
+.evh-footer-brand p { max-width: 20ch; margin: .75rem 0 0; color: #f5b36d; font-size: .9rem; font-weight: 800; line-height: 1.45; }
 .evh-footer-section { display: flex; flex-direction: column; align-items: flex-start; gap: .55rem; min-width: 0; margin: 0; text-align: left; }
 .evh-footer-section h2 { margin: 0 0 .35rem; color: #fff; font-size: .88rem; }
 .evh-footer-section a,.evh-footer-section > span { color: #c3c5c9; font-size: .78rem; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
 .evh-footer-section a:hover { color: #f5b36d; }
-.evh-footer-legal { width: min(100%, 1180px); margin: 2.5rem auto 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.12); color: #aaaeb6; font-size: .72rem; }
+.evh-footer-legal { width: min(100%, 1180px); margin: 2.5rem auto 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.12); color: #aaaeb6; font-size: .72rem; text-align: center; }
 
 @media (max-width: 900px) {
   .evh-header-inner { flex-direction: column; justify-content: center; gap: .5rem; padding: 1rem 0; }

@@ -15,7 +15,7 @@ const Footer = () => {
     <div className="evh-footer-inner">
       <div className="evh-footer-brand">
         <Link to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
-        <p>TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO</p>
+        <p>Más conexión. Más comodidad. Más hogar.</p>
       </div>
 
       <div className="evh-footer-section">
