@@ -99,6 +99,7 @@ const Header = () => {
         ) : (
             <div className="nav-container">
               <ul className="nav-links">
+                <li><Link to="/catalogo"><div className="nav-icon"><FontAwesomeIcon icon={faBoxOpen} /></div><div className="nav-text">EXPLORAR PRODUCTOS</div></Link></li>
                 <li>
                   <Link to="/register">
                     <div className="nav-icon"><FontAwesomeIcon icon={faUserPlus} /></div>
