@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const { orderSchema } = require('../validations/orderValidation');
+const Joi = require('joi');
 const { validateProducts, reduceInventory, restoreInventory } = require('../utils/productUtils');
 const Product = require('../models/Product');
 const moment = require('moment-timezone'); // Importa moment-timezone
@@ -117,22 +118,23 @@ exports.updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
     const allowedFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'deliveryDate'];
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
     const updates = {};
     for (const field of allowedFields) {
-      if (Object.prototype.hasOwnProperty.call(req.body, field)) updates[field] = req.body[field];
+      if (Object.prototype.hasOwnProperty.call(body, field)) updates[field] = body[field];
     }
 
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({ message: 'No hay campos editables válidos.' });
     }
 
-    const updateSchema = require('joi').object({
-      firstName: require('joi').string().trim().min(1).max(100),
-      lastName: require('joi').string().trim().min(1).max(100),
-      email: require('joi').string().trim().email().max(254),
-      phone: require('joi').string().trim().min(5).max(30),
-      address: require('joi').string().trim().min(1).max(300),
-      deliveryDate: require('joi').date().iso().min('now')
+    const updateSchema = Joi.object({
+      firstName: Joi.string().trim().min(1).max(100),
+      lastName: Joi.string().trim().min(1).max(100),
+      email: Joi.string().trim().email().max(254),
+      phone: Joi.string().trim().min(5).max(30),
+      address: Joi.string().trim().min(1).max(300),
+      deliveryDate: Joi.date().iso()
     }).min(1).unknown(false);
 
     const { error, value } = updateSchema.validate(updates, { abortEarly: false, stripUnknown: true });
