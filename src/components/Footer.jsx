@@ -15,6 +15,7 @@ const Footer = () => {
     <div className="evh-footer-inner">
       <div className="evh-footer-brand">
         <Link to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
+        <p>TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO</p>
       </div>
 
       <div className="evh-footer-section">
@@ -25,6 +26,13 @@ const Footer = () => {
       <div className="evh-footer-section">
         <h2>Navegación</h2>
         {exploreLinks.map(([to, label]) => <Link key={to} to={to}>{label}</Link>)}
+      </div>
+
+      <div className="evh-footer-section">
+        <h2>Recursos</h2>
+        <a href="https://company-electrovibehome.onrender.com/about">Sobre Nosotros</a>
+        <a href="https://company-electrovibehome.onrender.com/privacy">Política de Privacidad</a>
+        <a href="https://company-electrovibehome.onrender.com/terms">Términos de Servicio</a>
       </div>
     </div>
     <div className="evh-footer-legal">© {new Date().getFullYear()} ElectroVibeHome. Todos los derechos reservados.</div>

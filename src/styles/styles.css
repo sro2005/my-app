@@ -1293,7 +1293,7 @@ h2 {
   width: min(100%, 1180px);
   min-height: 590px;
   margin: 0 auto;
-  overflow: hidden;
+  overflow: clip;
   background: #fff;
   border: 1px solid #e8e8e4;
   border-radius: 28px;
@@ -1301,11 +1301,16 @@ h2 {
 }
 
 .evh-form-story {
-  position: relative;
+  position: sticky;
+  top: 1.5rem;
+  align-self: start;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 100%;
+  justify-content: center;
+  gap: clamp(3rem, 10vh, 5rem);
+  height: min(42rem, calc(100vh - 3rem));
+  min-height: 30rem;
+  box-sizing: border-box;
   padding: clamp(1.75rem, 4vw, 3rem);
   overflow: hidden;
   color: #fff;
@@ -1325,7 +1330,7 @@ h2 {
 
 .evh-form-brand span { color: #f39435; font-size: 1.1rem; }
 
-.evh-form-story-copy { position: relative; z-index: 1; max-width: 22rem; margin: 3rem 0 0; }
+.evh-form-story-copy { position: relative; z-index: 1; max-width: 22rem; margin: 0; }
 .evh-form-story-label { color: #f5b36d; font-size: .7rem; font-weight: 800; letter-spacing: .12em; }
 .evh-form-story h2 { margin: .9rem 0; color: #fff; font-size: clamp(2rem, 3vw, 2.75rem); line-height: 1.1; }
 .evh-form-story-copy p { max-width: 20rem; color: #d0d2d7; font-size: 1rem; line-height: 1.7; }
@@ -1387,7 +1392,7 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 @media (max-width: 760px) {
   .evh-form-page { padding: 1rem .75rem 2rem; }
   .evh-form-layout { grid-template-columns: 1fr; min-height: 0; border-radius: 22px; }
-  .evh-form-story { min-height: 0; padding: 1.4rem 1.5rem; }
+  .evh-form-story { position: relative; top: auto; align-self: auto; height: auto; min-height: 0; gap: 0; justify-content: space-between; padding: 1.4rem 1.5rem; }
   .evh-form-story-copy { margin: 1.5rem 0 .3rem; }
   .evh-form-story h2 { font-size: 2rem; }
   .evh-form-story-copy p { margin: .5rem 0; font-size: .88rem; }
@@ -1395,6 +1400,11 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
   .evh-form-story-orbit { right: -9rem; bottom: -11rem; width: 17rem; }
   .evh-form-content { width: 100%; padding: 1.5rem; }
   .evh-form-heading { margin-bottom: 1.25rem; }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .evh-register-form .evh-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .evh-register-form .evh-form-field-wide { grid-column: auto; }
 }
 
 @media (max-width: 480px) {
@@ -1422,9 +1432,10 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-site-header .goodbye-message p { margin: 0; }
 
 .evh-site-footer { display: block; padding: 3rem 1.5rem 1.25rem; color: #e9e9eb; background: #202124; text-align: left; }
-.evh-footer-inner { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 2rem; width: min(100%, 1180px); margin: 0 auto; }
+.evh-footer-inner { display: grid; grid-template-columns: 1.2fr 1.1fr 1fr 1.4fr; gap: 2rem; width: min(100%, 1180px); margin: 0 auto; }
 .evh-footer-brand a { color: #fff; font-size: .86rem; font-weight: 900; letter-spacing: .06em; text-decoration: none; }
 .evh-footer-brand a span { color: #f39435; font-size: 1.25rem; }
+.evh-footer-brand p { max-width: 26ch; margin: .7rem 0 0; color: #c3c5c9; font-size: .72rem; font-weight: 700; letter-spacing: .08em; line-height: 1.6; }
 .evh-footer-section { display: flex; flex-direction: column; align-items: flex-start; gap: .55rem; min-width: 0; margin: 0; text-align: left; }
 .evh-footer-section h2 { margin: 0 0 .35rem; color: #fff; font-size: .88rem; }
 .evh-footer-section a,.evh-footer-section > span { color: #c3c5c9; font-size: .78rem; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
