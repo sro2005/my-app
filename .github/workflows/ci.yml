@@ -1,10 +1,8 @@
 name: ElectroVibeHome CI
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+  # Ejecución manual para evitar correos automáticos de cada actualización.
+  workflow_dispatch:
 
 jobs:
   frontend:
