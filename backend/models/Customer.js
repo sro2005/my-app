@@ -11,6 +11,8 @@ const customerSchema = new mongoose.Schema({
   // Campos obligatorios para todos los usuarios
   email: { type: String, required: true, unique: true, lowercase: true, trim: true, match: [/^\S+@\S+\.\S+$/, 'Correo electrónico no válido'] },
   password: { type: String, required: true },
+  resetPasswordToken: { type: String, select: false },
+  resetPasswordExpires: { type: Date, select: false },
   // Campos generales
   registrationDate: { type: Date, default: Date.now },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
