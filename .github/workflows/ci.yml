@@ -25,7 +25,7 @@ jobs:
           node-version: 24
           cache: npm
       - name: Install exact frontend dependencies from lockfile
-        run: npm ci
+        run: npm ci --no-audit
       - name: Capture frontend dependency audit
         run: npm audit --json > npm-audit-frontend.json || true
       - name: Upload frontend audit report
@@ -52,7 +52,7 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
       - name: Install exact backend dependencies from lockfile
-        run: npm ci
+        run: npm ci --no-audit
       - name: Capture backend dependency audit
         run: npm audit --json > npm-audit-backend.json || true
       - name: Upload backend audit report
