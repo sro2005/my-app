@@ -17,6 +17,9 @@ import LoginCliente from './components/LoginCliente';
 import RecoverPassword from './components/RecoverPassword';
 import ResetPassword from './components/ResetPassword';
 import PaymentResult from './components/PaymentResult';
+import AboutPage from './components/AboutPage';
+import PrivacyPage from './components/PrivacyPage';
+import TermsPage from './components/TermsPage';
 import AuthProvider from './contexts/AuthContext';
 
 const AppContent = () => {
@@ -38,6 +41,9 @@ const AppContent = () => {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/pago-resultado" element={<PaymentResult />} />
         <Route path="/catalogo" element={<ListadoProductos />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />

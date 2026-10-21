@@ -14,11 +14,11 @@ const Footer = () => {
   <footer className="footer evh-site-footer">
     <div className="evh-footer-inner">
       <div className="evh-footer-brand">
-        <Link to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
+        <Link className="evh-footer-logo" to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
         <p>El futuro se siente en casa.</p>
         <div className="evh-footer-contact">
           <h2>Contacto</h2>
-          <a href="mailto:company.electrovibehome@gmail.com">company.electrovibehome@gmail.com</a>
+          <a href="mailto:company.electrovibehome@gmail.com">company.electrovibehome@<wbr />gmail.com</a>
         </div>
       </div>
 
@@ -30,18 +30,9 @@ const Footer = () => {
       <div className="evh-footer-section">
         <h2>Recursos</h2>
         <div className="evh-footer-resources">
-          <section>
-            <h3>Sobre Nosotros</h3>
-            <p>Proyecto académico sobre tecnología para un hogar más cómodo y conectado.</p>
-          </section>
-          <section>
-            <h3>Política de Privacidad</h3>
-            <p>Los datos del perfil se usan para las funciones de demostración. Evita ingresar información personal real.</p>
-          </section>
-          <section>
-            <h3>Términos de Servicio</h3>
-            <p>Catálogo, pedidos y pagos son demostrativos; Wompi permanece en Sandbox y no se realizan cobros reales.</p>
-          </section>
+          <Link to="/about">Sobre Nosotros</Link>
+          <Link to="/privacy">Política de Privacidad</Link>
+          <Link to="/terms">Términos de Servicio</Link>
         </div>
       </div>
     </div>
