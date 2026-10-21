@@ -4,10 +4,19 @@ import axios from 'axios';
 import Select from 'react-select';
 
 const isAdult = (birthDate) => {
+  if (!birthDate) return false;
+
+  const [year, month, day] = birthDate.split('-').map(Number);
+  if (!year || !month || !day) return false;
+
   const today = new Date();
-  const birthDateObj = new Date(birthDate);
-  const age = today.getFullYear() - birthDateObj.getFullYear();
-  return age >= 18 || (age === 18 && today.getMonth() >= birthDateObj.getMonth());
+  let age = today.getFullYear() - year;
+  const birthdayHasNotOccurred =
+    today.getMonth() + 1 < month ||
+    (today.getMonth() + 1 === month && today.getDate() < day);
+
+  if (birthdayHasNotOccurred) age -= 1;
+  return age >= 18;
 };
 
 // Opciones de preferencias ordenadas alfabéticamente
@@ -95,16 +104,19 @@ const RegistroCliente = () => {
       phone,
       preferences: preferences.map(pref => pref.value)
     })
-    .then(response => {
-      console.log('Cliente registrado:', response.data); // Verifica la respuesta
+    .then(() => {
       setSuccessMessage('¡Registro exitoso! Redirigiendo...');
       setTimeout(() => {
-        navigate('/login'); // Redirigir después de 2 segundos
+        navigate('/login');
       }, 3000);
     })
-    .catch(error => {
-      console.error('Error registrando cliente', error); // Verifica el error en caso de fallo
+    .catch(() => {
+      // No imprimir el objeto Axios: su configuración puede contener datos personales
+      // enviados en el formulario, incluida la contraseña.
       setError('Ocurrió un error al registrar al cliente. Por favor, intenta nuevamente.');
+    })
+    .finally(() => {
+      setLoading(false);
     });
   };
 
@@ -153,7 +165,9 @@ const RegistroCliente = () => {
       <div>
         <Select id="preferences" isMulti options={optionsWithDefault} value={preferences} onChange={setPreferences} placeholder="Preferencias de Productos" className="select-preferences" />
       </div>
-      <button type="submit">Registrar</button>
+      <button type="submit" disabled={loading}>
+        {loading ? 'Registrando...' : 'Registrar'}
+      </button>
       {loading && <div className="spinner">Procesando...</div>}
       {error && <div className="error-message">{error}</div>} {/* Mensaje de error */}
       {successMessage && <div className="success-message">{successMessage}</div>} {/* Mensaje de éxito */}
