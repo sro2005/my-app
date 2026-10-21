@@ -16,7 +16,8 @@ exports.createProduct = async (req, res) => {
 
     res.status(201).json({ message: 'Producto agregado exitosamente', product: newProduct });
   } catch (error) {
-    res.status(400).json({ message: "Error al agregar el producto", error: error.message });
+    console.error('Error al agregar producto:', error.message);
+    res.status(500).json({ message: 'No fue posible agregar el producto.' });
   }
 };
 
@@ -26,7 +27,8 @@ exports.getProducts = async (req, res) => {
     const products = await Product.find();
     res.status(200).json(products);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error al obtener productos:', error.message);
+    res.status(500).json({ message: 'No fue posible obtener los productos.' });
   }
 };
 
@@ -50,7 +52,8 @@ exports.getProductsByPreferences = async (req, res) => {
     const products = await Product.find({ category: { $in: preferences } });
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener los productos filtrados', error: error.message });
+    console.error('Error al filtrar productos:', error.message);
+    res.status(500).json({ message: 'No fue posible obtener los productos filtrados.' });
   }
 };
 
@@ -71,7 +74,8 @@ exports.updateProduct = async (req, res) => {
     if (!updatedProduct) return res.status(404).json({ message: 'Producto no encontrado' });
     res.status(200).json({ message: 'Producto actualizado exitosamente', product: updatedProduct });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('Error actualizando producto:', error.message);
+    res.status(500).json({ message: 'No fue posible actualizar el producto.' });
   }
 };
 
