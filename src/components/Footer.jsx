@@ -15,7 +15,7 @@ const Footer = () => {
     <div className="evh-footer-inner">
       <div className="evh-footer-brand">
         <Link to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
-        <p>Más conexión. Más comodidad. Más hogar.</p>
+        <p>El futuro se siente en casa.</p>
       </div>
 
       <div className="evh-footer-section">
@@ -24,7 +24,7 @@ const Footer = () => {
       </div>
 
       <div className="evh-footer-section">
-        <h2>Navegación</h2>
+        <h2>Explora</h2>
         {exploreLinks.map(([to, label]) => <Link key={to} to={to}>{label}</Link>)}
       </div>
 

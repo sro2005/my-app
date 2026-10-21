@@ -1433,6 +1433,7 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 
 .evh-site-footer { display: block; padding: 3rem 1.5rem 1.25rem; color: #e9e9eb; background: #202124; text-align: left; }
 .evh-footer-inner { display: grid; grid-template-columns: 1.2fr 1.55fr .9fr 1.4fr; gap: 2rem; width: min(100%, 1180px); margin: 0 auto; }
+.evh-footer-brand { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .evh-footer-brand a { color: #fff; font-size: .86rem; font-weight: 900; letter-spacing: .06em; text-decoration: none; }
 .evh-footer-brand a span { color: #f39435; font-size: 1.25rem; }
 .evh-footer-brand p { max-width: 20ch; margin: .75rem 0 0; color: #f5b36d; font-size: .9rem; font-weight: 800; line-height: 1.45; }
