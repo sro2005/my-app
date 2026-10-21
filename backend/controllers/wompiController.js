@@ -1,12 +1,7 @@
 const crypto = require('crypto');
 const Order = require('../models/Order');
 const { restoreInventory } = require('../utils/productUtils');
-
-const getPath = (object, path) => path.split('.').reduce((value, key) => value == null ? undefined : value[key], object);
-const secureEquals = (left, right) => {
-  if (typeof left !== 'string' || typeof right !== 'string' || left.length !== right.length) return false;
-  return crypto.timingSafeEqual(Buffer.from(left), Buffer.from(right));
-};
+const { secureEquals, calculateIntegritySignature, calculateEventChecksum } = require('../utils/wompiSecurity');
 
 exports.createCheckout = async (req, res) => {
   try {
@@ -35,9 +30,7 @@ exports.createCheckout = async (req, res) => {
     if (!Number.isSafeInteger(amountInCents) || amountInCents < 1) {
       return res.status(400).json({ message: 'El importe del pedido no es válido.' });
     }
-    const signature = crypto.createHash('sha256')
-      .update(`${reference}${amountInCents}COP${integritySecret}`)
-      .digest('hex');
+    const signature = calculateIntegritySignature(reference, amountInCents, 'COP', integritySecret);
     order.paymentReference = reference;
     order.paymentStatus = 'PENDING';
     await order.save();
@@ -63,14 +56,7 @@ exports.handleWebhook = async (req, res) => {
     if (!secret || event?.event !== 'transaction.updated' || !Array.isArray(event?.signature?.properties)) {
       return res.status(400).json({ message: 'Evento no válido.' });
     }
-    const values = event.signature.properties.map(path => {
-      const value = getPath(event.data, path);
-      if (value === undefined || value === null) throw new Error('Propiedad de firma faltante');
-      return String(value);
-    });
-    const calculated = crypto.createHash('sha256')
-      .update(values.join('') + String(event.timestamp) + secret)
-      .digest('hex');
+    const calculated = calculateEventChecksum(event, secret);
     const supplied = req.get('X-Event-Checksum') || event.signature.checksum;
     if (!secureEquals(calculated.toLowerCase(), String(supplied || '').toLowerCase())) {
       return res.status(401).json({ message: 'Firma del evento no válida.' });
