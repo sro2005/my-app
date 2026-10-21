@@ -3,11 +3,6 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const Customer = require('../models/Customer');
 
-// ✅ Verifica que las variables de entorno se están cargando correctamente
-console.log('Correo General:', process.env.GENERAL_EMAIL_ADDRESS);
-console.log('Correo No Reply:', process.env.NO_REPLY_EMAIL_ADDRESS);
-console.log('Contraseña No Reply:', process.env.NO_REPLY_EMAIL_PASSWORD ? 'Cargada' : 'No cargada');
-
 // ✅ Configuración de Nodemailer con SMTP de Gmail
 const configureTransporter = (email, password) => {
   return nodemailer.createTransport({
