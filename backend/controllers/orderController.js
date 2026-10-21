@@ -1,6 +1,7 @@
 const Order = require('../models/Order');
 const { orderSchema } = require('../validations/orderValidation');
 const { validateProducts, reduceInventory, restoreInventory } = require('../utils/productUtils');
+const Product = require('../models/Product');
 const moment = require('moment-timezone'); // Importa moment-timezone
 
 // Función para actualizar el estado del pedido automáticamente
@@ -32,10 +33,19 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(err => err.message) });
     }
 
-    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, totalAmount, products } = req.body;
+    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = req.body;
 
-    // Validar los productos y reducir el inventario
+    // El precio se calcula siempre en el servidor, nunca se confía en el total del navegador.
     await validateProducts(products);
+    const productIds = products.map(item => item.productId);
+    const dbProducts = await Product.find({ _id: { $in: productIds } });
+    const productMap = new Map(dbProducts.map(product => [product._id.toString(), product]));
+    const totalAmount = products.reduce((sum, item) => {
+      const product = productMap.get(item.productId.toString());
+      if (!product || !Number.isFinite(product.price) || product.price <= 0) throw new Error('Producto o precio inválido');
+      return sum + product.price * item.quantity;
+    }, 0);
+    if (!Number.isSafeInteger(Math.round(totalAmount * 100))) throw new Error('Importe inválido');
     await reduceInventory(products);
 
     // Convertir la fecha de entrega a la zona horaria de Colombia.
@@ -46,7 +56,9 @@ exports.createOrder = async (req, res) => {
     const newOrder = new Order({
       firstName, lastName, email, phone, address, paymentMethod, deliveryDate: deliveryDateColombia, totalAmount, products,
       orderDate: new Date(), // Registrar la fecha del pedido
-      userId  // Asignar el usuario que hizo el pedido
+      userId,  // Asignar el usuario que hizo el pedido
+      paymentStatus: 'PENDING',
+      paymentConfirmed: false
     });
 
     await newOrder.save();
