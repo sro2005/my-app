@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
+import FormPage from './FormPage';
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -33,23 +34,26 @@ const ResetPassword = () => {
   };
 
   return (
-    <main className="container">
-      <form onSubmit={submit}>
-        <h1>Restablecer contraseña</h1>
-        <p>Elige una nueva contraseña de al menos 10 caracteres.</p>
+    <FormPage eyebrow="SEGURIDAD DE TU CUENTA" title="Crea una nueva contraseña" description="Elige una contraseña segura para volver a entrar a tu espacio ElectroVibeHome.">
+      <form className="evh-form" onSubmit={submit}>
+        <p className="evh-form-hint">Debe tener al menos 10 caracteres.</p>
         {!success && (
           <>
+            <div className="evh-form-field">
             <label htmlFor="new-password">Nueva contraseña</label>
             <input id="new-password" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} required />
+            </div>
+            <div className="evh-form-field">
             <label htmlFor="confirm-password">Confirmar contraseña</label>
             <input id="confirm-password" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={confirmation} onChange={event => setConfirmation(event.target.value)} required />
-            <button type="submit" disabled={loading}>{loading ? 'Guardando...' : 'Cambiar contraseña'}</button>
+            </div>
+            <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Guardando…' : 'Guardar contraseña'}</button>
           </>
         )}
-        {message && <p role="status">{message}</p>}
-        <Link to={success ? '/login' : '/recover-password'}>{success ? 'Ir a iniciar sesión' : 'Solicitar otro enlace'}</Link>
+        {message && <p className={`evh-form-feedback ${success ? 'is-success' : 'is-error'}`} role={success ? 'status' : 'alert'}>{message}</p>}
       </form>
-    </main>
+      <p className="evh-form-alternate"><Link to={success ? '/login' : '/recover-password'}>{success ? 'Ir a iniciar sesión' : 'Solicitar otro enlace'}</Link></p>
+    </FormPage>
   );
 };
 

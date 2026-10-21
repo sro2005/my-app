@@ -43,6 +43,14 @@ Configura las variables indicadas en [backend/.env.example](backend/.env.example
 
 El backend expone `/health` para comprobar si la API está funcionando y si MongoDB está conectado.
 
+## Guía ElectroVibe (opcional)
+
+El catálogo incluye una guía conversacional que usa productos disponibles para orientar la elección. No crea pedidos, no procesa pagos ni consulta datos de cuenta.
+
+Para habilitarla, configura `OPENAI_API_KEY` en el entorno del backend y, opcionalmente, `OPENAI_MODEL` (por defecto `gpt-4.1-mini`). Nunca pongas la clave en variables del frontend ni en Git. Sin una clave, la interfaz informa que la guía todavía no está configurada.
+
+La integración limita el tamaño de la conversación y la respuesta, envía hasta 20 productos disponibles y establece `store: false` en la solicitud. Los mensajes se mantienen solo en el estado de la página y no se guardan en ElectroVibeHome. Las llamadas a la API tienen facturación independiente de una suscripción de ChatGPT; revisa el [precio actual de la API](https://developers.openai.com/api/docs/pricing) y configura el presupuesto de uso de tu proyecto antes de habilitarla.
+
 ## Pagos
 
 El checkout se integra con Wompi. Para pruebas utiliza únicamente credenciales y configuración de **Sandbox**. La página de redirección no confirma un pago; el estado definitivo debe proceder del webhook validado por el backend.

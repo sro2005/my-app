@@ -1,40 +1,42 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
-// Componente funcional Footer que muestra la información de pie de página
 const Footer = () => {
+  const { user } = useContext(AuthContext);
+  const exploreLinks = !user
+    ? [['/', 'Inicio'], ['/catalogo', 'Catálogo'], ['/register', 'Únete hoy'], ['/login', 'Iniciar sesión']]
+    : user.role === 'admin'
+      ? [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-productos', 'Inventario'], ['/listado-pedidos', 'Pedidos']]
+      : [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-pedidos', 'Mis pedidos'], ['/perfil-cliente', 'Mi perfil']];
+
   return (
-<footer className="footer">
-  <div className="footer-sections">
-    <div className="section left">
-      <h3>Contacto</h3>
-      <p>Email: company.electrovibehome@gmail.com</p>
-      <p>Teléfono: +57 601 000 0000</p>
-    </div>
+  <footer className="footer evh-site-footer">
+    <div className="evh-footer-inner">
+      <div className="evh-footer-brand">
+        <Link to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
+        <p>Vive mejor. Vive conectado.</p>
+      </div>
 
-    <div className="section center">
-      <h3>Recursos</h3>
-      <ul>
-        <li><a href="/about">Sobre Nosotros</a></li>
-        <li><a href="/privacy">Política de Privacidad</a></li>
-        <li><a href="/terms">Términos de Servicio</a></li>
-      </ul>
-    </div>
+      <div className="evh-footer-section">
+        <h2>Contacto del proyecto</h2>
+        <a href="mailto:company.electrovibehome@gmail.com">company.electrovibehome@gmail.com</a>
+      </div>
 
-    <div className="section right">
-      <h3>Redes Sociales</h3>
-      <ul className="social-links">
-        <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-facebook"></i></a></li>
-        <li><a href="https://x.com" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-x-twitter"></i></a></li>
-        <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><i className="fa-brands fa-instagram"></i></a></li>
-      </ul>
+      <div className="evh-footer-section">
+        <h2>Explora</h2>
+        {exploreLinks.map(([to, label]) => <Link key={to} to={to}>{label}</Link>)}
+      </div>
+
+      <div className="evh-footer-section evh-footer-project">
+        <h2>Un proyecto personal</h2>
+        <p>ElectroVibeHome explora una experiencia de compra para tecnología y comodidad en el hogar.</p>
+      </div>
     </div>
-  </div>
-  <p>&copy; Copyright 2025 </p>
-  <p>⚡ELECTROVIBEHOME⚡</p>
-  <p>Todos los derechos reservados.</p>
-</footer>
+    <div className="evh-footer-legal">© {new Date().getFullYear()} ElectroVibeHome · Vive mejor. Vive conectado.</div>
+  </footer>
   );
 };
 
-// Exportar el componente Footer para que pueda ser utilizado en otros archivos
 export default Footer;

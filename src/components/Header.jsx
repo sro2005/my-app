@@ -1,124 +1,83 @@
-import React, { useContext } from 'react'; // Importar useContext
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt, faHome, faPlusCircle, faCheckSquare, faUser, faUsers, faBoxOpen, faClipboardList, faUserPlus, faDoorOpen } from '@fortawesome/free-solid-svg-icons';
-import { AuthContext } from '../contexts/AuthContext'; // Asegúrate de que esta sea la ruta correcta
+import {
+  faSignOutAlt,
+  faHome,
+  faPlusCircle,
+  faCheckSquare,
+  faUser,
+  faUsers,
+  faBoxOpen,
+  faClipboardList,
+  faUserPlus,
+  faDoorOpen
+} from '@fortawesome/free-solid-svg-icons';
+import { AuthContext } from '../contexts/AuthContext';
+
+const navLink = (to, icon, label) => (
+  <li key={to}>
+    <Link to={to}>
+      <FontAwesomeIcon icon={icon} aria-hidden="true" />
+      <span>{label}</span>
+    </Link>
+  </li>
+);
 
 const Header = () => {
-  const { user, handleLogout } = useContext(AuthContext); // Obtener user y handleLogout desde el contexto
+  const { user, handleLogout } = useContext(AuthContext);
   const [showGoodbyeMessage, setShowGoodbyeMessage] = React.useState(false);
 
   const logout = () => {
     setShowGoodbyeMessage(true);
     setTimeout(() => {
       setShowGoodbyeMessage(false);
-      handleLogout(); // Llamar a handleLogout para manejar la lógica de logout
-    }, 3000);
+      handleLogout();
+    }, 1800);
   };
 
   return (
-    <header>
-      <h1 className="header-title">⚡ELECTROVIBEHOME⚡</h1>
-      <div className="separator-shadow"></div>
-      <h4>• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</h4>
-      <nav aria-label="Main Navigation">
-        {user ? (
-            <div className="nav-container">
-              <ul className="nav-links">
-                <li>
-                  <Link to="/home-page">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faHome} /></div>
-                    <div className="nav-text">INICIO</div>
-                  </Link>
-                </li>
+    <header className="evh-site-header">
+      <div className="evh-header-inner">
+        <Link className="evh-site-brand" to={user ? '/home-page' : '/'} aria-label="ElectroVibeHome, ir al inicio">
+          <span className="evh-site-brand-mark" aria-hidden="true">⚡</span>
+          <span className="evh-site-brand-copy">
+            <strong>ELECTROVIBEHOME</strong>
+            <small>• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</small>
+          </span>
+        </Link>
 
-              {/* Solo mostrar "Agregar Producto" si el rol es admin */}
-              {user?.role === 'admin' && (
+        <nav aria-label="Navegación principal">
+          <ul className="evh-header-links">
+            {!user ? (
+              <>
+                {navLink('/catalogo', faBoxOpen, 'Catálogo')}
+                {navLink('/register', faUserPlus, 'Únete hoy')}
+                {navLink('/login', faDoorOpen, 'Iniciar sesión')}
+              </>
+            ) : (
+              <>
+                {navLink('/home-page', faHome, 'Inicio')}
+                {user.role === 'admin' && navLink('/producto-form', faPlusCircle, 'Agregar producto')}
+                {user.role === 'user' && navLink('/pedido-form', faCheckSquare, 'Realizar pedido')}
+                {user.role === 'admin' && navLink('/listado-clientes', faUsers, 'Clientes')}
+                {navLink('/listado-productos', faBoxOpen, user.role === 'admin' ? 'Inventario' : 'Preferencias')}
+                {navLink('/listado-pedidos', faClipboardList, user.role === 'admin' ? 'Pedidos' : 'Mis órdenes')}
+                {user.role === 'user' && navLink('/perfil-cliente', faUser, 'Mi perfil')}
                 <li>
-                  <Link to="/producto-form">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faPlusCircle} /></div>
-                    <div className="nav-text">AGREGAR PRODUCTOS</div>
-                  </Link>
-                </li>
-              )}
-              {/* Solo mostrar "Realizar Pedidos" si el rol es user */}
-              {user?.role === 'user' && (
-                <li>
-                  <Link to="/pedido-form">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faCheckSquare} /></div>
-                    <div className="nav-text">REALIZAR PEDIDOS</div>
-                  </Link>
-                </li>
-              )}
-              {/* Solo mostrar "Gestión de Clientes" si el rol es admin */}
-              {user?.role === 'admin' && (
-                <li>
-                  <Link to="/listado-clientes">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faUsers} /></div>
-                    <div className="nav-text">GESTIÓN DE CLIENTES</div>
-                  </Link>
-                </li>
-              )}
-
-                <li>
-                  <Link to="/listado-productos">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faBoxOpen} /></div>
-                    <div className="nav-text">
-              {user?.role === 'admin' ? 'GESTIÓN DE INVENTARIOS' : 'MIS PREFERENCIAS'}
-                    </div>
-                  </Link>
-                </li>
-
-                <li>
-                  <Link to="/listado-pedidos">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faClipboardList} /></div>
-                    <div className="nav-text">
-              {user?.role === 'admin' ? 'GESTIÓN DE PEDIDOS' : 'MIS ÓRDENES'}
-                    </div>
-                  </Link>
-                </li>
-                
-              {/* Solo mostrar "Perfil" si el rol es user */}
-              {user?.role === 'user' && (
-                <li>
-                  <Link to="/perfil-cliente">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faUser} /></div>
-                    <div className="nav-text">PERFIL</div>
-                  </Link>
-                </li>
-              )}
-             
-                <li className="logout-item">
-                  <button className="logout-button" onClick={logout}>
-                    <div className="nav-icon"><FontAwesomeIcon icon={faSignOutAlt} /></div>
-                    <div className="nav-text">SALIR</div>
+                  <button className="evh-site-logout" type="button" onClick={logout}>
+                    <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
+                    <span>Salir</span>
                   </button>
                 </li>
-              </ul>
-            </div>
-        ) : (
-            <div className="nav-container">
-              <ul className="nav-links">
-                <li><Link to="/catalogo"><div className="nav-icon"><FontAwesomeIcon icon={faBoxOpen} /></div><div className="nav-text">EXPLORAR PRODUCTOS</div></Link></li>
-                <li>
-                  <Link to="/register">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faUserPlus} /></div>
-                    <div className="nav-text">ÚNETE HOY</div>
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/login">
-                    <div className="nav-icon"><FontAwesomeIcon icon={faDoorOpen} /></div>
-                    <div className="nav-text">ENTRA AHORA</div>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-        )}
-      </nav>
+              </>
+            )}
+          </ul>
+        </nav>
+      </div>
       {showGoodbyeMessage && (
-        <div className="goodbye-message">
-          <h1>¡Gracias por visitarnos! Te esperamos de vuelta pronto.</h1>
+        <div className="goodbye-message" role="status">
+          <p>¡Gracias por visitarnos! Te esperamos de vuelta pronto.</p>
         </div>
       )}
     </header>

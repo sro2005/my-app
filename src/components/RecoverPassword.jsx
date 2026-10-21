@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import FormPage from './FormPage';
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
@@ -28,21 +30,28 @@ const RecoverPassword = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Recuperar Contraseña</h1>
+    <FormPage eyebrow="RECUPERA EL ACCESO" title="Volvamos a conectarte" description="Te enviaremos un enlace seguro para que puedas crear una nueva contraseña.">
+    <form className="evh-form" onSubmit={handleSubmit}>
+      <div className="evh-form-field">
+      <label htmlFor="recover-email">Correo electrónico</label>
       <input
+        id="recover-email"
         type="email"
-        placeholder="Correo Electrónico"
+        autoComplete="email"
+        placeholder="nombre@correo.com"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         required
       />
-      <button type="submit" disabled={loading}>
-        {loading ? "Enviando..." : "Enviar Enlace"}
+      </div>
+      <button className="evh-form-submit" type="submit" disabled={loading}>
+        {loading ? 'Enviando…' : 'Enviar enlace seguro'}
       </button>
-      {message && <p className="message">{message}</p>}
-      {loading && <div className="spinner"><i className="fas fa-spinner fa-spin"></i></div>}
+      {message && <p className="evh-form-feedback" role="status">{message}</p>}
+      {loading && <div className="evh-form-feedback" role="status">Preparando el enlace…</div>}
     </form>
+    <p className="evh-form-alternate"><Link to="/login">Volver a iniciar sesión</Link></p>
+    </FormPage>
   );
 };
 

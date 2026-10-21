@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import ClipLoader from 'react-spinners/ClipLoader'; 
 import { AuthContext } from '../contexts/AuthContext';
+import ShoppingAssistant from './ShoppingAssistant';
 
 // Componente funcional para mostrar cada producto
 const ProductoItem = ({ producto }) => (
@@ -26,9 +27,10 @@ const ListadoProductos = () => {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken');
 
     if (!API_URL) {
@@ -40,6 +42,10 @@ const ListadoProductos = () => {
         setLoading(true);
         setError(null);
 
+        if (!API_URL) {
+          throw new Error('La API del catálogo no está configurada.');
+        }
+
         // Si hay token, asumimos que el backend filtrará según las preferencias del usuario
         const endpoint = 
           token && user && user.preferences && user.preferences.length > 0
@@ -50,9 +56,14 @@ const ListadoProductos = () => {
           headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
         
+        if (!Array.isArray(response.data)) {
+          throw new Error('La respuesta del catálogo no tiene el formato esperado.');
+        }
+
         setProductos(response.data);
       } catch (error) {
-        setError('Hubo un error al obtener los productos. Intenta nuevamente.');
+        setProductos([]);
+        setError('No pudimos cargar el catálogo en este momento. Intenta nuevamente en unos minutos.');
         console.error('Error obteniendo productos:', error);
       } finally {
         setLoading(false);
@@ -60,7 +71,7 @@ const ListadoProductos = () => {
     };
 
     fetchProducts();
-  }, [user]);
+  }, [user, retryCount]);
 
   if (loading) {
     return (
@@ -72,9 +83,16 @@ const ListadoProductos = () => {
 
   if (error) {
     return (
-      <div className="error-message">
-        <p>{error}</p>
-      </div>
+      <main className="container evh-catalog-state">
+        {user?.role !== 'admin' && <ShoppingAssistant />}
+        <section className="error-message" role="alert" aria-live="polite">
+          <h2>Tu catálogo te espera</h2>
+          <p>{error}</p>
+          <button type="button" onClick={() => setRetryCount(count => count + 1)}>
+            Cargar de nuevo
+          </button>
+        </section>
+      </main>
     );
   }
 
@@ -145,6 +163,7 @@ const ListadoProductos = () => {
           </ul>
       <hr />
       </div>}
+      {user?.role !== 'admin' && <ShoppingAssistant />}
       <h2>Listado de Productos</h2>
       <ul className="productos-list">
         {productos.length > 0 ? (

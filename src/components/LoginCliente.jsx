@@ -1,11 +1,14 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
+import FormPage from './FormPage';
 
 const LoginCliente = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [messageKind, setMessageKind] = useState('');
   const [loading, setLoading] = useState(false);
   const { handleLoginSuccess } = useContext(AuthContext);
 
@@ -14,26 +17,32 @@ const LoginCliente = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
+    setMessageKind('');
 
     if (!isValidEmail(email)) {
       setMessage('Por favor, ingresa un correo electrónico válido.');
+      setMessageKind('error');
       return;
     }
 
     setLoading(true);
 
     try {
-      const API_URL = process.env.REACT_APP_API_BASE_URL;
+      const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+      if (!API_URL) throw new Error('La conexión no está disponible en este momento.');
       const { data } = await axios.post(`${API_URL}/api/auth/login`, { email, password });
 
       if (data?.token && data?.user) {
         handleLoginSuccess(data.user, data.token);
         setMessage('Inicio de sesión exitoso. Redirigiendo...');
+        setMessageKind('success');
       } else {
         setMessage('Error en la autenticación. Intenta nuevamente.');
+        setMessageKind('error');
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Credenciales inválidas. Por favor, intenta nuevamente.');
+      setMessage(error.response?.data?.message || error.message || 'Credenciales inválidas. Por favor, intenta nuevamente.');
+      setMessageKind('error');
       setPassword('');
     } finally {
       setLoading(false);
@@ -41,40 +50,46 @@ const LoginCliente = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>INICIAR SESIÓN</h1>
-      <h2>Login del Cliente</h2>
-      <input 
-        type="email" 
-        placeholder="Correo Electrónico" 
+    <FormPage eyebrow="TU ESPACIO CONECTADO" title="Qué bueno verte de nuevo" description="Entra a tu cuenta para seguir con tu hogar a tu manera.">
+    <form className="evh-form" onSubmit={handleSubmit}>
+      <div className="evh-form-field">
+      <label htmlFor="login-email">Correo electrónico</label>
+      <input
+        id="login-email"
+        type="email"
+        autoComplete="email"
+        placeholder="nombre@correo.com"
         value={email} 
         onChange={(e) => setEmail(e.target.value)} 
         required 
-      /> 
-      <input 
-        type="password" 
-        placeholder="Contraseña" 
+      />
+      </div>
+      <div className="evh-form-field">
+      <label htmlFor="login-password">Contraseña</label>
+      <input
+        id="login-password"
+        type="password"
+        autoComplete="current-password"
+        placeholder="Tu contraseña"
         value={password} 
         onChange={(e) => setPassword(e.target.value)} 
         required 
       />
-      <button type="submit" disabled={loading}>Ingresar</button>
+      </div>
+      <div className="evh-form-options"><Link to="/recover-password">¿Olvidaste tu contraseña?</Link></div>
+      <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Ingresando…' : 'Ingresar a mi cuenta'}</button>
       {loading ? (
-        <div className="spinner">Cargando...</div>
+        <div className="evh-form-feedback" role="status">Conectando con tu cuenta…</div>
       ) : (
         message && (
-          <p className={`message ${message.includes('error') ? 'error' : 'success'}`}>
+          <p className={`evh-form-feedback is-${messageKind}`} role={messageKind === 'error' ? 'alert' : 'status'}>
             {message}
           </p>
         )
       )}
-
-      <div style={{ textAlign: 'center', marginTop: '10px' }}>
-        <a href="/recover-password" style={{ color: '#FF6347', textDecoration: 'none' }}>
-          ¿Olvidaste tu contraseña?
-        </a>
-      </div>
     </form>
+    <p className="evh-form-alternate">¿Primera vez aquí? <Link to="/register">Crea tu cuenta</Link></p>
+    </FormPage>
   );
 };
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Select from 'react-select'; // Importa React-Select
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
+import FormPage from './FormPage';
 
 // Función para formatear el precio en formato local
 const formatPrice = (price) => {
@@ -37,6 +38,8 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
+  const [productLoadError, setProductLoadError] = useState('');
+  const [formError, setFormError] = useState('');
 
   useEffect(() => {
     const savedCustomerData = localStorage.getItem('userData');
@@ -57,8 +60,13 @@ const userId = user?._id;  // Usar userId desde el contexto
 
     // Cargar productos disponibles filtrados según las preferencias del usuario
     useEffect(() => {
-      const API_URL = process.env.REACT_APP_API_BASE_URL;
+      const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
       const token = localStorage.getItem('authToken');
+
+      if (!API_URL) {
+        setProductLoadError('El catálogo de productos no está disponible en este momento.');
+        return;
+      }
   
       // Si hay token y el usuario tiene preferencias, usamos el endpoint filtrado
       const endpoint =
@@ -70,6 +78,8 @@ const userId = user?._id;  // Usar userId desde el contexto
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       })
         .then(response => {
+          if (!Array.isArray(response.data)) throw new Error('El catálogo devolvió un formato inesperado.');
+          setProductLoadError('');
           setAvailableProducts(response.data.map(product => ({
             value: product._id,
             label: (
@@ -80,7 +90,11 @@ const userId = user?._id;  // Usar userId desde el contexto
             price: product.price
           })));
         })
-        .catch(error => console.error('Error cargando productos:', error));
+        .catch(error => {
+          setAvailableProducts([]);
+          setProductLoadError('No pudimos cargar los productos. Intenta nuevamente más tarde.');
+          console.error('Error cargando productos:', error.message);
+        });
     }, [user]);
 
   // Maneja el cambio de selección de producto
@@ -100,12 +114,13 @@ const userId = user?._id;  // Usar userId desde el contexto
 
   const handleSubmit = (e) => {
     e.preventDefault();   
+    setFormError('');
 
     // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
 
     // Validación antes de enviar el pedido
     if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || !selectedProduct || totalAmount <= 0) {
-     alert("Por favor, complete todos los campos correctamente.");
+     setFormError('Revisa los datos del pedido y selecciona un producto disponible.');
      return;
     }
 
@@ -145,7 +160,7 @@ const userId = user?._id;  // Usar userId desde el contexto
       window.location.assign(checkout.data.checkoutUrl);
     } catch (error) {
       console.error('No fue posible iniciar el pago:', error.response?.data?.message || error.message);
-      alert(error.response?.data?.message || 'No pudimos iniciar el pago. No repitas la compra; revisa tus pedidos o inténtalo de nuevo.');
+      setFormError(error.response?.data?.message || 'No pudimos iniciar el pago. No repitas la compra; revisa tus pedidos o inténtalo de nuevo.');
     } finally {
       setLoading(false);
       setShowConfirmModal(false);
@@ -161,30 +176,41 @@ const userId = user?._id;  // Usar userId desde el contexto
   ];
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h1>Finalizar compra</h1>
-        <h2>Tu pedido, de forma segura</h2>
-        <input type="text" placeholder="Nombre(s)" value={customerData.firstName} onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })} required disabled className="disabled-input"/>
-        <input type="text" placeholder="Apellidos" value={customerData.lastName} onChange={(e) => setCustomerData({ ...customerData, lastName: e.target.value })} required disabled className="disabled-input"/>
-        <input type="email" placeholder="Correo Electrónico" value={customerData.email} onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })} required disabled className="disabled-input"/>
-        <input type="tel" placeholder="Número de Celular" value={customerData.phone} onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })} required disabled className="disabled-input"/>
-        <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
+    <FormPage eyebrow="COMPRA SEGURA" title="Completa tu pedido" description="Revisa tus datos, elige lo que necesitas y continúa al pago protegido de Wompi." className="evh-checkout-page">
+      <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
+        <div className="evh-form-grid">
+        <div className="evh-form-field"><label htmlFor="checkout-first-name">Nombre</label><input id="checkout-first-name" type="text" autoComplete="given-name" value={customerData.firstName} onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })} required disabled className="disabled-input" /></div>
+        <div className="evh-form-field"><label htmlFor="checkout-last-name">Apellidos</label><input id="checkout-last-name" type="text" autoComplete="family-name" value={customerData.lastName} onChange={(e) => setCustomerData({ ...customerData, lastName: e.target.value })} required disabled className="disabled-input" /></div>
+        <div className="evh-form-field"><label htmlFor="checkout-email">Correo electrónico</label><input id="checkout-email" type="email" autoComplete="email" value={customerData.email} onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })} required disabled className="disabled-input" /></div>
+        <div className="evh-form-field"><label htmlFor="checkout-phone">Celular</label><input id="checkout-phone" type="tel" autoComplete="tel" value={customerData.phone} onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })} required disabled className="disabled-input" /></div>
+        <div className="evh-form-field evh-form-field-wide">
+          <label htmlFor="checkout-address">Dirección de entrega</label>
+          <input id="checkout-address" type="text" autoComplete="street-address" placeholder="Calle, número, barrio y ciudad" value={address} onChange={(e) => setAddress(e.target.value)} required />
+        </div>
         <div className="payment-method-container">
-          <Select placeholder="Selecciona el método de pago" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable />
-          <p>Serás redirigido al checkout oficial de Wompi. ElectroVibeHome no solicita ni almacena datos de tu tarjeta.</p>
-        </div>           
-        <div className="date-field">
-          <label htmlFor="deliveryDate">Fecha deseada para la entrega:</label>
+          <label htmlFor="checkout-payment">Método de pago</label>
+          <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
+          <p>El pago se completa en el checkout oficial de Wompi. No guardamos datos de tu tarjeta.</p>
+        </div>
+        <div className="evh-form-field">
+          <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
         </div>
-        
-        <Select placeholder="Selecciona un producto" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable />
-        
-        <h3>Total estimado: {formatPrice(totalAmount)}</h3>
-        <p>El total definitivo se calcula en el servidor con los precios actuales del catálogo.</p>
-      <button type="submit" disabled={loading || totalAmount === 0}>REALIZAR</button>
-    </form>
+        <div className="evh-form-field evh-form-field-wide">
+          <label htmlFor="checkout-product">Producto</label>
+          <Select inputId="checkout-product" placeholder="Selecciona un producto disponible" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable isDisabled={availableProducts.length === 0} classNamePrefix="evh-select" />
+          {productLoadError && <p className="evh-form-feedback is-error" role="status">{productLoadError}</p>}
+        </div>
+        </div>
+
+        <div className="evh-order-summary">
+          <span>Total estimado</span>
+          <strong>{formatPrice(totalAmount)}</strong>
+          <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
+        </div>
+        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0}>Continuar al pago seguro</button>
+        {formError && <p className="evh-form-feedback is-error" role="alert">{formError}</p>}
+      </form>
 
       {showConfirmModal && (
         <div className="modal" aria-live="assertive">
@@ -222,7 +248,7 @@ const userId = user?._id;  // Usar userId desde el contexto
     </div>
   </div>
 )}
-  </div>
+  </FormPage>
 )}
 
 export default PedidoForm;

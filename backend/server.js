@@ -19,6 +19,7 @@ const productRoutes = require('./routes/productRoutes');
 const customerRoutes = require('./routes/customerRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const authRoutes = require('./routes/authRoutes');
+const assistantRoutes = require('./routes/assistantRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -60,6 +61,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/assistant', assistantRoutes);
 
 app.get('/', (req, res) => res.send('Bienvenido a ⚡ELECTROVIBEHOME⚡ API'));
 app.get('/health', (req, res) => {

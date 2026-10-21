@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Select from 'react-select';
+import FormPage from './FormPage';
 
 const isAdult = (birthDate) => {
   if (!birthDate) return false;
@@ -85,14 +86,19 @@ const RegistroCliente = () => {
     }
 
     if (!isValidIdentification(identificationNumber)) {
-      setError('El número de identificación debe ser de 10 dígitos.');
+      setError('El número de identificación no puede superar los 10 dígitos.');
       return;
     }
 
     setLoading(true);
     setError(''); // Reset error message
 
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+    if (!API_URL) {
+      setError('El registro no está disponible en este momento. Intenta nuevamente más tarde.');
+      setLoading(false);
+      return;
+    }
 
     axios.post(`${API_URL}/api/auth/register`, {
       firstName,
@@ -146,32 +152,56 @@ const RegistroCliente = () => {
   };
   
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>CREAR CUENTA</h1>
-      <h2>Registro del Cliente</h2>
-      <input type="text" placeholder="Nombre(s)" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-      <input type="text" placeholder="Apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-      <input type="email" placeholder="Correo Electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required />
-      <input type="text" placeholder="Número de Identificación (Cédula de Ciudadanía)" value={identificationNumber} onChange={(e) => setIdentificationNumber(formatIdentificationNumber(e.target.value))}  required />
-      <div className="date-field-DOB">
-        <label htmlFor="birthDate">DATE OF BIRTH:</label>
-        <input type="date" id="birthDate" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
+    <FormPage eyebrow="EMPIEZA POR TI" title="Crea tu espacio" description="Cuéntanos un poco de ti para acercarte a los productos que hacen tu hogar más cómodo.">
+    <form className="evh-form evh-register-form" onSubmit={handleSubmit}>
+      <div className="evh-form-grid">
+        <div className="evh-form-field">
+          <label htmlFor="register-first-name">Nombre(s)</label>
+          <input id="register-first-name" type="text" autoComplete="given-name" placeholder="Tu nombre" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+        </div>
+        <div className="evh-form-field">
+          <label htmlFor="register-last-name">Apellidos</label>
+          <input id="register-last-name" type="text" autoComplete="family-name" placeholder="Tus apellidos" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
+        </div>
+        <div className="evh-form-field evh-form-field-wide">
+          <label htmlFor="register-email">Correo electrónico</label>
+          <input id="register-email" type="email" autoComplete="email" placeholder="nombre@correo.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </div>
+        <div className="evh-form-field">
+          <label htmlFor="register-identification">Número de identificación</label>
+          <input id="register-identification" type="text" inputMode="numeric" autoComplete="off" placeholder="Ej. 1.234.567" value={identificationNumber} onChange={(e) => setIdentificationNumber(formatIdentificationNumber(e.target.value))} required />
+          <span className="evh-field-hint">Hasta 10 dígitos, sin puntos al escribir.</span>
+        </div>
+        <div className="evh-form-field">
+          <label htmlFor="birthDate">Fecha de nacimiento</label>
+          <input type="date" id="birthDate" autoComplete="bday" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
+        </div>
+        <div className="evh-form-field">
+          <label htmlFor="register-phone">Celular</label>
+          <div className="evh-phone-field">
+            <span aria-hidden="true">+57</span>
+            <input id="register-phone" type="tel" autoComplete="tel-national" inputMode="numeric" placeholder="302 000 0000" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required />
+          </div>
+        </div>
+        <div className="evh-form-field">
+          <label htmlFor="register-password">Contraseña</label>
+          <input id="register-password" type="password" autoComplete="new-password" minLength={8} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,128}" title="Incluye mayúscula, minúscula, número y símbolo." value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <span className="evh-field-hint">8 caracteres, mayúscula, minúscula, número y símbolo.</span>
+        </div>
+        <div className="evh-form-field evh-form-field-wide">
+          <label htmlFor="preferences">¿Qué te interesa para tu hogar?</label>
+          <Select inputId="preferences" isMulti options={optionsWithDefault.filter(option => option.value)} value={preferences} onChange={setPreferences} placeholder="Elige una o varias categorías" className="select-preferences" classNamePrefix="evh-select" />
+        </div>
       </div>
-      <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      <div className="phone-input-wrapper">
-        <div className="phone-input-prefix">+57</div>
-        <input type="text" className="phone-input-field" placeholder="Número de Celular" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required />
-      </div>
-      <div>
-        <Select id="preferences" isMulti options={optionsWithDefault} value={preferences} onChange={setPreferences} placeholder="Preferencias de Productos" className="select-preferences" />
-      </div>
-      <button type="submit" disabled={loading}>
-        {loading ? 'Registrando...' : 'Registrar'}
+      <button className="evh-form-submit" type="submit" disabled={loading}>
+        {loading ? 'Creando tu cuenta…' : 'Crear mi cuenta'}
       </button>
-      {loading && <div className="spinner">Procesando...</div>}
-      {error && <div className="error-message">{error}</div>} {/* Mensaje de error */}
-      {successMessage && <div className="success-message">{successMessage}</div>} {/* Mensaje de éxito */}
+      {loading && <div className="evh-form-feedback" role="status">Preparando tu espacio…</div>}
+      {error && <div className="evh-form-feedback is-error" role="alert">{error}</div>}
+      {successMessage && <div className="evh-form-feedback is-success" role="status">{successMessage}</div>}
     </form>
+    <p className="evh-form-alternate">¿Ya tienes una cuenta? <Link to="/login">Inicia sesión</Link></p>
+    </FormPage>
   );
 };
 
