@@ -1,36 +1,47 @@
 const Product = require('../models/Product');
 
-// Función para validar los productos
+const aggregateItems = (products) => {
+  const totals = new Map();
+  for (const item of products) {
+    const id = String(item.productId);
+    totals.set(id, (totals.get(id) || 0) + Number(item.quantity));
+  }
+  return Array.from(totals, ([productId, quantity]) => ({ productId, quantity }));
+};
+
 exports.validateProducts = async (products) => {
-  for (const item of products) {
+  for (const item of aggregateItems(products)) {
     const product = await Product.findById(item.productId);
-    if (!product) {
-      throw new Error(`Producto con ID ${item.productId} no encontrado`);
-    }
-    if (product.quantity < item.quantity) {
-      throw new Error(`El producto ${product.name} no tiene suficiente inventario`);
+    if (!product) throw new Error('Uno de los productos ya no está disponible.');
+    if (!Number.isInteger(item.quantity) || item.quantity < 1 || product.quantity < item.quantity) {
+      throw new Error(`Stock insuficiente para ${product.name}.`);
     }
   }
 };
 
-// Función para reducir inventario de productos
+// Actualización atómica de stock; revierte los cambios ya aplicados si un artículo falla.
 exports.reduceInventory = async (products) => {
-  for (const item of products) {
-    const product = await Product.findById(item.productId);
-    console.log(`Reduciendo inventario para ${product.name}: cantidad actual ${product.quantity}, reduciendo por ${item.quantity}`);
-    product.quantity -= item.quantity;
-    await product.save();
-    console.log(`Nuevo inventario para ${product.name}: ${product.quantity}`);
+  const applied = [];
+  try {
+    for (const item of aggregateItems(products)) {
+      const product = await Product.findOneAndUpdate(
+        { _id: item.productId, quantity: { $gte: item.quantity } },
+        { $inc: { quantity: -item.quantity } },
+        { new: true }
+      );
+      if (!product) throw new Error('Stock insuficiente o producto no disponible.');
+      applied.push(item);
+    }
+  } catch (error) {
+    for (const item of applied.reverse()) {
+      await Product.updateOne({ _id: item.productId }, { $inc: { quantity: item.quantity } });
+    }
+    throw error;
   }
 };
 
-// Función para restaurar inventario de productos
 exports.restoreInventory = async (products) => {
-  for (const item of products) {
-    const product = await Product.findById(item.productId);
-    console.log(`Restaurando inventario para ${product.name}: cantidad actual ${product.quantity}, aumentando por ${item.quantity}`);
-    product.quantity += item.quantity;
-    await product.save();
-    console.log(`Nuevo inventario para ${product.name}: ${product.quantity}`);
+  for (const item of aggregateItems(products)) {
+    await Product.updateOne({ _id: item.productId }, { $inc: { quantity: item.quantity } });
   }
 };
