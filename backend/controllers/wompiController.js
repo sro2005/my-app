@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const { restoreInventory } = require('../utils/productUtils');
 const { secureEquals, calculateIntegritySignature, calculateEventChecksum } = require('../utils/wompiSecurity');
@@ -139,20 +140,30 @@ exports.handleWebhook = async (req, res) => {
         return res.status(200).json({ received: true, ignored: true });
       }
     } else if (['DECLINED', 'ERROR', 'VOIDED'].includes(status)) {
-      const cancelledOrder = await Order.findOneAndUpdate(
-        pendingOrderFilter,
-        {
-          $set: {
-            paymentStatus: status,
-            paymentTransactionId: String(transaction.id || ''),
-            status: 'Cancelado'
+      // El cambio de estado y la devolución del inventario deben confirmarse juntos.
+      // Si falla la devolución, la transacción revierte también el cambio de estado y
+      // Wompi puede reintentar el webhook sin dejar el stock bloqueado permanentemente.
+      const session = await mongoose.startSession();
+      try {
+        await session.withTransaction(async () => {
+          const cancelledOrder = await Order.findOneAndUpdate(
+            pendingOrderFilter,
+            {
+              $set: {
+                paymentStatus: status,
+                paymentTransactionId: String(transaction.id || ''),
+                status: 'Cancelado'
+              }
+            },
+            { new: true, runValidators: true, session }
+          );
+          if (cancelledOrder) {
+            // Solo la transacción que ganó el cambio PENDING libera el inventario.
+            await restoreInventory(cancelledOrder.products, { session });
           }
-        },
-        { new: true, runValidators: true }
-      );
-      if (cancelledOrder) {
-        // Solo el proceso que logró cambiar PENDING a estado terminal libera el stock.
-        await restoreInventory(cancelledOrder.products);
+        });
+      } finally {
+        await session.endSession();
       }
     }
     return res.status(200).json({ received: true });

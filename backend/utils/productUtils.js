@@ -40,8 +40,12 @@ exports.reduceInventory = async (products) => {
   }
 };
 
-exports.restoreInventory = async (products) => {
+exports.restoreInventory = async (products, options = {}) => {
   for (const item of aggregateItems(products)) {
-    await Product.updateOne({ _id: item.productId }, { $inc: { quantity: item.quantity } });
+    await Product.updateOne(
+      { _id: item.productId },
+      { $inc: { quantity: item.quantity } },
+      options
+    );
   }
 };
