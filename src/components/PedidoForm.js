@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import Select from 'react-select'; // Importa React-Select
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
@@ -38,7 +37,6 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
-  const navigate = useNavigate();
 
   useEffect(() => {
     const savedCustomerData = localStorage.getItem('userData');
