@@ -1,7 +1,18 @@
 name: ElectroVibeHome CI
 
 on:
-  # Solo ejecución manual para evitar correos en cada commit.
+  # Ejecutar CI automáticamente solo en la rama de endurecimiento; producción/main no se toca.
+  push:
+    branches:
+      - security/electrovibehome-hardening
+    paths:
+      - '.github/workflows/ci.yml'
+      - 'src/**'
+      - 'public/**'
+      - 'backend/**'
+      - 'package.json'
+      - 'package-lock.json'
+  # También se conserva la opción manual.
   workflow_dispatch:
 
 jobs:
