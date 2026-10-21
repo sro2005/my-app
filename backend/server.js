@@ -58,13 +58,26 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => res.send('Bienvenido a ⚡ELECTROVIBEHOME⚡ API'));
-app.get('/health', (req, res) => res.status(200).send('API funcionando'));
+app.get('/health', (req, res) => {
+  const databaseReady = mongoose.connection.readyState === 1;
+  const status = databaseReady ? 200 : 503;
+  res.status(status).json({
+    status: databaseReady ? 'ok' : 'degraded',
+    database: databaseReady ? 'connected' : 'disconnected'
+  });
+});
 
-// Middleware de error centralizado
+// Middleware de error centralizado: no expone detalles internos al cliente.
 app.use((req, res) => res.status(404).json({ message: 'Ruta no encontrada' }));
 app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
-  res.status(err.status || 500).json({ message: err.message || 'Error interno del servidor' });
+  console.error('Error de servidor:', err.message);
+  const status = Number.isInteger(err.status) && err.status >= 400 && err.status < 500
+    ? err.status
+    : 500;
+  const message = status < 500 && typeof err.message === 'string'
+    ? err.message
+    : 'Error interno del servidor';
+  res.status(status).json({ message });
 });
 
 // Opcional: Servidor HTTPS solo si los certificados están disponibles
