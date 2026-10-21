@@ -6,6 +6,7 @@ const { authenticateToken, authenticateAdminToken } = require('../middlewares/au
 
 // Ruta para manejar la solicitud de recuperación de contraseña
 router.post('/forgot-password', emailController.forgotPassword);
+router.post('/reset-password/:token', emailController.resetPassword);
 
 // Ruta para obtener todos los clientes (solo para admins)
 router.get('/all', authenticateAdminToken, customerController.getCustomers);
