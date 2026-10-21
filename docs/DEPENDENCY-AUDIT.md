@@ -6,21 +6,31 @@ The last recorded GitHub Actions install logs reported:
 
 - Frontend root (`npm ci`, 1,552 packages audited): **112 advisories** — 6 low, 17 moderate, 85 high, 4 critical.
 - Backend (`backend/npm ci`, 224 packages audited): **24 advisories** — 1 low, 5 moderate, 16 high, 2 critical.
-- Both installs completed. These totals are from that run and must be refreshed before release; they are not a current per-package inventory.
-- The backend JavaScript syntax check passed in that run. The frontend job stopped at “No tests found”, so the build step was skipped. The workflow was subsequently changed to allow an empty frontend test suite and to run only by manual dispatch, but that updated workflow has not yet been confirmed in a new run.
+- These totals come from a previous run and must be refreshed; they are not a current per-package inventory.
+- The backend JavaScript syntax check passed in that run. The frontend job stopped at “No tests found”, so its build step was skipped. The workflow was later changed to allow an empty frontend test suite, but that revised workflow has not yet been confirmed in a new run.
 
-## What this means
+## New audit-report collection
 
-The install logs do not include the full `npm audit` advisory tree, so they do not reliably identify which exact package/version fixes each advisory. Do not run `npm audit fix --force` blindly: it may introduce major-version changes or break the React app and API.
+The manual-only workflow now runs `npm audit --json` separately for the frontend and backend and uploads the complete JSON reports as artifacts, retained for 14 days. This should expose package names, affected paths, severity, and available remediation metadata from the next manual run, even if npm audit exits non-zero. It does **not** automatically change dependency versions or claim the issues are fixed.
 
-## Safe remediation sequence
+## Remediation approach
 
-1. Run `npm audit --json` from the repository root and from `backend/`; retain the output so each advisory can be mapped to its direct/transitive dependency, severity, and fixed version.
-2. Apply ordinary compatible updates with `npm audit fix` in an isolated working branch, then review both lockfiles and package manifests.
-3. For advisories that remain, update the responsible direct dependency deliberately. The frontend currently uses Create React App / `react-scripts@5`, whose old build-tool dependency tree is a likely source of legacy transitive packages; migrating build tooling is a separate, larger change and should not be mixed into an unverified patch.
-4. Run clean installs, frontend tests and production build, backend syntax checks and unit tests, then smoke-test routes and checkout.
-5. Re-run both audits and record the remaining findings. Do not claim “zero vulnerabilities” unless the final audit output confirms it.
+1. Run the workflow manually from GitHub Actions on branch `security/electrovibehome-hardening`.
+2. Download both audit artifacts and map advisories to direct/transitive dependencies, severity, and fixed versions.
+3. Apply compatible updates in this isolated branch, review both lockfiles, and test the application. Do not use `npm audit fix --force` blindly: it may introduce major-version changes or break the React app and API.
+4. For advisories that remain, update the responsible direct dependency deliberately. The frontend uses Create React App / `react-scripts@5`, whose older build-tool dependency tree may require a separately planned migration; do not mix an unverified migration into a security patch.
+5. Run clean installs, frontend tests and production build, backend syntax checks and unit tests, then smoke-test routes and checkout.
+6. Re-run both audits and document the verified result. Do not claim “zero vulnerabilities” unless the final reports confirm it.
 
-## Notification control
+## Release blockers
 
-The repository CI workflow is now manual-dispatch-only. Commits to the feature branch should no longer trigger that workflow automatically. This does not control GitHub's separate Dependabot, pull-request, review, or account-level notification emails; those are controlled in GitHub notification settings.
+- No refreshed per-package audit output has been reviewed yet, so vulnerable package versions have **not** been upgraded as part of this work.
+- Full frontend production build and updated CI have not been confirmed.
+- Configure Wompi Sandbox and its HTTPS webhook; verify SMTP password reset and MongoDB connectivity; test approved, declined, pending, and abandoned payment flows.
+- Define safe reconciliation for abandoned pending orders. Do not restore reserved stock for a Wompi reference until its payment outcome is verified.
+- Rotate any real private key that was ever committed. Removing a key from the current branch does not purge it from Git history.
+- Confirm `REACT_APP_API_BASE_URL`, `ALLOWED_ORIGINS`, and `FRONTEND_URL` match the actual deployed domains. Do not enable production payments until Sandbox tests pass.
+
+## Notifications
+
+The repository CI workflow is manual-dispatch-only, so commits do not automatically start this workflow. This reduces workflow-triggered email noise, but does not change separate GitHub, Dependabot, pull-request, review, or account-level notifications. Those require notification settings in GitHub.
