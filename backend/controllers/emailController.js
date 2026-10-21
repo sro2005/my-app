@@ -83,7 +83,8 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body || {};
-  if (!/^[a-f0-9]{64}$/.test(token || '') || typeof password !== 'string' || password.length < 10 || password.length > 128) {
+  const normalizedPassword = typeof password === 'string' ? password.trim() : '';
+  if (!/^[a-f0-9]{64}$/.test(token || '') || normalizedPassword.length < 10 || normalizedPassword.length > 128) {
     return res.status(400).json({ message: 'Enlace o contraseña inválidos. Utiliza al menos 10 caracteres.' });
   }
   try {
@@ -93,7 +94,7 @@ exports.resetPassword = async (req, res) => {
       resetPasswordExpires: { $gt: new Date() }
     }).select('+resetPasswordToken +resetPasswordExpires');
     if (!customer) return res.status(400).json({ message: 'El enlace expiró o ya fue utilizado. Solicita uno nuevo.' });
-    customer.password = await bcrypt.hash(password, 12);
+    customer.password = await bcrypt.hash(normalizedPassword, 12);
     customer.resetPasswordToken = undefined;
     customer.resetPasswordExpires = undefined;
     await customer.save();
