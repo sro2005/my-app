@@ -159,8 +159,9 @@ exports.updateOrder = async (req, res) => {
 
 // Eliminar un pedido (solo admins)
 exports.deleteOrder = async (req, res) => {
-  const session = await mongoose.startSession();
+  let session;
   try {
+    session = await mongoose.startSession();
     const { id } = req.params;
     let outcome = 'not-found';
 
@@ -210,7 +211,7 @@ exports.deleteOrder = async (req, res) => {
     console.error('Error al eliminar el pedido:', error.message);
     return res.status(500).json({ message: 'Error al eliminar el pedido' });
   } finally {
-    await session.endSession();
+    if (session) await session.endSession();
   }
 };
 
