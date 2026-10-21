@@ -15,6 +15,7 @@ import PerfilCliente from './components/PerfilCliente';
 import RegistroCliente from './components/RegistroCliente';
 import LoginCliente from './components/LoginCliente';
 import RecoverPassword from './components/RecoverPassword';
+import ResetPassword from './components/ResetPassword';
 import AuthProvider from './contexts/AuthContext';
 
 const AppContent = () => {
@@ -33,6 +34,7 @@ const AppContent = () => {
       <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
       <Routes>
             <Route path="/recover-password" element={<RecoverPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/catalogo" element={<ListadoProductos />} />
         {!user ? (
           <>
