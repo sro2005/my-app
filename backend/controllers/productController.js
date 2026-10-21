@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
-const Customer = require('../models/Customer'); // Asegúrate de que la ruta y el modelo sean correctos
+const Customer = require('../models/Customer');
+const Order = require('../models/Order');
 const { productSchema } = require('../validations/productValidation');
 
 // Crear un nuevo producto (solo admins)
@@ -83,9 +84,22 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!/^[a-f\\d]{24}$/i.test(id)) {
+      return res.status(400).json({ message: 'Identificador de producto inválido.' });
+    }
+
+    // Mantener la integridad del historial: no eliminar productos que aparecen
+    // en pedidos existentes, incluso si el pedido ya está completado.
+    const referencedOrders = await Order.exists({ 'products.productId': id });
+    if (referencedOrders) {
+      return res.status(409).json({
+        message: 'No se puede eliminar este producto porque está asociado a pedidos existentes.'
+      });
+    }
+
     const product = await Product.findByIdAndDelete(id);
     if (!product) return res.status(404).json({ message: 'Producto no encontrado' });
-    res.status(200).json({ message: 'Producto eliminado exitosamente' });
+    return res.status(200).json({ message: 'Producto eliminado exitosamente' });
   } catch (error) {
     console.error('Error eliminando producto:', error.message);
     res.status(500).json({ message: 'No fue posible eliminar el producto.' });
