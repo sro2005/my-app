@@ -40,7 +40,7 @@ exports.getProfile = async (req, res) => {
 exports.updateCustomer = async (req, res) => {
   const { id } = req.params;
   try {
-    if (!/^[a-f\\d]{24}$/i.test(id)) {
+    if (!Customer.base.isValidObjectId(id)) {
       return res.status(400).json({ message: 'Identificador de cliente inválido.' });
     }
 
