@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, test, vi } from 'vitest';
 
-// Keep this component test independent from the router package implementation.
 // The storefront only needs Link to render its destination as an anchor here.
-jest.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', () => ({
   Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>
-}), { virtual: true });
+}));
 
 import LandingPage from './LandingPage';
 

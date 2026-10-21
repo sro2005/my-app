@@ -2,6 +2,9 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -9,9 +12,6 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
-    "@testing-library/user-event": "^14.5.2",
     "axios": "^1.20.0",
     "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",
@@ -22,26 +22,25 @@
     "react-number-format": "^5.4.3",
     "react-phone-number-input": "^3.4.11",
     "react-router-dom": "^7.18.4",
-    "react-scripts": "^5.0.1",
     "react-select": "^5.9.0",
     "react-spinners": "^0.15.0",
     "rotating-file-stream": "^3.2.5",
     "web-vitals": "^4.2.4"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitejs/plugin-react": "^6.1.2",
+    "jsdom": "^27.2.0",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest run",
+    "preview": "vite preview"
   },
   "browserslist": {
     "production": [
@@ -56,12 +55,9 @@
       "last 1 edge version"
     ]
   },
-  "description": "This project was bootstrapped with Create React App.",
+  "description": "ElectroVibeHome storefront built with React and Vite.",
   "main": "index.js",
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "engines": {
-    "node": ">=24 <25"
-  }
+  "license": "ISC"
 }
