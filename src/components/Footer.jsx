@@ -16,11 +16,10 @@ const Footer = () => {
       <div className="evh-footer-brand">
         <Link to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
         <p>El futuro se siente en casa.</p>
-      </div>
-
-      <div className="evh-footer-section">
-        <h2>Contacto</h2>
-        <a href="mailto:company.electrovibehome@gmail.com">company.electrovibehome@gmail.com</a>
+        <div className="evh-footer-contact">
+          <h2>Contacto</h2>
+          <a href="mailto:company.electrovibehome@gmail.com">company.electrovibehome@gmail.com</a>
+        </div>
       </div>
 
       <div className="evh-footer-section">
@@ -30,9 +29,20 @@ const Footer = () => {
 
       <div className="evh-footer-section">
         <h2>Recursos</h2>
-        <a href="https://company-electrovibehome.onrender.com/about">Sobre Nosotros</a>
-        <a href="https://company-electrovibehome.onrender.com/privacy">Política de Privacidad</a>
-        <a href="https://company-electrovibehome.onrender.com/terms">Términos de Servicio</a>
+        <div className="evh-footer-resources">
+          <section>
+            <h3>Sobre Nosotros</h3>
+            <p>Proyecto académico sobre tecnología para un hogar más cómodo y conectado.</p>
+          </section>
+          <section>
+            <h3>Política de Privacidad</h3>
+            <p>Los datos del perfil se usan para las funciones de demostración. Evita ingresar información personal real.</p>
+          </section>
+          <section>
+            <h3>Términos de Servicio</h3>
+            <p>Catálogo, pedidos y pagos son demostrativos; Wompi permanece en Sandbox y no se realizan cobros reales.</p>
+          </section>
+        </div>
       </div>
     </div>
     <div className="evh-footer-legal">© {new Date().getFullYear()} ElectroVibeHome. Todos los derechos reservados.</div>
