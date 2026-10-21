@@ -1,6 +1,9 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, test, vi } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, test, vi } from 'vitest';
+
+// Prevent DOM from one test leaking into the next.
+afterEach(cleanup);
 
 // The storefront only needs Link to render its destination as an anchor here.
 vi.mock('react-router-dom', () => ({

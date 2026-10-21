@@ -10,6 +10,7 @@ on:
       - 'package.json'
       - 'backend/package.json'
       - 'vite.config.js'
+      - 'src/**/*.test.jsx'
 
 permissions:
   contents: read
