@@ -29,7 +29,7 @@ The Wompi checkout controller now reuses a persisted payment reference for a pen
 ## Release blockers
 
 - No refreshed per-package audit output has been reviewed yet, so vulnerable package versions have **not** been upgraded as part of this work.
-- The last available frontend build failed on an unused `navigate` variable; the variable/import have been removed on this branch, but the fixed build is not yet confirmed. The frontend currently has no tests, so the green test step is not evidence of functional coverage.
+- The last available frontend build failed on an unused `navigate` variable; the variable/import have been removed on this branch, but the fixed build is not yet confirmed. Two storefront smoke tests have been added and the workflow now requires tests to exist, but these tests have not yet been executed in a fresh CI run.
 - Configure Wompi Sandbox and its HTTPS webhook; verify SMTP password reset and MongoDB connectivity; test approved, declined, pending, and abandoned payment flows.
 - Define safe reconciliation for abandoned pending orders. Do not restore reserved stock for a Wompi reference until its payment outcome is verified.
 - Rotate any real private key that was ever committed. Removing a key from the current branch does not purge it from Git history.
