@@ -123,7 +123,6 @@ const userId = user?._id;  // Usar userId desde el contexto
       deliveryDate,
       products: [{ productId: selectedProduct.value, quantity: 1 }],
       totalAmount,
-      sameRegisteredNumber, 
     };
 
     // Verificar el pedido antes de continuar
@@ -208,18 +207,6 @@ const userId = user?._id;  // Usar userId desde el contexto
             <p><strong>Método de pago:</strong> {paymentMethod ? paymentMethod.label : 'No especificado'}</p>
             <p>El pago se completará en el checkout seguro de Wompi.</p>
 
-            {paymentMethod && (paymentMethod.value === "Tarjeta Crédito" || paymentMethod.value === "Tarjeta Débito") && (
-              <>
-                <p><strong>Banco:</strong> {bankName}</p>
-                <p><strong>Número de Cuenta:</strong> {accountNumber}</p>
-              </>
-            )}
-            {(paymentMethod && (paymentMethod.value === "Nequi" || paymentMethod.value === "Daviplata" || paymentMethod.value === "Transfiya")) && (
-              <>
-                <p><strong>¿Mismo Número Registrado?:</strong> {sameRegisteredNumber ? "Sí" : "No"}</p>
-                {!sameRegisteredNumber && <p><strong>Número de Cuenta/Celular:</strong> {accountNumber}</p>}
-              </>
-            )}
             <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
             <div>
               <p><strong>Producto Seleccionado:</strong></p>
