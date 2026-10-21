@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
     },
     // The existing codebase contains JSX in .js files; opt those files into Oxc's JSX parser.
     oxc: {
-      include: /\\.[jt]sx?$/
+      include: /\.[jt]sx?$/
     },
     test: {
       include: ['src/**/*.test.{js,jsx,ts,tsx}'],
