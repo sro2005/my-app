@@ -15,19 +15,19 @@ describe('LandingPage', () => {
 
     expect(
       screen.getByRole('heading', { name: /tu hogar merece algo extraordinario/i })
-    ).toBeInTheDocument();
+    ).toBeTruthy();
 
-    expect(screen.getByRole('link', { name: /explorar productos/i })).toHaveAttribute('href', '/catalogo');
-    expect(screen.getByRole('link', { name: /crear mi cuenta/i })).toHaveAttribute('href', '/register');
+    expect(screen.getByRole('link', { name: /explorar productos/i }).getAttribute('href')).toBe('/catalogo');
+    expect(screen.getByRole('link', { name: /crear mi cuenta/i }).getAttribute('href')).toBe('/register');
   });
 
   test('renders the four product categories and official Wompi checkout messaging', () => {
     render(<LandingPage />);
 
-    expect(screen.getByText('Refrigeración')).toBeInTheDocument();
-    expect(screen.getByText('Lavado y cuidado')).toBeInTheDocument();
-    expect(screen.getByText('Cocina')).toBeInTheDocument();
-    expect(screen.getByText('Limpieza del hogar')).toBeInTheDocument();
-    expect(screen.getByText(/el pago se completa en el checkout oficial de wompi/i)).toBeInTheDocument();
+    expect(screen.getByText('Refrigeración')).toBeTruthy();
+    expect(screen.getByText('Lavado y cuidado')).toBeTruthy();
+    expect(screen.getByText('Cocina')).toBeTruthy();
+    expect(screen.getByText('Limpieza del hogar')).toBeTruthy();
+    expect(screen.getByText(/el pago se completa en el checkout oficial de wompi/i)).toBeTruthy();
   });
 });
