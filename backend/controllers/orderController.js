@@ -23,7 +23,7 @@ const updateOrderStatus = async (order) => {
 exports.createOrder = async (req, res) => {
   try {
     // Asegurarse de que userId esté en formato string
-    const userId = req.body.userId || req.user._id;
+    const userId = req.user._id;
     // Convierte el userId a string
     req.body.userId = userId.toString();
     // Validar los datos del pedido
@@ -50,7 +50,6 @@ exports.createOrder = async (req, res) => {
     });
 
     await newOrder.save();
-    console.log('Pedido guardado:', newOrder);
     res.status(201).json({ message: 'Pedido realizado exitosamente', order: newOrder });
   } catch (error) {
     res.status(400).json({ message: 'Error al crear el pedido', error: error.message });
@@ -60,7 +59,7 @@ exports.createOrder = async (req, res) => {
 // Obtener todos los pedidos del usuario (para clientes)
 exports.getOrdersByUserId = async (req, res) => {
   try {
-    const userId = req.user;  // Se obtiene del token
+    const userId = req.user._id;  // Identificador del usuario autenticado
     // Filtrar solo los pedidos que tengan el userId del usuario autenticado
     const orders = await Order.find({ userId: userId }).populate('products.productId');
     // Devolver el arreglo (vacío si no hay pedidos)
