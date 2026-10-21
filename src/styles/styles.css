@@ -1289,8 +1289,8 @@ h2 {
 
 .evh-form-layout {
   display: grid;
-  grid-template-columns: minmax(260px, .82fr) minmax(0, 1.18fr);
-  width: min(100%, 1060px);
+  grid-template-columns: minmax(300px, .78fr) minmax(0, 1.22fr);
+  width: min(100%, 1180px);
   min-height: 590px;
   margin: 0 auto;
   overflow: hidden;
@@ -1327,7 +1327,7 @@ h2 {
 
 .evh-form-story-copy { position: relative; z-index: 1; max-width: 22rem; margin: 3rem 0 0; }
 .evh-form-story-label { color: #f5b36d; font-size: .7rem; font-weight: 800; letter-spacing: .12em; }
-.evh-form-story h2 { margin: .9rem 0; color: #fff; font-size: clamp(2.25rem, 4vw, 3.25rem); line-height: 1.05; }
+.evh-form-story h2 { margin: .9rem 0; color: #fff; font-size: clamp(2rem, 3vw, 2.75rem); line-height: 1.1; }
 .evh-form-story-copy p { max-width: 20rem; color: #d0d2d7; font-size: 1rem; line-height: 1.7; }
 .evh-form-promise { display: inline-flex; align-items: center; gap: .55rem; margin-top: 1.5rem; color: #f0d4b6; font-size: .78rem; }
 .evh-form-promise span { color: #f39435; }
@@ -1335,7 +1335,7 @@ h2 {
 .evh-form-story-orbit::before,.evh-form-story-orbit::after { position: absolute; inset: 1.5rem; border: 1px solid rgba(255,255,255,.09); border-radius: 50%; content: ''; }
 .evh-form-story-orbit::after { inset: 3rem; }
 
-.evh-form-content { align-self: center; width: min(100%, 600px); box-sizing: border-box; margin: 0 auto; padding: clamp(1.75rem, 4vw, 3.5rem); }
+.evh-form-content { align-self: center; width: min(100%, 740px); box-sizing: border-box; margin: 0 auto; padding: clamp(1.75rem, 4vw, 3.5rem); }
 .evh-form-heading { margin-bottom: 1.75rem; }
 .evh-form-heading .evh-eyebrow { color: #a65b1d; font-size: .7rem; font-weight: 900; letter-spacing: .13em; }
 .evh-form-heading h1 { margin: .5rem 0 .55rem; color: var(--evh-ink); font-size: clamp(1.8rem, 3.3vw, 2.45rem); line-height: 1.15; }
@@ -1345,7 +1345,7 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-form-field { display: grid; min-width: 0; gap: .45rem; }
 .evh-form-field label { color: #30394a; font-size: .82rem; font-weight: 750; }
 .evh-form .evh-form-field input { width: 100%; height: 48px; min-height: 48px; box-sizing: border-box; margin: 0; padding: .65rem .9rem; border: 1px solid #d9dee6; border-radius: 12px; background: #fff; color: var(--evh-ink); font: inherit; font-size: .9rem; transition: border-color .18s ease, box-shadow .18s ease; }
-.evh-form .evh-form-field input[type="date"] { appearance: none; padding-block: 0; line-height: normal; }
+.evh-form .evh-form-field input[type="date"] { appearance: none; min-width: 0; padding-block: 0; line-height: normal; }
 .evh-form .evh-form-field input:focus { border-color: #e97816; outline: 0; box-shadow: 0 0 0 4px rgba(233,120,22,.13); }
 .evh-form .evh-form-field input::placeholder { color: #98a1af; }
 .evh-form .evh-form-field input:disabled { color: #7c8593; background: #f5f6f8; cursor: not-allowed; }
@@ -1357,7 +1357,7 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-phone-field { display: flex; align-items: center; gap: .65rem; height: 48px; min-height: 48px; box-sizing: border-box; padding-left: .9rem; border: 1px solid #d9dee6; border-radius: 12px; }
 .evh-phone-field:focus-within { border-color: #e97816; box-shadow: 0 0 0 4px rgba(233,120,22,.13); }
 .evh-phone-field > span { color: #687386; font-size: .88rem; font-weight: 700; }
-.evh-form .evh-phone-field input { height: 46px; min-height: 46px; padding: 0 .9rem 0 0; border: 0; box-shadow: none; }
+.evh-form .evh-phone-field input { flex: 1; min-width: 0; height: 46px; min-height: 46px; padding: 0 .9rem 0 0; border: 0; box-shadow: none; }
 .evh-select__control { min-height: 48px !important; border-color: #d9dee6 !important; border-radius: 12px !important; box-shadow: none !important; }
 .evh-select__control--is-focused { border-color: #e97816 !important; box-shadow: 0 0 0 4px rgba(233,120,22,.13) !important; }
 .evh-select__multi-value { border-radius: 7px !important; background: #fff1e3 !important; }
@@ -1375,7 +1375,7 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-form-alternate a { color: #a65b1d; font-weight: 750; text-decoration: none; }
 .evh-form .evh-form-hint { margin: -.6rem 0 .2rem; }
 .evh-register-form { gap: 1.15rem !important; }
-.evh-form-page-wide .evh-form-layout { width: min(100%, 1120px); }
+.evh-form-page-wide .evh-form-layout { width: min(100%, 1180px); }
 .evh-checkout-form .payment-method-container { display: grid; align-content: start; gap: .45rem; min-width: 0; }
 .evh-checkout-form .payment-method-container > label { color: #30394a; font-size: .82rem; font-weight: 750; }
 .evh-checkout-form .payment-method-container p { margin: .2rem 0 0; color: #687386; font-size: .73rem; line-height: 1.5; }
@@ -1422,15 +1422,13 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-site-header .goodbye-message p { margin: 0; }
 
 .evh-site-footer { display: block; padding: 3rem 1.5rem 1.25rem; color: #e9e9eb; background: #202124; text-align: left; }
-.evh-footer-inner { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1.2fr; gap: 2rem; width: min(100%, 1180px); margin: 0 auto; }
+.evh-footer-inner { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 2rem; width: min(100%, 1180px); margin: 0 auto; }
 .evh-footer-brand a { color: #fff; font-size: .86rem; font-weight: 900; letter-spacing: .06em; text-decoration: none; }
 .evh-footer-brand a span { color: #f39435; font-size: 1.25rem; }
-.evh-footer-brand p { margin: .6rem 0 0; color: #c3c5c9; font-size: .84rem; }
 .evh-footer-section { display: flex; flex-direction: column; align-items: flex-start; gap: .55rem; min-width: 0; margin: 0; text-align: left; }
 .evh-footer-section h2 { margin: 0 0 .35rem; color: #fff; font-size: .88rem; }
 .evh-footer-section a,.evh-footer-section > span { color: #c3c5c9; font-size: .78rem; line-height: 1.5; text-decoration: none; overflow-wrap: anywhere; }
 .evh-footer-section a:hover { color: #f5b36d; }
-.evh-footer-project p { max-width: 27ch; margin: 0; color: #c3c5c9; font-size: .78rem; line-height: 1.55; }
 .evh-footer-legal { width: min(100%, 1180px); margin: 2.5rem auto 0; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,.12); color: #aaaeb6; font-size: .72rem; }
 
 @media (max-width: 900px) {
