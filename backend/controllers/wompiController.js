@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const { restoreInventory } = require('../utils/productUtils');
-const { secureEquals, calculateIntegritySignature, calculateEventChecksum } = require('../utils/wompiSecurity');
+const { secureEquals, calculateIntegritySignature, calculateEventChecksum, hasSandboxWompiCredentials } = require('../utils/wompiSecurity');
 
 exports.createCheckout = async (req, res) => {
   try {
@@ -22,7 +22,11 @@ exports.createCheckout = async (req, res) => {
     const publicKey = process.env.WOMPI_PUBLIC_KEY;
     const integritySecret = process.env.WOMPI_INTEGRITY_SECRET;
     const frontendUrl = process.env.FRONTEND_URL;
-    if (!publicKey || !integritySecret || !frontendUrl || !/^https:\/\//.test(frontendUrl)) {
+    if (!hasSandboxWompiCredentials({
+      publicKey,
+      integritySecret,
+      eventsSecret: process.env.WOMPI_EVENTS_SECRET
+    }) || !frontendUrl || !/^https:\/\//.test(frontendUrl)) {
       return res.status(503).json({ message: 'Los pagos aún no están configurados. Inténtalo más tarde.' });
     }
 
@@ -88,7 +92,11 @@ exports.handleWebhook = async (req, res) => {
   try {
     const event = req.body;
     const secret = process.env.WOMPI_EVENTS_SECRET;
-    if (!secret || event?.event !== 'transaction.updated' || !Array.isArray(event?.signature?.properties)) {
+    if (!hasSandboxWompiCredentials({
+      publicKey: process.env.WOMPI_PUBLIC_KEY,
+      integritySecret: process.env.WOMPI_INTEGRITY_SECRET,
+      eventsSecret: secret
+    }) || event?.event !== 'transaction.updated' || !Array.isArray(event?.signature?.properties)) {
       return res.status(400).json({ message: 'Evento no válido.' });
     }
     const calculated = calculateEventChecksum(event, secret);

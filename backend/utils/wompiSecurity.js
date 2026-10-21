@@ -13,6 +13,11 @@ const calculateIntegritySignature = (reference, amountInCents, currency, secret)
     .update(`${reference}${amountInCents}${currency}${secret}`)
     .digest('hex');
 
+const hasSandboxWompiCredentials = ({ publicKey, integritySecret, eventsSecret } = {}) =>
+  typeof publicKey === 'string' && publicKey.startsWith('pub_test_') &&
+  typeof integritySecret === 'string' && integritySecret.startsWith('test_integrity_') &&
+  typeof eventsSecret === 'string' && eventsSecret.startsWith('test_events_');
+
 const calculateEventChecksum = (event, secret) => {
   if (!event || !Array.isArray(event.signature?.properties) || event.timestamp == null || !secret) {
     throw new Error('Evento o configuración de firma incompletos');
@@ -27,4 +32,4 @@ const calculateEventChecksum = (event, secret) => {
     .digest('hex');
 };
 
-module.exports = { getPath, secureEquals, calculateIntegritySignature, calculateEventChecksum };
+module.exports = { getPath, secureEquals, calculateIntegritySignature, calculateEventChecksum, hasSandboxWompiCredentials };

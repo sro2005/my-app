@@ -3,7 +3,8 @@ const assert = require('node:assert/strict');
 const {
   secureEquals,
   calculateIntegritySignature,
-  calculateEventChecksum
+  calculateEventChecksum,
+  hasSandboxWompiCredentials
 } = require('./wompiSecurity');
 
 test('creates the expected Wompi integrity signature for a fixed checkout', () => {
@@ -38,4 +39,28 @@ test('compares equal-length checksums safely and rejects mismatches', () => {
   assert.equal(secureEquals('abcdef', 'abcdeg'), false);
   assert.equal(secureEquals('abcdef', 'abc'), false);
   assert.equal(secureEquals(undefined, 'abc'), false);
+});
+
+test('accepts only complete Wompi Sandbox credentials', () => {
+  assert.equal(hasSandboxWompiCredentials({
+    publicKey: 'pub_test_example',
+    integritySecret: 'test_integrity_example',
+    eventsSecret: 'test_events_example'
+  }), true);
+  assert.equal(hasSandboxWompiCredentials({
+    publicKey: 'pub_prod_example',
+    integritySecret: 'test_integrity_example',
+    eventsSecret: 'test_events_example'
+  }), false);
+  assert.equal(hasSandboxWompiCredentials({
+    publicKey: 'pub_test_example',
+    integritySecret: 'prod_integrity_example',
+    eventsSecret: 'test_events_example'
+  }), false);
+  assert.equal(hasSandboxWompiCredentials({
+    publicKey: 'pub_test_example',
+    integritySecret: 'test_integrity_example',
+    eventsSecret: 'prod_events_example'
+  }), false);
+  assert.equal(hasSandboxWompiCredentials({}), false);
 });

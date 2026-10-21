@@ -5,6 +5,7 @@ const Joi = require('joi');
 const { validateProducts, reduceInventory, restoreInventory } = require('../utils/productUtils');
 const Product = require('../models/Product');
 const moment = require('moment-timezone'); // Importa moment-timezone
+const { hasSandboxWompiCredentials } = require('../utils/wompiSecurity');
 
 // Función para actualizar el estado del pedido automáticamente
 const updateOrderStatus = async (order) => {
@@ -39,9 +40,11 @@ exports.createOrder = async (req, res) => {
 
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = req.body;
     if (
-      !process.env.WOMPI_PUBLIC_KEY ||
-      !process.env.WOMPI_INTEGRITY_SECRET ||
-      !process.env.WOMPI_EVENTS_SECRET ||
+      !hasSandboxWompiCredentials({
+        publicKey: process.env.WOMPI_PUBLIC_KEY,
+        integritySecret: process.env.WOMPI_INTEGRITY_SECRET,
+        eventsSecret: process.env.WOMPI_EVENTS_SECRET
+      }) ||
       !process.env.FRONTEND_URL ||
       !/^https:\/\//.test(process.env.FRONTEND_URL)
     ) {
