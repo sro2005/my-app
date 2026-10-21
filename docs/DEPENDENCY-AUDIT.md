@@ -13,6 +13,10 @@ The last recorded GitHub Actions install logs reported:
 
 The manual-only workflow now runs `npm audit --json` separately for the frontend and backend and uploads the complete JSON reports as artifacts, retained for 14 days. This should expose package names, affected paths, severity, and available remediation metadata from the next manual run, even if npm audit exits non-zero. It does **not** automatically change dependency versions or claim the issues are fixed.
 
+## Additional checkout hardening
+
+The Wompi checkout controller now reuses a persisted payment reference for a pending order and uses a conditional database update to claim the first reference. This reduces the risk that reopening checkout creates a new reference while a previous transaction is still in flight. It is a code-level hardening change, not proof that concurrent payment attempts are fully resolved; Wompi Sandbox tests and payment reconciliation are still required.
+
 ## Remediation approach
 
 1. Run the workflow manually from GitHub Actions on branch `security/electrovibehome-hardening`.
