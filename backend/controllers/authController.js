@@ -6,7 +6,7 @@ const { registerSchema } = require('../validations/customerValidation');
 
 // Función para formatear el número de teléfono
 const formatPhoneNumber = (value) => {
-  let digits = value.replace(/\\D/g, '');
+  let digits = value.replace(/\D/g, '');
   if (digits.startsWith('57')) digits = digits.slice(2);
   digits = digits.slice(0, 10);
   if (digits.length > 3) return `+57 ${digits.slice(0, 3)} ${digits.slice(3)}`;
@@ -68,6 +68,7 @@ const registerUser = async (req, res, role) => {
 };
 
 exports.isAdult = isAdult;
+exports.formatPhoneNumber = formatPhoneNumber;
 exports.registerCustomer = (req, res) => registerUser(req, res, 'user');
 
 // Inicio de sesión de cliente o administrador
