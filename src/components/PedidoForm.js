@@ -34,9 +34,6 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [deliveryDate, setDeliveryDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null); // Cambiado a objeto para React-Select
   const [totalAmount, setTotalAmount] = useState(0);
-  const [accountNumber, setAccountNumber] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [sameRegisteredNumber, setSameRegisteredNumber] = useState(false);
   const [availableProducts, setAvailableProducts] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -101,8 +98,6 @@ const userId = user?._id;  // Usar userId desde el contexto
   // Maneja el cambio en el método de pago
   const handlePaymentMethodChange = (selectedOption) => {
     setPaymentMethod(selectedOption);
-    setAccountNumber("");
-    setBankName("");
   };
 
   const handleSubmit = (e) => {
@@ -115,20 +110,6 @@ const userId = user?._id;  // Usar userId desde el contexto
     if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || !selectedProduct || totalAmount <= 0) {
      alert("Por favor, complete todos los campos correctamente.");
      return;
-    }
-
-    // Validación de métodos de pago
-    if ((paymentMethod.value === "Tarjeta de Crédito" || paymentMethod.value === "Tarjeta de Débito") && (!bankName || !accountNumber)) {
-      alert("Por favor, ingrese los datos de la cuenta bancaria.");
-      return;
-    }
-    
-    // Validación para Nequi, Daviplata y Transfiya
-    if ((paymentMethod.value === "Nequi" || paymentMethod.value === "Daviplata" || paymentMethod.value === "Transfiya")) {
-      if (!sameRegisteredNumber && !accountNumber) { // Si el número no es el mismo registrado y no se ingresa un número de cuenta o celular
-        alert("Por favor, ingrese el número de cuenta o celular.");
-        return;
-      }
     }
 
     const newOrder = {
@@ -144,16 +125,6 @@ const userId = user?._id;  // Usar userId desde el contexto
       totalAmount,
       sameRegisteredNumber, 
     };
-
-    // Incluir bankName solo si no es una cadena vacía
-    if (bankName.trim() !== "") {
-    newOrder.bankName = bankName;
-    }
-
-    // Agregar accountNumber solo si no es una cadena vacía
-    if (accountNumber.trim() !== "") {
-    newOrder.accountNumber = accountNumber;
-    }
 
     // Verificar el pedido antes de continuar
     console.log('Datos del pedido antes de la confirmación:', newOrder);
@@ -208,31 +179,6 @@ const userId = user?._id;  // Usar userId desde el contexto
           <Select placeholder="Selecciona el método de pago" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable />
           <p>Serás redirigido al checkout oficial de Wompi. ElectroVibeHome no solicita ni almacena datos de tu tarjeta.</p>
         </div>           
-        {(paymentMethod && (paymentMethod.value === "Tarjeta de Crédito" || paymentMethod.value === "Tarjeta de Débito")) && (
-          <div className="bank-fields">
-            <input type="text" placeholder="Nombre del Banco" value={bankName} onChange={(e) => setBankName(e.target.value)} required />
-            <input type="text" placeholder="Número de Cuenta" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 20))} maxLength="20" required />
-          </div>
-        )}
-        {(paymentMethod && (paymentMethod.value === "Nequi" || paymentMethod.value === "Daviplata" || paymentMethod.value === "Transfiya")) && (
-          <div className="payment-options">
-            <p>¿Es el mismo número registrado?</p>
-              <div className="radio-group">
-            <label>
-              <input type="radio" value="Sí" checked={sameRegisteredNumber === true} onChange={() => setSameRegisteredNumber(true)} />
-              Sí
-            </label>
-            <label>
-              <input type="radio" value="No" checked={sameRegisteredNumber === false} onChange={() => setSameRegisteredNumber(false)} />
-              No
-            </label>
-              </div>
-            {!sameRegisteredNumber && (
-              <input type="text" placeholder="Número de Cuenta" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))} maxLength="10" required />
-            )}
-          </div>
-        )}
-        
         <div className="date-field">
           <label htmlFor="deliveryDate">Fecha deseada para la entrega:</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
