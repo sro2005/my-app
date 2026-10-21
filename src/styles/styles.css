@@ -1132,3 +1132,53 @@ h2 {
   display: flex;
   align-items: center;
 }
+
+/* ElectroVibeHome storefront refresh */
+.evh-landing { color: #172033; background: #fff; }
+.evh-hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(24px, 5vw, 72px); align-items: center; max-width: 1320px; margin: 0 auto; padding: clamp(36px, 6vw, 84px) clamp(20px, 5vw, 72px) 64px; overflow: hidden; }
+.evh-hero-copy { max-width: 650px; }
+.evh-eyebrow { display: inline-block; color: #b85a05; font-size: .75rem; font-weight: 800; letter-spacing: .15em; line-height: 1.6; }
+.evh-hero h1 { margin: 18px 0; font-size: clamp(2.5rem, 5vw, 4.7rem); letter-spacing: -.055em; line-height: 1.03; color: #172033; }
+.evh-hero h1 span { color: #e97816; }
+.evh-hero-copy > p { max-width: 560px; color: #586174; font-size: clamp(1rem, 1.5vw, 1.18rem); line-height: 1.8; }
+.evh-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.evh-button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; padding: 0 22px; border-radius: 999px; text-decoration: none; font-weight: 800; transition: transform .2s ease, box-shadow .2s ease; }
+.evh-button:hover { transform: translateY(-2px); }
+.evh-button-primary { background: #f18120; color: #fff; box-shadow: 0 10px 24px rgba(225, 113, 21, .22); }
+.evh-button-secondary { color: #202a3d; border: 1px solid #d9deea; background: #fff; }
+.evh-trust-row { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 28px; color: #626c7e; font-size: .86rem; }
+.evh-trust-row strong { color: #18815b; margin-right: 5px; }
+.evh-hero-art { min-height: 390px; position: relative; display: flex; align-items: center; justify-content: center; border-radius: 36px; background: radial-gradient(circle at 50% 42%, #fff4df 0, #ffe4c0 38%, #f8bb77 100%); overflow: hidden; isolation: isolate; }
+.evh-orbit { position: absolute; border: 1px solid rgba(255,255,255,.65); border-radius: 50%; }
+.evh-orbit-one { width: 390px; height: 390px; }
+.evh-orbit-two { width: 285px; height: 285px; }
+.evh-appliance { position: absolute; display: flex; align-items: center; justify-content: center; flex-direction: column; border: 2px solid rgba(255,255,255,.8); box-shadow: 0 24px 50px rgba(105, 63, 23, .18); background: linear-gradient(145deg, #fff, #dfe5eb); color: #f18120; }
+.evh-appliance i { display: block; background: #bbc5d0; border-radius: 8px; }
+.evh-fridge { z-index: 2; left: 17%; top: 17%; width: 108px; height: 205px; border-radius: 17px; }
+.evh-fridge span { font-size: 2.2rem; }
+.evh-fridge i { position: absolute; right: 13px; top: 45%; width: 4px; height: 44px; }
+.evh-washer { z-index: 3; right: 17%; bottom: 16%; width: 150px; height: 160px; border-radius: 22px; }
+.evh-washer span { width: 85px; height: 85px; display: grid; place-items: center; border-radius: 50%; border: 9px solid #9ca9b8; background: linear-gradient(140deg, #d7efff, #8eb8d4); color: #e97816; font-size: 2.5rem; }
+.evh-washer i { position: absolute; top: 14px; right: 17px; width: 27px; height: 5px; }
+.evh-microwave { z-index: 4; right: 10%; top: 14%; width: 118px; height: 84px; border-radius: 13px; }
+.evh-microwave span { position: absolute; left: 15px; width: 66px; height: 49px; display: grid; place-items: center; border-radius: 7px; background: #536779; color: #e5f6ff; font-size: 1.5rem; }
+.evh-microwave i { position: absolute; right: 9px; width: 5px; height: 5px; top: 23px; box-shadow: 0 13px #9ca9b8, 0 26px #9ca9b8; }
+.evh-art-label { position: absolute; bottom: 22px; left: 22px; right: 22px; padding: 12px 16px; border: 1px solid rgba(255,255,255,.7); border-radius: 15px; background: rgba(255,255,255,.68); backdrop-filter: blur(10px); text-align: center; font-size: .9rem; font-weight: 800; color: #744116; }
+.evh-categories { max-width: 1320px; margin: 0 auto; padding: 35px clamp(20px, 5vw, 72px) 70px; }
+.evh-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 25px; }
+.evh-section-heading h2 { margin: 8px 0 0; color: #172033; font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -.04em; }
+.evh-section-heading > a { color: #b85a05; text-decoration: none; font-weight: 800; white-space: nowrap; }
+.evh-category-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.evh-category-card { position: relative; display: flex; flex-direction: column; gap: 9px; min-height: 185px; padding: 22px; border: 1px solid #e8eaf0; border-radius: 22px; background: #fff; text-decoration: none; color: #172033; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.evh-category-card:hover { transform: translateY(-4px); border-color: #f4bc87; box-shadow: 0 18px 38px rgba(30, 41, 59, .08); }
+.evh-category-icon { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 17px; background: #fff1df; font-size: 1.7rem; }
+.evh-category-card strong { font-size: 1rem; }
+.evh-category-card > span:not(.evh-category-icon) { color: #687386; font-size: .86rem; line-height: 1.5; }
+.evh-category-card b { position: absolute; right: 18px; bottom: 18px; color: #e97816; }
+.evh-promise { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; padding: 38px clamp(20px, 5vw, 72px); background: #f7f8fb; }
+.evh-promise > div { max-width: 350px; margin: auto; }
+.evh-promise span { display: block; margin-bottom: 13px; color: #e97816; font-size: .78rem; font-weight: 900; letter-spacing: .1em; }
+.evh-promise strong { color: #172033; }
+.evh-promise p { color: #687386; line-height: 1.6; font-size: .92rem; }
+@media (max-width: 900px) { .evh-hero { grid-template-columns: 1fr; padding-top: 40px; } .evh-hero-art { min-height: 340px; } .evh-category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .evh-hero { padding-left: 18px; padding-right: 18px; } .evh-hero h1 { font-size: 2.65rem; } .evh-hero-art { min-height: 300px; border-radius: 25px; } .evh-fridge { left: 13%; transform: scale(.82); } .evh-washer { right: 12%; transform: scale(.85); } .evh-microwave { right: 7%; transform: scale(.85); } .evh-categories { padding-left: 18px; padding-right: 18px; } .evh-section-heading { align-items: start; flex-direction: column; } .evh-category-grid { gap: 10px; } .evh-category-card { min-height: 170px; padding: 15px; border-radius: 17px; } .evh-promise { grid-template-columns: 1fr; gap: 4px; } .evh-promise > div { width: 100%; } }
