@@ -3,6 +3,12 @@ import Loading from '../components/Loading';
 
 export const AuthContext = createContext();
 
+const AUTH_STORAGE_KEYS = ['authToken', 'userData', 'userId'];
+
+const clearAuthStorage = () => {
+  AUTH_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+};
+
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,36 +20,43 @@ const AuthProvider = ({ children }) => {
     if (storedToken && storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-      } catch (error) {
-        console.error('Error al parsear los datos del usuario', error);
+        if (parsedUser && typeof parsedUser === 'object' && parsedUser._id && parsedUser.role) {
+          setUser(parsedUser);
+        } else {
+          clearAuthStorage();
+        }
+      } catch {
+        // Invalid persisted state must not leave a stale token behind.
+        clearAuthStorage();
       }
+    } else if (storedToken || storedUser || localStorage.getItem('userId')) {
+      // Remove partial authentication state without touching unrelated app storage.
+      clearAuthStorage();
     }
+
     setLoading(false);
-}, []);
+  }, []);
 
   const handleLoginSuccess = (user, token) => {
-    if (!user?.role || !token) {
-      console.error("Error: Datos de usuario o token inválidos");
+    if (!user?._id || !user?.role || typeof token !== 'string' || !token.trim()) {
+      console.error('No se pudo guardar una sesión con datos incompletos.');
       return;
     }
 
-    setUser(user);
     localStorage.setItem('authToken', token);
     localStorage.setItem('userData', JSON.stringify(user));
-    // Guardamos el userId en localStorage
-    if (user._id) {
-      localStorage.setItem("userId", user._id.toString());
-    }
+    localStorage.setItem('userId', String(user._id));
+    setUser(user);
   };
 
   const updateUser = (updatedUser) => {
+    if (!updatedUser || typeof updatedUser !== 'object' || !updatedUser._id) return;
     setUser(updatedUser);
     localStorage.setItem('userData', JSON.stringify(updatedUser));
-  };  
+  };
 
   const handleLogout = () => {
-    localStorage.clear();
+    clearAuthStorage();
     setUser(null);
   };
 
