@@ -8,7 +8,7 @@ exports.orderSchema = Joi.object({
   email: Joi.string().email().required(), // Validación del formato de correo
   phone: Joi.string().required().messages({ 'string.empty': 'Phone number is required' }),
   address: Joi.string().min(1).required(), // Asegura que la dirección no esté vacía
-  paymentMethod: Joi.string().valid('Tarjeta de Crédito', 'Tarjeta de Débito', 'Nequi', 'Daviplata', 'Transfiya').required(),
+  paymentMethod: Joi.string().valid('Wompi').required(),
   deliveryDate: Joi.date().custom((value, helpers) => { const delivery = moment.tz(value, "America/Bogota").startOf('day'); const today = moment.tz("America/Bogota").startOf('day'); return delivery.isSameOrAfter(today) ? value : helpers.error("any.invalid"); }, 'Fecha Deseada' ).required(),
   totalAmount: Joi.number().positive().greater(0).required(), // Validación para un monto positivo y mayor a cero
   products: Joi.array().items( Joi.object({ productId: Joi.string().hex().length(24).required(), // ID de producto válido
