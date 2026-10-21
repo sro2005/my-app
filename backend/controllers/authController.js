@@ -67,6 +67,7 @@ const registerUser = async (req, res, role) => {
   }
 };
 
+exports.isAdult = isAdult;
 exports.registerCustomer = (req, res) => registerUser(req, res, 'user');
 
 // Inicio de sesión de cliente o administrador
