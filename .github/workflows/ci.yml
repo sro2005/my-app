@@ -22,9 +22,18 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
-      - run: npm ci
+      - name: Refresh dependency lockfile within declared version ranges
+        run: npm update
+      - name: Upload refreshed frontend lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refreshed-frontend-lockfile
+          path: package-lock.json
+          if-no-files-found: warn
+          retention-days: 7
       - name: Capture frontend dependency audit
         run: npm audit --json > npm-audit-frontend.json || true
       - name: Upload frontend audit report
@@ -51,6 +60,14 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
       - run: npm ci
+      - name: Upload refreshed backend lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refreshed-backend-lockfile
+          path: backend/package-lock.json
+          if-no-files-found: warn
+          retention-days: 7
       - name: Capture backend dependency audit
         run: npm audit --json > npm-audit-backend.json || true
       - name: Upload backend audit report
