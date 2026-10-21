@@ -21,6 +21,10 @@ export default defineConfig(({ mode }) => {
         env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_BASE_URL || ''
       )
     },
+    // The existing codebase contains JSX in .js files; opt those files into Oxc's JSX parser.
+    oxc: {
+      include: /\\.[jt]sx?$/
+    },
     test: {
       include: ['src/**/*.test.{js,jsx,ts,tsx}'],
       environment: 'jsdom',
