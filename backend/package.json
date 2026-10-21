@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js",
+    "dev": "node --watch server.js",
     "test": "node --test"
   },
   "keywords": [],
@@ -28,13 +28,8 @@
     "nodemailer": "^10.1.7",
     "rotating-file-stream": "^3.2.5"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.0"
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=24 <25"
-  },
-  "overrides": {
-    "braces": "^3.0.4"
   }
 }
