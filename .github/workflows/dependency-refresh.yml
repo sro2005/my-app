@@ -9,8 +9,6 @@ on:
       - '.github/workflows/dependency-refresh.yml'
       - 'package.json'
       - 'backend/package.json'
-      - 'vite.config.js'
-      - 'src/**/*.test.jsx'
 
 permissions:
   contents: read
