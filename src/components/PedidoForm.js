@@ -162,39 +162,28 @@ const userId = user?._id;  // Usar userId desde el contexto
     setShowConfirmModal(true); // Mostramos el modal de confirmación
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const token = localStorage.getItem('authToken');
     setLoading(true);
-
-    // Obtener el token de localStorage
-    const token = localStorage.getItem("authToken");
-
-    // Verificar la estructura del pedido antes de enviarlo
-    console.log('Enviando pedido:', order);
-
-    axios.post(`${API_URL}/api/orders/realizar`, order, { 
-      headers: { Authorization: `Bearer ${token}` }, // Incluir el token en los headers
-      })
-      .then(response => {
-        alert('¡Pedido realizado exitosamente!');
-        // Obtenemos el orderId desde la respuesta de la API
-        const orderData = response.data;
-        // Actualizamos el estado con el orderId recibido de la respuesta
-        setOrder({
-          ...order, // Aquí usamos la variable order que contiene los datos del pedido
-        orderId: orderData.orderId, // Añadimos el orderId de la respuesta
+    try {
+      const created = await axios.post(`${API_URL}/api/orders/realizar`, order, {
+        headers: { Authorization: `Bearer ${token}` }
       });
-      // Redirigir a la página de Gestión de Pedidos
-      navigate('/listado-pedidos');  // Aquí es donde rediriges después de confirmar el pedido
-      })
-      .catch(error => {
-        console.error('Error realizando pedido:', error);
-        alert('Ocurrió un error al realizar el pedido. Por favor, intenta nuevamente.');
-      })
-      .finally(() => {
-        setLoading(false);
-        setShowConfirmModal(false);
+      const orderId = created.data?.order?._id;
+      if (!orderId) throw new Error('El servidor no devolvió el identificador del pedido.');
+      const checkout = await axios.post(`${API_URL}/api/orders/${orderId}/wompi-checkout`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+      if (!checkout.data?.checkoutUrl) throw new Error('No se recibió el enlace de pago.');
+      window.location.assign(checkout.data.checkoutUrl);
+    } catch (error) {
+      console.error('No fue posible iniciar el pago:', error.response?.data?.message || error.message);
+      alert(error.response?.data?.message || 'No pudimos iniciar el pago. No repitas la compra; revisa tus pedidos o inténtalo de nuevo.');
+    } finally {
+      setLoading(false);
+      setShowConfirmModal(false);
+    }
   };
 
   const handleCancel = () => {
@@ -202,25 +191,22 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const paymentMethods = [
-    { value: 'Tarjeta de Crédito', label: 'Tarjeta de Crédito' },
-    { value: 'Tarjeta de Débito', label: 'Tarjeta de Débito' },
-    { value: 'Nequi', label: 'Nequi' },
-    { value: 'Daviplata', label: 'Daviplata' },
-    { value: 'Transfiya', label: 'Transfiya' },
+    { value: 'Wompi', label: 'Pago seguro con Wompi' },
   ];
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <h1>Formulario</h1>
-        <h2>Realizar Nuevo Pedido</h2>
+        <h1>Finalizar compra</h1>
+        <h2>Tu pedido, de forma segura</h2>
         <input type="text" placeholder="Nombre(s)" value={customerData.firstName} onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })} required disabled className="disabled-input"/>
         <input type="text" placeholder="Apellidos" value={customerData.lastName} onChange={(e) => setCustomerData({ ...customerData, lastName: e.target.value })} required disabled className="disabled-input"/>
         <input type="email" placeholder="Correo Electrónico" value={customerData.email} onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })} required disabled className="disabled-input"/>
         <input type="tel" placeholder="Número de Celular" value={customerData.phone} onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })} required disabled className="disabled-input"/>
         <input type="text" placeholder="Dirección del Domicilio" value={address} onChange={(e) => setAddress(e.target.value)} required />
         <div className="payment-method-container">
-        <Select placeholder="Selecciona un método de pago" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable />
+          <Select placeholder="Selecciona el método de pago" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable />
+          <p>Serás redirigido al checkout oficial de Wompi. ElectroVibeHome no solicita ni almacena datos de tu tarjeta.</p>
         </div>           
         {(paymentMethod && (paymentMethod.value === "Tarjeta de Crédito" || paymentMethod.value === "Tarjeta de Débito")) && (
           <div className="bank-fields">
@@ -254,7 +240,8 @@ const userId = user?._id;  // Usar userId desde el contexto
         
         <Select placeholder="Selecciona un producto" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable />
         
-        <h3>Total a Pagar: {formatPrice(totalAmount)}</h3>
+        <h3>Total estimado: {formatPrice(totalAmount)}</h3>
+        <p>El total definitivo se calcula en el servidor con los precios actuales del catálogo.</p>
       <button type="submit" disabled={loading || totalAmount === 0}>REALIZAR</button>
     </form>
 
@@ -272,7 +259,8 @@ const userId = user?._id;  // Usar userId desde el contexto
             <p><strong>Correo Electrónico:</strong> {customerData.email}</p>
             <p><strong>Número de Celular:</strong> {customerData.phone}</p>
             <p><strong>Dirección:</strong> {address}</p>
-            <p><strong>Método de Pago:</strong> {paymentMethod ? paymentMethod.value : 'No especificado'}</p>
+            <p><strong>Método de pago:</strong> {paymentMethod ? paymentMethod.label : 'No especificado'}</p>
+            <p>El pago se completará en el checkout seguro de Wompi.</p>
 
             {paymentMethod && (paymentMethod.value === "Tarjeta Crédito" || paymentMethod.value === "Tarjeta Débito") && (
               <>
