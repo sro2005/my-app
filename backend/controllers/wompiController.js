@@ -14,8 +14,7 @@ exports.createCheckout = async (req, res) => {
     if (order.paymentConfirmed || order.paymentStatus === 'APPROVED') {
       return res.status(409).json({ message: 'Este pedido ya tiene un pago aprobado.' });
     }
-    // Los pedidos cancelados o con un pago rechazado no se pueden reutilizar:
-    // el inventario pudo haberse liberado y una aprobación tardía no debe reactivar el pedido.
+    // Los pedidos cancelados o con un pago rechazado no se pueden reutilizar.
     if (order.status === 'Cancelado' || order.paymentStatus !== 'PENDING') {
       return res.status(409).json({ message: 'Este pedido ya no admite pagos. Crea un nuevo pedido.' });
     }
@@ -25,15 +24,50 @@ exports.createCheckout = async (req, res) => {
     if (!publicKey || !integritySecret || !frontendUrl || !/^https:\/\//.test(frontendUrl)) {
       return res.status(503).json({ message: 'Los pagos aún no están configurados. Inténtalo más tarde.' });
     }
-    const reference = `EVH-${order._id}-${crypto.randomBytes(8).toString('hex')}`;
-    const amountInCents = Math.round(order.totalAmount * 100);
+
+    // Una referencia por pedido: volver a abrir checkout no debe invalidar una referencia
+    // anterior que pudiera terminar en una notificación de pago válida.
+    let reference = order.paymentReference;
+    if (!reference) {
+      const candidate = `EVH-${order._id}-${crypto.randomBytes(8).toString('hex')}`;
+      const claimedOrder = await Order.findOneAndUpdate(
+        {
+          _id: order._id,
+          paymentStatus: 'PENDING',
+          paymentConfirmed: false,
+          status: { $ne: 'Cancelado' },
+          $or: [{ paymentReference: { $exists: false } }, { paymentReference: null }]
+        },
+        { $set: { paymentReference: candidate } },
+        { new: true, runValidators: true }
+      );
+      if (claimedOrder) {
+        reference = claimedOrder.paymentReference;
+      } else {
+        // Otra solicitud pudo haber creado la referencia a la vez. Reutiliza esa referencia.
+        const latestOrder = await Order.findById(id);
+        if (!latestOrder || latestOrder.status === 'Cancelado' || latestOrder.paymentStatus !== 'PENDING' || latestOrder.paymentConfirmed) {
+          return res.status(409).json({ message: 'El pedido ya no admite un nuevo intento de pago.' });
+        }
+        reference = latestOrder.paymentReference;
+        if (!reference) {
+          return res.status(409).json({ message: 'No se pudo reservar una referencia de pago. Inténtalo nuevamente.' });
+        }
+      }
+    }
+
+    // Revalidar el estado antes de emitir el enlace por si un webhook lo cambió.
+    const latestOrder = await Order.findById(id);
+    if (!latestOrder || latestOrder.status === 'Cancelado' || latestOrder.paymentStatus !== 'PENDING' || latestOrder.paymentConfirmed) {
+      return res.status(409).json({ message: 'El pedido ya no admite un nuevo intento de pago.' });
+    }
+    // Si una operación concurrente ya asignó otra referencia, usar siempre la persistida.
+    reference = latestOrder.paymentReference || reference;
+    const amountInCents = Math.round(latestOrder.totalAmount * 100);
     if (!Number.isSafeInteger(amountInCents) || amountInCents < 1) {
       return res.status(400).json({ message: 'El importe del pedido no es válido.' });
     }
     const signature = calculateIntegritySignature(reference, amountInCents, 'COP', integritySecret);
-    order.paymentReference = reference;
-    order.paymentStatus = 'PENDING';
-    await order.save();
 
     const checkout = new URL('https://checkout.wompi.co/p/');
     checkout.searchParams.set('public-key', publicKey);
@@ -79,7 +113,6 @@ exports.handleWebhook = async (req, res) => {
       return res.status(200).json({ received: true, ignored: true });
     }
 
-    const status = String(transaction.status).toUpperCase();
     // Compare-and-set evita que webhooks repetidos liberen el mismo inventario más de una vez.
     const pendingOrderFilter = {
       _id: order._id,
@@ -88,6 +121,7 @@ exports.handleWebhook = async (req, res) => {
       status: { $ne: 'Cancelado' }
     };
 
+    const status = String(transaction.status).toUpperCase();
     if (status === 'APPROVED') {
       const approvedOrder = await Order.findOneAndUpdate(
         pendingOrderFilter,
