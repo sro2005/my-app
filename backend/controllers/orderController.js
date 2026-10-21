@@ -95,7 +95,8 @@ exports.getOrdersByUserId = async (req, res) => {
     // Devolver el arreglo (vacío si no hay pedidos)
     res.status(200).json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener los pedidos', error: error.message });
+    console.error('Error al obtener los pedidos:', error.message);
+    res.status(500).json({ message: 'Error al obtener los pedidos' });
   }
 };
 
@@ -130,7 +131,8 @@ exports.updateOrder = async (req, res) => {
     const updatedOrder = await Order.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
     res.status(200).json({ message: 'Pedido actualizado exitosamente', order: updatedOrder });
   } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar el pedido', error: error.message });
+    console.error('Error al actualizar el pedido:', error.message);
+    res.status(500).json({ message: 'Error al actualizar el pedido' });
   }
 };
 
@@ -141,12 +143,17 @@ exports.deleteOrder = async (req, res) => {
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Pedido no encontrado' });
 
-    await restoreInventory(order.products);
+    // Solo liberar stock si seguía reservado para un pedido sin pago.
+    // Los pedidos cancelados ya liberaron inventario en el webhook; los aprobados lo consumieron.
+    if (order.paymentStatus === 'PENDING' && order.status !== 'Cancelado' && !order.paymentConfirmed) {
+      await restoreInventory(order.products);
+    }
     await Order.findByIdAndDelete(id);
     
     res.status(200).json({ message: 'Pedido eliminado exitosamente' });
   } catch (error) {
-    res.status(500).json({ message: 'Error al eliminar el pedido', error: error.message });
+    console.error('Error al eliminar el pedido:', error.message);
+    res.status(500).json({ message: 'Error al eliminar el pedido' });
   }
 };
 
@@ -166,6 +173,7 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
 
     res.status(200).json({ message: 'Estado del pedido actualizado automáticamente', order });
   } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar el estado del pedido', error: error.message });
+    console.error('Error al actualizar el estado del pedido:', error.message);
+    res.status(500).json({ message: 'Error al actualizar el estado del pedido' });
   }
 };
