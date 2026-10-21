@@ -104,7 +104,6 @@ const userId = user?._id;  // Usar userId desde el contexto
     e.preventDefault();   
 
     // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
-    console.log("userId desde el contexto:", userId);
 
     // Validación antes de enviar el pedido
     if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || !selectedProduct || totalAmount <= 0) {
@@ -126,7 +125,6 @@ const userId = user?._id;  // Usar userId desde el contexto
     };
 
     // Verificar el pedido antes de continuar
-    console.log('Datos del pedido antes de la confirmación:', newOrder);
     
     setOrder(newOrder); // Guardamos el pedido en el estado
     setShowConfirmModal(true); // Mostramos el modal de confirmación
