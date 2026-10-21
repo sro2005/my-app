@@ -10,7 +10,7 @@ exports.orderSchema = Joi.object({
   address: Joi.string().min(1).required(), // Asegura que la dirección no esté vacía
   paymentMethod: Joi.string().valid('Wompi').required(),
   deliveryDate: Joi.date().custom((value, helpers) => { const delivery = moment.tz(value, "America/Bogota").startOf('day'); const today = moment.tz("America/Bogota").startOf('day'); return delivery.isSameOrAfter(today) ? value : helpers.error("any.invalid"); }, 'Fecha Deseada' ).required(),
-  totalAmount: Joi.number().positive().greater(0).required(), // Validación para un monto positivo y mayor a cero
+  totalAmount: Joi.any().optional(), // Se ignora para calcular el total con precios del servidor.
   products: Joi.array().items( Joi.object({ productId: Joi.string().hex().length(24).required(), // ID de producto válido
   quantity: Joi.number().integer().positive().min(1).required() })).min(1).required(), // Al menos un producto en el pedido 
   accountNumber: Joi.string().trim().min(1).optional(),
