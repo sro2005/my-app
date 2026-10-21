@@ -23,6 +23,8 @@ const customerSchema = new mongoose.Schema({
 customerSchema.set('toJSON', {
   transform: (doc, ret) => {
     delete ret.password;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpires;
     delete ret.__v;
     // Si el rol es admin, eliminamos el campo 'preferences'
     if (ret.role === 'admin') {
