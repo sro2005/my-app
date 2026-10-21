@@ -1,17 +1,17 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import LandingPage from './LandingPage';
 
-const renderLandingPage = () => render(
-  <MemoryRouter>
-    <LandingPage />
-  </MemoryRouter>
-);
+// Keep this component test independent from the router package implementation.
+// The storefront only needs Link to render its destination as an anchor here.
+jest.mock('react-router-dom', () => ({
+  Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>
+}), { virtual: true });
+
+import LandingPage from './LandingPage';
 
 describe('LandingPage', () => {
   test('renders the main storefront headline and primary navigation', () => {
-    renderLandingPage();
+    render(<LandingPage />);
 
     expect(
       screen.getByRole('heading', { name: /tu hogar merece algo extraordinario/i })
@@ -22,7 +22,7 @@ describe('LandingPage', () => {
   });
 
   test('renders the four product categories and official Wompi checkout messaging', () => {
-    renderLandingPage();
+    render(<LandingPage />);
 
     expect(screen.getByText('Refrigeración')).toBeInTheDocument();
     expect(screen.getByText('Lavado y cuidado')).toBeInTheDocument();
