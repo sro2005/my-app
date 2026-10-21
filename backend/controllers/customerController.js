@@ -3,9 +3,9 @@ const Order = require('../models/Order');
 const { calculateCustomerStatus } = require('../utils/calculateCustomerStatus');
 
 // Función auxiliar para manejar errores
-const handleError = (res, error, message, statusCode = 400) => {
-  console.error(message, error);
-  res.status(statusCode).json({ message, error: error.message });
+const handleError = (res, error, message, statusCode = 500) => {
+  console.error(message, error.message);
+  res.status(statusCode).json({ message });
 };
 
 // Obtener todos los clientes (solo admins)
@@ -14,7 +14,8 @@ exports.getCustomers = async (req, res) => {
     const customers = await Customer.find();
     const customersWithStatus = await Promise.all(customers.map(async (customer) => {
       const orders = await Order.find({ userId: customer._id });
-      return { ...customer._doc, status: calculateCustomerStatus(customer.lastActivityDate), orders };
+      // Usa toJSON para aplicar la transformación que elimina contraseña y campos internos.
+      return { ...customer.toJSON(), status: calculateCustomerStatus(customer.lastActivityDate), orders };
     }));
     res.status(200).json(customersWithStatus);
   } catch (error) {
@@ -25,10 +26,10 @@ exports.getCustomers = async (req, res) => {
 // Obtener el perfil del cliente
 exports.getProfile = async (req, res) => {
   try {
-    const customer = await Customer.findById(req.user);
+    const customer = await Customer.findById(req.user._id);
     if (!customer) return res.status(404).json({ message: 'Cliente no encontrado' });
 
-    res.status(200).json({ ...customer._doc, status: calculateCustomerStatus(customer.lastActivityDate) });
+    res.status(200).json({ ...customer.toJSON(), status: calculateCustomerStatus(customer.lastActivityDate) });
   } catch (error) {
     handleError(res, error, 'Error al obtener el perfil');
   }
@@ -68,12 +69,18 @@ exports.deleteCustomer = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedCustomer = await Customer.findByIdAndDelete(id);
-    if (!deletedCustomer) return res.status(404).json({ message: 'Cliente no encontrado' });
+    const customer = await Customer.findById(id);
+    if (!customer) return res.status(404).json({ message: 'Cliente no encontrado' });
 
-    // Opcional: eliminar pedidos asociados
-    await Order.deleteMany({ userId: id });
+    // Conserva la trazabilidad y evita dejar reservas de inventario huérfanas.
+    const orderCount = await Order.countDocuments({ userId: id });
+    if (orderCount > 0) {
+      return res.status(409).json({
+        message: 'No se puede eliminar este cliente porque tiene pedidos asociados. Conserva el historial de compra.'
+      });
+    }
 
+    await Customer.findByIdAndDelete(id);
     res.status(200).json({ message: 'Cliente eliminado exitosamente' });
   } catch (error) {
     handleError(res, error, 'Error al eliminar el cliente');
