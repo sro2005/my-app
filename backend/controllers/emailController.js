@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const Customer = require('../models/Customer');
 
 // ✅ Verifica que las variables de entorno se están cargando correctamente
@@ -41,43 +42,69 @@ exports.sendGeneralEmail = async (to, subject, text) => {
   }
 };
 
-// ✅ Recuperar contraseña
+// Nunca revelar si una dirección está registrada.
+const recoveryMessage = 'Si el correo está registrado, recibirás instrucciones para restablecer tu contraseña.';
+
 exports.forgotPassword = async (req, res) => {
-  const { email } = req.body;
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    return res.status(400).json({ message: 'Introduce un correo válido.' });
+  }
   try {
-    // 1️⃣ Verifica si el usuario existe en la base de datos
     const customer = await Customer.findOne({ email });
-    if (!customer) {
-      return res.status(404).json({ message: 'Correo electrónico no encontrado' });
+    if (customer) {
+      const frontendUrl = process.env.FRONTEND_URL;
+      if (!frontendUrl || !/^https:\/\//.test(frontendUrl)) {
+        console.error('FRONTEND_URL debe configurarse con una dirección HTTPS.');
+        return res.status(503).json({ message: 'La recuperación no está disponible temporalmente.' });
+      }
+      const token = crypto.randomBytes(32).toString('hex');
+      customer.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
+      customer.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000);
+      await customer.save();
+      const resetUrl = `${frontendUrl.replace(/\/$/, '')}/reset-password/${token}`;
+      try {
+        await transporterNoReply.sendMail({
+          to: customer.email,
+          from: process.env.NO_REPLY_EMAIL_ADDRESS,
+          subject: 'Restablecer contraseña de ElectroVibeHome',
+          text: `Solicitaste restablecer tu contraseña. Abre este enlace (válido durante 30 minutos):\n\n${resetUrl}\n\nSi no lo solicitaste, ignora este mensaje.`
+        });
+      } catch (mailError) {
+        customer.resetPasswordToken = undefined;
+        customer.resetPasswordExpires = undefined;
+        await customer.save();
+        console.error('No fue posible enviar el correo de recuperación.');
+        return res.status(503).json({ message: 'El correo no está disponible temporalmente. Inténtalo más tarde.' });
+      }
     }
-
-    // 2️⃣ Genera un token de recuperación
-    const token = crypto.randomBytes(20).toString('hex');
-    customer.resetPasswordToken = token;
-    customer.resetPasswordExpires = Date.now() + 3600000; // Expira en 1 hora
-    await customer.save();
-
-    // 3️⃣ Construye la URL de restablecimiento
-    const resetUrl = `${process.env.FRONTEND_URL || `https://${req.headers.host}`}/reset-password/${token}`;
-    console.log('🔗 URL de restablecimiento:', resetUrl);
-
-    // 4️⃣ Opciones del correo de restablecimiento
-    const mailOptions = {
-      to: customer.email,
-      from: process.env.NO_REPLY_EMAIL_ADDRESS,
-      subject: '🔑 Restablecimiento de contraseña',
-      text: `Recibiste este correo porque solicitaste restablecer tu contraseña.\n\n` +
-            `Haz clic en el siguiente enlace o cópialo en tu navegador para continuar:\n\n` +
-            `${resetUrl}\n\n` +
-            `Si no solicitaste este cambio, ignora este correo.\n`
-    };
-
-    // 5️⃣ Enviar el correo
-    await transporterNoReply.sendMail(mailOptions);
-    res.status(200).json({ message: '📩 Correo de recuperación enviado con éxito' });
-
+    return res.status(200).json({ message: recoveryMessage });
   } catch (error) {
-    console.error('❌ Error en el proceso de recuperación:', error);
-    res.status(500).json({ message: 'Error en el proceso de recuperación', error: error.message });
+    console.error('Error en recuperación de contraseña:', error.message);
+    return res.status(500).json({ message: 'No fue posible procesar la solicitud.' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body || {};
+  if (!/^[a-f0-9]{64}$/.test(token || '') || typeof password !== 'string' || password.length < 10 || password.length > 128) {
+    return res.status(400).json({ message: 'Enlace o contraseña inválidos. Utiliza al menos 10 caracteres.' });
+  }
+  try {
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const customer = await Customer.findOne({
+      resetPasswordToken: tokenHash,
+      resetPasswordExpires: { $gt: new Date() }
+    }).select('+resetPasswordToken +resetPasswordExpires');
+    if (!customer) return res.status(400).json({ message: 'El enlace expiró o ya fue utilizado. Solicita uno nuevo.' });
+    customer.password = await bcrypt.hash(password, 12);
+    customer.resetPasswordToken = undefined;
+    customer.resetPasswordExpires = undefined;
+    await customer.save();
+    return res.status(200).json({ message: 'Contraseña actualizada. Ya puedes iniciar sesión.' });
+  } catch (error) {
+    console.error('Error restableciendo contraseña:', error.message);
+    return res.status(500).json({ message: 'No fue posible restablecer la contraseña.' });
   }
 };
