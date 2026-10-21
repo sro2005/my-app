@@ -19,6 +19,11 @@ exports.createCheckout = async (req, res) => {
     if (order.paymentConfirmed || order.paymentStatus === 'APPROVED') {
       return res.status(409).json({ message: 'Este pedido ya tiene un pago aprobado.' });
     }
+    // Los pedidos cancelados o con un pago rechazado no se pueden reutilizar:
+    // el inventario pudo haberse liberado y una aprobación tardía no debe reactivar el pedido.
+    if (order.status === 'Cancelado' || order.paymentStatus !== 'PENDING') {
+      return res.status(409).json({ message: 'Este pedido ya no admite pagos. Crea un nuevo pedido.' });
+    }
     const publicKey = process.env.WOMPI_PUBLIC_KEY;
     const integritySecret = process.env.WOMPI_INTEGRITY_SECRET;
     const frontendUrl = process.env.FRONTEND_URL;
@@ -83,7 +88,10 @@ exports.handleWebhook = async (req, res) => {
       console.error('Evento Wompi ignorado: importe o moneda no coincide con el pedido.');
       return res.status(400).json({ message: 'El importe o la moneda no coinciden.' });
     }
-    if (order.paymentStatus === 'APPROVED') return res.status(200).json({ received: true });
+    // Un evento repetido o tardío no debe reactivar pedidos cuyo stock ya se liberó.
+    if (order.paymentStatus !== 'PENDING' || order.status === 'Cancelado') {
+      return res.status(200).json({ received: true, ignored: true });
+    }
 
     const status = String(transaction.status).toUpperCase();
     if (status === 'APPROVED') {
