@@ -1,10 +1,7 @@
 name: ElectroVibeHome CI
 
 on:
-  # Ejecuta CI solo en la rama aislada de preparación; no en cada rama ni en producción.
-  push:
-    branches:
-      - security/electrovibehome-hardening
+  # Solo ejecución manual: no genera correos por cada commit.
   workflow_dispatch:
 
 jobs:
