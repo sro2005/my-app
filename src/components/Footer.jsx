@@ -16,10 +16,11 @@ const Footer = () => {
       <div className="evh-footer-brand">
         <Link className="evh-footer-logo" to="/" aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
         <p>El futuro se siente en casa.</p>
-        <div className="evh-footer-contact">
-          <h2>Contacto</h2>
-          <a href="mailto:company.electrovibehome@gmail.com">company.electrovibehome@<wbr />gmail.com</a>
-        </div>
+      </div>
+
+      <div className="evh-footer-section evh-footer-contact">
+        <h2>Contacto</h2>
+        <a href="mailto:company.electrovibehome@gmail.com">company.electrovibehome@<wbr />gmail.com</a>
       </div>
 
       <div className="evh-footer-section">
