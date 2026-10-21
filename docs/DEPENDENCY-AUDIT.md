@@ -1,40 +1,45 @@
-# Dependency audit — ElectroVibeHome
+# Auditoría de dependencias y estado de verificación — ElectroVibeHome
 
-## Evidence available (21 Oct 2026)
+Última revisión documental: 21 de octubre de 2026.
 
-The last recorded GitHub Actions install logs reported:
+## Estado verificado en GitHub Actions
 
-- Frontend root (`npm ci`, 1,552 packages audited): **112 advisories** — 6 low, 17 moderate, 85 high, 4 critical.
-- Backend (`backend/npm ci`, 224 packages audited): **24 advisories** — 1 low, 5 moderate, 16 high, 2 critical.
-- These totals come from a previous run and must be refreshed; they are not a current per-package inventory.
-- The backend JavaScript syntax check and four backend unit tests passed in the most recent available run. Frontend tests exited successfully only because the repository has no frontend tests yet. The frontend production build then failed because `src/components/PedidoForm.js` declared an unused `navigate` variable; that unused import and variable have now been removed on the feature branch, but the build has not yet been rerun against the fix.
+- La ejecución #61 (221ca31) terminó correctamente: instalación limpia, pruebas frontend, compilación de producción, comprobación de sintaxis del backend y pruebas unitarias del backend.
+- Esa ejecución generó artefactos JSON de auditoría para frontend y backend, retenidos por GitHub Actions durante 14 días.
+- Esa ejecución no prueba por sí sola que toda la aplicación funcione de extremo a extremo ni que los flujos de pago sean seguros en producción.
+- Se añadieron pruebas de AuthProvider para comprobar el saneamiento de sesiones persistidas inválidas y el cierre de sesión sin borrar otras preferencias del navegador. Las ejecuciones posteriores deben confirmar estos nuevos tests.
 
-## New audit-report collection
+## Dependencias y herramientas
 
-The manual-only workflow now runs `npm audit --json` separately for the frontend and backend and uploads the complete JSON reports as artifacts, retained for 14 days. This should expose package names, affected paths, severity, and available remediation metadata from the next manual run, even if npm audit exits non-zero. It does **not** automatically change dependency versions or claim the issues are fixed.
+La rama de endurecimiento migra el frontend de Create React App a Vite/Vitest, usa React 19 y Node.js 24, y actualiza las dependencias del backend dentro de versiones principales compatibles. Los lockfiles se instalan mediante npm ci en CI.
 
-## Additional checkout hardening
+**No se debe afirmar que hay cero vulnerabilidades hasta revisar el contenido de los dos informes JSON más recientes.** El hecho de que npm audit --json se ejecute y se almacene como artefacto no hace que CI falle automáticamente cuando reporta avisos. Las cantidades antiguas documentadas abajo son históricas, no un inventario actual.
 
-The Wompi checkout controller now reuses a persisted payment reference for a pending order and uses a conditional database update to claim the first reference. This reduces the risk that reopening checkout creates a new reference while a previous transaction is still in flight. It is a code-level hardening change, not proof that concurrent payment attempts are fully resolved; Wompi Sandbox tests and payment reconciliation are still required.
+## Hallazgos y riesgos que siguen pendientes
 
-## Remediation approach
+1. **Pedidos pendientes y stock:** al crear un pedido se reduce el inventario antes de completar el checkout. Si el cliente abandona el checkout, el inventario puede permanecer reservado. No se debe liberar automáticamente sin reconciliar la referencia con el estado real de Wompi; una política segura requiere consulta/verificación de transacciones y pruebas de concurrencia.
+2. **Pagos:** validar en Wompi Sandbox pagos aprobados, rechazados, en error, pendientes, abandonados, webhooks repetidos, importes/monedas discordantes y eventos tardíos. La redirección del navegador no es prueba de pago.
+3. **Configuración de despliegue:** confirmar MONGODB_URI, JWT_SECRET, FRONTEND_URL, ALLOWED_ORIGINS, variables SMTP y las credenciales Wompi de Sandbox en el entorno de prueba. No copiar secretos reales al repositorio.
+4. **MongoDB:** comprobar que el clúster de pruebas admite transacciones (replica set o Atlas) antes de probar los flujos que usan sesiones/transacciones. No actualizar la versión del servidor MongoDB sin conocer la versión actual y tener respaldo.
+5. **Autenticación:** ampliar pruebas de integración para registro, inicio de sesión, autorización de roles, expiración de JWT, recuperación y restablecimiento de contraseña, y acceso a pedidos ajenos.
+6. **Abuso de endpoints:** valorar limitación de frecuencia para inicio de sesión y recuperación de contraseña antes de producción.
+7. **Secretos históricos:** si se llegó a subir una clave privada real al repositorio, eliminarla del historial no basta: debe revocarse/rotarse y comprobarse el historial con herramientas adecuadas.
+8. **Despliegue:** confirmar que Render utiliza Node 24, el comando de compilación y el directorio de publicación build; probar el frontend con la API de pruebas antes de fusionar.
 
-1. Run the workflow manually from GitHub Actions on branch `security/electrovibehome-hardening`.
-2. Download both audit artifacts and map advisories to direct/transitive dependencies, severity, and fixed versions.
-3. Apply compatible updates in this isolated branch, review both lockfiles, and test the application. Do not use `npm audit fix --force` blindly: it may introduce major-version changes or break the React app and API.
-4. For advisories that remain, update the responsible direct dependency deliberately. The frontend uses Create React App / `react-scripts@5`, whose older build-tool dependency tree may require a separately planned migration; do not mix an unverified migration into a security patch.
-5. Run clean installs, frontend tests and production build, backend syntax checks and unit tests, then smoke-test routes and checkout.
-6. Re-run both audits and document the verified result. Do not claim “zero vulnerabilities” unless the final reports confirm it.
+## Artefactos de auditoría
 
-## Release blockers
+La ejecución #61 almacenó los artefactos frontend-dependency-audit y backend-dependency-audit. Deben descargarse y analizarse para registrar versiones afectadas, severidad, rutas de dependencias y remediaciones disponibles. Repetir la auditoría después de cambios sustanciales y guardar los resultados nuevos.
 
-- No refreshed per-package audit output has been reviewed yet, so vulnerable package versions have **not** been upgraded as part of this work.
-- The last available frontend build failed on an unused `navigate` variable; the variable/import have been removed on this branch, but the fixed build is not yet confirmed. Two storefront smoke tests have been added and the workflow now requires tests to exist, but these tests have not yet been executed in a fresh CI run.
-- Configure Wompi Sandbox and its HTTPS webhook; verify SMTP password reset and MongoDB connectivity; test approved, declined, pending, and abandoned payment flows.
-- Define safe reconciliation for abandoned pending orders. Do not restore reserved stock for a Wompi reference until its payment outcome is verified.
-- Rotate any real private key that was ever committed. Removing a key from the current branch does not purge it from Git history.
-- Confirm `REACT_APP_API_BASE_URL`, `ALLOWED_ORIGINS`, and `FRONTEND_URL` match the actual deployed domains. Do not enable production payments until Sandbox tests pass.
+## Historial
 
-## Notifications
+Una ejecución anterior reportó 112 avisos de frontend (6 bajos, 17 moderados, 85 altos y 4 críticos) y 24 de backend (1 bajo, 5 moderados, 16 altos y 2 críticos). Estos datos pertenecen a una versión anterior y no deben presentarse como estado actual.
 
-The repository CI workflow is manual-dispatch-only, so commits do not automatically start this workflow. This reduces workflow-triggered email noise, but does not change separate GitHub, Dependabot, pull-request, review, or account-level notifications. Those require notification settings in GitHub.
+## Criterio de salida
+
+La rama solo debe proponerse para publicación después de:
+- CI verde en el commit final.
+- Informes de auditoría revisados y vulnerabilidades remediadas o aceptadas con justificación.
+- Pruebas funcionales del frontend y de los endpoints críticos.
+- Pruebas de pago Sandbox y webhook, inventario y recuperación de contraseña.
+- Verificación de configuración de Render y MongoDB en entorno de prueba.
+- Revisión manual del diff final. No fusionar ni desplegar sin aprobación explícita.
