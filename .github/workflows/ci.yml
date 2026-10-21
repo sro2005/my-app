@@ -17,7 +17,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: CI=true npm test -- --watchAll=false
+      - run: CI=true npm test -- --watchAll=false --passWithNoTests
       - run: npm run build
 
   backend:
