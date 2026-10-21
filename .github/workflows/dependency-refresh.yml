@@ -1,0 +1,74 @@
+name: ElectroVibeHome dependency refresh (safe)
+
+on:
+  # Ejecuta una actualización controlada solo en la rama de seguridad.
+  push:
+    branches:
+      - security/electrovibehome-hardening
+    paths:
+      - '.github/workflows/dependency-refresh.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Refresh dependencies within declared semver ranges
+        run: npm update
+      - name: Capture dependency audit
+        if: always()
+        run: npm audit --json > npm-audit-frontend.json || true
+      - name: Run frontend tests
+        run: CI=true npm test -- --watchAll=false
+      - name: Build frontend
+        run: npm run build
+      - name: Upload refreshed frontend lockfile and audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refreshed-frontend-lockfile
+          path: |
+            package-lock.json
+            npm-audit-frontend.json
+          if-no-files-found: warn
+          retention-days: 7
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Refresh dependencies within declared semver ranges
+        run: npm update
+      - name: Capture dependency audit
+        if: always()
+        run: npm audit --json > npm-audit-backend.json || true
+      - name: Check JavaScript syntax
+        run: |
+          find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
+      - name: Run backend unit tests
+        run: npm test
+      - name: Upload refreshed backend lockfile and audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refreshed-backend-lockfile
+          path: |
+            backend/package-lock.json
+            backend/npm-audit-backend.json
+          if-no-files-found: warn
+          retention-days: 7
