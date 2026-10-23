@@ -186,7 +186,7 @@ const PerfilCliente = () => {
       lastName: formData.lastName.trim(),
       email: formData.email.trim().toLowerCase(),
       birthDate: formData.birthDate,
-      identificationNumber: formData.identificationNumber.trim(),
+      identificationNumber: formatIdentificationNumber(formData.identificationNumber),
       phone: formData.phone.trim(),
       preferences: asPreferenceValues(formData.preferences)
     };
