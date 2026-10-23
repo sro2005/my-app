@@ -1,20 +1,21 @@
-name: ElectroVibeHome dependency refresh (safe)
+name: ElectroVibeHome dependency refresh (manual and safe)
 
 on:
-  # Ejecuta una actualización controlada solo en la rama de seguridad.
-  push:
-    branches:
-      - security/electrovibehome-hardening
-    paths:
-      - '.github/workflows/dependency-refresh.yml'
-      - 'package.json'
-      - 'backend/package.json'
+  # Actualizar dependencias solo bajo solicitud explícita, nunca en cada push.
+  workflow_dispatch:
+    inputs:
+      confirm_refresh:
+        description: "Confirmo que se actualicen dependencias compatibles y se ejecuten pruebas."
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
 jobs:
   frontend:
+    if: \${{ inputs.confirm_refresh }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -43,6 +44,7 @@ jobs:
           retention-days: 7
 
   backend:
+    if: \${{ inputs.confirm_refresh }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -76,7 +78,7 @@ jobs:
           retention-days: 7
 
   commit-lockfiles:
-    if: needs.frontend.result == 'success' && needs.backend.result == 'success'
+    if: \${{ inputs.confirm_refresh && needs.frontend.result == 'success' && needs.backend.result == 'success' }}
     needs:
       - frontend
       - backend
@@ -86,7 +88,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: security/electrovibehome-hardening
+          ref: preview/electrovibehome-v2
       - uses: actions/download-artifact@v7
         with:
           name: refreshed-frontend-lockfile
