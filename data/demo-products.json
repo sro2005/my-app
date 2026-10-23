@@ -1,244 +1,244 @@
 [
   {
     "id": "aire-brisa",
-    "name": "Aire acondicionado Brisa",
-    "description": "Equipo de climatización de muestra para habitaciones y salas. Las características y el precio son ilustrativos.",
+    "name": "AeroClima Inverter 12000 BTU",
+    "description": "Aire acondicionado tipo split de 12.000 BTU, modo sueño, temporizador de 24 horas y control remoto. Recomendado para espacios de hasta 20 m².",
     "category": "Aires Acondicionados",
-    "price": 1499000,
-    "quantity": 8,
+    "price": 1899900,
+    "quantity": 7,
     "demoIcon": "❄️",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Aire%20acondicionado%20Brisa"
+    "imageUrl": ""
   },
   {
     "id": "aspiradora-nube",
-    "name": "Aspiradora Nube",
-    "description": "Una opción de demostración para facilitar la limpieza diaria de pisos y tapicería.",
+    "name": "NovaClean Cyclone 1800",
+    "description": "Aspiradora sin bolsa de 1.800 W, depósito de 2 L, filtro lavable y accesorios para pisos, rincones y tapicería.",
     "category": "Aspiradoras",
-    "price": 329900,
-    "quantity": 12,
+    "price": 379900,
+    "quantity": 11,
     "demoIcon": "🧹",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Aspiradora%20Nube"
+    "imageUrl": ""
   },
   {
     "id": "batidora-mix",
-    "name": "Batidora Mix",
-    "description": "Ejemplo de equipo para mezclar ingredientes y preparar recetas en casa.",
+    "name": "ChefMix Pro 5 Velocidades",
+    "description": "Batidora de pedestal con recipiente de acero de 4 L, cinco velocidades y accesorios para masas ligeras, cremas y mezclas.",
     "category": "Batidoras",
-    "price": 239900,
-    "quantity": 10,
+    "price": 449900,
+    "quantity": 9,
     "demoIcon": "🥣",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Batidora%20Mix"
+    "imageUrl": ""
   },
   {
     "id": "parlante-onda",
-    "name": "Parlante Onda",
-    "description": "Producto ilustrativo de audio inalámbrico para acompañar tus espacios.",
+    "name": "Sonora Beat 20",
+    "description": "Parlante Bluetooth portátil con potencia nominal de 20 W, conexión inalámbrica, entrada auxiliar y batería de hasta 10 horas según uso.",
     "category": "Bocinas Inteligentes o Parlantes Bluetooth",
-    "price": 279900,
-    "quantity": 14,
+    "price": 249900,
+    "quantity": 15,
     "demoIcon": "🔊",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Parlante%20Onda"
+    "imageUrl": ""
   },
   {
     "id": "cafetera-am",
-    "name": "Cafetera Amanecer",
-    "description": "Una ficha de muestra para quienes disfrutan preparar café en casa.",
+    "name": "CaféMio Program 12",
+    "description": "Cafetera de goteo programable para 12 tazas, jarra de vidrio, función de pausa y apagado automático.",
     "category": "Cafeteras",
-    "price": 189900,
-    "quantity": 9,
+    "price": 229900,
+    "quantity": 12,
     "demoIcon": "☕",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Cafetera%20Amanecer"
+    "imageUrl": ""
   },
   {
     "id": "celular-pulso",
-    "name": "Celular Pulso",
-    "description": "Ejemplo de teléfono para ilustrar la categoría de dispositivos móviles.",
+    "name": "Orion M5 128 GB",
+    "description": "Smartphone con pantalla FHD+ de 6,5 pulgadas, 128 GB de almacenamiento, 6 GB de RAM, cámara principal de 50 MP y batería de 5.000 mAh.",
     "category": "Celulares",
-    "price": 1249900,
-    "quantity": 7,
+    "price": 1099900,
+    "quantity": 8,
     "demoIcon": "📱",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Celular%20Pulso"
+    "imageUrl": ""
   },
   {
     "id": "desktop-nucleo",
-    "name": "Computador de escritorio Núcleo",
-    "description": "Configuración ficticia de escritorio para mostrar equipos de productividad y hogar.",
+    "name": "CoreDesk Home i5 16 GB",
+    "description": "Computador de escritorio con procesador Intel Core i5 de gama media, 16 GB de RAM, SSD de 512 GB y conectividad Wi-Fi. Monitor no incluido.",
     "category": "Computadores de Escritorio",
-    "price": 2899000,
-    "quantity": 4,
+    "price": 2599900,
+    "quantity": 5,
     "demoIcon": "🖥️",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Computador%20de%20escritorio%20N%C3%BAcleo"
+    "imageUrl": ""
   },
   {
     "id": "portatil-ruta",
-    "name": "Portátil Ruta",
-    "description": "Ficha demostrativa de computador portátil para estudio, trabajo y tareas cotidianas.",
+    "name": "AlturaBook 14 Ryzen 5",
+    "description": "Portátil de 14 pulgadas Full HD, procesador AMD Ryzen 5, 16 GB de RAM, SSD de 512 GB y teclado en español para estudio y productividad.",
     "category": "Computadores Portátiles",
-    "price": 2499000,
-    "quantity": 5,
+    "price": 2399900,
+    "quantity": 7,
     "demoIcon": "💻",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Port%C3%A1til%20Ruta"
+    "imageUrl": ""
   },
   {
     "id": "consola-play",
-    "name": "Consola Arcade",
-    "description": "Producto de muestra para la categoría de entretenimiento y videojuegos.",
+    "name": "PlaySphere X 1 TB",
+    "description": "Consola doméstica ficticia con almacenamiento SSD de 1 TB, salida de video hasta 4K compatible y control inalámbrico incluido.",
     "category": "Consolas de Videojuegos",
-    "price": 2299000,
-    "quantity": 4,
+    "price": 2199900,
+    "quantity": 6,
     "demoIcon": "🎮",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Consola%20Arcade"
+    "imageUrl": ""
   },
   {
     "id": "estufa-hogar",
-    "name": "Estufa Hogar",
-    "description": "Ejemplo de estufa para ilustrar opciones de cocina doméstica.",
+    "name": "HogarChef 4 Puestos",
+    "description": "Estufa de piso a gas con cuatro quemadores, horno de 60 L, parrillas resistentes y encendido eléctrico.",
     "category": "Estufas",
-    "price": 899900,
+    "price": 1199900,
     "quantity": 6,
     "demoIcon": "🔥",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Estufa%20Hogar"
+    "imageUrl": ""
   },
   {
     "id": "impresora-trazo",
-    "name": "Impresora Trazo",
-    "description": "Ficha ilustrativa de una impresora para documentos y actividades del hogar.",
+    "name": "Printiva InkTank M220",
+    "description": "Impresora multifuncional de tanque de tinta con impresión, copia y escaneo, conexión Wi-Fi y resolución de hasta 1.200 dpi.",
     "category": "Impresoras",
-    "price": 649900,
-    "quantity": 6,
+    "price": 799900,
+    "quantity": 9,
     "demoIcon": "🖨️",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Impresora%20Trazo"
+    "imageUrl": ""
   },
   {
     "id": "lavadora-ciclo",
-    "name": "Lavadora Ciclo",
-    "description": "Una opción demostrativa para la categoría de lavado y cuidado de prendas.",
+    "name": "AquaWash 17 kg Digital",
+    "description": "Lavadora automática de carga superior con capacidad de 17 kg, ocho programas, selección de nivel de agua y bloqueo infantil.",
     "category": "Lavadoras",
-    "price": 1599000,
+    "price": 1799900,
     "quantity": 5,
     "demoIcon": "🧺",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Lavadora%20Ciclo"
+    "imageUrl": ""
   },
   {
     "id": "licuadora-viva",
-    "name": "Licuadora Viva",
-    "description": "Producto ficticio para mostrar una alternativa práctica en la preparación de bebidas.",
+    "name": "VitaBlend Glass 1,5 L",
+    "description": "Licuadora de 700 W con vaso de vidrio de 1,5 L, cinco velocidades y función pulso para bebidas y preparaciones cotidianas.",
     "category": "Licuadoras",
-    "price": 199900,
-    "quantity": 11,
+    "price": 219900,
+    "quantity": 16,
     "demoIcon": "🥤",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Licuadora%20Viva"
+    "imageUrl": ""
   },
   {
     "id": "microondas-rapido",
-    "name": "Microondas Rápido",
-    "description": "Ejemplo de producto para calentar alimentos y complementar la cocina.",
+    "name": "QuickHeat 25 L Digital",
+    "description": "Horno microondas de 25 L con panel digital, diez niveles de potencia, descongelación por peso y temporizador.",
     "category": "Microondas",
-    "price": 499900,
-    "quantity": 8,
+    "price": 549900,
+    "quantity": 10,
     "demoIcon": "🍲",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Microondas%20R%C3%A1pido"
+    "imageUrl": ""
   },
   {
     "id": "plancha-suave",
-    "name": "Plancha Suave",
-    "description": "Ficha de demostración para el cuidado de la ropa y el alisado de prendas.",
+    "name": "VaporCare Ceramic 2200",
+    "description": "Plancha de vapor de 2.200 W con suela cerámica, vapor regulable, rociador de agua y sistema antigoteo.",
     "category": "Planchas de Ropa",
-    "price": 99900,
-    "quantity": 13,
+    "price": 139900,
+    "quantity": 14,
     "demoIcon": "👔",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Plancha%20Suave"
+    "imageUrl": ""
   },
   {
     "id": "refrigerador-fresco",
-    "name": "Refrigerador Fresco",
-    "description": "Producto ilustrativo de refrigeración para organizar alimentos en el hogar.",
+    "name": "FrostLine No Frost 300 L",
+    "description": "Nevera de 300 L con tecnología No Frost, congelador superior, bandejas ajustables e iluminación LED interior.",
     "category": "Refrigeradores",
-    "price": 2399000,
-    "quantity": 4,
+    "price": 2299900,
+    "quantity": 5,
     "demoIcon": "🧊",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Refrigerador%20Fresco"
+    "imageUrl": ""
   },
   {
     "id": "sandwichera-lista",
-    "name": "Sanduchera Lista",
-    "description": "Ejemplo de pequeño electrodoméstico para preparar sándwiches de forma sencilla.",
+    "name": "Toast&Go Grill Compact",
+    "description": "Sanduchera de dos puestos con placas antiadherentes, indicadores luminosos y cierre de seguridad.",
     "category": "Sandwicheras",
-    "price": 109900,
-    "quantity": 12,
+    "price": 119900,
+    "quantity": 18,
     "demoIcon": "🥪",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Sanduchera%20Lista"
+    "imageUrl": ""
   },
   {
     "id": "secador-brillo",
-    "name": "Secador Brillo",
-    "description": "Ficha ficticia para mostrar un accesorio de cuidado personal.",
+    "name": "SilkAir Ionic 2000",
+    "description": "Secador de cabello de 2.000 W con dos velocidades, tres niveles de temperatura, aire frío y boquilla concentradora.",
     "category": "Secadores de Cabello",
-    "price": 129900,
-    "quantity": 10,
+    "price": 169900,
+    "quantity": 12,
     "demoIcon": "💨",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Secador%20Brillo"
+    "imageUrl": ""
   },
   {
     "id": "tablet-idea",
-    "name": "Tableta Idea",
-    "description": "Ejemplo de tableta para ilustrar dispositivos de lectura, estudio y entretenimiento.",
+    "name": "NovaTab 10 128 GB",
+    "description": "Tableta de 10,4 pulgadas, 128 GB de almacenamiento, 6 GB de RAM, conectividad Wi-Fi y cámara frontal para videollamadas.",
     "category": "Tablets",
-    "price": 899900,
-    "quantity": 6,
+    "price": 999900,
+    "quantity": 8,
     "demoIcon": "📲",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Tableta%20Idea"
+    "imageUrl": ""
   },
   {
     "id": "televisor-escena",
-    "name": "Televisor Escena",
-    "description": "Producto demostrativo de pantalla para disfrutar contenido audiovisual en casa.",
+    "name": "VisionMax QLED 55",
+    "description": "Televisor inteligente de 55 pulgadas, resolución 4K UHD, panel QLED, Wi-Fi integrado y tres puertos HDMI.",
     "category": "Televisores",
-    "price": 1799000,
-    "quantity": 5,
+    "price": 2199900,
+    "quantity": 6,
     "demoIcon": "📺",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Televisor%20Escena"
+    "imageUrl": ""
   },
   {
     "id": "tostadora-dorada",
-    "name": "Tostadora Dorada",
-    "description": "Ficha ilustrativa para una opción de desayuno práctica y compacta.",
+    "name": "DoraToast 2 Rebanadas",
+    "description": "Tostadora compacta para dos rebanadas con seis niveles de dorado, función cancelar y bandeja recogemigas.",
     "category": "Tostadoras",
-    "price": 89900,
-    "quantity": 14,
+    "price": 109900,
+    "quantity": 17,
     "demoIcon": "🍞",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Tostadora%20Dorada"
+    "imageUrl": ""
   },
   {
     "id": "ventilador-brisa",
-    "name": "Ventilador Brisa",
-    "description": "Ejemplo de ventilación doméstica para complementar ambientes de uso diario.",
+    "name": "EcoBreeze Torre 42",
+    "description": "Ventilador de torre de 42 pulgadas, tres velocidades, oscilación lateral, temporizador y control remoto.",
     "category": "Ventiladores",
-    "price": 159900,
-    "quantity": 9,
+    "price": 299900,
+    "quantity": 13,
     "demoIcon": "🌀",
     "demo": true,
-    "imageUrl": "https://placehold.co/800x600/f4f6fb/344054.jpg?text=Ventilador%20Brisa"
+    "imageUrl": ""
   }
 ]
