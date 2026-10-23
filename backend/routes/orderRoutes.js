@@ -4,22 +4,20 @@ const orderController = require('../controllers/orderController');
 const { authenticateToken, authenticateAdminToken } = require('../middlewares/authMiddleware');
 const paymentController = require('../controllers/wompiController');
 
-// Ruta para crear un nuevo pedido (abierto para usuarios normales, pero con autenticación)
+// Crear un pedido requiere una sesión autenticada.
 router.post('/realizar', authenticateToken, orderController.createOrder);
 router.post('/:id/wompi-checkout', authenticateToken, paymentController.createCheckout);
 router.post('/wompi/webhook', paymentController.handleWebhook);
 
-// Ruta para obtener todos los pedidos (solo para administradores)
+// Los clientes solo pueden consultar sus propios pedidos; la lista completa es exclusiva de admins.
 router.get('/all', authenticateAdminToken, orderController.getOrders);
-
-// Ruta para obtener un pedido específico por su ID (abierto para usuarios autenticados)
 router.get('/my-orders', authenticateToken, orderController.getOrdersByUserId);
 
-// Ruta para actualizar un pedido (solo para administradores)
-// Ruta para actualizar automáticamente el estado de un pedido
+// Edición logística limitada y cambios de estado solo para administradores.
 router.put('/:id/status', authenticateAdminToken, orderController.updateOrderStatusAutomatically);
+router.put('/:id', authenticateAdminToken, orderController.updateOrder);
 
-// Ruta para eliminar un pedido (solo para administradores)
+// Eliminar pedidos solo para administradores y con las protecciones del controlador.
 router.delete('/:id', authenticateAdminToken, orderController.deleteOrder);
 
 module.exports = router;
