@@ -1,45 +1,58 @@
 # Auditoría de dependencias y estado de verificación — ElectroVibeHome
 
-Última revisión documental: 21 de octubre de 2026.
+Última verificación automatizada: CI #105, commit `baa141b845fa3fd7f2f5bcb17288e19f09423dec` (22 de octubre de 2026, hora de Colombia; 23 de octubre UTC).
 
-## Estado verificado en GitHub Actions
+## Resultado más reciente de npm audit
 
-- La ejecución #61 (221ca31) terminó correctamente: instalación limpia, pruebas frontend, compilación de producción, comprobación de sintaxis del backend y pruebas unitarias del backend.
-- Esa ejecución generó artefactos JSON de auditoría para frontend y backend, retenidos por GitHub Actions durante 14 días.
-- Esa ejecución no prueba por sí sola que toda la aplicación funcione de extremo a extremo ni que los flujos de pago sean seguros en producción.
-- Se añadieron pruebas de AuthProvider para comprobar el saneamiento de sesiones persistidas inválidas y el cierre de sesión sin borrar otras preferencias del navegador. Las ejecuciones posteriores deben confirmar estos nuevos tests.
+Los informes JSON adjuntos al workflow **ElectroVibeHome CI #105** fueron descargados y revisados.
 
-## Dependencias y herramientas
+| Paquete | Dependencias incluidas en el informe | Informativas | Bajas | Moderadas | Altas | Críticas | Total reportado |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Frontend | 245 | 0 | 0 | 0 | 0 | 0 | **0** |
+| Backend | 127 | 0 | 0 | 0 | 0 | 0 | **0** |
 
-La rama de endurecimiento migra el frontend de Create React App a Vite/Vitest, usa React 19 y Node.js 24, y actualiza las dependencias del backend dentro de versiones principales compatibles. Los lockfiles se instalan mediante npm ci en CI.
+Los informes no detectaron avisos de vulnerabilidad conocidos por la base de datos de advisories de npm consultada en esa ejecución. Esto **no** demuestra que la aplicación sea invulnerable ni sustituye el análisis del código, las dependencias transitivas que no cubra el informe, la configuración de hosting o las pruebas funcionales.
 
-**No se debe afirmar que hay cero vulnerabilidades hasta revisar el contenido de los dos informes JSON más recientes.** El hecho de que npm audit --json se ejecute y se almacene como artefacto no hace que CI falle automáticamente cuando reporta avisos. Las cantidades antiguas documentadas abajo son históricas, no un inventario actual.
+CI ejecuta `npm audit --json` con tolerancia de error para poder generar y guardar el informe como artefacto. Por tanto, un informe con avisos por sí solo no hace fallar el workflow; revisar los informes continúa siendo un control explícito.
 
-## Hallazgos y riesgos que siguen pendientes
+Artefactos asociados a la ejecución #105:
+- `frontend-dependency-audit`
+- `backend-dependency-audit`
 
-1. **Pedidos pendientes y stock:** al crear un pedido se reduce el inventario antes de completar el checkout. Si el cliente abandona el checkout, el inventario puede permanecer reservado. No se debe liberar automáticamente sin reconciliar la referencia con el estado real de Wompi; una política segura requiere consulta/verificación de transacciones y pruebas de concurrencia.
-2. **Pagos:** validar en Wompi Sandbox pagos aprobados, rechazados, en error, pendientes, abandonados, webhooks repetidos, importes/monedas discordantes y eventos tardíos. La redirección del navegador no es prueba de pago.
-3. **Configuración de despliegue:** confirmar MONGODB_URI, JWT_SECRET, FRONTEND_URL, ALLOWED_ORIGINS, variables SMTP y las credenciales Wompi de Sandbox en el entorno de prueba. No copiar secretos reales al repositorio.
-4. **MongoDB:** comprobar que el clúster de pruebas admite transacciones (replica set o Atlas) antes de probar los flujos que usan sesiones/transacciones. No actualizar la versión del servidor MongoDB sin conocer la versión actual y tener respaldo.
-5. **Autenticación:** ampliar pruebas de integración para registro, inicio de sesión, autorización de roles, expiración de JWT, recuperación y restablecimiento de contraseña, y acceso a pedidos ajenos.
-6. **Abuso de endpoints:** valorar limitación de frecuencia para inicio de sesión y recuperación de contraseña antes de producción.
-7. **Secretos históricos:** si se llegó a subir una clave privada real al repositorio, eliminarla del historial no basta: debe revocarse/rotarse y comprobarse el historial con herramientas adecuadas.
-8. **Despliegue:** confirmar que Render utiliza Node 24, el comando de compilación y el directorio de publicación build; probar el frontend con la API de pruebas antes de fusionar.
+## Estado de verificación de CI
 
-## Artefactos de auditoría
+La ejecución #105 terminó correctamente:
+- Instalación limpia de dependencias frontend y backend con los lockfiles.
+- Pruebas automatizadas frontend.
+- Build de producción del frontend.
+- Validación sintáctica del backend.
+- Pruebas unitarias del backend.
+- Generación y publicación de los dos informes de auditoría.
 
-La ejecución #61 almacenó los artefactos frontend-dependency-audit y backend-dependency-audit. Deben descargarse y analizarse para registrar versiones afectadas, severidad, rutas de dependencias y remediaciones disponibles. Repetir la auditoría después de cambios sustanciales y guardar los resultados nuevos.
+Esto comprueba los pasos ejecutados en CI, no el funcionamiento end-to-end de todas las pantallas, la conexión con MongoDB, el servicio SMTP ni los pagos.
 
-## Historial
+## Riesgos y tareas funcionales pendientes
 
-Una ejecución anterior reportó 112 avisos de frontend (6 bajos, 17 moderados, 85 altos y 4 críticos) y 24 de backend (1 bajo, 5 moderados, 16 altos y 2 críticos). Estos datos pertenecen a una versión anterior y no deben presentarse como estado actual.
+1. **Base de datos de pruebas:** crear una base MongoDB independiente cuyo nombre incluya `demo`, `test` o `sandbox`. No conectar la vista previa a la variable `MONGODB_URI` de producción.
+2. **Pedidos e inventario:** al crear un pedido, las unidades se reservan antes de completar el checkout. Un checkout abandonado puede dejar inventario reservado. No liberar unidades automáticamente sin reconciliar de forma segura el estado de la transacción Wompi.
+3. **Wompi Sandbox:** probar pagos aprobados, rechazados, con error, pendientes, abandonados y eventos tardíos; webhooks repetidos; referencias, importe y moneda discordantes. La redirección del navegador no confirma por sí sola un pago.
+4. **Transacciones MongoDB:** confirmar que la base de pruebas admite transacciones (por ejemplo, un clúster de Atlas apto para ellas) antes de probar los flujos concurrentes de pedidos e inventario.
+5. **Autenticación y permisos:** probar registro, login, rol administrador, expiración JWT, perfil, recuperación y restablecimiento de contraseña, y aislamiento de pedidos entre usuarios.
+6. **Correo:** validar envío SMTP de recuperación en el entorno de pruebas sin incluir credenciales reales en Git, registros o frontend.
+7. **Configuración:** establecer valores de pruebas para `JWT_SECRET`, `FRONTEND_URL`, `ALLOWED_ORIGINS`, variables SMTP y credenciales exclusivas de Wompi Sandbox.
+8. **Secretos históricos:** si una clave privada real fue subida al historial del repositorio, retirarla del código actual no basta; hay que revocarla o rotarla y revisar el historial.
+9. **Abuso de endpoints:** evaluar limitación de frecuencia para login y recuperación de contraseña antes de producción.
+10. **Pruebas manuales:** recorrer la vista previa y validar que cada pantalla se comporta como se espera; el éxito del build y de las pruebas unitarias no es una prueba completa de los flujos de usuario.
 
-## Criterio de salida
+## Historial de cifras
 
-La rama solo debe proponerse para publicación después de:
-- CI verde en el commit final.
-- Informes de auditoría revisados y vulnerabilidades remediadas o aceptadas con justificación.
-- Pruebas funcionales del frontend y de los endpoints críticos.
-- Pruebas de pago Sandbox y webhook, inventario y recuperación de contraseña.
-- Verificación de configuración de Render y MongoDB en entorno de prueba.
-- Revisión manual del diff final. No fusionar ni desplegar sin aprobación explícita.
+Una ejecución histórica reportó 112 avisos frontend y 24 backend. Esos números corresponden a una versión anterior y **no** describen el informe más reciente, que registró cero avisos en ambas partes.
+
+## Criterio de publicación
+
+No habilitar pagos reales ni fusionar/desplegar esta rama a producción hasta:
+- CI verde en el commit que se proponga publicar.
+- Informes de auditoría revisados.
+- Base de datos y backend de pruebas separados de producción.
+- Pruebas funcionales de frontend, API, autorización, correo, pedidos, inventario, Sandbox y webhooks.
+- Confirmación de todas las variables de entorno y revisión manual del diff final.
