@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ListadoProductos from './ListadoProductos';
+import demoProducts from '../../data/demo-products.json';
 
 vi.mock('axios', () => ({
   default: { get: vi.fn() }
@@ -18,6 +19,41 @@ afterEach(() => {
   vi.clearAllMocks();
   vi.unstubAllEnvs();
   localStorage.clear();
+  test('demo fixtures cover every preference category with clearly marked sample data', () => {
+    const expectedCategories = [
+      'Aires Acondicionados',
+      'Aspiradoras',
+      'Batidoras',
+      'Bocinas Inteligentes o Parlantes Bluetooth',
+      'Cafeteras',
+      'Celulares',
+      'Computadores de Escritorio',
+      'Computadores Portátiles',
+      'Consolas de Videojuegos',
+      'Estufas',
+      'Impresoras',
+      'Lavadoras',
+      'Licuadoras',
+      'Microondas',
+      'Planchas de Ropa',
+      'Refrigeradores',
+      'Sandwicheras',
+      'Secadores de Cabello',
+      'Tablets',
+      'Televisores',
+      'Tostadoras',
+      'Ventiladores'
+    ];
+    const actualCategories = [...new Set(demoProducts.map((product) => product.category))];
+
+    expect(demoProducts).toHaveLength(22);
+    expect(actualCategories).toHaveLength(22);
+    expect(actualCategories).toEqual(expect.arrayContaining(expectedCategories));
+    expect(demoProducts.every((product) => product.demo === true)).toBe(true);
+    expect(demoProducts.every((product) => Number.isFinite(product.price) && product.price > 0)).toBe(true);
+    expect(demoProducts.every((product) => Number.isInteger(product.quantity) && product.quantity > 0)).toBe(true);
+  });
+
 });
 
 const renderCatalog = (user = null) => render(
