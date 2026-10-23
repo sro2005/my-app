@@ -121,6 +121,10 @@ exports.getOrders = async (req, res) => {
 exports.updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Identificador de pedido inválido.' });
+    }
+
     const allowedFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'deliveryDate'];
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const updates = {};
