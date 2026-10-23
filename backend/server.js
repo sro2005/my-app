@@ -23,7 +23,7 @@ const assistantRoutes = require('./routes/assistantRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGODB_URI;
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Configurar CORS. En producción se exige una lista explícita de orígenes permitidos.
@@ -54,7 +54,7 @@ if (!isProduction) {
  // así Render puede detectar una configuración rota en lugar de dejar un backend aparentemente activo.
 const connectDatabase = async () => {
   if (!MONGO_URI || !MONGO_URI.trim()) {
-    throw new Error('Falta la variable de entorno MONGODB_URI.');
+    throw new Error('Falta la variable de entorno MONGO_URI (también se acepta MONGODB_URI).');
   }
 
   await mongoose.connect(MONGO_URI, {
