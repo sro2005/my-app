@@ -1519,6 +1519,10 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
   justify-content: space-between;
   gap: 2rem;
   margin-bottom: 1.75rem;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  text-align: left;
 }
 
 .evh-catalog-heading h1,
