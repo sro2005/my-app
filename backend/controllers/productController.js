@@ -3,16 +3,31 @@ const Customer = require('../models/Customer');
 const Order = require('../models/Order');
 const { productSchema } = require('../validations/productValidation');
 
+// Campos aceptados por la validación del servidor; los datos demo se conservan cuando se editan productos.
+const productFields = (value) => {
+  const fields = {
+    name: value.name,
+    description: value.description,
+    category: value.category,
+    price: value.price,
+    quantity: value.quantity,
+    imageUrl: value.imageUrl
+  };
+  for (const key of ['demo', 'demoIcon', 'catalogVersion']) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) fields[key] = value[key];
+  }
+  return fields;
+};
+
 // Crear un nuevo producto (solo admins)
 exports.createProduct = async (req, res) => {
   try {
-    const { error, value } = productSchema.validate(req.body);
+    const { error, value } = productSchema.validate(req.body, { abortEarly: false, stripUnknown: false });
     if (error) {
-      return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
+      return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(detail => detail.message) });
     }
 
-    const { name, description, category, price, quantity, imageUrl } = value;
-    const newProduct = new Product({ name, description, category, price, quantity, imageUrl });
+    const newProduct = new Product(productFields(value));
     await newProduct.save();
 
     res.status(201).json({ message: 'Producto agregado exitosamente', product: newProduct });
@@ -37,19 +52,16 @@ exports.getProducts = async (req, res) => {
 // Ajuste: Consultamos el cliente en la base de datos para obtener las preferencias actualizadas
 exports.getProductsByPreferences = async (req, res) => {
   try {
-    // Buscamos el cliente actualizado en la base de datos
     const customer = await Customer.findById(req.user._id);
     if (!customer) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
-    
-    const preferences = customer.preferences; // Ahora obtenemos las preferencias actualizadas desde la DB
 
+    const preferences = customer.preferences;
     if (!preferences || preferences.length === 0) {
-      return res.status(200).json([]); // O bien, podrías devolver todos los productos si lo prefieres
+      return res.status(200).json([]);
     }
-    
-    // Buscar productos cuya 'category' esté entre las preferencias actualizadas del usuario
+
     const products = await Product.find({ category: { $in: preferences } });
     res.status(200).json(products);
   } catch (error) {
@@ -61,15 +73,18 @@ exports.getProductsByPreferences = async (req, res) => {
 // Actualizar un producto (solo admins)
 exports.updateProduct = async (req, res) => {
   try {
-    const { error, value } = productSchema.validate(req.body);
+    const { error, value } = productSchema.validate(req.body, { abortEarly: false, stripUnknown: false });
     if (error) {
-      return res.status(400).json({ message: 'Datos inválidos', error: error.details[0].message });
+      return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(detail => detail.message) });
     }
 
     const { id } = req.params;
-    const { name, description, category, price, quantity, imageUrl } = value;
+    if (!Product.base.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Identificador de producto inválido.' });
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(id, {
-      name, description, category, price, quantity, imageUrl
+      $set: productFields(value)
     }, { new: true, runValidators: true });
 
     if (!updatedProduct) return res.status(404).json({ message: 'Producto no encontrado' });
