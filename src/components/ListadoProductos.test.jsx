@@ -1,12 +1,16 @@
 import React from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ListadoProductos from './ListadoProductos';
 
 vi.mock('axios', () => ({
   default: { get: vi.fn() }
+}));
+
+vi.mock('./ShoppingAssistant', () => ({
+  default: () => null
 }));
 
 afterEach(() => {
@@ -16,49 +20,73 @@ afterEach(() => {
   localStorage.clear();
 });
 
-const renderCatalog = () => render(
-  <AuthContext.Provider value={{ user: null }}>
+const renderCatalog = (user = null) => render(
+  <AuthContext.Provider value={{ user }}>
     <ListadoProductos />
   </AuthContext.Provider>
 );
 
 describe('ListadoProductos', () => {
-  test('shows a recoverable message instead of requesting the current page when the API URL is missing', async () => {
+  test('shows the local demo catalog when the API URL is not configured', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', '');
 
     renderCatalog();
 
-    expect(await screen.findByRole('alert')).toBeTruthy();
-    expect(screen.getByRole('heading', { name: /tu catálogo te espera/i })).toBeTruthy();
-    expect(screen.getByRole('button', { name: /cargar de nuevo/i })).toBeTruthy();
+    expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Aire acondicionado Brisa' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Ventilador Brisa' })).toBeTruthy();
     expect(axios.get).not.toHaveBeenCalled();
   });
 
-  test('rejects an unexpected API response shape and allows retrying', async () => {
+  test('falls back to demo products when the API request fails and offers retry', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
-    axios.get.mockResolvedValue({ data: { message: 'Backend unavailable' } });
+    axios.get.mockRejectedValue(new Error('offline'));
 
     renderCatalog();
 
-    expect(await screen.findByRole('alert')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: /cargar de nuevo/i }));
-
-    await waitFor(() => {
-      const productRequests = axios.get.mock.calls.filter(([url]) => url.includes('/api/products'));
-      expect(productRequests).toHaveLength(2);
-    });
-    expect(screen.getByRole('alert')).toBeTruthy();
+    expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /reintentar conexión/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Licuadora Viva' })).toBeTruthy();
   });
 
-  test('renders products from the expected API response', async () => {
+  test('loads the full API catalog and lets visitors search it', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
     axios.get.mockResolvedValue({
-      data: [{ _id: 'product-1', name: 'Licuadora', description: 'Compacta', price: 120000, category: 'Cocina', quantity: 3 }]
+      data: [
+        { _id: 'p1', name: 'Licuadora Test', description: 'Para batidos', price: 150000, category: 'Licuadoras', quantity: 3 },
+        { _id: 'p2', name: 'Tostadora Test', description: 'Para desayunos', price: 90000, category: 'Tostadoras', quantity: 4 }
+      ]
     });
 
     renderCatalog();
 
-    expect(await screen.findByText('Licuadora')).toBeTruthy();
-    expect(screen.getByText(/3 unidades/i)).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Licuadora Test' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Tostadora Test' })).toBeTruthy();
+    expect(axios.get).toHaveBeenCalledWith('https://api.example.test/api/products');
+
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'tostadora' } });
+
+    expect(screen.getByRole('heading', { name: 'Tostadora Test' })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Licuadora Test' })).toBeNull();
+  });
+
+  test('uses saved category preferences as an optional filter, without preventing access to the full catalog', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    axios.get.mockResolvedValue({
+      data: [
+        { _id: 'p1', name: 'Licuadora Test', description: 'Para batidos', price: 150000, category: 'Licuadoras', quantity: 3 },
+        { _id: 'p2', name: 'Tostadora Test', description: 'Para desayunos', price: 90000, category: 'Tostadoras', quantity: 4 }
+      ]
+    });
+
+    renderCatalog({ _id: 'user-1', role: 'user', preferences: ['Licuadoras'] });
+
+    expect(await screen.findByRole('heading', { name: 'Licuadora Test' })).toBeTruthy();
+    expect(screen.queryByRole('heading', { name: 'Tostadora Test' })).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: /ver todo el catálogo/i }));
+
+    expect(screen.getByRole('heading', { name: 'Licuadora Test' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Tostadora Test' })).toBeTruthy();
   });
 });
