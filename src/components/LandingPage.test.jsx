@@ -24,13 +24,13 @@ describe('LandingPage', () => {
     expect(screen.getByRole('link', { name: /crear mi cuenta/i }).getAttribute('href')).toBe('/register');
   });
 
-  test('renders the four product categories and official Wompi checkout messaging', () => {
+  test('renders the four product categories and explains that payments are test-only', () => {
     render(<LandingPage />);
 
     expect(screen.getByText('Refrigeración')).toBeTruthy();
     expect(screen.getByText('Lavado y cuidado')).toBeTruthy();
     expect(screen.getByText('Cocina')).toBeTruthy();
     expect(screen.getByText('Limpieza del hogar')).toBeTruthy();
-    expect(screen.getByText(/el pago se completa en el checkout oficial de wompi/i)).toBeTruthy();
+    expect(screen.getByText(/no se realizan cobros ni transferencias reales/i)).toBeTruthy();
   });
 });
