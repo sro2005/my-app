@@ -32,6 +32,16 @@ const preferencesOptions = [
 
 const getApiUrl = () => (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
 
+const getTodayInBogota = () => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Bogota', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(new Date()).reduce((result, part) => {
+    if (part.type !== 'literal') result[part.type] = part.value;
+    return result;
+  }, {});
+  return parts.year + '-' + parts.month + '-' + parts.day;
+};
+
 const asPreferenceValues = (preferences) => {
   if (!Array.isArray(preferences)) return [];
   return preferences
@@ -300,7 +310,7 @@ const PerfilCliente = () => {
               </div>
               <div className="evh-profile-field">
                 <label htmlFor="profile-birth-date">Fecha de nacimiento</label>
-                <input id="profile-birth-date" name="birthDate" type="date" value={formData.birthDate} onChange={handleInputChange} max={new Date().toISOString().slice(0, 10)} required />
+                <input id="profile-birth-date" name="birthDate" type="date" value={formData.birthDate} onChange={handleInputChange} max={getTodayInBogota()} required />
               </div>
               <div className="evh-profile-field">
                 <label htmlFor="profile-identification">Número de identificación</label>
