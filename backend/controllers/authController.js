@@ -2,116 +2,103 @@ const bcrypt = require('bcrypt');
 const Customer = require('../models/Customer');
 const { registerOrUpdateLoginLog } = require('../models/LoginLog');
 const { generateToken } = require('../utils/tokenUtils');
+const { registerSchema } = require('../validations/customerValidation');
 
 // Función para formatear el número de teléfono
 const formatPhoneNumber = (value) => {
   let digits = value.replace(/\D/g, '');
-  if (digits.startsWith('57')) {
-    digits = digits.slice(2);
-  }
+  if (digits.startsWith('57')) digits = digits.slice(2);
   digits = digits.slice(0, 10);
-  if (digits.length > 3) {
-    return `+57 ${digits.slice(0, 3)} ${digits.slice(3)}`;
-  }
+  if (digits.length > 3) return `+57 ${digits.slice(0, 3)} ${digits.slice(3)}`;
   return `+57 ${digits}`;
 };
 
-// Función genérica para registrar usuarios
-const registerUser = async (req, res, role) => {
-  try {
-    console.log(`Datos recibidos para registrar ${role}:`, req.body);
-    const {
-      firstName,
-      lastName,
-      email,
-      identificationNumber,
-      birthDate,
-      password,
-      phone,
-      preferences
-    } = req.body;
-
-    // Verificar si el correo ya está registrado
-    const existingUser = await Customer.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email is already registered' });
-    }
-
-    // Hashear la contraseña
-    const hashedPassword = await bcrypt.hash(password.trim(), 10);
-
-    // Crear el objeto de datos para el nuevo usuario
-    const newUserData = {
-      email,
-      password: hashedPassword,
-      role
-    };
-
-    // Si se trata de un usuario (cliente), agregar los demás campos
-    if (role === 'user') {
-      newUserData.firstName = firstName;
-      newUserData.lastName = lastName;
-      newUserData.identificationNumber = identificationNumber;
-      newUserData.birthDate = birthDate;
-      newUserData.phone = formatPhoneNumber(phone);
-      newUserData.preferences = preferences;
-    }
-
-    const newUser = new Customer(newUserData);
-
-    await newUser.save();
-    res.status(201).json({
-      message: `${role.charAt(0).toUpperCase() + role.slice(1)} registered successfully`
-    });
-  } catch (error) {
-    console.error(`Error en el registro de ${role}:`, error);
-    res.status(400).json({ message: `Error registering ${role}`, error: error.message });
-  }
+const isAdult = (value) => {
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) return false;
+  const today = new Date();
+  let age = today.getFullYear() - value.getFullYear();
+  if (today.getMonth() < value.getMonth() ||
+      (today.getMonth() === value.getMonth() && today.getDate() < value.getDate())) age -= 1;
+  return age >= 18;
 };
 
-// Registro de un cliente (usuario normal)
-exports.registerCustomer = (req, res) => registerUser(req, res, 'user');
-
-// Registro de un administrador
-exports.registerAdmin = (req, res) => registerUser(req, res, 'admin');
-
-// Inicio de sesión de un usuario (cliente o admin)
-exports.loginCustomer = async (req, res) => {
-  const { email, password, role } = req.body; // Se puede enviar role opcionalmente desde el frontend
-
+// Registro de cliente con validación del lado del servidor (no se confía en el formulario web).
+const registerUser = async (req, res, role) => {
   try {
-    // Buscar al usuario por correo
-    const user = await Customer.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Incorrect email or password' });
-    }
-
-    // Comparar la contraseña
-    const isMatch = await bcrypt.compare(password.trim(), user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Incorrect email or password' });
-    }
-
-    // Si se envía un rol, verificar que coincida con el rol del usuario
-    if (role && user.role !== role) {
-      return res.status(403).json({
-        message: `Access denied. Expected ${role}, but got ${user.role}`
+    const payload = { ...(req.body || {}), role };
+    const { error, value } = registerSchema.validate(payload, { abortEarly: false, stripUnknown: true });
+    if (error) {
+      return res.status(400).json({
+        message: 'Datos de registro inválidos.',
+        errors: error.details.map((detail) => detail.message)
       });
     }
 
-    // Actualizar el estado y la última actividad
-    user.status = "Active";
+    const email = value.email.trim().toLowerCase();
+    const password = value.password;
+    if (role === 'user' && !isAdult(value.birthDate)) {
+      return res.status(400).json({ message: 'Debes tener al menos 18 años para registrarte.' });
+    }
+
+    const existingUser = await Customer.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'No se pudo completar el registro con esos datos.' });
+    }
+
+    const newUserData = { email, password: await bcrypt.hash(password, 12), role };
+    if (role === 'user') {
+      newUserData.firstName = value.firstName.trim();
+      newUserData.lastName = value.lastName.trim();
+      newUserData.identificationNumber = value.identificationNumber.trim();
+      newUserData.birthDate = value.birthDate;
+      newUserData.phone = formatPhoneNumber(value.phone);
+      newUserData.preferences = value.preferences || [];
+    }
+
+    const newUser = new Customer(newUserData);
+    await newUser.save();
+    return res.status(201).json({ message: 'Registro completado correctamente.' });
+  } catch (error) {
+    if (error?.code === 11000) {
+      return res.status(409).json({ message: 'No se pudo completar el registro con esos datos.' });
+    }
+    console.error('Error procesando registro:', error.message);
+    return res.status(500).json({ message: 'No fue posible completar el registro.' });
+  }
+};
+
+exports.isAdult = isAdult;
+exports.formatPhoneNumber = formatPhoneNumber;
+exports.registerCustomer = (req, res) => registerUser(req, res, 'user');
+
+// Inicio de sesión de cliente o administrador
+exports.loginCustomer = async (req, res) => {
+  const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const password = typeof req.body?.password === 'string' ? req.body.password : '';
+  const role = req.body?.role;
+
+  if (!email || !password || password.length > 128) {
+    return res.status(400).json({ message: 'Correo o contraseña incorrectos.' });
+  }
+
+  try {
+    const user = await Customer.findOne({ email });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: 'Correo o contraseña incorrectos.' });
+    }
+    if (role && user.role !== role) {
+      return res.status(403).json({ message: 'No tienes permiso para acceder con ese perfil.' });
+    }
+
+    user.status = 'Active';
     user.lastActivityDate = new Date();
     await user.save();
-
-    // Registrar el intento de inicio de sesión
     await registerOrUpdateLoginLog(user);
 
-    // Generar el token JWT con el payload que incluye role
     const token = generateToken(user);
-    return res.status(200).json({ token, user, message: 'Login successful' });
+    return res.status(200).json({ token, user, message: 'Inicio de sesión correcto.' });
   } catch (error) {
-    console.error('Error en el inicio de sesión:', error.message);
-    res.status(400).json({ message: 'Error logging in', error: error.message });
+    console.error('Error procesando inicio de sesión:', error.message);
+    return res.status(500).json({ message: 'No fue posible iniciar sesión.' });
   }
 };

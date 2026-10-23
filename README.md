@@ -1,103 +1,64 @@
-# ⚡ ElectroVibeHome
+# ElectroVibeHome
 
-Bienvenido a **ElectroVibeHome**, una plataforma moderna e intuitiva para la compra de electrodomésticos. Nuestro objetivo es ofrecer innovación, calidad y comodidad en cada compra.
+Tienda web de electrodomésticos construida con React, Vite, Node.js, Express y MongoDB.
 
-## 🌟 Descripción del Proyecto
-ElectroVibeHome es una aplicación web diseñada para facilitar la compra de productos para el hogar. Proporcionamos una experiencia fluida y segura para los clientes, con múltiples opciones de pago y una interfaz optimizada.
+## Requisitos
 
----
+- Node.js 24.x
+- npm compatible con Node 24
+- Una base de datos MongoDB para ejecutar el backend
+- Variables de entorno configuradas; nunca publiques credenciales reales en Git
 
-## 🚀 Tecnologías Utilizadas
+## Frontend
 
-### **Frontend:**
-- React.js
-- CSS (Diseño responsive)
-- Google Fonts
+Desde la raíz del repositorio:
 
-### **Backend:**
-- Node.js
-- Express.js
-
-### **Base de Datos:**
-- MongoDB
-
-### **Herramientas Adicionales:**
-- Postman (para pruebas de API)
-- GitHub (control de versiones)
-- JSON Web Tokens (JWT) para autenticación
-
----
-
-## 🎯 Características Principales
-✅ Registro e inicio de sesión de usuarios
-✅ Gestión de productos con imágenes, descripciones y precios
-✅ Carrito de compras con total dinámico
-✅ Métodos de pago variados: tarjeta, billeteras virtuales (Nequi, Daviplata), Transfiya
-✅ Historial de pedidos para los clientes
-✅ Panel de administración para gestionar productos y pedidos
-✅ Notificaciones y alertas en la compra
-
----
-
-## 📂 Instalación y Uso
-
-Sigue estos pasos para ejecutar el proyecto en tu entorno local:
-
-### 1️⃣ **Clonar el repositorio**
 ```bash
-  git clone https://github.com/sro2005/my-app.git
-  cd my-app
+npm ci
+cp .env.example .env.development
+npm run dev
 ```
 
-### 2️⃣ **Instalar dependencias**
+Vite inicia el frontend en `http://localhost:3000`. Configura `REACT_APP_API_BASE_URL` en el archivo de entorno con la URL base del backend (sin añadir `/api` al final).
+
+Comandos de validación:
+
 ```bash
-  npm install
+npm test
+npm run build
+npm run preview
 ```
 
-### 3️⃣ **Configurar variables de entorno**
-Crea un archivo `.env` en la raíz del proyecto y define las variables necesarias.
+## Backend
 
-### 4️⃣ **Iniciar la aplicación**
+Desde otra terminal:
+
 ```bash
-  npm start
+cd backend
+npm ci
+npm start
 ```
-Luego, abre **http://localhost:3000** en tu navegador para ver la aplicación en acción.
 
----
+Configura las variables indicadas en [backend/.env.example](backend/.env.example) en el entorno local o en el panel de tu proveedor de hosting. En producción se deben usar variables del proveedor, no archivos con secretos dentro del repositorio.
 
-## 📜 Documentación de la API
-La API de **ElectroVibeHome** permite realizar operaciones CRUD en los módulos principales. Aquí están algunos de los endpoints clave:
+El backend expone `/health` para comprobar si la API está funcionando y si MongoDB está conectado.
 
-### 🔹 **Autenticación**
-- `POST /api/auth/register` → Registrar un nuevo usuario
-- `POST /api/auth/login` → Iniciar sesión y obtener un token JWT
+## Guía ElectroVibe (opcional)
 
-### 🔹 **Gestión de Productos**
-- `GET /api/products` → Obtener todos los productos
-- `POST /api/products` → Agregar un nuevo producto (requiere rol de administrador)
+El catálogo incluye una guía conversacional que usa productos disponibles para orientar la elección. No crea pedidos, no procesa pagos ni consulta datos de cuenta.
 
-### 🔹 **Pedidos**
-- `GET /api/orders` → Obtener pedidos del usuario autenticado
-- `POST /api/orders` → Crear un nuevo pedido
+Para habilitarla, configura `OPENAI_API_KEY` en el entorno del backend y, opcionalmente, `OPENAI_MODEL` (por defecto `gpt-4.1-mini`). Nunca pongas la clave en variables del frontend ni en Git. Sin una clave, la interfaz informa que la guía todavía no está configurada.
 
----
+La integración limita el tamaño de la conversación y la respuesta, envía hasta 20 productos disponibles y establece `store: false` en la solicitud. Los mensajes se mantienen solo en el estado de la página y no se guardan en ElectroVibeHome. Las llamadas a la API tienen facturación independiente de una suscripción de ChatGPT; revisa el [precio actual de la API](https://developers.openai.com/api/docs/pricing) y configura el presupuesto de uso de tu proyecto antes de habilitarla.
 
-## 🛠️ **Mantenimiento y Actualizaciones**
-- Se realizan pruebas periódicas con **Postman** y **Jest**.
-- Implementación de mejoras en la UI/UX.
-- Integración de nuevas pasarelas de pago en el futuro.
+## Pagos
 
----
+El checkout se integra con Wompi. Para pruebas utiliza únicamente credenciales y configuración de **Sandbox**. La página de redirección no confirma un pago; el estado definitivo debe proceder del webhook validado por el backend.
 
-## 👥 **Contribuidores**
-📌 **Desarrollador principal:** SANTYRO  
-📌 **Repositorio en GitHub:** [ElectroVibeHome](https://github.com/sro2005/my-app)
+Los flujos de devolución de inventario usan transacciones MongoDB. El entorno de base de datos debe admitir transacciones, como MongoDB Atlas configurado como replica set.
 
-Si deseas contribuir, ¡siéntete libre de hacer un fork y enviar un pull request! 🚀
+## CI y cambios de seguridad
 
----
+La rama `security/electrovibehome-hardening` ejecuta las pruebas del frontend, compilación, auditoría de dependencias y pruebas del backend. Los cambios de esta rama no se consideran desplegados en producción hasta que sean revisados, probados y aprobados explícitamente.
 
-## 📞 Contacto
-Si tienes dudas o sugerencias, puedes escribirme a **company.electrovibehome@gmail.com** 📩
-
-⚡ *Gracias por visitar ElectroVibeHome. ¡Esperamos que disfrutes tu experiencia!* ⚡
+Repositorio: https://github.com/sro2005/my-app

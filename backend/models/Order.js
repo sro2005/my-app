@@ -15,6 +15,9 @@ const orderSchema = new mongoose.Schema({
   orderDate: { type: Date, default: Date.now }, 
   status: { type: String, default: 'Pendiente', enum: ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado'] }, // Añadir estados posibles
   paymentConfirmed: { type: Boolean, default: false },
+  paymentStatus: { type: String, enum: ['PENDING', 'APPROVED', 'DECLINED', 'ERROR', 'VOIDED'], default: 'PENDING' },
+  paymentReference: { type: String, unique: true, sparse: true },
+  paymentTransactionId: { type: String },
   packed: { type: Boolean, default: false },
   delivered: { type: Boolean, default: false },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true }, // Agregado para asociar al usuario

@@ -11,6 +11,8 @@ const customerSchema = new mongoose.Schema({
   // Campos obligatorios para todos los usuarios
   email: { type: String, required: true, unique: true, lowercase: true, trim: true, match: [/^\S+@\S+\.\S+$/, 'Correo electrónico no válido'] },
   password: { type: String, required: true },
+  resetPasswordToken: { type: String, select: false },
+  resetPasswordExpires: { type: Date, select: false },
   // Campos generales
   registrationDate: { type: Date, default: Date.now },
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
@@ -21,6 +23,8 @@ const customerSchema = new mongoose.Schema({
 customerSchema.set('toJSON', {
   transform: (doc, ret) => {
     delete ret.password;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordExpires;
     delete ret.__v;
     // Si el rol es admin, eliminamos el campo 'preferences'
     if (ret.role === 'admin') {

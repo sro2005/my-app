@@ -1,0 +1,75 @@
+name: ElectroVibeHome CI
+
+on:
+  # Ejecutar CI automáticamente en la rama de vista previa; main y el sitio publicado permanecen separados.
+  push:
+    branches:
+      - preview/electrovibehome-v2
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/dependency-refresh.yml'
+      - 'src/**'
+      - 'public/**'
+      - 'backend/**'
+      - 'data/**'
+      - 'docs/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.*'
+      - 'index.html'
+  # También se conserva la opción manual.
+  workflow_dispatch:
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install exact frontend dependencies from lockfile
+        run: npm ci --no-audit
+      - name: Capture frontend dependency audit
+        run: npm audit --json > npm-audit-frontend.json || true
+      - name: Upload frontend audit report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-dependency-audit
+          path: npm-audit-frontend.json
+          if-no-files-found: warn
+          retention-days: 14
+      - run: CI=true npm test
+      - run: npm run build
+
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install exact backend dependencies from lockfile
+        run: npm ci --no-audit
+      - name: Capture backend dependency audit
+        run: npm audit --json > npm-audit-backend.json || true
+      - name: Upload backend audit report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-dependency-audit
+          path: backend/npm-audit-backend.json
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Check JavaScript syntax
+        run: |
+          find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
+      - name: Run backend unit tests
+        run: npm test

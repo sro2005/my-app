@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import Loading from './components/Loading';
 import LandingPage from './components/LandingPage';
@@ -15,6 +15,11 @@ import PerfilCliente from './components/PerfilCliente';
 import RegistroCliente from './components/RegistroCliente';
 import LoginCliente from './components/LoginCliente';
 import RecoverPassword from './components/RecoverPassword';
+import ResetPassword from './components/ResetPassword';
+import PaymentResult from './components/PaymentResult';
+import AboutPage from './components/AboutPage';
+import PrivacyPage from './components/PrivacyPage';
+import TermsPage from './components/TermsPage';
 import AuthProvider from './contexts/AuthContext';
 
 const AppContent = () => {
@@ -33,6 +38,12 @@ const AppContent = () => {
       <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
       <Routes>
             <Route path="/recover-password" element={<RecoverPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/pago-resultado" element={<PaymentResult />} />
+        <Route path="/catalogo" element={<ListadoProductos />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
@@ -62,6 +73,8 @@ const AppContent = () => {
     </>
   );
 };
+
+const Router = process.env.REACT_APP_ROUTER_MODE === 'hash' ? HashRouter : BrowserRouter;
 
 const App = () => (
   <Router>

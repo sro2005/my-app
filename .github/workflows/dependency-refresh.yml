@@ -1,0 +1,114 @@
+name: ElectroVibeHome dependency refresh (manual and safe)
+
+on:
+  # Actualizar dependencias solo bajo solicitud explícita, nunca en cada push.
+  workflow_dispatch:
+    inputs:
+      confirm_refresh:
+        description: "Confirmo que se actualicen dependencias compatibles y se ejecuten pruebas."
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    if: ${{ inputs.confirm_refresh }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Refresh dependencies within declared semver ranges
+        run: npm update
+      - name: Capture dependency audit
+        if: always()
+        run: npm audit --json > npm-audit-frontend.json || true
+      - name: Run frontend tests
+        run: CI=true npm test
+      - name: Build frontend
+        run: npm run build
+      - name: Upload refreshed frontend lockfile and audit
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: refreshed-frontend-lockfile
+          path: |
+            package-lock.json
+            npm-audit-frontend.json
+          if-no-files-found: warn
+          retention-days: 7
+
+  backend:
+    if: ${{ inputs.confirm_refresh }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Refresh dependencies within declared semver ranges
+        run: npm update
+      - name: Capture dependency audit
+        if: always()
+        run: npm audit --json > npm-audit-backend.json || true
+      - name: Check JavaScript syntax
+        run: |
+          find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
+      - name: Run backend unit tests
+        run: npm test
+      - name: Upload refreshed backend lockfile and audit
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: refreshed-backend-lockfile
+          path: |
+            backend/package-lock.json
+            backend/npm-audit-backend.json
+          if-no-files-found: warn
+          retention-days: 7
+
+  commit-lockfiles:
+    if: ${{ inputs.confirm_refresh && needs.frontend.result == 'success' && needs.backend.result == 'success' }}
+    needs:
+      - frontend
+      - backend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: preview/electrovibehome-v2
+      - uses: actions/download-artifact@v7
+        with:
+          name: refreshed-frontend-lockfile
+          path: /tmp/refreshed-frontend
+      - uses: actions/download-artifact@v7
+        with:
+          name: refreshed-backend-lockfile
+          path: /tmp/refreshed-backend
+      - name: Apply validated lockfiles
+        run: |
+          cp /tmp/refreshed-frontend/package-lock.json package-lock.json
+          cp /tmp/refreshed-backend/package-lock.json backend/package-lock.json
+      - name: Commit validated dependency refresh
+        run: |
+          if git diff --quiet -- package-lock.json backend/package-lock.json; then
+            echo "No dependency lockfile changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json backend/package-lock.json
+          git commit -m "chore: refresh compatible dependency lockfiles"
+          git push
