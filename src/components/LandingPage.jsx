@@ -21,7 +21,7 @@ const LandingPage = () => (
         </div>
         <div className="evh-trust-row">
           <span><strong>✓</strong> Compra sencilla</span>
-          <span><strong>✓</strong> Pago seguro con Wompi</span>
+          <span><strong>✓</strong> Pago de prueba, sin cobros reales</span>
         </div>
       </div>
       <div className="evh-hero-art" aria-label="Ilustración de electrodomésticos para el hogar" role="img">
@@ -53,8 +53,8 @@ const LandingPage = () => (
 
     <section className="evh-promise">
       <div><span>01</span><strong>Explora con facilidad</strong><p>Consulta productos y disponibilidad sin complicaciones.</p></div>
-      <div><span>02</span><strong>Paga con confianza</strong><p>El pago se completa en el checkout oficial de Wompi.</p></div>
-      <div><span>03</span><strong>Ten el control</strong><p>Accede a tu cuenta y consulta el estado de tus pedidos.</p></div>
+      <div><span>02</span><strong>Prueba el flujo de pago</strong><p>La integración usa el entorno de pruebas de Wompi. No se realizan cobros ni transferencias reales.</p></div>
+      <div><span>03</span><strong>Ten el control</strong><p>Accede a tu cuenta y consulta el estado de tus pedidos de prueba.</p></div>
     </section>
   </main>
 );
