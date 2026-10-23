@@ -50,11 +50,18 @@ if (!isProduction) {
   app.use(morgan('dev', { stream: accessLogStream }));
 }
 
-// Conexión a MongoDB
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log('✅ MongoDB conectado correctamente'))
-  .catch((err) => console.error('❌ Error al conectar con MongoDB:', err));
+// Conectar primero a MongoDB. No iniciar la API si la base de datos no está lista:
+ // así Render puede detectar una configuración rota en lugar de dejar un backend aparentemente activo.
+const connectDatabase = async () => {
+  if (!MONGO_URI || !MONGO_URI.trim()) {
+    throw new Error('Falta la variable de entorno MONGODB_URI.');
+  }
+
+  await mongoose.connect(MONGO_URI, {
+    serverSelectionTimeoutMS: 10000,
+  });
+  console.log('✅ MongoDB conectado correctamente');
+};
 
 // Rutas de la API
 app.use('/api/products', productRoutes);
@@ -105,7 +112,15 @@ try {
   server = app;
 }
 
-// Iniciar el servidor
-server.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en ${server === app ? 'http' : 'https'}://localhost:${PORT}`);
-});
+// Iniciar la API únicamente después de confirmar la conexión a la base de datos.
+connectDatabase()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`🚀 Servidor corriendo en ${server === app ? 'http' : 'https'}://localhost:${PORT}`);
+    });
+  })
+  .catch((error) => {
+    // No registrar la URI ni otros datos de conexión en los logs.
+    console.error('❌ No fue posible iniciar el backend: revisa MONGODB_URI, las credenciales y el acceso de red de Atlas.', error.message);
+    process.exit(1);
+  });
