@@ -19,6 +19,10 @@ export default defineConfig(({ mode }) => {
       // Keep compatibility with the existing Render variable while migrating from CRA.
       'process.env.REACT_APP_API_BASE_URL': JSON.stringify(
         env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_BASE_URL || ''
+      ),
+      // The preview can use hash-based routes so deep links survive static hosting without a server rewrite.
+      'process.env.REACT_APP_ROUTER_MODE': JSON.stringify(
+        env.REACT_APP_ROUTER_MODE || process.env.REACT_APP_ROUTER_MODE || 'browser'
       )
     },
     test: {
