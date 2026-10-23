@@ -8,11 +8,12 @@ const PaymentResult = () => {
 
   return (
     <main className="container" style={{ maxWidth: 720, margin: '3rem auto', padding: '2rem', textAlign: 'center' }}>
-      <h1>Gracias por tu compra</h1>
-      <p>Wompi nos está notificando el resultado de la transacción. La redirección por sí sola no confirma un pago.</p>
-      {reference && <p><strong>Referencia:</strong> {reference}</p>}
-      {status && <p><strong>Estado informado por Wompi:</strong> {status}</p>}
-      <p>El estado definitivo aparecerá en tus pedidos cuando el servidor valide la notificación segura del pago.</p>
+      <h1>Resultado de la simulación de pago</h1>
+      <p>Esta tienda usa el entorno de pruebas de Wompi. No se realizan cobros ni transferencias reales.</p>
+      <p>La redirección por sí sola no confirma el resultado de una transacción de prueba.</p>
+      {reference && <p><strong>Referencia de prueba:</strong> {reference}</p>}
+      {status && <p><strong>Estado informado por Wompi (pruebas):</strong> {status}</p>}
+      <p>Si el evento de prueba se valida correctamente, el estado aparecerá en tus pedidos de demostración.</p>
       <Link to="/listado-pedidos">Consultar mis pedidos</Link>
       {' · '}
       <Link to="/catalogo">Volver al catálogo</Link>
