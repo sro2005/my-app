@@ -10,6 +10,8 @@ on:
       - 'src/**'
       - 'public/**'
       - 'backend/**'
+      - 'data/**'
+      - 'docs/**'
       - 'package.json'
       - 'package-lock.json'
   # También se conserva la opción manual.
