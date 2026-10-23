@@ -19,8 +19,6 @@ afterEach(() => {
   vi.clearAllMocks();
   vi.unstubAllEnvs();
   localStorage.clear();
-
-
 });
 
 const renderCatalog = (user = null) => render(
@@ -36,8 +34,8 @@ describe('ListadoProductos', () => {
     renderCatalog();
 
     expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'Aire acondicionado Brisa' })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'Ventilador Brisa' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: demoProducts[0].name })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: demoProducts[1].name })).toBeTruthy();
     expect(axios.get).not.toHaveBeenCalled();
   });
 
@@ -49,7 +47,7 @@ describe('ListadoProductos', () => {
 
     expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
     expect(screen.getByRole('button', { name: /reintentar conexión/i })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: 'Licuadora Viva' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: demoProducts[0].name })).toBeTruthy();
   });
 
   test('loads the full API catalog and lets visitors search it', async () => {
@@ -127,5 +125,4 @@ describe('ListadoProductos', () => {
     expect(demoProducts.every((product) => Number.isFinite(product.price) && product.price > 0)).toBe(true);
     expect(demoProducts.every((product) => Number.isInteger(product.quantity) && product.quantity > 0)).toBe(true);
   });
-
 });
