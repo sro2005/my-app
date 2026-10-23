@@ -7,6 +7,7 @@ on:
       - preview/electrovibehome-v2
     paths:
       - '.github/workflows/ci.yml'
+      - '.github/workflows/dependency-refresh.yml'
       - 'src/**'
       - 'public/**'
       - 'backend/**'
