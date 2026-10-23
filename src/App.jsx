@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import Loading from './components/Loading';
 import LandingPage from './components/LandingPage';
@@ -73,6 +73,8 @@ const AppContent = () => {
     </>
   );
 };
+
+const Router = process.env.REACT_APP_ROUTER_MODE === 'hash' ? HashRouter : BrowserRouter;
 
 const App = () => (
   <Router>
