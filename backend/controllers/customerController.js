@@ -2,6 +2,7 @@ const Customer = require('../models/Customer');
 const Joi = require('joi');
 const Order = require('../models/Order');
 const { calculateCustomerStatus } = require('../utils/calculateCustomerStatus');
+const { isAdult, toColombianCalendarDate } = require('../utils/ageValidation');
 
 // Función auxiliar para manejar errores
 const handleError = (res, error, message, statusCode = 500) => {
@@ -73,7 +74,12 @@ exports.updateCustomer = async (req, res) => {
       lastName: Joi.string().trim().min(1).max(100),
       email: Joi.string().trim().email().max(254),
       identificationNumber: Joi.string().pattern(/^[0-9]{1,3}([.][0-9]{3})*$/),
-      birthDate: Joi.date().iso().max('now'),
+      birthDate: Joi.string().pattern(/^\\d{4}-\\d{2}-\\d{2}$/).custom((value, helpers) =>
+        isAdult(value) ? value : helpers.error('any.invalid')
+      ).messages({
+        'string.pattern.base': 'La fecha de nacimiento debe tener formato YYYY-MM-DD.',
+        'any.invalid': 'La fecha de nacimiento debe ser válida y corresponder a una persona mayor de edad.'
+      }),
       phone: Joi.string().trim().min(7).max(30),
       preferences: Joi.array().items(Joi.string().trim().min(1).max(100)).max(30)
     }).min(1);
@@ -87,6 +93,7 @@ exports.updateCustomer = async (req, res) => {
     }
 
     if (value.email) value.email = value.email.toLowerCase();
+    if (value.birthDate) value.birthDate = toColombianCalendarDate(value.birthDate);
     const updatedCustomer = await Customer.findByIdAndUpdate(id, { $set: value }, {
       new: true,
       runValidators: true,
