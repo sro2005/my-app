@@ -26,7 +26,7 @@ const createResponse = () => ({
 const validRegistration = overrides => ({
   firstName: 'Demo',
   lastName: 'Customer',
-  email: 'DEMO@example.test',
+  email: 'DEMO@example.com',
   identificationNumber: '1.234.567',
   birthDate: '1990-01-01',
   phone: '3001234567',
@@ -59,9 +59,9 @@ test('registerCustomer forces the public registration role to user and stores a 
   await registerCustomer({ body: validRegistration({ role: 'admin' }) }, response);
 
   assert.equal(response.statusCode, 201);
-  assert.equal(lookup.email, 'demo@example.test');
+  assert.equal(lookup.email, 'demo@example.com');
   assert.equal(savedCustomer.role, 'user');
-  assert.equal(savedCustomer.email, 'demo@example.test');
+  assert.equal(savedCustomer.email, 'demo@example.com');
   assert.equal(savedCustomer.password, 'hashed:StrongPass1!:12');
   assert.equal(savedCustomer.preferences[0], 'Televisores');
 });
@@ -113,7 +113,7 @@ test('loginCustomer returns a generic 401 for invalid credentials', async t => {
   bcrypt.compare = async () => false;
 
   const response = createResponse();
-  await loginCustomer({ body: { email: ' UNKNOWN@example.test ', password: 'WrongPass1!' } }, response);
+  await loginCustomer({ body: { email: ' UNKNOWN@example.com ', password: 'WrongPass1!' } }, response);
 
   assert.equal(response.statusCode, 401);
   assert.equal(response.body.message, 'Correo o contraseña incorrectos.');
@@ -132,7 +132,7 @@ test('loginCustomer returns a token without serializing password or password-res
   const customer = new Customer({
     firstName: 'Demo',
     lastName: 'Customer',
-    email: 'demo@example.test',
+    email: 'demo@example.com',
     identificationNumber: '1.234.567',
     birthDate: new Date('1990-01-01T12:00:00.000Z'),
     phone: '+57 300 123 4567',
