@@ -123,6 +123,31 @@ test('rejects unsupported status fields instead of accepting arbitrary state cha
 });
 
 
+test('createOrder refuses administrator accounts before querying or changing order data', async () => {
+  let queries = 0;
+  const originalFindOne = Order.findOne;
+  Order.findOne = async () => { queries += 1; return null; };
+  try {
+    const response = createResponse();
+    await createOrder({
+      user: { _id: validId, role: 'admin' },
+      get: () => undefined,
+      body: {
+        firstName: 'Admin', lastName: 'Demo', email: 'company@example.test',
+        phone: '+57 300 000 0000', address: 'Dirección demo',
+        paymentMethod: 'Demostración', deliveryDate: '2099-01-01',
+        products: [{ productId: validId, quantity: 1 }]
+      }
+    }, response);
+
+    assert.equal(response.statusCode, 403);
+    assert.match(response.body.message, /cuentas de cliente/i);
+    assert.equal(queries, 0);
+  } finally {
+    Order.findOne = originalFindOne;
+  }
+});
+
 test('createOrder returns an existing order for a repeated idempotency key without reserving stock again', async t => {
   const originalFindOne = Order.findOne;
   const originalStartSession = mongoose.startSession;
@@ -146,7 +171,7 @@ test('createOrder returns an existing order for a repeated idempotency key witho
   const key = 'request-key-1234567890';
   const response = createResponse();
   await createOrder({
-    user: { _id: validId },
+    user: { _id: validId, role: 'user' },
     get: name => name === 'Idempotency-Key' ? key : undefined,
     body: {
       firstName: 'Cliente',
