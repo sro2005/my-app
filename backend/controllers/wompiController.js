@@ -7,6 +7,9 @@ const { secureEquals, calculateIntegritySignature, calculateEventChecksum, hasSa
 exports.createCheckout = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Identificador de pedido inválido.' });
+    }
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Pedido no encontrado.' });
     if (order.userId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
