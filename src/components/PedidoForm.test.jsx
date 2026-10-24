@@ -1,6 +1,7 @@
 import React from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import PedidoForm from './PedidoForm';
@@ -50,9 +51,11 @@ const renderCheckout = () => {
   }));
   vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
   return render(
-    <AuthContext.Provider value={{ user }}>
-      <PedidoForm />
-    </AuthContext.Provider>
+    <MemoryRouter>
+      <AuthContext.Provider value={{ user }}>
+        <PedidoForm />
+      </AuthContext.Provider>
+    </MemoryRouter>
   );
 };
 
@@ -87,5 +90,36 @@ describe('PedidoForm catalog loading', () => {
 
     expect(await screen.findByRole('option', { name: 'p-2' })).toBeTruthy();
     expect(screen.getByRole('status').textContent).toMatch(/no pudimos cargar las recomendaciones/i);
+  });
+
+  test('completes an in-app demo purchase without calling Wompi checkout', async () => {
+    axios.get.mockResolvedValueOnce({
+      data: [{
+        _id: 'p-demo',
+        name: 'Cafetera ficticia',
+        category: 'Cafeteras',
+        price: 45000,
+        quantity: 3,
+        demo: true
+      }]
+    });
+    axios.post.mockResolvedValueOnce({
+      data: { order: { _id: 'order-demo-123' } }
+    });
+
+    renderCheckout();
+
+    await screen.findByRole('option', { name: 'p-demo' });
+    fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-demo' } });
+    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
+    fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
+    fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar compra ficticia' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'CONFIRMAR COMPRA FICTICIA' }));
+
+    await screen.findByText(/pedido de demostración creado/i);
+    expect(axios.post).toHaveBeenCalledTimes(1);
+    expect(axios.post.mock.calls[0][0]).toBe('https://api.example.test/api/orders/realizar');
+    expect(screen.getByRole('link', { name: 'Ver mis pedidos' })).toBeTruthy();
   });
 });

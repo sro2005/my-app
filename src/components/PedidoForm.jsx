@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Select from 'react-select'; // Importa React-Select
+import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import FormPage from './FormPage';
@@ -39,6 +40,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
   const [pendingCheckoutOrderId, setPendingCheckoutOrderId] = useState(null);
+  const [completedDemoOrderId, setCompletedDemoOrderId] = useState(null);
   const [orderRequestKey, setOrderRequestKey] = useState(null);
   const [productLoadError, setProductLoadError] = useState('');
   const [productLoadNotice, setProductLoadNotice] = useState('');
@@ -214,9 +216,23 @@ const userId = user?._id;  // Usar userId desde el contexto
       createdOrderId = created.data?.order?._id;
       if (!createdOrderId) throw new Error('El servidor no devolvió el identificador del pedido.');
 
-      // La API confirmó qué pedido corresponde a esta solicitud; a partir de aquí
-      // el reintento se hace sobre el mismo identificador del pedido.
+      // La API confirmó qué pedido corresponde a esta solicitud.
       setOrderRequestKey(null);
+      if (order?.paymentMethod === 'Demostración') {
+        // El pedido se guarda como SIMULATED en el servidor; nunca se abre Wompi.
+        setPendingCheckoutOrderId(null);
+        setCompletedDemoOrderId(createdOrderId);
+        setSelectedProduct(null);
+        setTotalAmount(0);
+        setPaymentMethod(null);
+        setAddress('');
+        setDeliveryDate('');
+        setOrder(null);
+        setFormError('');
+        return;
+      }
+
+      // Solo el método Wompi Sandbox inicia un checkout externo.
       setPendingCheckoutOrderId(createdOrderId);
       const checkout = await axios.post(`${API_URL}/api/orders/${createdOrderId}/wompi-checkout`, {}, {
         headers: { Authorization: `Bearer ${token}` }
@@ -276,11 +292,12 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const paymentMethods = [
-    { value: 'Wompi', label: 'Pago seguro con Wompi' },
+    { value: 'Demostración', label: 'Compra de demostración (sin cobro)' },
+    { value: 'Wompi', label: 'Wompi Sandbox (checkout de prueba)' },
   ];
 
   return (
-    <FormPage eyebrow="COMPRA SEGURA" title="Completa tu pedido" description="Revisa tus datos, elige lo que necesitas y continúa al pago protegido de Wompi." className="evh-checkout-page">
+    <FormPage eyebrow="COMPRA DE DEMOSTRACIÓN" title="Completa tu pedido ficticio" description="Registra una compra simulada dentro del sitio o abre el checkout de prueba de Wompi Sandbox. No se realizan cobros reales." className="evh-checkout-page">
       <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
         <div className="evh-form-grid">
         <div className="evh-form-field"><label htmlFor="checkout-first-name">Nombre</label><input id="checkout-first-name" type="text" autoComplete="given-name" value={customerData.firstName} onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })} required disabled className="disabled-input" /></div>
@@ -294,7 +311,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         <div className="payment-method-container">
           <label htmlFor="checkout-payment">Método de pago</label>
           <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
-          <p>Este entorno utiliza productos de muestra y el checkout de Wompi en modo de prueba. No guardamos datos de tu tarjeta ni se realizan cobros reales.</p>
+          <p>La compra de demostración registra el pedido aquí mismo, sin abrir Wompi ni hacer cobros. Wompi Sandbox es una opción externa independiente, reservada para pruebas.</p>
         </div>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
@@ -313,7 +330,16 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0 || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>Continuar al pago seguro</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{paymentMethod?.value === 'Demostración' ? 'Registrar compra ficticia' : 'Continuar al checkout de prueba'}</button>
+        {completedDemoOrderId && (
+          <div className="evh-form-feedback is-success" role="status">
+            <h3>¡Pedido de demostración creado!</h3>
+            <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
+            <p>El pedido quedó registrado como simulado y se actualizó el inventario de demostración. No se realizó ningún cobro ni se contactó a Wompi.</p>
+            <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
+            <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Hacer otro pedido</button>
+          </div>
+        )}
         {orderRequestKey && !pendingCheckoutOrderId && !loading && order && (
           <div className="evh-form-feedback" role="status">
             <p>No se ha podido confirmar la respuesta del pedido. Reintenta la misma solicitud; el servidor verificará si ya existe.</p>
@@ -344,7 +370,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             <p><strong>Número de Celular:</strong> {customerData.phone}</p>
             <p><strong>Dirección:</strong> {address}</p>
             <p><strong>Método de pago:</strong> {paymentMethod ? paymentMethod.label : 'No especificado'}</p>
-            <p>El pago se completará en el checkout seguro de Wompi.</p>
+            <p>{paymentMethod?.value === 'Demostración' ? 'Esta compra se registrará como demostración, sin pago ni salida del sitio.' : 'Se abrirá el checkout externo de Wompi Sandbox para la prueba.'}</p>
 
             <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
             <div>
@@ -359,7 +385,7 @@ const userId = user?._id;  // Usar userId desde el contexto
       {!loading && (
         <div className="button-container">
           <button className="cancel-button" onClick={handleCancel}>CANCELAR</button>
-          <button className="confirm-button" onClick={handleConfirm}>CONFIRMAR</button>
+          <button className="confirm-button" onClick={handleConfirm}>{paymentMethod?.value === 'Demostración' ? 'CONFIRMAR COMPRA FICTICIA' : 'CONTINUAR A WOMPI'}</button>
         </div>
       )}
     </div>

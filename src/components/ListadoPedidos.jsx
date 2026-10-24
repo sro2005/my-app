@@ -31,7 +31,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
         <p><strong>💳 Método de Pago:</strong> {pedido.paymentMethod || 'No especificado'}</p>
-        <p><strong>💰 Estado del pago:</strong> {pedido.paymentStatus || 'No disponible'}</p>
+        <p><strong>💰 Estado del pago:</strong> {pedido.paymentStatus === 'SIMULATED' ? 'SIMULADO · sin cobro real' : (pedido.paymentStatus || 'No disponible')}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
         <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
