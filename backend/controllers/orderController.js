@@ -25,20 +25,18 @@ const updateOrderStatus = async (order) => {
 
 // Crear un nuevo pedido
 exports.createOrder = async (req, res) => {
-  let inventoryReduced = false;
-  let reservedProducts = [];
+  let session;
   try {
-    // Asegurarse de que userId esté en formato string
     const userId = req.user._id;
-    // Convierte el userId a string
-    req.body.userId = userId.toString();
-    // Validar los datos del pedido
-    const { error } = orderSchema.validate(req.body);
+    const payload = { ...(req.body || {}), userId: userId.toString() };
+
+    // Validar los datos antes de abrir la transacción.
+    const { error } = orderSchema.validate(payload);
     if (error) {
       return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(err => err.message) });
     }
 
-    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = req.body;
+    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = payload;
     if (
       !hasSandboxWompiCredentials({
         publicKey: process.env.WOMPI_PUBLIC_KEY,
@@ -51,43 +49,49 @@ exports.createOrder = async (req, res) => {
       return res.status(503).json({ message: 'Los pagos no están configurados por completo. El pedido no se ha creado.' });
     }
 
-    // El precio se calcula siempre en el servidor, nunca se confía en el total del navegador.
-    await validateProducts(products);
-    const productIds = products.map(item => item.productId);
-    const dbProducts = await Product.find({ _id: { $in: productIds } });
-    const productMap = new Map(dbProducts.map(product => [product._id.toString(), product]));
-    const totalAmount = products.reduce((sum, item) => {
-      const product = productMap.get(item.productId.toString());
-      if (!product || !Number.isFinite(product.price) || product.price <= 0) throw new Error('Producto o precio inválido');
-      return sum + product.price * item.quantity;
-    }, 0);
-    if (!Number.isSafeInteger(Math.round(totalAmount * 100))) throw new Error('Importe inválido');
-    await reduceInventory(products);
-    inventoryReduced = true;
-    reservedProducts = products;
+    // La reserva de inventario y la creación del pedido se confirman juntas.
+    // Así no quedan unidades descontadas si falla el guardado del pedido.
+    session = await mongoose.startSession();
+    let createdOrder;
+    await session.withTransaction(async () => {
+      await validateProducts(products, { session });
+      const productIds = products.map(item => item.productId);
+      const dbProducts = await Product.find({ _id: { $in: productIds } }).session(session);
+      const productMap = new Map(dbProducts.map(product => [product._id.toString(), product]));
+      const totalAmount = products.reduce((sum, item) => {
+        const product = productMap.get(item.productId.toString());
+        if (!product || !Number.isFinite(product.price) || product.price <= 0) {
+          throw new Error('Producto o precio inválido');
+        }
+        return sum + product.price * item.quantity;
+      }, 0);
+      if (!Number.isSafeInteger(Math.round(totalAmount * 100))) {
+        throw new Error('Importe inválido');
+      }
 
-    // Convertir la fecha de entrega a la zona horaria de Colombia.
-    // Se asume que deliveryDate viene en formato "YYYY-MM-DD".
-    const deliveryDateColombia = moment.tz(deliveryDate, "YYYY-MM-DD", "America/Bogota").toDate();
+      await reduceInventory(products, { session });
 
-    // Crear y guardar el nuevo pedido
-    const newOrder = new Order({
-      firstName, lastName, email, phone, address, paymentMethod, deliveryDate: deliveryDateColombia, totalAmount, products,
-      orderDate: new Date(), // Registrar la fecha del pedido
-      userId,  // Asignar el usuario que hizo el pedido
-      paymentStatus: 'PENDING',
-      paymentConfirmed: false
+      // Guardar deliveryDate a medianoche de Colombia sin desplazar el día por UTC.
+      const deliveryDateColombia = moment.tz(deliveryDate, 'YYYY-MM-DD', 'America/Bogota').toDate();
+      createdOrder = new Order({
+        firstName, lastName, email, phone, address, paymentMethod,
+        deliveryDate: deliveryDateColombia,
+        totalAmount,
+        products,
+        orderDate: new Date(),
+        userId,
+        paymentStatus: 'PENDING',
+        paymentConfirmed: false
+      });
+      await createdOrder.save({ session });
     });
 
-    await newOrder.save();
-    inventoryReduced = false;
-    res.status(201).json({ message: 'Pedido realizado exitosamente', order: newOrder });
+    return res.status(201).json({ message: 'Pedido realizado exitosamente', order: createdOrder });
   } catch (error) {
-    if (inventoryReduced) {
-      try { await restoreInventory(reservedProducts); } catch (restoreError) { console.error('No se pudo revertir la reserva de inventario:', restoreError.message); }
-    }
     console.error('Error al crear pedido:', error.message);
-    res.status(400).json({ message: 'No fue posible crear el pedido. Verifica los datos e inténtalo nuevamente.' });
+    return res.status(400).json({ message: 'No fue posible crear el pedido. Verifica los datos e inténtalo nuevamente.' });
+  } finally {
+    if (session) await session.endSession();
   }
 };
 
