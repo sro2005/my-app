@@ -54,6 +54,16 @@ describe('ResetPassword', () => {
     expect(screen.getByRole('link', { name: /ir a iniciar sesión/i }).getAttribute('href')).toBe('/login');
   });
 
+  test('does not call the API when the backend URL is missing', () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', '   ');
+    render(<ResetPassword />);
+
+    fillPasswordForm('StrongPass1!');
+
+    expect(screen.getByRole('alert').textContent).toMatch(/no está disponible/i);
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
   test('rejects mismatched password confirmation without calling the API', () => {
     render(<ResetPassword />);
 

@@ -24,10 +24,15 @@ const ResetPassword = () => {
       setMessage('Usa entre 10 y 128 caracteres con mayúscula, minúscula, número y símbolo; ambas contraseñas deben coincidir.');
       return;
     }
+    const api = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+    if (!api) {
+      setMessage('El restablecimiento no está disponible en este momento. Intenta nuevamente más tarde.');
+      return;
+    }
+
     setLoading(true);
     setMessage('');
     try {
-      const api = process.env.REACT_APP_API_BASE_URL;
       const response = await axios.post(`${api}/api/customers/reset-password/${token}`, { password });
       setSuccess(true);
       setPassword('');

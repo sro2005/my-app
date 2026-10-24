@@ -8,15 +8,18 @@ const RecoverPassword = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const API_URL = process.env.REACT_APP_API_BASE_URL; 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
-    setLoading(true);
+    const apiUrl = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+    if (!apiUrl) {
+      setMessage('La recuperación no está disponible en este momento. Intenta nuevamente más tarde.');
+      return;
+    }
 
+    setLoading(true);
     try {
-      const response = await axios.post(`${API_URL}/api/customers/forgot-password`, { email });
+      const response = await axios.post(`${apiUrl}/api/customers/forgot-password`, { email });
       setMessage(response.data.message || 'Se ha enviado un enlace para restablecer tu contraseña.');
     } catch (error) {
       if (error.response) {
