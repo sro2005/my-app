@@ -2424,3 +2424,12 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .cliente-historial-pedidos>ul>li{display:grid;gap:.35rem;padding:.8rem 0;border-top:1px solid #dbe3eb}
 .cliente-historial-pedidos span{font-size:.9rem;overflow-wrap:anywhere}
 .cliente-historial-pedidos li ul{margin:.3rem 0 0;padding-left:1.25rem;list-style:disc}
+
+/* Presentación de la guía como parte central de la experiencia ElectroVibe */
+.evh-guide-promo{display:flex;justify-content:space-between;align-items:center;gap:clamp(1.2rem,4vw,3rem);margin:clamp(2rem,5vw,4rem) auto;padding:clamp(1.5rem,4vw,3rem);max-width:1240px;border:1px solid #c5d9e9;border-radius:24px;background:radial-gradient(circle at 90% 10%,rgba(88,176,210,.19),transparent 38%),linear-gradient(125deg,#f4f8fc,#edf5fa);color:#18334d}
+.evh-guide-promo-copy{max-width:760px}
+.evh-guide-promo h2{font-size:clamp(1.5rem,3vw,2.35rem);line-height:1.15;max-width:740px;margin:.65rem 0}
+.evh-guide-promo p{max-width:680px;line-height:1.7;color:#49647b;margin:0}
+.evh-guide-promo .evh-button{flex-shrink:0}
+.evh-catalog-assistant{margin:1.3rem 0 2rem;scroll-margin-top:2rem}
+@media(max-width:760px){.evh-guide-promo{align-items:flex-start;flex-direction:column}.evh-guide-promo .evh-button{width:100%;justify-content:center}}
