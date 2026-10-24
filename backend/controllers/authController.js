@@ -96,3 +96,44 @@ exports.loginCustomer = async (req, res) => {
     return res.status(500).json({ message: 'No fue posible iniciar sesión.' });
   }
 };
+
+};
+
+// Change the signed-in account's password after verifying the current credential.
+exports.changePassword = async (req, res) => {
+  const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
+  const newPassword = typeof req.body?.newPassword === 'string' ? req.body.newPassword : '';
+  const passwordIsValid = newPassword.length >= 12 &&
+    newPassword.length <= 128 &&
+    /[a-z]/.test(newPassword) &&
+    /[A-Z]/.test(newPassword) &&
+    /[0-9]/.test(newPassword) &&
+    /[!@#$%^&*]/.test(newPassword);
+
+  if (!currentPassword || !passwordIsValid) {
+    return res.status(400).json({
+      message: 'La nueva contraseña debe tener entre 12 y 128 caracteres e incluir mayúscula, minúscula, número y símbolo.'
+    });
+  }
+
+  try {
+    const user = await Customer.findById(req.user?._id);
+    if (!user) return res.status(401).json({ message: 'La sesión no es válida. Inicia sesión de nuevo.' });
+
+    if (!(await bcrypt.compare(currentPassword, user.password))) {
+      return res.status(400).json({ message: 'La contraseña actual no coincide.' });
+    }
+    if (await bcrypt.compare(newPassword, user.password)) {
+      return res.status(400).json({ message: 'La nueva contraseña debe ser diferente a la actual.' });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 12);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    return res.status(200).json({ message: 'Contraseña actualizada correctamente.' });
+  } catch {
+    console.error('No fue posible cambiar la contraseña de la cuenta.');
+    return res.status(500).json({ message: 'No fue posible actualizar la contraseña. Inténtalo nuevamente.' });
+  }
+};
