@@ -11,7 +11,7 @@ const productPrice = Joi.number().min(0.01).max(1000000000).custom((value, helpe
 });
 
 const productImageUrl = Joi.string().trim().allow('').custom((value, helpers) => {
-  if (value === '') return value;
+  if (value === '' || /^\/images\/products\/[a-z0-9-]+\.svg$/.test(value)) return value;
   try {
     const imageUrl = new URL(value);
     if (!imageUrl.hostname || imageUrl.username || imageUrl.password || !/^https?:$/.test(imageUrl.protocol) ||
@@ -23,7 +23,7 @@ const productImageUrl = Joi.string().trim().allow('').custom((value, helpers) =>
   }
   return value;
 }, 'product image URL validation').messages({
-  'string.imageUrl': 'La URL debe apuntar a una imagen JPG, JPEG, GIF, PNG, WEBP o AVIF.'
+  'string.imageUrl': 'Usa una URL de imagen válida o una imagen SVG local del catálogo de demostración.'
 });
 
 // Campos demo opcionales para que la administración no pierda las marcas del catálogo de muestra.
