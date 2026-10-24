@@ -11,7 +11,9 @@ test('order idempotency keys are unique, sparse, immutable, and excluded from JS
 });
 
 test('order idempotency keys accept a sufficiently long safe key format', () => {
-  const validator = Order.schema.path('idempotencyKey');
-  assert.equal(validator.validateSync('request-key-1234567890'), undefined);
-  assert.ok(validator.validateSync('invalid key with spaces'));
+  const validOrder = new Order({ idempotencyKey: 'request-key-1234567890' });
+  const invalidOrder = new Order({ idempotencyKey: 'invalid key with spaces' });
+
+  assert.equal(validOrder.validateSync()?.errors?.idempotencyKey, undefined);
+  assert.ok(invalidOrder.validateSync()?.errors?.idempotencyKey);
 });
