@@ -33,4 +33,11 @@ describe('LandingPage', () => {
     expect(screen.getByText('Limpieza del hogar')).toBeTruthy();
     expect(screen.getByText(/no se realizan cobros ni transferencias reales/i)).toBeTruthy();
   });
+
+  test('introduces the ElectroVibe guide and links visitors to explore recommendations', () => {
+    render(<LandingPage />);
+    expect(screen.getByRole('heading', { name: /no elijas a ciegas/i })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /probar la guía electrovibe/i }).getAttribute('href')).toBe('/catalogo');
+    expect(screen.getByText(/asistencia generativa/i)).toBeTruthy();
+  });
 });
