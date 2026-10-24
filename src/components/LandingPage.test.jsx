@@ -17,7 +17,7 @@ describe('LandingPage', () => {
     render(<LandingPage />);
 
     expect(
-      screen.getByRole('heading', { name: /tu hogar merece algo extraordinario/i })
+      screen.getByRole('heading', { name: /encuentra tecnología que haga más fácil tu día a día/i })
     ).toBeTruthy();
 
     expect(screen.getByRole('link', { name: /explorar productos/i }).getAttribute('href')).toBe('/catalogo');
