@@ -134,11 +134,11 @@ describe('PedidoForm catalog loading', () => {
 
     await screen.findByRole('option', { name: 'p-1' });
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-1' } });
-    fireEvent.change(screen.getByLabelText('checkout-product-quantity'), { target: { value: '2' } });
+    fireEvent.change(screen.getByLabelText('Unidades'), { target: { value: '2' } });
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
 
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-2' } });
-    fireEvent.change(screen.getByLabelText('checkout-product-quantity'), { target: { value: '1' } });
+    fireEvent.change(screen.getByLabelText('Unidades'), { target: { value: '1' } });
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
     fireEvent.click(screen.getByRole('button', { name: 'Aumentar cantidad de Monitor Demo' }));
 
@@ -168,7 +168,7 @@ describe('PedidoForm catalog loading', () => {
     await screen.findByRole('option', { name: 'p-stock' });
 
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-stock' } });
-    fireEvent.change(screen.getByLabelText('checkout-product-quantity'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Unidades'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
 
     expect(await screen.findByRole('alert')).toBeTruthy();
