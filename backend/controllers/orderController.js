@@ -26,10 +26,12 @@ const updateOrderStatus = async (order) => {
 // Crear un nuevo pedido
 exports.createOrder = async (req, res) => {
   let session;
+  let userId;
+  let idempotencyKey = '';
   try {
-    const userId = req.user._id;
+    userId = req.user._id;
     const rawIdempotencyKey = req.get?.('Idempotency-Key');
-    const idempotencyKey = typeof rawIdempotencyKey === 'string' ? rawIdempotencyKey.trim() : '';
+    idempotencyKey = typeof rawIdempotencyKey === 'string' ? rawIdempotencyKey.trim() : '';
     if (idempotencyKey && !/^[A-Za-z0-9_-]{16,128}$/.test(idempotencyKey)) {
       return res.status(400).json({ message: 'La clave de solicitud no tiene un formato válido.' });
     }
@@ -119,20 +121,41 @@ exports.createOrder = async (req, res) => {
   } catch (error) {
     // Dos solicitudes simultáneas con la misma clave pueden competir por el índice único.
     // En ese caso, recupera el pedido ganador en vez de crear un duplicado.
-    if (error?.code === 11000 && idempotencyKey) {
+    if (error?.code === 11000 && idempotencyKey && userId) {
       try {
         const existingOrder = await Order.findOne({ userId, idempotencyKey });
         if (existingOrder) {
           return res.status(200).json({ message: 'Esta solicitud ya había creado un pedido.', order: existingOrder });
         }
+        return res.status(409).json({
+          message: 'La clave de solicitud ya está asociada a otro registro. Inicia una nueva solicitud de pedido.'
+        });
       } catch (lookupError) {
         console.error('No se pudo recuperar la solicitud de pedido repetida:', lookupError.message);
       }
     }
+
     console.error('Error al crear pedido:', error.message);
-    return res.status(400).json({ message: 'No fue posible crear el pedido. Verifica los datos e inténtalo nuevamente.' });
+    const stockConflict = /Stock insuficiente|Uno de los productos ya no está disponible/i.test(error.message || '');
+    if (stockConflict) {
+      return res.status(409).json({
+        message: 'Uno o más productos ya no están disponibles o no tienen stock suficiente. Actualiza el catálogo e inténtalo de nuevo.'
+      });
+    }
+
+    // Unexpected database/transaction errors must not look like client validation errors:
+    // the client keeps the idempotency key and can safely retry an uncertain result.
+    return res.status(500).json({
+      message: 'No fue posible confirmar el pedido. Reintenta la misma solicitud; el sistema verificará si ya existe.'
+    });
   } finally {
-    if (session) await session.endSession();
+    if (session) {
+      try {
+        await session.endSession();
+      } catch (endError) {
+        console.error('No fue posible cerrar la sesión de la transacción:', endError.message);
+      }
+    }
   }
 };
 
