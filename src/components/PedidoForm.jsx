@@ -38,6 +38,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
+  const [pendingCheckoutOrderId, setPendingCheckoutOrderId] = useState(null);
   const [productLoadError, setProductLoadError] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -115,6 +116,10 @@ const userId = user?._id;  // Usar userId desde el contexto
   const handleSubmit = (e) => {
     e.preventDefault();   
     setFormError('');
+    if (pendingCheckoutOrderId) {
+      setFormError('Ya existe un pedido pendiente de iniciar pago. Reintenta el pago de ese pedido antes de crear otro.');
+      return;
+    }
 
     // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
 
@@ -144,26 +149,66 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const handleConfirm = async () => {
-    const API_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken');
+    if (!API_URL || !token) {
+      setFormError('No se encontró la URL de la API o la sesión. Vuelve a iniciar sesión e inténtalo de nuevo.');
+      setShowConfirmModal(false);
+      return;
+    }
+
+    let createdOrderId = null;
     setLoading(true);
     try {
       const created = await axios.post(`${API_URL}/api/orders/realizar`, order, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const orderId = created.data?.order?._id;
-      if (!orderId) throw new Error('El servidor no devolvió el identificador del pedido.');
-      const checkout = await axios.post(`${API_URL}/api/orders/${orderId}/wompi-checkout`, {}, {
+      createdOrderId = created.data?.order?._id;
+      if (!createdOrderId) throw new Error('El servidor no devolvió el identificador del pedido.');
+
+      // Conserva el identificador para reintentar solo el checkout si falla el segundo paso.
+      setPendingCheckoutOrderId(createdOrderId);
+      const checkout = await axios.post(`${API_URL}/api/orders/${createdOrderId}/wompi-checkout`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!checkout.data?.checkoutUrl) throw new Error('No se recibió el enlace de pago.');
+
+      setPendingCheckoutOrderId(null);
       window.location.assign(checkout.data.checkoutUrl);
     } catch (error) {
       console.error('No fue posible iniciar el pago:', error.response?.data?.message || error.message);
-      setFormError(error.response?.data?.message || 'No pudimos iniciar el pago. No repitas la compra; revisa tus pedidos o inténtalo de nuevo.');
+      if (createdOrderId) setPendingCheckoutOrderId(createdOrderId);
+      setFormError(error.response?.data?.message || 'El pedido pudo haberse guardado, pero no se pudo abrir el checkout. Reintenta el pago del mismo pedido antes de crear otro.');
     } finally {
       setLoading(false);
       setShowConfirmModal(false);
+    }
+  };
+
+  const handleRetryCheckout = async () => {
+    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+    const token = localStorage.getItem('authToken');
+    if (!pendingCheckoutOrderId || !API_URL || !token) {
+      setFormError('No se puede reintentar el pago con la sesión actual. Revisa tus pedidos.');
+      return;
+    }
+
+    setLoading(true);
+    setFormError('');
+    try {
+      const checkout = await axios.post(
+        `${API_URL}/api/orders/${pendingCheckoutOrderId}/wompi-checkout`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!checkout.data?.checkoutUrl) throw new Error('No se recibió el enlace de pago.');
+      setPendingCheckoutOrderId(null);
+      window.location.assign(checkout.data.checkoutUrl);
+    } catch (error) {
+      console.error('No fue posible reintentar el checkout:', error.response?.data?.message || error.message);
+      setFormError(error.response?.data?.message || 'No se pudo reabrir el checkout. Intenta nuevamente sin crear otro pedido.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -208,7 +253,13 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0}>Continuar al pago seguro</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0 || Boolean(pendingCheckoutOrderId)}>Continuar al pago seguro</button>
+        {pendingCheckoutOrderId && !loading && (
+          <div className="evh-form-feedback" role="status">
+            <p>El pedido {pendingCheckoutOrderId} ya está creado. Puedes reintentar el checkout sin reservar inventario nuevamente.</p>
+            <button type="button" className="evh-form-submit" onClick={handleRetryCheckout}>Reintentar pago de este pedido</button>
+          </div>
+        )}
         {formError && <p className="evh-form-feedback is-error" role="alert">{formError}</p>}
       </form>
 
