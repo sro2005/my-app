@@ -168,12 +168,12 @@ const userId = user?._id;  // Usar userId desde el contexto
     const token = localStorage.getItem('authToken');
     const requestKey = orderRequestKey ||
       (window.crypto?.randomUUID ? window.crypto.randomUUID() : `evh-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`);
-    setOrderRequestKey(requestKey);
     if (!API_URL || !token) {
       setFormError('No se encontró la URL de la API o la sesión. Vuelve a iniciar sesión e inténtalo de nuevo.');
       setShowConfirmModal(false);
       return;
     }
+    setOrderRequestKey(requestKey);
 
     let createdOrderId = null;
     setLoading(true);
@@ -204,9 +204,11 @@ const userId = user?._id;  // Usar userId desde el contexto
         setOrderRequestKey(null);
         setPendingCheckoutOrderId(createdOrderId);
       } else {
-        // Mantener la clave permite reintentar exactamente la misma solicitud si
-        // el servidor guardó el pedido pero la respuesta no llegó al navegador.
-        setOrderRequestKey(requestKey);
+        const status = error.response?.status;
+        const outcomeIsUncertain = !error.response || status >= 500 || [408, 425, 429].includes(status);
+        // Reutiliza la clave solo cuando no es posible saber si el servidor llegó
+        // a registrar el pedido. Errores definitivos dejan iniciar una nueva solicitud.
+        setOrderRequestKey(outcomeIsUncertain ? requestKey : null);
       }
       setFormError(error.response?.data?.message || 'No pudimos confirmar la respuesta del servidor. Reintenta la misma solicitud para evitar duplicar el pedido.');
     } finally {
