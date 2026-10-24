@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { limitLoginByIp, limitLoginByAccount, limitPasswordReset } = require('../middlewares/requestRateLimit');
+const { limitLoginByIp, limitLoginByAccount, limitPasswordChange } = require('../middlewares/requestRateLimit');
 const { authenticateToken } = require('../middlewares/authMiddleware');
 
 // Ruta para registrar un nuevo cliente
@@ -12,6 +12,6 @@ router.post('/register', authController.registerCustomer);
 
 // Ruta para iniciar sesión
 router.post('/login', limitLoginByIp, limitLoginByAccount, authController.loginCustomer);
-router.put('/change-password', authenticateToken, limitPasswordReset, authController.changePassword);
+router.put('/change-password', authenticateToken, limitPasswordChange, authController.changePassword);
 
 module.exports = router;
