@@ -6,11 +6,15 @@ const PrivacyPage = () => (
     eyebrow="DATOS Y TRANSPARENCIA"
     title="Política de Privacidad"
     lead="Aquí explicamos qué información utiliza el prototipo, para qué la necesita y qué ocurre al probar sus funciones."
-    notice="Este texto describe la versión académica actual y sirve para explicar su funcionamiento. No es un aviso legal aprobado para una tienda en producción. Para explorar la demo, utiliza información ficticia y nunca compartas datos sensibles."
+    notice="Este texto describe la versión personal de demostración actual y sirve para explicar su funcionamiento. No es un aviso legal aprobado para una tienda en producción. Para explorar la demo, utiliza información ficticia y nunca compartas datos sensibles."
     sections={[
       {
         title: 'Información de una cuenta',
         body: 'Al crear un perfil de prueba, el sistema solicita nombre, apellidos, correo, número de identificación, fecha de nacimiento, celular y preferencias de productos. Estos datos se usan para crear la cuenta, iniciar sesión, mostrar el perfil y personalizar la navegación del catálogo.'
+      },
+      {
+        title: 'Verificación del correo',
+        body: 'El registro actual no confirma automáticamente la titularidad del correo. Si vas a probar la recuperación de contraseña, utiliza una dirección cuya bandeja de entrada controles. En los campos de identificación, fecha de nacimiento, celular y entrega utiliza datos ficticios.'
       },
       {
         title: 'Información de pedidos',
