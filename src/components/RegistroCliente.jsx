@@ -175,7 +175,8 @@ const RegistroCliente = () => {
   };
   
   return (
-    <FormPage eyebrow="EMPIEZA POR TI" title="Crea tu espacio" description="Cuéntanos un poco de ti para acercarte a los productos que hacen tu hogar más cómodo.">
+    <FormPage eyebrow="CUENTA DE DEMOSTRACIÓN" title="Crea tu cuenta de prueba" description="Accede a tu perfil, guarda preferencias y prueba el recorrido de ElectroVibeHome.">
+    <p className="evh-form-hint" role="note">Este prototipo no vende productos. Usa datos ficticios en nombre, identificación, fecha de nacimiento y celular. Utiliza un correo al que tengas acceso solo si vas a probar la recuperación de contraseña, y una contraseña exclusiva para esta demo.</p>
     <form className="evh-form evh-register-form" onSubmit={handleSubmit}>
       <div className="evh-form-grid">
         <div className="evh-form-field">
@@ -219,7 +220,6 @@ const RegistroCliente = () => {
       <button className="evh-form-submit" type="submit" disabled={loading}>
         {loading ? 'Creando tu cuenta…' : 'Crear mi cuenta'}
       </button>
-      {loading && <div className="evh-form-feedback" role="status">Preparando tu espacio…</div>}
       {error && <div className="evh-form-feedback is-error" role="alert">{error}</div>}
       {successMessage && <div className="evh-form-feedback is-success" role="status">{successMessage}</div>}
     </form>
