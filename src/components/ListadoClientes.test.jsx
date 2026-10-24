@@ -53,10 +53,10 @@ describe('Admin customer history', () => {
 
   test('filters customers by name in addition to email and id', async () => {
     renderClients();
-    await screen.findByText(/Demo Buyer/);
+    await screen.findByText('buyer@example.test');
     fireEvent.change(screen.getByPlaceholderText(/nombre, correo, celular o ID/i), { target: { value: 'buyer@example.test' } });
-    expect(screen.getByText(/Demo Buyer/)).toBeTruthy();
+    expect(screen.getByText('buyer@example.test')).toBeTruthy();
     fireEvent.change(screen.getByPlaceholderText(/nombre, correo, celular o ID/i), { target: { value: 'missing' } });
-    expect(screen.queryByText(/Demo Buyer/)).toBeNull();
+    expect(screen.queryByText('buyer@example.test')).toBeNull();
   });
 });
