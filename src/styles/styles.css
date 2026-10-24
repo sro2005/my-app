@@ -2395,3 +2395,24 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
     width: 100%;
   }
 }
+
+/* Checkout ficticio con múltiples artículos */
+.evh-cart-add-controls{display:flex;align-items:end;gap:.75rem;flex-wrap:wrap;margin-top:.8rem}
+.evh-cart-add-controls label{display:flex;flex-direction:column;gap:.35rem;font-weight:600}
+.evh-cart-add-controls input{width:100px;min-height:42px;padding:.55rem;border:1px solid #b9c6d4;border-radius:9px}
+.evh-cart-add-controls button{min-height:42px;padding:.65rem 1rem;border:0;border-radius:9px;background:#163c63;color:#fff;font-weight:700;cursor:pointer}
+.evh-cart-add-controls button:disabled{opacity:.45;cursor:not-allowed}
+.evh-cart{margin:1.2rem 0;padding:1.1rem;border:1px solid #d4dde7;border-radius:16px;background:#f8fafc;color:#152d46}
+.evh-cart-heading{display:flex;justify-content:space-between;align-items:center;gap:.7rem;flex-wrap:wrap}
+.evh-cart-heading h3{margin:.2rem 0}.evh-cart-heading span{font-size:.9rem;color:#536b81}
+.evh-cart-items{list-style:none;margin:0;padding:0}
+.evh-cart-item{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:.9rem;padding:.95rem 0;border-bottom:1px solid #d9e2ea}
+.evh-cart-item:last-child{border-bottom:0}
+.evh-cart-item-info{display:flex;flex-direction:column;gap:.25rem;min-width:0}.evh-cart-item-info strong{overflow-wrap:anywhere}
+.evh-cart-item-info span{font-size:.84rem;color:#536b81}
+.evh-cart-quantity{display:flex;align-items:center;gap:.65rem}
+.evh-cart-quantity button,.evh-cart-remove{min-width:32px;min-height:32px;border:1px solid #b1c0d0;border-radius:8px;background:#fff;color:#173b5c;cursor:pointer}
+.evh-cart-quantity button:disabled{opacity:.4;cursor:not-allowed}
+.evh-cart-line-total{white-space:nowrap}.evh-cart-remove{padding:.35rem .6rem}
+.evh-cart-note{font-size:.85rem;line-height:1.5;color:#536b81;margin-bottom:0}
+@media(max-width:640px){.evh-cart-item{grid-template-columns:minmax(0,1fr) auto;gap:.7rem}.evh-cart-line-total{grid-column:1}.evh-cart-remove{grid-column:2;grid-row:2}.evh-cart-quantity{grid-column:2;grid-row:1}}
