@@ -15,9 +15,9 @@ const LandingPage = () => (
         <span className="evh-eyebrow">TECNOLOGÍA QUE SE SIENTE EN CASA</span>
         <h1>Tu hogar merece algo <span>extraordinario.</span></h1>
         <p>Encuentra electrodomésticos que combinan funcionalidad, comodidad y estilo para tu día a día.</p>
-        <div className="evh-hero-actions">
-          <Link className="evh-button evh-button-primary" to="/catalogo">Explorar productos <span aria-hidden="true">→</span></Link>
-          <Link className="evh-button evh-button-secondary" to="/register">Crear mi cuenta</Link>
+        <div className="evh-hero-actions" style={{ maxWidth: 'calc(100vw - 40px)', minWidth: 0, boxSizing: 'border-box' }}>
+          <Link className="evh-button evh-button-primary" to="/catalogo" style={{ maxWidth: 'calc(100vw - 50px)', minWidth: 0, boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere' }}>Explorar productos <span aria-hidden="true">→</span></Link>
+          <Link className="evh-button evh-button-secondary" to="/register" style={{ maxWidth: 'calc(100vw - 50px)', minWidth: 0, boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere' }}>Crear mi cuenta</Link>
         </div>
         <div className="evh-trust-row">
           <span><strong>✓</strong> Compra sencilla</span>
