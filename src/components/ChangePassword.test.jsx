@@ -58,7 +58,7 @@ describe('ChangePassword', () => {
         { headers: { Authorization: 'Bearer ' + ['valid', 'mock', 'token'].join('-') } }
       );
     });
-    expect((await screen.findByRole('status')).textContent).toMatch(/actualizada correctamente/i);
+    expect((await screen.findByText(/contraseña actualizada correctamente/i)).textContent).toMatch(/actualizada correctamente/i);
     expect(screen.getByLabelText('Contraseña actual').value).toBe('');
     expect(screen.getByLabelText('Nueva contraseña').value).toBe('');
     expect(screen.getByLabelText('Confirma la nueva contraseña').value).toBe('');
