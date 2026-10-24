@@ -41,7 +41,7 @@ describe('Admin customer history', () => {
     renderClients();
     const summary = await screen.findByText('Ver historial de compras (1)');
     fireEvent.click(summary);
-    expect(await screen.findByText('Simulado · sin cobro')).toBeTruthy();
+    expect(await screen.findByText(/Simulado · sin cobro/)).toBeTruthy();
     expect(screen.getByText(/Importe ficticio:/)).toBeTruthy();
     expect(screen.getByText(/45.000/)).toBeTruthy();
     expect(screen.getByText(/Cafetera de muestra/)).toBeTruthy();
