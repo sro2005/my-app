@@ -2916,3 +2916,34 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   html { scroll-behavior: auto; }
   .evh-confirmation-dialog, .evh-confirmation-spinner { animation: none; }
 }
+
+
+/* Legacy component aliases now follow the same primary / neutral action hierarchy. */
+.save-button, .confirm-button {
+  border: 1px solid var(--evh-accent, #f28c28);
+  border-radius: 10px;
+  background: var(--evh-accent, #f28c28);
+  color: var(--evh-ink-strong, #14243a);
+}
+.save-button:hover, .confirm-button:hover {
+  background: var(--evh-accent-hover, #d96f12);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.cancel-button, .cancel-button-profile {
+  border: 1px solid var(--evh-border, #e0e6ed);
+  border-radius: 10px;
+  background: #f4f7fa;
+  color: var(--evh-blue, #294b70);
+}
+.cancel-button:hover, .cancel-button-profile:hover {
+  background: var(--evh-blue-soft, #eaf0f6);
+  color: var(--evh-ink-strong, #14243a);
+  transform: none;
+}
+.button-container { align-items: center; gap: .75rem; flex-wrap: wrap; }
+.button-container .confirm-button, .button-container .cancel-button {
+  min-width: 0;
+  padding: .75rem 1rem;
+  border-radius: 10px;
+}
