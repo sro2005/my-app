@@ -2465,3 +2465,9 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-customer-preferences>div{max-width:760px}.evh-customer-chips{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem}
 .evh-customer-chips span{padding:.4rem .7rem;border-radius:999px;background:#e3f0f5;color:#194664;font-size:.88rem;font-weight:650}
 @media(max-width:820px){.evh-customer-hero{grid-template-columns:1fr}.evh-customer-hero-mark{min-height:180px}.evh-customer-journey-grid{grid-template-columns:1fr}.evh-customer-journey-card{min-height:0}.evh-customer-preferences{align-items:flex-start;flex-direction:column}}
+
+/* Ensure primary links never exceed the viewport on narrow phones */
+.evh-hero-copy{min-width:0}
+.evh-hero-actions{min-width:0;max-width:100%}
+.evh-hero-actions .evh-button{box-sizing:border-box;max-width:100%}
+@media(max-width:560px){.evh-hero-actions{width:100%;align-items:stretch}.evh-hero-actions .evh-button{width:100%;max-width:100%;white-space:normal;text-align:center}}
