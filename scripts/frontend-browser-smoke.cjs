@@ -139,9 +139,7 @@ async function main() {
         'Public route returned a non-success status for ' + route.path + ': ' +
         (routeResponse ? routeResponse.status() : 'no response'));
 
-      const heading = page.getByRole('heading', { name: new RegExp(route.heading.replace(/[.*+?^${}()|[\]\\]/g, '\\    await page.screenshot({ path: path.join(artifactsDir, 'catalog-mobile.png'), fullPage: true });
-
-    assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));'), 'i') });
+      const heading = page.getByRole('heading', { name: new RegExp(route.heading, 'i') });
       await heading.first().waitFor({ timeout: 45000 });
       await page.waitForTimeout(100);
 
