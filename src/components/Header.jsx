@@ -11,7 +11,8 @@ import {
   faClipboardList,
   faUserPlus,
   faDoorOpen,
-  faInfoCircle
+  faInfoCircle,
+  faLock
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -55,6 +56,7 @@ const Header = () => {
                 {navLink('/admin-inventario', faBoxOpen, 'Inventario')}
                 {navLink('/listado-clientes', faUsers, 'Clientes')}
                 {navLink('/listado-pedidos', faClipboardList, 'Pedidos')}
+                {navLink('/seguridad', faLock, 'Seguridad')}
                 <li>
                   <button className="evh-site-logout" type="button" onClick={logout} aria-label="Cerrar sesión">
                     <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
@@ -69,6 +71,7 @@ const Header = () => {
                 {navLink('/pedido-form', faCheckSquare, 'Realizar pedido')}
                 {navLink('/listado-pedidos', faClipboardList, 'Mis pedidos')}
                 {navLink('/perfil-cliente', faUser, 'Mi perfil')}
+                {navLink('/seguridad', faLock, 'Seguridad')}
                 <li>
                   <button className="evh-site-logout" type="button" onClick={logout} aria-label="Cerrar sesión">
                     <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
