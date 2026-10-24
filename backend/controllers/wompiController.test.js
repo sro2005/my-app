@@ -1,7 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const Order = require('../models/Order');
-const { createCheckout } = require('./wompiController');
+const { createCheckout, handleWebhook } = require('./wompiController');
+const { calculateEventChecksum } = require('../utils/wompiSecurity');
 
 const validId = '507f1f77bcf86cd799439011';
 const createResponse = () => ({
@@ -54,4 +55,174 @@ test('createCheckout refuses production credentials and never emits a live check
 
   assert.equal(response.statusCode, 503);
   assert.equal(response.body.checkoutUrl, undefined);
+});
+
+
+const sandboxEnvNames = ['WOMPI_PUBLIC_KEY', 'WOMPI_INTEGRITY_SECRET', 'WOMPI_EVENTS_SECRET'];
+const configureSandbox = t => {
+  const oldEnv = Object.fromEntries(sandboxEnvNames.map(name => [name, process.env[name]]));
+  process.env.WOMPI_PUBLIC_KEY = 'pub_test_unit-test';
+  process.env.WOMPI_INTEGRITY_SECRET = 'test_integrity_unit-test';
+  process.env.WOMPI_EVENTS_SECRET = 'test_events_unit-test';
+  t.after(() => {
+    for (const name of sandboxEnvNames) {
+      if (oldEnv[name] === undefined) delete process.env[name];
+      else process.env[name] = oldEnv[name];
+    }
+  });
+};
+
+const buildSignedEvent = (transaction, secret = 'test_events_unit-test') => {
+  const event = {
+    event: 'transaction.updated',
+    timestamp: 1720000000,
+    signature: {
+      properties: [
+        'transaction.id',
+        'transaction.status',
+        'transaction.amount_in_cents',
+        'transaction.currency',
+        'transaction.reference'
+      ],
+      checksum: ''
+    },
+    data: { transaction }
+  };
+  event.signature.checksum = calculateEventChecksum(event, secret);
+  return event;
+};
+
+test('handleWebhook rejects an invalid event checksum before looking up the order', async t => {
+  configureSandbox(t);
+  const originalFindOne = Order.findOne;
+  t.after(() => { Order.findOne = originalFindOne; });
+  let lookups = 0;
+  Order.findOne = async () => { lookups += 1; return null; };
+
+  const event = buildSignedEvent({
+    id: 'TX-100',
+    status: 'APPROVED',
+    amount_in_cents: 12345,
+    currency: 'COP',
+    reference: 'EVH-unit-test'
+  });
+  event.signature.checksum = 'bad-checksum';
+  const response = createResponse();
+  await handleWebhook({ body: event, get: () => undefined }, response);
+
+  assert.equal(response.statusCode, 401);
+  assert.equal(lookups, 0);
+});
+
+test('handleWebhook rejects amounts that do not match the order', async t => {
+  configureSandbox(t);
+  const originalFindOne = Order.findOne;
+  const originalFindOneAndUpdate = Order.findOneAndUpdate;
+  t.after(() => {
+    Order.findOne = originalFindOne;
+    Order.findOneAndUpdate = originalFindOneAndUpdate;
+  });
+
+  let updates = 0;
+  Order.findOne = async () => ({
+    _id: validId,
+    paymentReference: 'EVH-unit-test',
+    totalAmount: 123.45,
+    paymentStatus: 'PENDING',
+    paymentConfirmed: false,
+    status: 'Pendiente'
+  });
+  Order.findOneAndUpdate = async () => { updates += 1; return null; };
+
+  const event = buildSignedEvent({
+    id: 'TX-101',
+    status: 'APPROVED',
+    amount_in_cents: 99999,
+    currency: 'COP',
+    reference: 'EVH-unit-test'
+  });
+  const response = createResponse();
+  await handleWebhook({ body: event, get: () => undefined }, response);
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(updates, 0);
+});
+
+test('handleWebhook confirms a correctly signed approval with matching amount and currency', async t => {
+  configureSandbox(t);
+  const originalFindOne = Order.findOne;
+  const originalFindOneAndUpdate = Order.findOneAndUpdate;
+  t.after(() => {
+    Order.findOne = originalFindOne;
+    Order.findOneAndUpdate = originalFindOneAndUpdate;
+  });
+
+  const order = {
+    _id: validId,
+    paymentReference: 'EVH-unit-test',
+    totalAmount: 123.45,
+    paymentStatus: 'PENDING',
+    paymentConfirmed: false,
+    status: 'Pendiente'
+  };
+  let received;
+  Order.findOne = async () => order;
+  Order.findOneAndUpdate = async (filter, update, options) => {
+    received = { filter, update, options };
+    return { ...order, paymentStatus: 'APPROVED', paymentConfirmed: true, status: 'Procesando' };
+  };
+
+  const event = buildSignedEvent({
+    id: 'TX-102',
+    status: 'APPROVED',
+    amount_in_cents: 12345,
+    currency: 'COP',
+    reference: 'EVH-unit-test'
+  });
+  const response = createResponse();
+  await handleWebhook({ body: event, get: () => undefined }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(received.filter.paymentStatus, 'PENDING');
+  assert.equal(received.filter.paymentConfirmed, false);
+  assert.equal(received.update.$set.paymentStatus, 'APPROVED');
+  assert.equal(received.update.$set.paymentConfirmed, true);
+  assert.equal(received.update.$set.paymentTransactionId, 'TX-102');
+  assert.equal(received.update.$set.status, 'Procesando');
+  assert.equal(received.options.runValidators, true);
+});
+
+test('handleWebhook ignores a repeated event after the order is no longer pending', async t => {
+  configureSandbox(t);
+  const originalFindOne = Order.findOne;
+  const originalFindOneAndUpdate = Order.findOneAndUpdate;
+  t.after(() => {
+    Order.findOne = originalFindOne;
+    Order.findOneAndUpdate = originalFindOneAndUpdate;
+  });
+
+  let updates = 0;
+  Order.findOne = async () => ({
+    _id: validId,
+    paymentReference: 'EVH-unit-test',
+    totalAmount: 123.45,
+    paymentStatus: 'APPROVED',
+    paymentConfirmed: true,
+    status: 'Procesando'
+  });
+  Order.findOneAndUpdate = async () => { updates += 1; return null; };
+
+  const event = buildSignedEvent({
+    id: 'TX-102',
+    status: 'APPROVED',
+    amount_in_cents: 12345,
+    currency: 'COP',
+    reference: 'EVH-unit-test'
+  });
+  const response = createResponse();
+  await handleWebhook({ body: event, get: () => undefined }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ignored, true);
+  assert.equal(updates, 0);
 });
