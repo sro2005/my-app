@@ -1,7 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const Customer = require('../models/Customer');
-const { getProfile, updateCustomer } = require('./customerController');
+const Order = require('../models/Order');
+const { getCustomers, getProfile, updateCustomer } = require('./customerController');
 
 const customerId = '507f1f77bcf86cd799439011';
 const anotherCustomerId = '507f1f77bcf86cd799439012';
@@ -207,4 +208,61 @@ test('getProfile returns 404 when the authenticated customer record no longer ex
 
   assert.equal(response.statusCode, 404);
   assert.match(response.body.message, /no encontrado/i);
+});
+
+
+test('getCustomers returns populated purchase history without exposing password hashes', async t => {
+  const originalCustomerFind = Customer.find;
+  const originalOrderFind = Order.find;
+  restore(t, [
+    [Customer, 'find', originalCustomerFind],
+    [Order, 'find', originalOrderFind]
+  ]);
+
+  const customer = new Customer({
+    _id: customerId,
+    firstName: 'Demo',
+    lastName: 'Buyer',
+    identificationNumber: '1.234.567',
+    birthDate: new Date('1990-01-01T12:00:00.000Z'),
+    phone: '+57 300 123 4567',
+    preferences: ['Cafeteras'],
+    email: 'buyer@example.test',
+    password: 'private-hash',
+    role: 'user',
+    lastActivityDate: new Date()
+  });
+  const order = {
+    _id: '507f1f77bcf86cd799439099',
+    userId: customerId,
+    firstName: 'Demo',
+    lastName: 'Buyer',
+    email: 'buyer@example.test',
+    totalAmount: 45000,
+    paymentMethod: 'Demostración',
+    paymentStatus: 'SIMULATED',
+    status: 'Procesando',
+    orderDate: new Date(),
+    products: [{ productId: { name: 'Cafetera de muestra', category: 'Cafeteras' }, quantity: 1 }]
+  };
+
+  Customer.find = async () => [customer];
+  Order.find = filter => {
+    assert.deepEqual(filter, { userId: { $in: [customer._id] } });
+    return {
+      populate: async options => {
+        assert.deepEqual(options, { path: 'products.productId', select: 'name category' });
+        return [order];
+      }
+    };
+  };
+
+  const response = createResponse();
+  await getCustomers({}, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body[0].orders.length, 1);
+  assert.equal(response.body[0].orders[0].paymentStatus, 'SIMULATED');
+  assert.equal(response.body[0].orders[0].products[0].productId.name, 'Cafetera de muestra');
+  assert.doesNotMatch(JSON.stringify(response.body), /private-hash/);
 });
