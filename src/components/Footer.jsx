@@ -5,7 +5,7 @@ import { AuthContext } from '../contexts/AuthContext';
 const Footer = () => {
   const { user } = useContext(AuthContext);
   const exploreLinks = !user
-    ? [['/', 'Inicio'], ['/catalogo', 'Catálogo'], ['/register', 'Únete hoy'], ['/login', 'Iniciar sesión']]
+    ? [['/', 'Inicio'], ['/catalogo', 'Catálogo'], ['/register', 'Crear cuenta'], ['/login', 'Iniciar sesión']]
     : user.role === 'admin'
       ? [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-productos', 'Inventario'], ['/listado-pedidos', 'Pedidos']]
       : [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-pedidos', 'Mis pedidos'], ['/perfil-cliente', 'Mi perfil']];
@@ -31,7 +31,7 @@ const Footer = () => {
       <div className="evh-footer-section">
         <h2>Recursos</h2>
         <div className="evh-footer-resources">
-          <Link to="/about">Sobre Nosotros</Link>
+          <Link to="/about">Qué es ElectroVibeHome</Link>
           <Link to="/privacy">Política de Privacidad</Link>
           <Link to="/terms">Términos de Servicio</Link>
         </div>
