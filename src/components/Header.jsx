@@ -58,7 +58,7 @@ const Header = () => {
             ) : (
               <>
                 {navLink('/home-page', faHome, 'Inicio')}
-                {user.role === 'admin' && navLink('/producto-form', faPlusCircle, 'Agregar producto')}
+                {user.role === 'admin' && navLink('/admin-inventario', faPlusCircle, 'Gestionar productos')}
                 {user.role === 'user' && navLink('/pedido-form', faCheckSquare, 'Realizar pedido')}
                 {user.role === 'admin' && navLink('/listado-clientes', faUsers, 'Clientes')}
                 {navLink('/listado-productos', faBoxOpen, user.role === 'admin' ? 'Inventario' : 'Preferencias')}
