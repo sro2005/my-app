@@ -23,6 +23,8 @@ const deliveryDateSchema = Joi.string()
   });
 
 // Esquema de validación para el pedido.
+exports.deliveryDateSchema = deliveryDateSchema;
+
 exports.orderSchema = Joi.object({
   firstName: Joi.string().trim().min(1).max(100).required(),
   lastName: Joi.string().trim().min(1).max(100).required(),
