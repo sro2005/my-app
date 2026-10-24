@@ -97,8 +97,6 @@ exports.loginCustomer = async (req, res) => {
   }
 };
 
-};
-
 // Change the signed-in account's password after verifying the current credential.
 exports.changePassword = async (req, res) => {
   const currentPassword = typeof req.body?.currentPassword === 'string' ? req.body.currentPassword : '';
