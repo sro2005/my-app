@@ -1,4 +1,8 @@
 import React from 'react';
+
+vi.mock('react-router-dom', () => ({
+  Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>
+}));
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import axios from 'axios';
@@ -128,5 +132,26 @@ describe('ListadoProductos', () => {
     expect(demoProducts.every((product) => product.demo === true)).toBe(true);
     expect(demoProducts.every((product) => Number.isFinite(product.price) && product.price > 0)).toBe(true);
     expect(demoProducts.every((product) => Number.isInteger(product.quantity) && product.quantity > 0)).toBe(true);
+  });
+
+  test('offers an add-to-order link for authenticated customers when products come from the live API', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    axios.get.mockResolvedValue({ data: [
+      { _id: '507f1f77bcf86cd799439011', name: 'Cafetera conectada', description: 'Demo', price: 45000, category: 'Cafeteras', quantity: 2, demo: true }
+    ] });
+
+    renderCatalog({ _id: 'customer-1', role: 'user', preferences: [] });
+
+    expect(await screen.findByRole('heading', { name: 'Cafetera conectada' })).toBeTruthy();
+    const addLink = screen.getByRole('link', { name: /agregar a pedido/i });
+    expect(addLink.getAttribute('href')).toBe('/pedido-form?productId=507f1f77bcf86cd799439011');
+  });
+
+  test('does not offer checkout for local fallback products that have no database identity', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', '');
+    renderCatalog({ _id: 'customer-1', role: 'user', preferences: [] });
+
+    expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /agregar a pedido/i })).toBeNull();
   });
 });
