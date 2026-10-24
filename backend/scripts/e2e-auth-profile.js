@@ -296,9 +296,91 @@ async function main() {
   persistedStock = await Product.findById(purchasableProduct._id);
   assert.equal(persistedStock.quantity, 3, 'Repeated declined events must not restore stock twice');
 
+
+  // Submit the same idempotent order twice at once; only one stock reservation may commit.
+  const concurrentIdempotentProduct = await Product.create({
+    name: 'CI E2E Concurrent Idempotency Product ' + fixtureTag,
+    description: 'Disposable product for concurrent idempotency testing',
+    category: 'CI E2E',
+    price: 6789,
+    quantity: 5,
+    demo: true,
+    demoIcon: 'test',
+    catalogVersion: 'e2e'
+  });
+  const concurrentIdempotentBody = {
+    ...orderBody,
+    products: [{ productId: concurrentIdempotentProduct._id.toString(), quantity: 1 }]
+  };
+  const concurrentIdempotencyKey = 'ci-e2e-order-' + fixtureTag + '-parallel';
+  const concurrentIdempotentResults = await Promise.all([
+    request('/api/orders/realizar', {
+      method: 'POST',
+      token,
+      body: concurrentIdempotentBody,
+      idempotencyKey: concurrentIdempotencyKey
+    }),
+    request('/api/orders/realizar', {
+      method: 'POST',
+      token,
+      body: concurrentIdempotentBody,
+      idempotencyKey: concurrentIdempotencyKey
+    })
+  ]);
+  assert.deepEqual(
+    concurrentIdempotentResults.map(result => result.status).sort((a, b) => a - b),
+    [200, 201],
+    'Concurrent calls with the same key should resolve to one creation and one reuse'
+  );
+  assert.equal(
+    new Set(concurrentIdempotentResults.map(result => result.body.order._id)).size,
+    1,
+    'Concurrent idempotent calls must return the same order'
+  );
+  const concurrentIdempotentStock = await Product.findById(concurrentIdempotentProduct._id);
+  assert.equal(concurrentIdempotentStock.quantity, 4, 'Concurrent idempotent calls must reserve exactly one unit');
+
+  // Two different requests competing for 3 units at quantity 2 must not oversell.
+  const scarceProduct = await Product.create({
+    name: 'CI E2E Concurrent Stock Product ' + fixtureTag,
+    description: 'Disposable product for concurrent stock reservation testing',
+    category: 'CI E2E',
+    price: 7777,
+    quantity: 3,
+    demo: true,
+    demoIcon: 'test',
+    catalogVersion: 'e2e'
+  });
+  const scarceOrderBody = {
+    ...orderBody,
+    products: [{ productId: scarceProduct._id.toString(), quantity: 2 }]
+  };
+  const concurrentStockResults = await Promise.all([
+    request('/api/orders/realizar', {
+      method: 'POST',
+      token,
+      body: scarceOrderBody,
+      idempotencyKey: 'ci-e2e-order-' + fixtureTag + '-stock-a'
+    }),
+    request('/api/orders/realizar', {
+      method: 'POST',
+      token,
+      body: scarceOrderBody,
+      idempotencyKey: 'ci-e2e-order-' + fixtureTag + '-stock-b'
+    })
+  ]);
+  assert.deepEqual(
+    concurrentStockResults.map(result => result.status).sort((a, b) => a - b),
+    [201, 409],
+    'Only one concurrent order can reserve two units from a stock of three'
+  );
+  const scarceStockAfterRace = await Product.findById(scarceProduct._id);
+  assert.equal(scarceStockAfterRace.quantity, 1, 'Concurrent stock race must not oversell or double-decrement');
+  assert.equal(await Order.countDocuments({ userId: customerId }), 4, 'Only four successful orders should persist for the primary test customer');
+
   const ordersForFirstUser = await request('/api/orders/my-orders', { token });
   expectStatus(ordersForFirstUser, 200, 'Authenticated order history');
-  assert.equal(ordersForFirstUser.body.length, 2, 'Only the successfully approved and declined/cancelled orders should remain');
+  assert.equal(ordersForFirstUser.body.length, 4, 'Only the four successful order creations should appear in the history');
   assert.equal(ordersForFirstUser.body[0]._id, firstOrderId);
   const adminListForbidden = await request('/api/orders/all', { token });
   expectStatus(adminListForbidden, 403, 'Non-admin order listing');
@@ -380,7 +462,7 @@ async function main() {
   });
   expectStatus(expiredResetResponse, 400, 'Expired password-reset token');
 
-  console.log('HTTP E2E passed: registration/login/profile persistence, authorization, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, and inventory restoration, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
+  console.log('HTTP E2E passed: registration/login/profile persistence, authorization, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, concurrent idempotency and stock-race protection, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, inventory restoration, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
 }
 
 main()
