@@ -46,7 +46,7 @@ const Header = () => {
             {!user ? (
               <>
                 {navLink('/catalogo', faBoxOpen, 'Catálogo')}
-                {navLink('/about', faInfoCircle, 'La propuesta')}
+                {navLink('/about', faInfoCircle, 'Sobre nosotros')}
                 {navLink('/register', faUserPlus, 'Crear cuenta')}
                 {navLink('/login', faDoorOpen, 'Iniciar sesión')}
               </>
