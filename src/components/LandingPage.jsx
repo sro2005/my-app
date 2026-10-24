@@ -51,6 +51,15 @@ const LandingPage = () => (
       </div>
     </section>
 
+    <section className="evh-guide-promo" aria-labelledby="evh-guide-promo-title">
+      <div className="evh-guide-promo-copy">
+        <span className="evh-eyebrow">DESCUBRE CON INTENCIÓN</span>
+        <h2 id="evh-guide-promo-title">No elijas a ciegas. Encuentra lo que de verdad necesitas.</h2>
+        <p>Cuéntale a la Guía ElectroVibe qué quieres resolver en casa y recibe sugerencias basadas en el catálogo. Según la configuración, puede orientarte con reglas locales o con asistencia generativa.</p>
+      </div>
+      <Link className="evh-button evh-button-primary" to="/catalogo">Probar la Guía ElectroVibe <span aria-hidden="true">→</span></Link>
+    </section>
+
     <section className="evh-promise">
       <div><span>01</span><strong>Explora con facilidad</strong><p>Consulta productos y disponibilidad sin complicaciones.</p></div>
       <div><span>02</span><strong>Prueba el flujo de pago</strong><p>La integración usa el entorno de pruebas de Wompi. No se realizan cobros ni transferencias reales.</p></div>
