@@ -37,7 +37,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
         <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
         <p><strong>📦 Estado del Pedido:</strong> {pedido.status}</p>
         <p><strong>🛍️ Producto Escogido: </strong> 
-          {pedido.products.length > 0 ? pedido.products.map((item, index) => (
+          {Array.isArray(pedido.products) && pedido.products.length > 0 ? pedido.products.map((item, index) => (
             <span key={index}>
               {item.productId?.name || "Producto desconocido"} -  {item.productId?.category || "Sin categoría"}
               {index < pedido.products.length - 1 ? ', ' : ''}
