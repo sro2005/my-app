@@ -78,11 +78,17 @@ const limitPasswordReset = createRequestRateLimiter({
   message: 'Demasiados intentos para restablecer la contraseña. Intenta más tarde.'
 });
 
+const limitPasswordChange = createRequestRateLimiter({
+  maxRequests: 10,
+  message: 'Demasiados intentos para cambiar la contraseña. Intenta más tarde.'
+});
+
 module.exports = {
   getClientAddress,
   createRequestRateLimiter,
   limitLoginByIp,
   limitLoginByAccount,
   limitPasswordRecovery,
-  limitPasswordReset
+  limitPasswordReset,
+  limitPasswordChange
 };
