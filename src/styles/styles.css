@@ -2470,4 +2470,4 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-hero-copy{min-width:0}
 .evh-hero-actions{min-width:0;max-width:100%}
 .evh-hero-actions .evh-button{box-sizing:border-box;max-width:100%}
-@media(max-width:560px){.evh-hero-actions{width:100%;align-items:stretch}.evh-hero-actions .evh-button{width:100%;max-width:100%;white-space:normal;text-align:center}}
+@media(max-width:560px){.evh-hero-actions{width:100%;align-items:stretch}.evh-hero-actions .evh-button{width:calc(100vw - 50px)!important;max-width:calc(100vw - 50px)!important;box-sizing:border-box;white-space:normal;text-align:center;flex:0 1 auto}}
