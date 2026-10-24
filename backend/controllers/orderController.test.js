@@ -168,3 +168,83 @@ test('createOrder rejects malformed idempotency keys before querying orders', as
   assert.equal(response.statusCode, 400);
   assert.equal(calls, 0);
 });
+
+
+const configureSandbox = t => {
+  const names = ['WOMPI_PUBLIC_KEY', 'WOMPI_INTEGRITY_SECRET', 'WOMPI_EVENTS_SECRET', 'FRONTEND_URL'];
+  const old = Object.fromEntries(names.map(name => [name, process.env[name]]));
+  process.env.WOMPI_PUBLIC_KEY = 'pub_test_unit-test';
+  process.env.WOMPI_INTEGRITY_SECRET = 'test_integrity_unit-test';
+  process.env.WOMPI_EVENTS_SECRET = 'test_events_unit-test';
+  process.env.FRONTEND_URL = 'https://preview.example.test';
+  t.after(() => {
+    for (const name of names) {
+      if (old[name] === undefined) delete process.env[name];
+      else process.env[name] = old[name];
+    }
+  });
+};
+
+const validOrderBody = () => ({
+  firstName: 'Cliente',
+  lastName: 'Demo',
+  email: 'cliente@example.com',
+  phone: '+57 300 123 4567',
+  address: 'Calle 10 # 20-30, Bogotá',
+  paymentMethod: 'Wompi',
+  deliveryDate: '2099-01-01',
+  products: [{ productId: validId, quantity: 1 }]
+});
+
+test('createOrder returns 500 for uncertain transaction failures so the client can reuse its idempotency key', async t => {
+  configureSandbox(t);
+  const originalStartSession = mongoose.startSession;
+  t.after(() => { mongoose.startSession = originalStartSession; });
+  mongoose.startSession = async () => ({
+    withTransaction: async () => { throw new Error('database transaction unavailable'); },
+    endSession: async () => {}
+  });
+
+  const response = createResponse();
+  await createOrder({
+    user: { _id: validId },
+    get: () => undefined,
+    body: validOrderBody()
+  }, response);
+
+  assert.equal(response.statusCode, 500);
+  assert.match(response.body.message, /Reintenta la misma solicitud/i);
+});
+
+test('createOrder recovers the winner when a concurrent idempotent insert reports duplicate key', async t => {
+  configureSandbox(t);
+  const originalFindOne = Order.findOne;
+  const originalStartSession = mongoose.startSession;
+  t.after(() => {
+    Order.findOne = originalFindOne;
+    mongoose.startSession = originalStartSession;
+  });
+
+  const existingOrder = { _id: 'existing-winner', paymentStatus: 'PENDING' };
+  let lookupCalls = 0;
+  Order.findOne = async () => {
+    lookupCalls += 1;
+    return lookupCalls === 1 ? null : existingOrder;
+  };
+  mongoose.startSession = async () => ({
+    withTransaction: async () => { throw Object.assign(new Error('duplicate idempotency key'), { code: 11000 }); },
+    endSession: async () => {}
+  });
+
+  const key = 'request-key-concurrent-123456';
+  const response = createResponse();
+  await createOrder({
+    user: { _id: validId },
+    get: name => name === 'Idempotency-Key' ? key : undefined,
+    body: validOrderBody()
+  }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.order, existingOrder);
+  assert.equal(lookupCalls, 2);
+});
