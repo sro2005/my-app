@@ -1,10 +1,9 @@
 const WINDOW_MS = 15 * 60 * 1000;
 
 const getClientAddress = (req) => {
-  // Render/Cloudflare supplies this header at the edge; fall back to Express' IP locally.
-  const edgeAddress = req.get?.('cf-connecting-ip');
-  const address = typeof edgeAddress === 'string' ? edgeAddress.split(',')[0].trim() : '';
-  return address || req.ip || req.socket?.remoteAddress || 'unknown';
+  // In production, Express derives req.ip from the X-Forwarded-For chain after
+  // server.js configures the trusted Render proxy hops. Do not trust raw client headers here.
+  return req.ip || req.socket?.remoteAddress || 'unknown';
 };
 
 const createRequestRateLimiter = ({
