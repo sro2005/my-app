@@ -139,8 +139,20 @@ async function main() {
         'Public route returned a non-success status for ' + route.path + ': ' +
         (routeResponse ? routeResponse.status() : 'no response'));
 
+      console.log('Public route response: ' + route.path + ' -> ' + page.url() + ' (HTTP ' + routeResponse.status() + ').');
       const heading = page.getByRole('heading', { name: new RegExp(route.heading, 'i') });
-      await heading.first().waitFor({ timeout: 45000 });
+      try {
+        await heading.first().waitFor({ timeout: 12000 });
+      } catch (error) {
+        const diagnostics = await page.evaluate(() => ({
+          url: window.location.href,
+          title: document.title,
+          headings: [...document.querySelectorAll('h1, h2')].slice(0, 12).map(node => node.innerText.trim()),
+          bodyText: (document.body.innerText || '').slice(0, 400)
+        }));
+        throw new Error('Expected heading "' + route.heading + '" was not rendered for ' + route.path +
+          '. Browser diagnostics: ' + JSON.stringify(diagnostics) + '. Original error: ' + error.message);
+      }
       await page.waitForTimeout(100);
 
       const routeLayout = await readLayout(page);
