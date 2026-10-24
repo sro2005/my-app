@@ -48,6 +48,7 @@ describe('Header navigation', () => {
     expect(screen.getByRole('link', { name: /realizar pedido/i }).getAttribute('href')).toBe('/pedido-form');
     expect(screen.getByRole('link', { name: /mis pedidos/i }).getAttribute('href')).toBe('/listado-pedidos');
     expect(screen.getByRole('link', { name: /mi perfil/i }).getAttribute('href')).toBe('/perfil-cliente');
+    expect(screen.getByRole('link', { name: /seguridad/i }).getAttribute('href')).toBe('/seguridad');
     expect(screen.queryByRole('link', { name: /inventario|clientes|agregar producto/i })).toBeNull();
   });
 
@@ -60,6 +61,7 @@ describe('Header navigation', () => {
     expect(screen.getByRole('link', { name: /^clientes$/i }).getAttribute('href')).toBe('/listado-clientes');
     expect(screen.getByRole('link', { name: /^inventario$/i }).getAttribute('href')).toBe('/admin-inventario');
     expect(screen.getByRole('link', { name: /^pedidos$/i }).getAttribute('href')).toBe('/listado-pedidos');
+    expect(screen.getByRole('link', { name: /seguridad/i }).getAttribute('href')).toBe('/seguridad');
     expect(screen.queryByRole('link', { name: /mi perfil|realizar pedido|catálogo|preferencias/i })).toBeNull();
   });
 
