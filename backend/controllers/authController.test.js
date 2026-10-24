@@ -12,7 +12,7 @@ const originalGenerateToken = tokenUtils.generateToken;
 loginLogModule.registerOrUpdateLoginLog = async () => {};
 tokenUtils.generateToken = () => 'unit-test-token';
 delete require.cache[require.resolve('./authController')];
-const { registerCustomer, loginCustomer } = require('./authController');
+const { registerCustomer, loginCustomer, changePassword } = require('./authController');
 loginLogModule.registerOrUpdateLoginLog = originalLoginLogger;
 tokenUtils.generateToken = originalGenerateToken;
 
@@ -154,4 +154,92 @@ test('loginCustomer returns a token without serializing password or password-res
   assert.equal(response.body.user.role, 'user');
   const serializedResponse = JSON.stringify(response.body);
   assert.doesNotMatch(serializedResponse, /hashed-password-value|private-reset-token|resetPasswordToken|resetPasswordExpires/);
+});
+
+test('changePassword checks the current credential and stores only a new bcrypt hash', async t => {
+  const originalFindById = Customer.findById;
+  const originalCompare = bcrypt.compare;
+  const originalHash = bcrypt.hash;
+  restore(t, [
+    [Customer, 'findById', originalFindById],
+    [bcrypt, 'compare', originalCompare],
+    [bcrypt, 'hash', originalHash]
+  ]);
+
+  const account = {
+    _id: 'customer-id-1',
+    password: 'stored-password-hash',
+    resetPasswordToken: 'old-reset-token',
+    resetPasswordExpires: new Date(Date.now() + 60000),
+    async save() { this.saved = true; }
+  };
+  Customer.findById = async id => {
+    assert.equal(String(id), 'customer-id-1');
+    return account;
+  };
+  bcrypt.compare = async (candidate, storedHash) =>
+    candidate === 'OldStrong1!' && storedHash === 'stored-password-hash';
+  bcrypt.hash = async (password, rounds) => {
+    assert.equal(rounds, 12);
+    return 'new-hash:' + password;
+  };
+
+  const response = createResponse();
+  await changePassword({
+    user: { _id: 'customer-id-1', role: 'admin' },
+    body: { currentPassword: 'OldStrong1!', newPassword: 'NewStrong2!Pass' }
+  }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.message, 'Contraseña actualizada correctamente.');
+  assert.equal(account.password, 'new-hash:NewStrong2!Pass');
+  assert.equal(account.resetPasswordToken, undefined);
+  assert.equal(account.resetPasswordExpires, undefined);
+  assert.equal(account.saved, true);
+});
+
+test('changePassword rejects weak new credentials before looking up the account', async t => {
+  const originalFindById = Customer.findById;
+  restore(t, [[Customer, 'findById', originalFindById]]);
+  let lookups = 0;
+  Customer.findById = async () => { lookups += 1; return null; };
+
+  const response = createResponse();
+  await changePassword({
+    user: { _id: 'customer-id-1', role: 'admin' },
+    body: { currentPassword: 'OldStrong1!', newPassword: 'weak' }
+  }, response);
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(lookups, 0);
+});
+
+test('changePassword refuses an incorrect current credential and leaves the hash unchanged', async t => {
+  const originalFindById = Customer.findById;
+  const originalCompare = bcrypt.compare;
+  const originalHash = bcrypt.hash;
+  restore(t, [
+    [Customer, 'findById', originalFindById],
+    [bcrypt, 'compare', originalCompare],
+    [bcrypt, 'hash', originalHash]
+  ]);
+
+  const account = {
+    _id: 'customer-id-1',
+    password: 'stored-password-hash',
+    async save() { this.saved = true; }
+  };
+  Customer.findById = async () => account;
+  bcrypt.compare = async () => false;
+  bcrypt.hash = async () => { throw new Error('must not hash'); };
+
+  const response = createResponse();
+  await changePassword({
+    user: { _id: 'customer-id-1', role: 'admin' },
+    body: { currentPassword: 'WrongCurrent1!', newPassword: 'NewStrong2!Pass' }
+  }, response);
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(account.password, 'stored-password-hash');
+  assert.equal(account.saved, undefined);
 });
