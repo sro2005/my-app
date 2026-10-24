@@ -191,8 +191,8 @@ const ListadoProductos = () => {
   if (loading) {
     return (
       <main className="evh-catalog-page evh-catalog-loading" aria-live="polite">
+        <span className="evh-sr-only">Cargando catálogo</span>
         <ClipLoader size={42} color="#F47B20" />
-        <p>Estamos preparando tu catálogo…</p>
       </main>
     );
   }
