@@ -36,7 +36,7 @@ afterEach(() => {
   localStorage.clear();
 });
 
-const renderCheckout = () => {
+const renderCheckout = (initialEntry = '/pedido-form') => {
   const user = {
     _id: 'customer-1',
     role: 'user',
@@ -51,7 +51,7 @@ const renderCheckout = () => {
   }));
   vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
   return render(
-    <MemoryRouter>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <AuthContext.Provider value={{ user }}>
         <PedidoForm />
       </AuthContext.Provider>
@@ -175,6 +175,36 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();
     fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
     expect(screen.getByRole('button', { name: 'Registrar compra ficticia' }).disabled).toBe(true);
+  });
+
+  test('preselects a requested live catalogue product using the full catalogue endpoint', async () => {
+    axios.get.mockResolvedValueOnce({ data: [
+      { _id: 'p-live', name: 'Cafetera elegida', category: 'Cafeteras', price: 45000, quantity: 3, demo: true },
+      { _id: 'p-other', name: 'Televisor de muestra', category: 'Televisores', price: 300000, quantity: 1, demo: true }
+    ] });
+
+    renderCheckout('/pedido-form?productId=p-live');
+
+    await screen.findByRole('option', { name: 'p-live' });
+    expect(screen.getByLabelText('checkout-product').value).toBe('p-live');
+    expect(screen.getByLabelText('Unidades').value).toBe('1');
+    expect(axios.get).toHaveBeenCalledTimes(1);
+    expect(axios.get).toHaveBeenCalledWith('https://api.example.test/api/products', {
+      headers: { Authorization: 'Bearer test-token' }
+    });
+    expect(axios.get).not.toHaveBeenCalledWith('https://api.example.test/api/products/preferences', expect.anything());
+  });
+
+  test('shows a clear notice when a catalogue product in the link is unavailable', async () => {
+    axios.get.mockResolvedValueOnce({ data: [
+      { _id: 'p-other', name: 'Televisor de muestra', category: 'Televisores', price: 300000, quantity: 1, demo: true }
+    ] });
+
+    renderCheckout('/pedido-form?productId=p-now-unavailable');
+
+    expect(await screen.findByRole('alert')).toBeTruthy();
+    expect(screen.getByRole('alert').textContent).toMatch(/ya no tiene existencias|dejó de estar disponible/i);
+    expect(screen.getByLabelText('checkout-product').value).toBe('');
   });
 
 });
