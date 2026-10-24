@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const moment = require('moment-timezone');
-const { orderSchema } = require('./orderValidation');
+const { orderSchema, deliveryDateSchema } = require('./orderValidation');
 
 const todayInBogota = () => moment.tz('America/Bogota').format('YYYY-MM-DD');
 
@@ -72,4 +72,15 @@ test('requiere identificadores válidos de usuario y producto', () => {
     ...validOrder,
     products: [{ productId: 'no-es-id', quantity: 1 }]
   }).error);
+});
+
+
+test('valida fechas de calendario sin conversión a UTC para la edición logística', () => {
+  const today = todayInBogota();
+  assert.equal(deliveryDateSchema.validate(today).error, undefined);
+  assert.equal(deliveryDateSchema.validate(today).value, today);
+  assert.ok(deliveryDateSchema.validate('2026-02-30').error);
+  assert.ok(deliveryDateSchema.validate('fecha-inválida').error);
+  const yesterday = moment.tz('America/Bogota').subtract(1, 'day').format('YYYY-MM-DD');
+  assert.ok(deliveryDateSchema.validate(yesterday).error);
 });
