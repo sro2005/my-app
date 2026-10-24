@@ -30,10 +30,10 @@ exports.sendGeneralEmail = async (to, subject, text) => {
       text
     };
 
-    const response = await transporterGeneral.sendMail(mailOptions);
-    console.log('📩 Correo enviado con éxito:', response);
+    await transporterGeneral.sendMail(mailOptions);
+    console.log('Correo de notificación enviado.');
   } catch (err) {
-    console.error('❌ Error al enviar el correo:', err);
+    console.error('No fue posible enviar el correo de notificación.');
   }
 };
 
@@ -75,7 +75,7 @@ exports.forgotPassword = async (req, res) => {
     }
     return res.status(200).json({ message: recoveryMessage });
   } catch (error) {
-    console.error('Error en recuperación de contraseña:', error.message);
+    console.error('No fue posible procesar la recuperación de contraseña.');
     return res.status(500).json({ message: 'No fue posible procesar la solicitud.' });
   }
 };
@@ -120,7 +120,7 @@ exports.resetPassword = async (req, res) => {
     }
     return res.status(200).json({ message: 'Contraseña actualizada. Ya puedes iniciar sesión.' });
   } catch (error) {
-    console.error('Error restableciendo contraseña:', error.message);
+    console.error('No fue posible restablecer la contraseña.');
     return res.status(500).json({ message: 'No fue posible restablecer la contraseña.' });
   }
 };
