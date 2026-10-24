@@ -4,19 +4,38 @@ import axios from 'axios';
 import Select from 'react-select';
 import FormPage from './FormPage';
 
+const getTodayInBogota = () => {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Bogota',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(new Date()).reduce((result, part) => {
+    if (part.type !== 'literal') result[part.type] = part.value;
+    return result;
+  }, {});
+  return `${parts.year}-${parts.month}-${parts.day}`;
+};
+
+const getLatestAdultBirthDate = () => {
+  const [year, month, day] = getTodayInBogota().split('-').map(Number);
+  let cutoff = new Date(Date.UTC(year - 18, month - 1, day));
+  // Clamp Feb 29 (or any overflow) to the last valid day of the target month.
+  if (cutoff.getUTCMonth() !== month - 1) {
+    cutoff = new Date(Date.UTC(year - 18, month, 0));
+  }
+  return cutoff.toISOString().slice(0, 10);
+};
+
 const isAdult = (birthDate) => {
-  if (!birthDate) return false;
+  if (typeof birthDate !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(birthDate)) return false;
+  const parsed = new Date(`${birthDate}T00:00:00.000Z`);
+  if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== birthDate) return false;
 
   const [year, month, day] = birthDate.split('-').map(Number);
-  if (!year || !month || !day) return false;
-
-  const today = new Date();
-  let age = today.getFullYear() - year;
-  const birthdayHasNotOccurred =
-    today.getMonth() + 1 < month ||
-    (today.getMonth() + 1 === month && today.getDate() < day);
-
-  if (birthdayHasNotOccurred) age -= 1;
+  const [todayYear, todayMonth, todayDay] = getTodayInBogota().split('-').map(Number);
+  let age = todayYear - year;
+  if (todayMonth < month || (todayMonth === month && todayDay < day)) age -= 1;
   return age >= 18;
 };
 
@@ -178,7 +197,7 @@ const RegistroCliente = () => {
         </div>
         <div className="evh-form-field">
           <label htmlFor="birthDate">Fecha de nacimiento</label>
-          <input type="date" id="birthDate" autoComplete="bday" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
+          <input type="date" id="birthDate" autoComplete="bday" max={getLatestAdultBirthDate()} value={birthDate} onChange={(e) => setBirthDate(e.target.value)} required />
         </div>
         <div className="evh-form-field">
           <label htmlFor="register-phone">Celular</label>
@@ -208,5 +227,7 @@ const RegistroCliente = () => {
     </FormPage>
   );
 };
+
+export { getTodayInBogota, getLatestAdultBirthDate, isAdult };
 
 export default RegistroCliente;
