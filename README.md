@@ -43,6 +43,22 @@ Configura las variables indicadas en [backend/.env.example](backend/.env.example
 
 El backend expone `/health` para comprobar si la API está funcionando y si MongoDB está conectado.
 
+### Cuenta administradora de demostración
+
+El registro público crea únicamente cuentas de cliente. No se debe exponer una ruta pública para crear administradores. Si no existe una cuenta de administración para la v2, se puede aprovisionar una vez mediante el script interno `backend/scripts/provisionAdmin.js`.
+
+Antes de ejecutarlo, confirma que el servicio y su `MONGO_URI` apuntan a la base de datos de demostración de **electrovibehome-v2**, nunca a la base de la versión original. Ejecuta el script solo desde el contexto operativo autorizado de ese servicio, no desde el backend que despliega `main`.
+
+Para autorizar la operación se requieren temporalmente estas variables de entorno:
+- `ADMIN_BOOTSTRAP_EMAIL`: correo exclusivo para la cuenta administradora.
+- `ADMIN_BOOTSTRAP_PASSWORD`: contraseña fuerte de al menos 16 caracteres, con mayúsculas, minúsculas, números y símbolos.
+- `ADMIN_BOOTSTRAP_CONFIRM=CREATE_ADMIN_ACCOUNT`: confirmación explícita.
+- `ALLOW_ADMIN_PROVISIONING=true`: solo cuando `NODE_ENV=production`, durante el aprovisionamiento.
+
+Desde la raíz del repositorio, en el entorno autorizado del backend, ejecuta `node backend/scripts/provisionAdmin.js`. El script solo crea una cuenta nueva; si el correo ya existe, se detiene y no modifica roles ni contraseñas. Después de ejecutarlo, elimina todas las variables `ADMIN_BOOTSTRAP_*` y `ALLOW_ADMIN_PROVISIONING` del entorno. No escribas la contraseña en comandos guardados, Git, tickets ni registros compartidos.
+
+El script no se ejecuta automáticamente durante el despliegue y no se ha ejecutado desde este cambio: crear la cuenta modifica la base de datos, por lo que primero debes comprobar el destino correcto del servicio v2.
+
 ## Guía ElectroVibe (opcional)
 
 El catálogo incluye una guía conversacional que usa productos disponibles para orientar la elección. No crea pedidos, no procesa pagos ni consulta datos de cuenta.
