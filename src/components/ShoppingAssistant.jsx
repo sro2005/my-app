@@ -9,7 +9,7 @@ const starterMessage = {
 
 const normalize = value => String(value || '')
   .normalize('NFD')
-  .replace(/[\\u0300-\\u036f]/g, '')
+  .replace(/[\u0300-\u036f]/g, '')
   .trim()
   .toLowerCase();
 
@@ -75,7 +75,7 @@ const buildLocalRecommendation = (query, products) => {
     }
   });
 
-  const queryWords = normalizedQuery.split(/\\s+/)
+  const queryWords = normalizedQuery.split(/\s+/)
     .filter(word => word.length >= 4 && !stopWords.has(word));
   const ranked = (Array.isArray(products) ? products : [])
     .filter(product => Number(product.quantity) > 0)
