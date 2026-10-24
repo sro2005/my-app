@@ -2,14 +2,132 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 const Customer = require('../models/Customer');
-const { resetPassword } = require('./emailController');
+
+const capturedMail = [];
+let mailFailure = null;
+const memoryTransport = {
+  sendMail: async options => {
+    capturedMail.push(options);
+    if (mailFailure) throw mailFailure;
+    return { accepted: [options.to], messageId: 'ci-memory-mail' };
+  }
+};
+const originalCreateTransport = nodemailer.createTransport;
+nodemailer.createTransport = () => memoryTransport;
+delete require.cache[require.resolve('./emailController')];
+const { resetPassword, forgotPassword } = require('./emailController');
+nodemailer.createTransport = originalCreateTransport;
 
 const createResponse = () => ({
   statusCode: null,
   body: null,
   status(code) { this.statusCode = code; return this; },
   json(body) { this.body = body; return this; }
+});
+
+
+test('forgotPassword stores only a hash and emails a short-lived reset link through the mocked transport', async t => {
+  const originalFindOne = Customer.findOne;
+  const originalFrontendUrl = process.env.FRONTEND_URL;
+  capturedMail.length = 0;
+  mailFailure = null;
+  process.env.FRONTEND_URL = 'https://preview.example.test';
+  const customer = {
+    email: 'demo@example.com',
+    resetPasswordToken: undefined,
+    resetPasswordExpires: undefined,
+    saves: 0,
+    async save() { this.saves += 1; return this; }
+  };
+  Customer.findOne = async filter => {
+    assert.deepEqual(filter, { email: 'demo@example.com' });
+    return customer;
+  };
+  t.after(() => {
+    Customer.findOne = originalFindOne;
+    if (originalFrontendUrl === undefined) delete process.env.FRONTEND_URL;
+    else process.env.FRONTEND_URL = originalFrontendUrl;
+    mailFailure = null;
+    capturedMail.length = 0;
+  });
+
+  const response = createResponse();
+  await forgotPassword({ body: { email: '  DEMO@EXAMPLE.COM  ' } }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.match(response.body.message, /Si el correo está registrado/i);
+  assert.equal(customer.saves, 1);
+  assert.match(customer.resetPasswordToken, /^[a-f0-9]{64}$/);
+  assert.ok(customer.resetPasswordExpires instanceof Date);
+  assert.ok(customer.resetPasswordExpires.getTime() > Date.now() + 29 * 60 * 1000);
+  assert.ok(customer.resetPasswordExpires.getTime() <= Date.now() + 30 * 60 * 1000 + 1000);
+  assert.equal(capturedMail.length, 1);
+  assert.equal(capturedMail[0].to, 'demo@example.com');
+  assert.match(capturedMail[0].text, /reset-password\/[a-f0-9]{64}/);
+  const tokenMatch = capturedMail[0].text.match(/reset-password\/([a-f0-9]{64})/);
+  assert.ok(tokenMatch);
+  assert.equal(
+    customer.resetPasswordToken,
+    crypto.createHash('sha256').update(tokenMatch[1]).digest('hex')
+  );
+  assert.doesNotMatch(capturedMail[0].text, new RegExp(customer.resetPasswordToken));
+});
+
+test('forgotPassword responds generically for an unregistered email and sends no message', async t => {
+  const originalFindOne = Customer.findOne;
+  capturedMail.length = 0;
+  mailFailure = null;
+  Customer.findOne = async filter => {
+    assert.deepEqual(filter, { email: 'unknown@example.com' });
+    return null;
+  };
+  t.after(() => {
+    Customer.findOne = originalFindOne;
+    mailFailure = null;
+    capturedMail.length = 0;
+  });
+
+  const response = createResponse();
+  await forgotPassword({ body: { email: 'UNKNOWN@example.com' } }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.match(response.body.message, /Si el correo está registrado/i);
+  assert.equal(capturedMail.length, 0);
+});
+
+test('forgotPassword removes the reset token if the mocked mail transport fails', async t => {
+  const originalFindOne = Customer.findOne;
+  const originalFrontendUrl = process.env.FRONTEND_URL;
+  capturedMail.length = 0;
+  mailFailure = new Error('simulated SMTP failure');
+  process.env.FRONTEND_URL = 'https://preview.example.test';
+  const customer = {
+    email: 'demo@example.com',
+    resetPasswordToken: undefined,
+    resetPasswordExpires: undefined,
+    saves: 0,
+    async save() { this.saves += 1; return this; }
+  };
+  Customer.findOne = async () => customer;
+  t.after(() => {
+    Customer.findOne = originalFindOne;
+    if (originalFrontendUrl === undefined) delete process.env.FRONTEND_URL;
+    else process.env.FRONTEND_URL = originalFrontendUrl;
+    mailFailure = null;
+    capturedMail.length = 0;
+  });
+
+  const response = createResponse();
+  await forgotPassword({ body: { email: 'demo@example.com' } }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.match(response.body.message, /Si el correo está registrado/i);
+  assert.equal(capturedMail.length, 1);
+  assert.equal(customer.saves, 2, 'The controller saves the token, then clears it after delivery failure');
+  assert.equal(customer.resetPasswordToken, undefined);
+  assert.equal(customer.resetPasswordExpires, undefined);
 });
 
 test('resetPassword consumes a valid token atomically and hashes the new password', async t => {

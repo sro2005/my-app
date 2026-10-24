@@ -1,7 +1,9 @@
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
+const Customer = require('../models/Customer');
 const { calculateEventChecksum } = require('../utils/wompiSecurity');
 
 const wompiSignedProperties = [
@@ -326,7 +328,59 @@ async function main() {
   expectStatus(otherOrderHistory, 200, 'Second customer order history');
   assert.deepEqual(otherOrderHistory.body, [], 'One customer must not see another customer orders');
 
-  console.log('HTTP E2E passed: registration/login/profile persistence, authorization, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, and inventory restoration. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
+
+  // Test the real HTTP password-reset flow with a known token stored only as a hash.
+  const recoveryToken = crypto.randomBytes(32).toString('hex');
+  await Customer.updateOne(
+    { _id: customerId },
+    {
+      $set: {
+        resetPasswordToken: crypto.createHash('sha256').update(recoveryToken).digest('hex'),
+        resetPasswordExpires: new Date(Date.now() + 30 * 60 * 1000)
+      }
+    }
+  );
+  const resetResponse = await request('/api/customers/reset-password/' + recoveryToken, {
+    method: 'POST',
+    body: { password: 'RenewedPass2!' }
+  });
+  expectStatus(resetResponse, 200, 'Valid password reset');
+  assert.match(resetResponse.body.message, /Contraseña actualizada/i);
+
+  const reusedTokenResponse = await request('/api/customers/reset-password/' + recoveryToken, {
+    method: 'POST',
+    body: { password: 'AnotherPass3!' }
+  });
+  expectStatus(reusedTokenResponse, 400, 'Reused password-reset token');
+
+  const oldPasswordLogin = await request('/api/auth/login', {
+    method: 'POST',
+    body: { email, password: 'StrongPass1!', role: 'user' }
+  });
+  expectStatus(oldPasswordLogin, 401, 'Old password after reset');
+  const renewedPasswordLogin = await request('/api/auth/login', {
+    method: 'POST',
+    body: { email, password: 'RenewedPass2!', role: 'user' }
+  });
+  expectStatus(renewedPasswordLogin, 200, 'New password after reset');
+
+  const expiredRecoveryToken = 'e'.repeat(64);
+  await Customer.updateOne(
+    { _id: customerId },
+    {
+      $set: {
+        resetPasswordToken: crypto.createHash('sha256').update(expiredRecoveryToken).digest('hex'),
+        resetPasswordExpires: new Date(Date.now() - 1000)
+      }
+    }
+  );
+  const expiredResetResponse = await request('/api/customers/reset-password/' + expiredRecoveryToken, {
+    method: 'POST',
+    body: { password: 'ExpiredPass4!' }
+  });
+  expectStatus(expiredResetResponse, 400, 'Expired password-reset token');
+
+  console.log('HTTP E2E passed: registration/login/profile persistence, authorization, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, and inventory restoration, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
 }
 
 main()
