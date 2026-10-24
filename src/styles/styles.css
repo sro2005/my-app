@@ -2476,3 +2476,9 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-guide-promo{box-sizing:border-box;min-width:0}
 .evh-guide-promo .evh-button{box-sizing:border-box;min-width:0;max-width:100%;flex-shrink:1;white-space:normal;overflow-wrap:anywhere}
 @media(max-width:760px){.evh-guide-promo .evh-button{width:100%;max-width:100%;box-sizing:border-box}}
+
+/* Clear path from a live catalogue card into the fictional checkout */
+.evh-product-order-link{display:flex;align-items:center;justify-content:space-between;gap:.65rem;width:100%;box-sizing:border-box;margin-top:1rem;padding:.8rem .95rem;border:1px solid #193f61;border-radius:11px;background:#193f61;color:#fff!important;text-decoration:none;font-size:.9rem;font-weight:800;transition:background .18s ease,transform .18s ease;overflow-wrap:anywhere}
+.evh-product-order-link:hover{background:#24577f;transform:translateY(-1px)}
+.evh-product-order-link:focus-visible{outline:3px solid #ef9b44;outline-offset:3px}
+.evh-product-order-link span{flex-shrink:0}
