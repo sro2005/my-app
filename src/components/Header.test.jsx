@@ -58,7 +58,7 @@ describe('Header navigation', () => {
       role: 'admin'
     });
 
-    expect(screen.getByRole('link', { name: /agregar producto/i }).getAttribute('href')).toBe('/producto-form');
+    expect(screen.getByRole('link', { name: /gestionar productos/i }).getAttribute('href')).toBe('/admin-inventario');
     expect(screen.getByRole('link', { name: /^clientes$/i }).getAttribute('href')).toBe('/listado-clientes');
     expect(screen.getByRole('link', { name: /inventario/i }).getAttribute('href')).toBe('/listado-productos');
     expect(screen.getByRole('link', { name: /^pedidos$/i }).getAttribute('href')).toBe('/listado-pedidos');
