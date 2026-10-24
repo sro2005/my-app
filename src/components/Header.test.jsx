@@ -33,7 +33,8 @@ describe('Header navigation', () => {
 
     expect(screen.getByRole('navigation', { name: /navegación principal/i })).toBeTruthy();
     expect(screen.getByRole('link', { name: /catálogo/i }).getAttribute('href')).toBe('/catalogo');
-    expect(screen.getByRole('link', { name: /únete hoy/i }).getAttribute('href')).toBe('/register');
+    expect(screen.getByRole('link', { name: /la propuesta/i }).getAttribute('href')).toBe('/about');
+    expect(screen.getByRole('link', { name: /crear cuenta/i }).getAttribute('href')).toBe('/register');
     expect(screen.getByRole('link', { name: /iniciar sesión/i }).getAttribute('href')).toBe('/login');
     expect(screen.queryByRole('link', { name: /inventario|clientes|agregar producto/i })).toBeNull();
   });
