@@ -83,21 +83,41 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body || {};
-  const normalizedPassword = typeof password === 'string' ? password.trim() : '';
-  if (!/^[a-f0-9]{64}$/.test(token || '') || normalizedPassword.length < 10 || normalizedPassword.length > 128) {
-    return res.status(400).json({ message: 'Enlace o contraseña inválidos. Utiliza al menos 10 caracteres.' });
+  const validPassword = typeof password === 'string' &&
+    password.length >= 10 &&
+    password.length <= 128 &&
+    /[a-z]/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /[0-9]/.test(password) &&
+    /[!@#$%^&*]/.test(password);
+
+  if (!/^[a-f0-9]{64}$/.test(token || '') || !validPassword) {
+    return res.status(400).json({
+      message: 'Enlace o contraseña inválidos. Usa entre 10 y 128 caracteres, con mayúscula, minúscula, número y símbolo.'
+    });
   }
+
   try {
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
-    const customer = await Customer.findOne({
-      resetPasswordToken: tokenHash,
-      resetPasswordExpires: { $gt: new Date() }
-    }).select('+resetPasswordToken +resetPasswordExpires');
-    if (!customer) return res.status(400).json({ message: 'El enlace expiró o ya fue utilizado. Solicita uno nuevo.' });
-    customer.password = await bcrypt.hash(normalizedPassword, 12);
-    customer.resetPasswordToken = undefined;
-    customer.resetPasswordExpires = undefined;
-    await customer.save();
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    // Consumir el token de forma atómica: dos solicitudes simultáneas no pueden
+    // reutilizar el mismo enlace para cambiar la contraseña más de una vez.
+    const updatedCustomer = await Customer.findOneAndUpdate(
+      {
+        resetPasswordToken: tokenHash,
+        resetPasswordExpires: { $gt: new Date() }
+      },
+      {
+        $set: { password: passwordHash },
+        $unset: { resetPasswordToken: 1, resetPasswordExpires: 1 }
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedCustomer) {
+      return res.status(400).json({ message: 'El enlace expiró o ya fue utilizado. Solicita uno nuevo.' });
+    }
     return res.status(200).json({ message: 'Contraseña actualizada. Ya puedes iniciar sesión.' });
   } catch (error) {
     console.error('Error restableciendo contraseña:', error.message);
