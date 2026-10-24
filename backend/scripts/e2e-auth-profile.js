@@ -462,7 +462,51 @@ async function main() {
   });
   expectStatus(expiredResetResponse, 400, 'Expired password-reset token');
 
-  console.log('HTTP E2E passed: registration/login/profile persistence, authorization, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, concurrent idempotency and stock-race protection, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, inventory restoration, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
+  // A fully local demo purchase must work even if Wompi credentials are absent.
+  const demoPaymentEnvironment = ['WOMPI_PUBLIC_KEY', 'WOMPI_INTEGRITY_SECRET', 'WOMPI_EVENTS_SECRET', 'FRONTEND_URL']
+    .map(name => [name, process.env[name]]);
+  for (const [name] of demoPaymentEnvironment) delete process.env[name];
+  try {
+    const demoProduct = await Product.create({
+      name: 'CI E2E Simulated Purchase ' + fixtureTag,
+      description: 'Disposable fixture for in-app demo purchase',
+      category: 'CI E2E',
+      price: 15000,
+      quantity: 2,
+      demo: true,
+      demoIcon: 'test',
+      catalogVersion: 'e2e'
+    });
+    const demoPurchase = await request('/api/orders/realizar', {
+      method: 'POST',
+      token,
+      body: {
+        ...orderBody,
+        paymentMethod: 'Demostración',
+        products: [{ productId: demoProduct._id.toString(), quantity: 1 }]
+      },
+      idempotencyKey: 'ci-e2e-order-' + fixtureTag + '-demo'
+    });
+    expectStatus(demoPurchase, 201, 'In-app demo purchase without Wompi credentials');
+    assert.equal(demoPurchase.body.order.paymentStatus, 'SIMULATED');
+    assert.equal(demoPurchase.body.order.paymentConfirmed, true);
+    assert.equal(demoPurchase.body.order.status, 'Procesando');
+    assert.equal(demoPurchase.body.order.totalAmount, 15000);
+    assert.equal((await Product.findById(demoProduct._id)).quantity, 1, 'A demo order changes only the disposable fixture inventory');
+
+    const demoCheckoutAttempt = await request('/api/orders/' + demoPurchase.body.order._id + '/wompi-checkout', {
+      method: 'POST',
+      token
+    });
+    expectStatus(demoCheckoutAttempt, 409, 'Demo orders must not open Wompi checkout');
+  } finally {
+    for (const [name, value] of demoPaymentEnvironment) {
+      if (value === undefined) delete process.env[name];
+      else process.env[name] = value;
+    }
+  }
+
+  console.log('HTTP E2E passed: registration/login/profile persistence, authorization, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, concurrent idempotency and stock-race protection, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, inventory restoration, in-app demo purchase without Wompi credentials, checkout isolation, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
 }
 
 main()

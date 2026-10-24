@@ -55,13 +55,15 @@ exports.createOrder = async (req, res) => {
     }
 
     if (
-      !hasSandboxWompiCredentials({
-        publicKey: process.env.WOMPI_PUBLIC_KEY,
-        integritySecret: process.env.WOMPI_INTEGRITY_SECRET,
-        eventsSecret: process.env.WOMPI_EVENTS_SECRET
-      }) ||
-      !process.env.FRONTEND_URL ||
-      !/^https:\/\//.test(process.env.FRONTEND_URL)
+      paymentMethod === 'Wompi' && (
+        !hasSandboxWompiCredentials({
+          publicKey: process.env.WOMPI_PUBLIC_KEY,
+          integritySecret: process.env.WOMPI_INTEGRITY_SECRET,
+          eventsSecret: process.env.WOMPI_EVENTS_SECRET
+        }) ||
+        !process.env.FRONTEND_URL ||
+        !/^https:\/\//.test(process.env.FRONTEND_URL)
+      )
     ) {
       return res.status(503).json({ message: 'Los pagos no están configurados por completo. El pedido no se ha creado.' });
     }
@@ -107,8 +109,9 @@ exports.createOrder = async (req, res) => {
         products,
         orderDate: new Date(),
         userId,
-        paymentStatus: 'PENDING',
-        paymentConfirmed: false,
+        paymentStatus: paymentMethod === 'Demostración' ? 'SIMULATED' : 'PENDING',
+        paymentConfirmed: paymentMethod === 'Demostración',
+        status: paymentMethod === 'Demostración' ? 'Procesando' : 'Pendiente',
         ...(idempotencyKey ? { idempotencyKey } : {})
       });
       await createdOrder.save({ session });

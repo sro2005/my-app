@@ -15,6 +15,9 @@ exports.createCheckout = async (req, res) => {
     if (order.userId.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'No tienes permiso para pagar este pedido.' });
     }
+    if (order.paymentMethod !== 'Wompi' || order.paymentStatus === 'SIMULATED') {
+      return res.status(409).json({ message: 'Este pedido es de demostración y no admite checkout de Wompi.' });
+    }
     if (order.paymentConfirmed || order.paymentStatus === 'APPROVED') {
       return res.status(409).json({ message: 'Este pedido ya tiene un pago aprobado.' });
     }
