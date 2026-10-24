@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import ClipLoader from 'react-spinners/ClipLoader'; // Importar el spinner
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
 import moment from 'moment-timezone';
 import { Link } from 'react-router-dom';
@@ -169,24 +168,6 @@ const ListadoPedidos = () => {
   };
   
 
-  // Mostrar el spinner de carga mientras se obtienen los datos
-  if (loading) {
-    return (
-      <div className="spinner-container">
-        <ClipLoader size={50} color="#FFA500" />
-      </div>
-    );
-  }
-
-  // Si ocurre un error, mostrar un mensaje de error
-  if (error) {
-    return (
-      <div className="error-message">
-        <p>{error}</p>
-      </div>
-    );
-  }
-
   const isAdmin = user?.role === 'admin';
 
   return (
@@ -199,7 +180,25 @@ const ListadoPedidos = () => {
           : 'Aquí puedes revisar los pedidos de demostración asociados a tu cuenta. Los importes son ilustrativos y este recorrido no genera pagos ni entregas reales.'}</p>
       </header>
 
-      <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos de demostración' : 'Historial de mis pedidos'}>
+      <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos de demostración' : 'Historial de mis pedidos'} aria-busy={loading}>
+        {loading ? (
+          <div className="evh-loading-panel evh-orders-loading" role="status" aria-live="polite">
+            <div className="evh-loading-mark" aria-hidden="true">EV</div>
+            <div className="evh-loading-copy">
+              <span className="evh-loading-kicker">ELECTROVIBEHOME</span>
+              <h2>{isAdmin ? 'Preparando el centro de pedidos' : 'Consultando tus pedidos'}</h2>
+              <p>Estamos organizando la información para que puedas revisarla con claridad.</p>
+              <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
+            </div>
+          </div>
+        ) : error ? (
+          <div className="evh-list-state is-error" role="alert">
+            <span className="evh-list-state-icon" aria-hidden="true">!</span>
+            <h2>No pudimos cargar los pedidos</h2>
+            <p>{error}</p>
+          </div>
+        ) : (
+          <>
         {statusMessage && <p role="status" className="order-status-feedback">{statusMessage}</p>}
         {emptyOrders ? (
           <div className="evh-orders-empty">
@@ -226,6 +225,8 @@ const ListadoPedidos = () => {
               <p>No hay pedidos disponibles.</p>
             )}
           </ul>
+        )}
+          </>
         )}
       </section>
     </main>
