@@ -9,10 +9,6 @@ vi.mock('axios', () => ({
   default: { get: vi.fn(), put: vi.fn() }
 }));
 
-vi.mock('react-spinners/ClipLoader', () => ({
-  default: () => <div role="status">Cargando pedidos…</div>
-}));
-
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
@@ -51,6 +47,18 @@ const setApiEnvironment = () => {
 };
 
 describe('ListadoPedidos', () => {
+  test('keeps the heading visible and uses a branded skeleton instead of a spinner', () => {
+    setApiEnvironment();
+    axios.get.mockReturnValue(new Promise(() => {}));
+
+    renderOrders();
+
+    expect(screen.getByText(/Gestión de pedidos/i)).toBeTruthy();
+    expect(screen.getByRole('status')).toBeTruthy();
+    expect(screen.getByText(/Preparando el centro de pedidos/i)).toBeTruthy();
+    expect(screen.queryByText(/Cargando pedidos/i)).toBeNull();
+  });
+
   test('lets an admin mark a paid order as prepared and shipped', async () => {
     setApiEnvironment();
     axios.get.mockResolvedValue({ data: [order()] });
