@@ -42,7 +42,7 @@ describe('Admin customer history', () => {
     const summary = await screen.findByText('Ver historial de compras (1)');
     fireEvent.click(summary);
     expect(await screen.findByText('Simulado · sin cobro')).toBeTruthy();
-    expect(screen.getByText('Importe ficticio:')).toBeTruthy();
+    expect(screen.getByText(/Importe ficticio:/)).toBeTruthy();
     expect(screen.getByText(/45.000/)).toBeTruthy();
     expect(screen.getByText(/Cafetera de muestra/)).toBeTruthy();
     expect(screen.getByText(/Estado: Procesando/)).toBeTruthy();
@@ -53,10 +53,10 @@ describe('Admin customer history', () => {
 
   test('filters customers by name in addition to email and id', async () => {
     renderClients();
-    await screen.findByText('Demo Buyer');
+    await screen.findByText(/Demo Buyer/);
     fireEvent.change(screen.getByPlaceholderText(/nombre, correo, celular o ID/i), { target: { value: 'buyer@example.test' } });
-    expect(screen.getByText('Demo Buyer')).toBeTruthy();
+    expect(screen.getByText(/Demo Buyer/)).toBeTruthy();
     fireEvent.change(screen.getByPlaceholderText(/nombre, correo, celular o ID/i), { target: { value: 'missing' } });
-    expect(screen.queryByText('Demo Buyer')).toBeNull();
+    expect(screen.queryByText(/Demo Buyer/)).toBeNull();
   });
 });
