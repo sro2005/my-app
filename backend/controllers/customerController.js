@@ -13,14 +13,26 @@ const handleError = (res, error, message, statusCode = 500) => {
 exports.getCustomers = async (req, res) => {
   try {
     const customers = await Customer.find();
-    const customersWithStatus = await Promise.all(customers.map(async (customer) => {
-      const orders = await Order.find({ userId: customer._id });
-      // Usa toJSON para aplicar la transformación que elimina contraseña y campos internos.
-      return { ...customer.toJSON(), status: calculateCustomerStatus(customer.lastActivityDate), orders };
+    const customerIds = customers.map(customer => customer._id);
+    const orders = customerIds.length
+      ? await Order.find({ userId: { $in: customerIds } })
+      : [];
+
+    // Indexar los pedidos en memoria evita una consulta individual por cliente.
+    const ordersByCustomer = new Map(customerIds.map(id => [String(id), []]));
+    for (const order of orders) {
+      const key = String(order.userId);
+      if (ordersByCustomer.has(key)) ordersByCustomer.get(key).push(order);
+    }
+
+    const customersWithStatus = customers.map(customer => ({
+      ...customer.toJSON(),
+      status: calculateCustomerStatus(customer.lastActivityDate),
+      orders: ordersByCustomer.get(String(customer._id)) || []
     }));
-    res.status(200).json(customersWithStatus);
+    return res.status(200).json(customersWithStatus);
   } catch (error) {
-    handleError(res, error, 'Error al obtener los clientes');
+    return handleError(res, error, 'Error al obtener los clientes');
   }
 };
 
