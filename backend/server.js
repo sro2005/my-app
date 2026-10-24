@@ -26,6 +26,11 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Render requests pass through Cloudflare and Render's load balancer.
+// Trust only those two proxy hops so Express derives req.ip from the forwarded chain.
+// Never trust arbitrary client-supplied forwarding headers directly in application code.
+app.set('trust proxy', isProduction ? 2 : false);
+
 // Configurar CORS. En producción se exige una lista explícita de orígenes permitidos.
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
