@@ -261,7 +261,7 @@ const ListadoProductos = () => {
         </section>
       )}
 
-      {user?.role !== 'admin' && <div className="evh-catalog-assistant"><ShoppingAssistant /></div>}
+      {user?.role !== 'admin' && <div className="evh-catalog-assistant"><ShoppingAssistant products={products} /></div>}
       <p className="evh-catalog-footnote">
         {allProductsAreDemo
           ? 'Experiencia demostrativa: no se realizan compras ni transacciones reales desde este catálogo.'
