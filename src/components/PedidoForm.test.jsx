@@ -116,7 +116,12 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Registrar compra ficticia' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'CONFIRMAR COMPRA FICTICIA' }));
+    const confirmation = await screen.findByRole('dialog', { name: /confirma tu pedido/i });
+    expect(screen.getByText('Entorno de demostración')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
+    expect(confirmation.textContent).toContain('Cafetera ficticia');
+    expect(confirmation.textContent).toContain('No se hará ningún cobro real');
+    fireEvent.click(screen.getByRole('button', { name: /confirmar pedido de prueba/i }));
 
     await screen.findByText(/pedido de demostración creado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
@@ -150,7 +155,7 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Registrar compra ficticia' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'CONFIRMAR COMPRA FICTICIA' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido de prueba' }));
 
     await screen.findByText(/pedido de demostración creado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
