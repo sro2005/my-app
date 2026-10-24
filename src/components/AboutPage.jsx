@@ -3,9 +3,9 @@ import InformationalPage from './InformationalPage';
 
 const AboutPage = () => (
   <InformationalPage
-    eyebrow="CONCEPTO Y PROPÓSITO"
-    title="Qué es ElectroVibeHome"
-    lead="Una propuesta de comercio electrónico para descubrir electrodomésticos y tecnología útil para la vida en casa."
+    eyebrow="IDENTIDAD Y PROPÓSITO"
+    title="Sobre nosotros"
+    lead="Conoce la idea, los principios y la visión que orientan ElectroVibeHome: un proyecto de experiencia digital enfocado en tecnología útil para el hogar."
     notice="ElectroVibeHome es actualmente un proyecto personal y un prototipo de portafolio. No es una tienda abierta al público: los productos, precios, existencias y pedidos se usan para demostrar la experiencia. No se afirma que exista una operación comercial activa ni un registro empresarial."
     sections={[
       {
