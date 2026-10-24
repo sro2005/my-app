@@ -13,8 +13,15 @@ const ResetPassword = () => {
 
   const submit = async (event) => {
     event.preventDefault();
-    if (password.length < 10 || password !== confirmation) {
-      setMessage('La contraseña debe tener al menos 10 caracteres y coincidir con la confirmación.');
+    const strongPassword = password.length >= 10 &&
+      password.length <= 128 &&
+      /[a-z]/.test(password) &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[!@#$%^&*]/.test(password);
+
+    if (!strongPassword || password !== confirmation) {
+      setMessage('Usa entre 10 y 128 caracteres con mayúscula, minúscula, número y símbolo; ambas contraseñas deben coincidir.');
       return;
     }
     setLoading(true);
@@ -36,16 +43,16 @@ const ResetPassword = () => {
   return (
     <FormPage eyebrow="SEGURIDAD DE TU CUENTA" title="Crea una nueva contraseña" description="Elige una contraseña segura para volver a entrar a tu espacio ElectroVibeHome.">
       <form className="evh-form" onSubmit={submit}>
-        <p className="evh-form-hint">Debe tener al menos 10 caracteres.</p>
+        <p className="evh-form-hint">Usa entre 10 y 128 caracteres e incluye mayúscula, minúscula, número y símbolo.</p>
         {!success && (
           <>
             <div className="evh-form-field">
             <label htmlFor="new-password">Nueva contraseña</label>
-            <input id="new-password" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} required />
+            <input id="new-password" type="password" autoComplete="new-password" minLength={10} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{10,128}" title="Incluye mayúscula, minúscula, número y símbolo." value={password} onChange={event => setPassword(event.target.value)} required />
             </div>
             <div className="evh-form-field">
             <label htmlFor="confirm-password">Confirmar contraseña</label>
-            <input id="confirm-password" type="password" autoComplete="new-password" minLength={10} maxLength={128} value={confirmation} onChange={event => setConfirmation(event.target.value)} required />
+            <input id="confirm-password" type="password" autoComplete="new-password" minLength={10} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{10,128}" title="Incluye mayúscula, minúscula, número y símbolo." value={confirmation} onChange={event => setConfirmation(event.target.value)} required />
             </div>
             <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Guardando…' : 'Guardar contraseña'}</button>
           </>
