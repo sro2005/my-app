@@ -48,10 +48,13 @@ exports.reduceInventory = async (products, options = {}) => {
 
 exports.restoreInventory = async (products, options = {}) => {
   for (const item of aggregateItems(products)) {
-    await Product.updateOne(
+    const result = await Product.updateOne(
       { _id: item.productId },
       { $inc: { quantity: item.quantity } },
       options
     );
+    if (!result || result.matchedCount === 0) {
+      throw new Error('No se pudo restaurar el inventario: uno de los productos ya no existe.');
+    }
   }
 };
