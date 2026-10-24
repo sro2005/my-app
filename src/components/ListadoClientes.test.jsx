@@ -5,7 +5,6 @@ import axios from 'axios';
 import ListadoClientes from './ListadoClientes';
 
 vi.mock('axios', () => ({ default: { get: vi.fn() } }));
-vi.mock('react-spinners/ClipLoader', () => ({ default: () => <div role="status">Cargando</div> }));
 
 afterEach(() => { cleanup(); vi.clearAllMocks(); vi.unstubAllEnvs(); localStorage.clear(); });
 
@@ -37,6 +36,18 @@ const renderClients = () => {
 };
 
 describe('Admin customer history', () => {
+  test('shows a branded skeleton instead of a rotating loader while fetching', () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    localStorage.setItem('authToken', 'admin-demo-token');
+    axios.get.mockReturnValue(new Promise(() => {}));
+
+    render(<ListadoClientes />);
+
+    expect(screen.getByRole('status')).toBeTruthy();
+    expect(screen.getByText(/Preparando el directorio de clientes/i)).toBeTruthy();
+    expect(screen.queryByText('Cargando')).toBeNull();
+  });
+
   test('shows an expandable order history with fictional payment and product details', async () => {
     renderClients();
     const summary = await screen.findByText('Ver historial de compras (1)');
