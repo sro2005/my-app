@@ -134,7 +134,7 @@ const ListadoProductos = () => {
       setSourceMessage('');
 
       if (!apiUrl) {
-        useDemoCatalog('La API no está configurada en este entorno. Puedes recorrer el catálogo de demostración mientras conectamos el backend.');
+        useDemoCatalog('Este entorno no tiene conexión con la API; se muestran productos locales de demostración, con precios y existencias ilustrativos.');
         return;
       }
 
