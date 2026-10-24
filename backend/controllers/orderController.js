@@ -245,6 +245,43 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Pedido no encontrado' });
 
+    const body = req.body && typeof req.body === 'object' ? req.body : {};
+    if (Object.keys(body).length > 0) {
+      const statusSchema = Joi.object({
+        packed: Joi.boolean().valid(true),
+        delivered: Joi.boolean().valid(true)
+      }).xor('packed', 'delivered').unknown(false);
+      const { error, value } = statusSchema.validate(body);
+      if (error) {
+        return res.status(400).json({
+          message: 'Indica si el pedido quedó preparado o entregado.',
+          errors: error.details.map(item => item.message)
+        });
+      }
+
+      if (order.status === 'Cancelado') {
+        return res.status(409).json({ message: 'No se puede avanzar un pedido cancelado.' });
+      }
+
+      if (value.packed === true) {
+        if (!order.paymentConfirmed || order.paymentStatus !== 'APPROVED' || order.status !== 'Procesando') {
+          return res.status(409).json({ message: 'Solo se puede preparar un pedido con pago aprobado y estado Procesando.' });
+        }
+        order.packed = true;
+        order.status = 'Enviado';
+      } else {
+        if (!order.packed || order.status !== 'Enviado') {
+          return res.status(409).json({ message: 'El pedido debe estar preparado y enviado antes de marcarlo como entregado.' });
+        }
+        order.delivered = true;
+        order.status = 'Entregado';
+      }
+
+      await order.save();
+      return res.status(200).json({ message: 'Estado del pedido actualizado.', order });
+    }
+
+    // Compatibilidad con llamadas antiguas que solo solicitan evaluar las transiciones automáticas.
     const previousStatus = order.status;
     await updateOrderStatus(order);
 
@@ -252,9 +289,9 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
       return res.status(200).json({ message: 'El estado del pedido ya estaba actualizado', order });
     }
 
-    res.status(200).json({ message: 'Estado del pedido actualizado automáticamente', order });
+    return res.status(200).json({ message: 'Estado del pedido actualizado automáticamente', order });
   } catch (error) {
     console.error('Error al actualizar el estado del pedido:', error.message);
-    res.status(500).json({ message: 'Error al actualizar el estado del pedido' });
+    return res.status(500).json({ message: 'Error al actualizar el estado del pedido' });
   }
 };
