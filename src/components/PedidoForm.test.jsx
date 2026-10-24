@@ -1,0 +1,91 @@
+import React from 'react';
+import { afterEach, describe, expect, test, vi } from 'vitest';
+import { cleanup, render, screen } from '@testing-library/react';
+import axios from 'axios';
+import { AuthContext } from '../contexts/AuthContext';
+import PedidoForm from './PedidoForm';
+
+vi.mock('axios', () => ({
+  default: { get: vi.fn(), post: vi.fn() }
+}));
+
+vi.mock('react-select', () => ({
+  default: ({ inputId, options = [], onChange, value, placeholder, isDisabled }) => (
+    <select
+      id={inputId}
+      aria-label={inputId}
+      value={value?.value || ''}
+      disabled={isDisabled}
+      onChange={event => onChange(options.find(option => option.value === event.target.value) || null)}
+    >
+      <option value="">{placeholder}</option>
+      {options.map(option => <option key={option.value} value={option.value}>{option.value}</option>)}
+    </select>
+  )
+}));
+
+vi.mock('./FormPage', () => ({
+  default: ({ children }) => <div>{children}</div>
+}));
+
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+  vi.unstubAllEnvs();
+  localStorage.clear();
+});
+
+const renderCheckout = () => {
+  const user = {
+    _id: 'customer-1',
+    role: 'user',
+    preferences: ['Lavadoras']
+  };
+  localStorage.setItem('authToken', 'test-token');
+  localStorage.setItem('userData', JSON.stringify({
+    firstName: 'Cliente',
+    lastName: 'Demo',
+    email: 'cliente@example.com',
+    phone: '+57 300 123 4567'
+  }));
+  vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+  return render(
+    <AuthContext.Provider value={{ user }}>
+      <PedidoForm />
+    </AuthContext.Provider>
+  );
+};
+
+describe('PedidoForm catalog loading', () => {
+  test('falls back to the full catalog when preferred products have no available stock', async () => {
+    axios.get
+      .mockResolvedValueOnce({ data: [{ _id: 'p-out', name: 'Lavadora Agotada', category: 'Lavadoras', price: 100000, quantity: 0 }] })
+      .mockResolvedValueOnce({ data: [{ _id: 'p-1', name: 'Monitor Demo', category: 'Computadores', price: 250000, quantity: 2, demo: true }] });
+
+    renderCheckout();
+
+    expect(await screen.findByRole('option', { name: 'p-1' })).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toMatch(/catálogo completo/i);
+    expect(axios.get).toHaveBeenNthCalledWith(
+      1,
+      'https://api.example.test/api/products/preferences',
+      { headers: { Authorization: 'Bearer test-token' } }
+    );
+    expect(axios.get).toHaveBeenNthCalledWith(
+      2,
+      'https://api.example.test/api/products',
+      { headers: { Authorization: 'Bearer test-token' } }
+    );
+  });
+
+  test('falls back to the full catalog if the preferences endpoint fails', async () => {
+    axios.get
+      .mockRejectedValueOnce(new Error('preferences endpoint unavailable'))
+      .mockResolvedValueOnce({ data: [{ _id: 'p-2', name: 'Televisor Demo', category: 'Televisores', price: 400000, quantity: 1 }] });
+
+    renderCheckout();
+
+    expect(await screen.findByRole('option', { name: 'p-2' })).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toMatch(/no pudimos cargar las recomendaciones/i);
+  });
+});
