@@ -1,6 +1,6 @@
 import React from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import Header from './Header';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -15,7 +15,6 @@ vi.mock('@fortawesome/react-fontawesome', () => ({
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
-  vi.useRealTimers();
 });
 
 const renderHeader = user => {
@@ -47,7 +46,7 @@ describe('Header navigation', () => {
 
     expect(screen.getByRole('link', { name: /realizar pedido/i }).getAttribute('href')).toBe('/pedido-form');
     expect(screen.getByRole('link', { name: /preferencias/i }).getAttribute('href')).toBe('/listado-productos');
-    expect(screen.getByRole('link', { name: /mis órdenes/i }).getAttribute('href')).toBe('/listado-pedidos');
+    expect(screen.getByRole('link', { name: /mis pedidos/i }).getAttribute('href')).toBe('/listado-pedidos');
     expect(screen.getByRole('link', { name: /mi perfil/i }).getAttribute('href')).toBe('/perfil-cliente');
     expect(screen.queryByRole('link', { name: /inventario|clientes|agregar producto/i })).toBeNull();
   });
@@ -65,15 +64,11 @@ describe('Header navigation', () => {
     expect(screen.queryByRole('link', { name: /mi perfil|realizar pedido/i })).toBeNull();
   });
 
-  test('announces logout before clearing the session', () => {
-    vi.useFakeTimers();
+  test('closes the session immediately without a misaligned goodbye notice', () => {
     const { handleLogout } = renderHeader({ _id: 'customer-1', role: 'user' });
 
     fireEvent.click(screen.getByRole('button', { name: /salir/i }));
-    expect(screen.getByRole('status').textContent).toMatch(/gracias por visitarnos/i);
-    expect(handleLogout).not.toHaveBeenCalled();
-
-    act(() => { vi.advanceTimersByTime(1800); });
     expect(handleLogout).toHaveBeenCalledOnce();
+    expect(screen.queryByText(/gracias por visitarnos/i)).toBeNull();
   });
 });
