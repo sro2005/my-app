@@ -44,7 +44,7 @@ const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
 }).format(Number(amount) || 0);
 
 // Formatear número de identificación
-const formatIdentificationNumber = (number) => String(number || '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.');
+const formatIdentificationNumber = (number) => String(number || '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
 // Calcular estado del cliente
 const calcularEstado = (lastActivityDate) => {
