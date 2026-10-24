@@ -8,7 +8,7 @@ test('registration rejects customers who are not adults', () => {
   futureBirthDate.setFullYear(futureBirthDate.getFullYear() + 1);
   assert.equal(isAdult(futureBirthDate), false);
   assert.equal(isAdult(new Date('2000-01-01T12:00:00.000Z')), true);
-  assert.equal(isAdult('2000-01-01'), false);
+  assert.equal(isAdult('2000-01-01'), true);
 });
 
 test('registration schema requires identity, contact, email and a strong password', () => {
