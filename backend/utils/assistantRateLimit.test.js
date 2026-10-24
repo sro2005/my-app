@@ -11,10 +11,15 @@ const createResponse = () => ({
   json(body) { this.body = body; return this; }
 });
 
-test('assistant rate limit counts requests by the trusted Render client IP and resets', () => {
+const makeRequest = (ip, spoofedHeader = '203.0.113.99') => ({
+  ip,
+  get: name => name === 'cf-connecting-ip' ? spoofedHeader : undefined
+});
+
+test('assistant rate limit counts requests by Express-resolved client IP and resets', () => {
   let currentTime = 1000;
   const middleware = createAssistantRateLimiter({ windowMs: 1000, maxRequests: 2, now: () => currentTime });
-  const request = { ip: 'proxy', get: name => name === 'cf-connecting-ip' ? '198.51.100.7' : undefined };
+  const request = makeRequest('198.51.100.7');
   let nextCalls = 0;
 
   middleware(request, createResponse(), () => { nextCalls += 1; });
@@ -31,9 +36,20 @@ test('assistant rate limit counts requests by the trusted Render client IP and r
   assert.equal(nextCalls, 3);
 });
 
-test('assistant rate limit gives separate buckets to different client IPs', () => {
+test('assistant limiter ignores a spoofed forwarding header', () => {
   const middleware = createAssistantRateLimiter({ maxRequests: 1 });
-  const makeRequest = address => ({ ip: 'proxy', get: name => name === 'cf-connecting-ip' ? address : undefined });
+  let nextCalls = 0;
+
+  middleware(makeRequest('198.51.100.7', '192.0.2.44'), createResponse(), () => { nextCalls += 1; });
+  const blocked = createResponse();
+  middleware(makeRequest('198.51.100.7', '198.51.100.8'), blocked, () => { nextCalls += 1; });
+
+  assert.equal(nextCalls, 1);
+  assert.equal(blocked.statusCode, 429);
+});
+
+test('assistant limiter gives separate buckets to different resolved client IPs', () => {
+  const middleware = createAssistantRateLimiter({ maxRequests: 1 });
   let nextCalls = 0;
 
   middleware(makeRequest('198.51.100.7'), createResponse(), () => { nextCalls += 1; });
