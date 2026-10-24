@@ -141,3 +141,70 @@ test('getProfile serialization does not expose the password or reset-password fi
   const serializedProfile = JSON.stringify(response.body);
   assert.doesNotMatch(serializedProfile, /stored-password-hash|private-reset-token|resetPasswordToken|resetPasswordExpires/);
 });
+
+
+test('updateCustomer rejects malformed customer ids before querying MongoDB', async t => {
+  const originalUpdate = Customer.findByIdAndUpdate;
+  restore(t, [[Customer, 'findByIdAndUpdate', originalUpdate]]);
+  let calls = 0;
+  Customer.findByIdAndUpdate = async () => { calls += 1; return null; };
+
+  const response = createResponse();
+  await updateCustomer({
+    params: { id: 'not-a-valid-object-id' },
+    user: { _id: customerId, role: 'user' },
+    body: { firstName: 'Someone' }
+  }, response);
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(calls, 0);
+});
+
+test('updateCustomer rejects invalid editable values before querying MongoDB', async t => {
+  const originalUpdate = Customer.findByIdAndUpdate;
+  restore(t, [[Customer, 'findByIdAndUpdate', originalUpdate]]);
+  let calls = 0;
+  Customer.findByIdAndUpdate = async () => { calls += 1; return null; };
+
+  const response = createResponse();
+  await updateCustomer({
+    params: { id: customerId },
+    user: { _id: customerId, role: 'user' },
+    body: { email: 'not-an-email' }
+  }, response);
+
+  assert.equal(response.statusCode, 400);
+  assert.match(response.body.message, /perfil inválidos/i);
+  assert.equal(calls, 0);
+});
+
+test('updateCustomer converts a duplicate-key database error into a safe conflict response', async t => {
+  const originalUpdate = Customer.findByIdAndUpdate;
+  restore(t, [[Customer, 'findByIdAndUpdate', originalUpdate]]);
+  Customer.findByIdAndUpdate = async () => {
+    throw Object.assign(new Error('duplicate key: private database detail'), { code: 11000 });
+  };
+
+  const response = createResponse();
+  await updateCustomer({
+    params: { id: customerId },
+    user: { _id: customerId, role: 'user' },
+    body: { email: 'existing@example.com' }
+  }, response);
+
+  assert.equal(response.statusCode, 409);
+  assert.match(response.body.message, /correo o número de identificación ya está registrado/i);
+  assert.doesNotMatch(JSON.stringify(response.body), /private database detail/);
+});
+
+test('getProfile returns 404 when the authenticated customer record no longer exists', async t => {
+  const originalFindById = Customer.findById;
+  restore(t, [[Customer, 'findById', originalFindById]]);
+  Customer.findById = async () => null;
+
+  const response = createResponse();
+  await getProfile({ user: { _id: customerId } }, response);
+
+  assert.equal(response.statusCode, 404);
+  assert.match(response.body.message, /no encontrado/i);
+});
