@@ -249,7 +249,7 @@ async function main() {
     await page.locator('#confirm-password').fill('password-too-weak');
     await page.getByRole('button', { name: /guardar contraseña/i }).click();
     assert.equal(await resetPassword.evaluate(element => element.validity.valid), false,
-      'Weak reset passwords should fail the browser's strength constraint.');
+      "Weak reset passwords should fail the browser's strength constraint.");
     assert.deepEqual(mutationRequests, [],
       'Read-only browser acceptance must not send account, login, recovery, or reset POST requests: ' + mutationRequests.join('; '));
     console.log('Safe form validations passed: registration required fields, malformed login email, empty recovery email, and weak reset password; no mutating API requests were sent.');
