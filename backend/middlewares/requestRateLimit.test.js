@@ -11,15 +11,16 @@ const createResponse = () => ({
   json(body) { this.body = body; return this; }
 });
 
-const request = (address, email = 'demo@example.com') => ({
-  ip: 'proxy',
+const request = (address, email = 'demo@example.com', spoofedEdgeAddress = '203.0.113.99') => ({
+  ip: address,
   body: { email },
-  get: name => name === 'cf-connecting-ip' ? address : undefined
+  get: name => name === 'cf-connecting-ip' ? spoofedEdgeAddress : undefined
 });
 
-test('uses the trusted edge address and falls back to Express IP', () => {
-  assert.equal(getClientAddress(request('198.51.100.10')), '198.51.100.10');
-  assert.equal(getClientAddress({ ip: '127.0.0.1', get: () => undefined }), '127.0.0.1');
+test('uses Express-resolved client IP and ignores an arbitrary Cloudflare header', () => {
+  assert.equal(getClientAddress(request('198.51.100.10', 'demo@example.com', '192.0.2.44')), '198.51.100.10');
+  assert.equal(getClientAddress({ ip: '127.0.0.1', get: () => '192.0.2.44' }), '127.0.0.1');
+  assert.equal(getClientAddress({ socket: { remoteAddress: '127.0.0.2' } }), '127.0.0.2');
 });
 
 test('blocks requests beyond the limit and sets Retry-After', () => {
