@@ -15,24 +15,41 @@ const createRequestRateLimiter = ({
   now = Date.now
 } = {}) => {
   const requestsByKey = new Map();
+  let requestsSinceCleanup = 0;
+  const maxTrackedKeys = 10000;
 
   return (req, res, next) => {
     const currentTime = now();
-    for (const [key, entry] of requestsByKey) {
-      if (entry.resetAt <= currentTime) requestsByKey.delete(key);
+    requestsSinceCleanup += 1;
+    // Evita escanear el mapa completo en cada solicitud; las claves usadas se
+    // comprueban individualmente y la limpieza global se amortiza cada 100 peticiones.
+    if (requestsSinceCleanup % 100 === 0) {
+      for (const [trackedKey, trackedEntry] of requestsByKey) {
+        if (trackedEntry.resetAt <= currentTime) requestsByKey.delete(trackedKey);
+      }
     }
 
     const key = keyGenerator(req);
     if (typeof key !== 'string' || !key) return next();
 
-    const entry = requestsByKey.get(key);
+    let entry = requestsByKey.get(key);
+    if (entry && entry.resetAt <= currentTime) {
+      requestsByKey.delete(key);
+      entry = undefined;
+    }
     if (entry && entry.count >= maxRequests) {
       res.set('Retry-After', String(Math.max(1, Math.ceil((entry.resetAt - currentTime) / 1000))));
       return res.status(429).json({ message });
     }
 
     if (entry) entry.count += 1;
-    else requestsByKey.set(key, { count: 1, resetAt: currentTime + windowMs });
+    else {
+      if (requestsByKey.size >= maxTrackedKeys) {
+        const oldestKey = requestsByKey.keys().next().value;
+        if (oldestKey !== undefined) requestsByKey.delete(oldestKey);
+      }
+      requestsByKey.set(key, { count: 1, resetAt: currentTime + windowMs });
+    }
 
     return next();
   };
