@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './AdminDashboard.css';
+import { AuthContext } from '../contexts/AuthContext';
 
 const money = value => new Intl.NumberFormat('es-CO', {
   style: 'currency', currency: 'COP', maximumFractionDigits: 0
@@ -23,6 +24,8 @@ export const summarizeDemoOperations = (orders, customers, products) => {
 };
 
 const AdminDashboard = () => {
+  const auth = useContext(AuthContext);
+  const adminEmail = auth?.user?.email || 'Cuenta de administración';
   const [orders, setOrders] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
@@ -73,6 +76,11 @@ const AdminDashboard = () => {
         <span className="evh-admin-eyebrow">CENTRO DE CONTROL · ENTORNO DE DEMOSTRACIÓN</span>
         <h1>Tu tienda, bajo control.</h1>
         <p>Consulta los movimientos ficticios de ElectroVibeHome. Ninguna cifra representa ventas o dinero recibido.</p>
+        <div className="evh-admin-session" aria-label="Cuenta administrativa conectada">
+          <span className="evh-admin-session-mark" aria-hidden="true">✓</span>
+          <span className="evh-admin-session-copy"><small>SESIÓN DE ADMINISTRACIÓN</small><strong>{adminEmail}</strong></span>
+          <span className="evh-admin-session-role">ADMIN</span>
+        </div>
         <button type="button" onClick={reload} disabled={loading}>Actualizar datos</button>
       </header>
       {loading && <p role="status">Cargando información de administración…</p>}
