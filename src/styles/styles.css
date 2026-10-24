@@ -1493,6 +1493,26 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 
 @media (max-width: 480px) {
   .evh-site-header { padding-inline: .7rem; }
+  .evh-site-brand {
+    min-width: 0;
+    max-width: 100%;
+    gap: .5rem;
+  }
+  .evh-site-brand-copy { min-width: 0; max-width: 100%; }
+  .evh-site-brand-copy strong {
+    font-size: .82rem;
+    letter-spacing: .04em;
+    overflow-wrap: anywhere;
+  }
+  .evh-site-brand-copy small {
+    display: block;
+    max-width: 100%;
+    font-size: .5rem;
+    letter-spacing: .045em;
+    line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
   .evh-header-links { gap: .15rem; }
   .evh-header-links a,.evh-header-links .evh-site-logout { gap: .35rem; padding: .45rem .55rem; font-size: .7rem; }
   .evh-footer-inner { grid-template-columns: 1fr 1fr; gap: 1.4rem 1rem; }
