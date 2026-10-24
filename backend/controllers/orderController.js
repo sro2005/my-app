@@ -239,6 +239,9 @@ exports.deleteOrder = async (req, res) => {
 exports.updateOrderStatusAutomatically = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Identificador de pedido inválido.' });
+    }
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Pedido no encontrado' });
 
