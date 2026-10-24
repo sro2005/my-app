@@ -12,16 +12,16 @@ const LandingPage = () => (
   <main className="evh-landing">
     <section className="evh-hero">
       <div className="evh-hero-copy">
-        <span className="evh-eyebrow">TECNOLOGÍA QUE SE SIENTE EN CASA</span>
-        <h1>Tu hogar merece algo <span>extraordinario.</span></h1>
-        <p>Encuentra electrodomésticos que combinan funcionalidad, comodidad y estilo para tu día a día.</p>
+        <span className="evh-eyebrow">TECNOLOGÍA ÚTIL PARA LA VIDA EN CASA</span>
+        <h1>Encuentra tecnología que haga <span>más fácil tu día a día.</span></h1>
+        <p>Explora electrodomésticos y tecnología para el hogar, compara categorías y descubre opciones según el espacio y las tareas de tu rutina.</p>
         <div className="evh-hero-actions" style={{ maxWidth: 'calc(100vw - 40px)', minWidth: 0, boxSizing: 'border-box' }}>
           <Link className="evh-button evh-button-primary" to="/catalogo" style={{ maxWidth: 'calc(100vw - 50px)', minWidth: 0, boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere' }}>Explorar productos <span aria-hidden="true">→</span></Link>
           <Link className="evh-button evh-button-secondary" to="/register" style={{ maxWidth: 'calc(100vw - 50px)', minWidth: 0, boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere' }}>Crear mi cuenta</Link>
         </div>
         <div className="evh-trust-row">
-          <span><strong>✓</strong> Compra sencilla</span>
-          <span><strong>✓</strong> Pago de prueba, sin cobros reales</span>
+          <span><strong>✓</strong> Catálogo fácil de explorar</span>
+          <span><strong>✓</strong> Recorrido de compra simulado</span>
         </div>
       </div>
       <div className="evh-hero-art" aria-label="Ilustración de electrodomésticos para el hogar" role="img">
@@ -30,7 +30,7 @@ const LandingPage = () => (
         <div className="evh-appliance evh-fridge"><span>❄</span><i /></div>
         <div className="evh-appliance evh-washer"><span>◉</span><i /></div>
         <div className="evh-appliance evh-microwave"><span>▦</span><i /></div>
-        <div className="evh-art-label">Vive mejor. Vive conectado.</div>
+        <div className="evh-art-label">Tecnología pensada para casa.</div>
       </div>
     </section>
 
