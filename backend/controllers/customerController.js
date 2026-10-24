@@ -74,7 +74,7 @@ exports.updateCustomer = async (req, res) => {
       lastName: Joi.string().trim().min(1).max(100),
       email: Joi.string().trim().email().max(254),
       identificationNumber: Joi.string().pattern(/^[0-9]{1,3}([.][0-9]{3})*$/),
-      birthDate: Joi.string().pattern(/^\\d{4}-\\d{2}-\\d{2}$/).custom((value, helpers) =>
+      birthDate: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).custom((value, helpers) =>
         isAdult(value) ? value : helpers.error('any.invalid')
       ).messages({
         'string.pattern.base': 'La fecha de nacimiento debe tener formato YYYY-MM-DD.',
