@@ -6,6 +6,7 @@ import LandingPage from './components/LandingPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
+import AdminDashboard from './components/AdminDashboard';
 import ProductoForm from './components/ProductoForm';
 import PedidoForm from './components/PedidoForm';
 import ListadoClientes from './components/ListadoClientes';
@@ -53,7 +54,7 @@ const AppContent = () => {
         ) : (
           <>
             <Route path="/" element={<Navigate to="/home-page" />} />
-            <Route path="/home-page" element={<ProtectedRoute component={HomePage} />} />
+            <Route path="/home-page" element={user?.role === 'admin' ? <AdminDashboard /> : <ProtectedRoute component={HomePage} />} />
             <Route path="/pedido-form" element={<ProtectedRoute component={PedidoForm} />} />
             <Route path="/listado-productos" element={<ProtectedRoute component={ListadoProductos} />} />
             <Route path="/listado-pedidos" element={<ProtectedRoute component={ListadoPedidos} />} />
