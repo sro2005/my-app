@@ -45,6 +45,7 @@ test('createCheckout refuses production credentials and never emits a live check
     _id: validId,
     userId: validId,
     status: 'Pendiente',
+    paymentMethod: 'Wompi',
     paymentStatus: 'PENDING',
     paymentConfirmed: false,
     totalAmount: 100000
