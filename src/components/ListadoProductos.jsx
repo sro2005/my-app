@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { AuthContext } from '../contexts/AuthContext';
 import ShoppingAssistant from './ShoppingAssistant';
@@ -45,7 +46,7 @@ const formatPrice = (price) => new Intl.NumberFormat('es-CO', {
   maximumFractionDigits: 0
 }).format(Number(price) || 0);
 
-const ProductCard = ({ product, demoMode }) => {
+const ProductCard = ({ product, demoMode, canOrder = false }) => {
   const [imageFailed, setImageFailed] = useState(false);
   const illustrative = demoMode || product.demo === true || isPlaceholderImage(product.imageUrl);
   const showImage = product.imageUrl && !illustrative && !imageFailed;
@@ -85,6 +86,14 @@ const ProductCard = ({ product, demoMode }) => {
               : Number(product.quantity) > 0 ? 'Disponible' : 'Agotado'}
           </span>
         </div>
+        {canOrder && product._id && (
+          <Link
+            className="evh-product-order-link"
+            to={`/pedido-form?productId=${encodeURIComponent(product._id)}`}
+          >
+            Agregar a pedido <span aria-hidden="true">→</span>
+          </Link>
+        )}
       </div>
     </li>
   );
@@ -255,7 +264,12 @@ const ListadoProductos = () => {
       {filteredProducts.length > 0 ? (
         <ul className="evh-product-grid" aria-label="Productos del catálogo">
           {filteredProducts.map((product) => (
-            <ProductCard key={getProductKey(product)} product={product} demoMode={source === 'demo'} />
+            <ProductCard
+              key={getProductKey(product)}
+              product={product}
+              demoMode={source === 'demo'}
+              canOrder={user?.role === 'user' && source === 'live'}
+            />
           ))}
         </ul>
       ) : (
