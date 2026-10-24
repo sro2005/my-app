@@ -30,8 +30,13 @@ const formatDateTime = (dateString) => {
 
 // Función para formatear la fecha en formato 12 horas con AM/PM
 const formatOrderDate = (dateString) => {
-  return moment(dateString).tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss'); // Hora en formato militar (24 horas)
+  const parsed = moment(dateString);
+  return parsed.isValid() ? parsed.tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss') : 'Fecha no disponible';
 };
+
+const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
+  style: 'currency', currency: 'COP', maximumFractionDigits: 0
+}).format(Number(amount) || 0);
 
 // Formatear número de identificación
 const formatIdentificationNumber = (number) => number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -62,6 +67,32 @@ const ClienteItem = ({ cliente }) => {
           <p><strong>Tipo & Número de Identificación (C.C):</strong> {formatIdentificationNumber(cliente.identificationNumber)}</p>
           <p><strong>Fecha de Nacimiento:</strong> {formatDate(cliente.birthDate)}</p>
           <p><strong>Historial de Pedidos:</strong> {pedidosCount} Pedido{pedidosCount === 1 ? '' : 's'}</p>
+          {pedidosCount > 0 && (
+            <details className="cliente-historial-pedidos">
+              <summary>Ver historial de compras ({pedidosCount})</summary>
+              <ul>
+                {cliente.orders.map(pedido => (
+                  <li key={pedido._id}>
+                    <strong>Pedido #{String(pedido._id).slice(-8)}</strong>
+                    <span>Fecha: {formatOrderDate(pedido.orderDate)}</span>
+                    <span>Estado: {pedido.status || 'Sin estado'}</span>
+                    <span>Pago: {pedido.paymentStatus === 'SIMULATED' ? 'Simulado · sin cobro' : (pedido.paymentStatus || 'No disponible')}</span>
+                    <span>Importe ficticio: {formatMoney(pedido.totalAmount)}</span>
+                    {Array.isArray(pedido.products) && pedido.products.length > 0 && (
+                      <ul>
+                        {pedido.products.map((item, index) => (
+                          <li key={item._id || item.productId?._id || index}>
+                            {item.productId?.name || 'Producto del historial'} × {item.quantity || 1}
+                            {item.productId?.category ? ` · ${item.productId.category}` : ''}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
           <p><strong>Última Interacción:</strong> {formatDateTime(cliente.lastActivityDate)}</p>
           <p><strong>Estado:</strong> {estadoActivo}</p>
         </div>
@@ -110,10 +141,13 @@ const ListadoClientes = () => {
   const clientesFiltrados = useMemo(() => {
     const searchLower = search.toLowerCase();
     return clientes
-      .filter(cliente =>
-        cliente._id.toLowerCase().includes(searchLower) ||
-        cliente.email.toLowerCase().includes(searchLower)
-      )
+      .filter(cliente => [
+        cliente._id,
+        cliente.email,
+        cliente.firstName,
+        cliente.lastName,
+        cliente.phone
+      ].some(value => String(value || '').toLowerCase().includes(searchLower)))
       .filter(cliente => filtroActivo === null || calcularEstado(cliente.lastActivityDate) === filtroActivo);
   }, [clientes, search, filtroActivo]);
 
@@ -164,7 +198,7 @@ const ListadoClientes = () => {
       <h2>Gestión de Clientes</h2>
 
       <div className="search-container">
-        <input type="text" placeholder="🔍 Buscar por ID... / Buscar por E-MAIL..." 
+        <input type="text" placeholder="🔍 Buscar por nombre, correo, celular o ID..." 
           value={search} onChange={(e) => setSearch(e.target.value)} className="search-input" />
       </div>
 
