@@ -2416,3 +2416,11 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-cart-line-total{white-space:nowrap}.evh-cart-remove{padding:.35rem .6rem}
 .evh-cart-note{font-size:.85rem;line-height:1.5;color:#536b81;margin-bottom:0}
 @media(max-width:640px){.evh-cart-item{grid-template-columns:minmax(0,1fr) auto;gap:.7rem}.evh-cart-line-total{grid-column:1}.evh-cart-remove{grid-column:2;grid-row:2}.evh-cart-quantity{grid-column:2;grid-row:1}}
+
+/* Historial de compras desplegable en administración de clientes */
+.cliente-historial-pedidos{margin:.6rem 0;padding:.7rem;border:1px solid #cdd8e4;border-radius:10px;background:#f7fafc;color:#203a53}
+.cliente-historial-pedidos summary{font-weight:700;cursor:pointer;padding:.2rem 0}
+.cliente-historial-pedidos>ul{list-style:none;padding:0;margin:.7rem 0 0}
+.cliente-historial-pedidos>ul>li{display:grid;gap:.35rem;padding:.8rem 0;border-top:1px solid #dbe3eb}
+.cliente-historial-pedidos span{font-size:.9rem;overflow-wrap:anywhere}
+.cliente-historial-pedidos li ul{margin:.3rem 0 0;padding-left:1.25rem;list-style:disc}
