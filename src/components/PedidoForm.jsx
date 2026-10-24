@@ -41,6 +41,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [pendingCheckoutOrderId, setPendingCheckoutOrderId] = useState(null);
   const [orderRequestKey, setOrderRequestKey] = useState(null);
   const [productLoadError, setProductLoadError] = useState('');
+  const [productLoadNotice, setProductLoadNotice] = useState('');
   const [formError, setFormError] = useState('');
 
   useEffect(() => {
@@ -60,7 +61,8 @@ const userId = user?._id;  // Usar userId desde el contexto
     }
   }, []);
 
-    // Cargar productos disponibles filtrados según las preferencias del usuario
+    // Cargar productos disponibles filtrados según las preferencias del usuario.
+    // Si no hay productos afines con stock (o falla ese endpoint), usamos el catálogo completo.
     useEffect(() => {
       const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
       const token = localStorage.getItem('authToken');
@@ -69,44 +71,69 @@ const userId = user?._id;  // Usar userId desde el contexto
         setProductLoadError('El catálogo de productos no está disponible en este momento.');
         return;
       }
-  
-      // Si hay token y el usuario tiene preferencias, usamos el endpoint filtrado
-      const endpoint =
-        token && user && user.preferences && user.preferences.length > 0
-          ? `${API_URL}/api/products/preferences`
-          : `${API_URL}/api/products`;
-  
-      axios.get(endpoint, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-      })
-        .then(response => {
-          if (!Array.isArray(response.data)) throw new Error('El catálogo devolvió un formato inesperado.');
-          const purchasableProducts = response.data.filter(product =>
-            Number(product.quantity) > 0 &&
-            Number.isFinite(Number(product.price)) &&
-            Number(product.price) > 0
-          );
 
-          setProductLoadError(purchasableProducts.length === 0
+      const fullCatalogEndpoint = `${API_URL}/api/products`;
+      const usePreferences =
+        Boolean(token && user && Array.isArray(user.preferences) && user.preferences.length > 0);
+      const endpoint = usePreferences ? `${API_URL}/api/products/preferences` : fullCatalogEndpoint;
+      const requestOptions = {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      };
+      const purchasable = products => products.filter(product =>
+        Number(product.quantity) > 0 &&
+        Number.isFinite(Number(product.price)) &&
+        Number(product.price) > 0
+      );
+      const toOptions = products => products.map(product => ({
+        value: product._id,
+        label: (
+          <span>
+            {product.demo === true && <strong>[DEMO] </strong>}
+            <strong>Producto:</strong> {product.name} | <strong>Categoría:</strong> {product.category} | <strong>Stock:</strong> {product.quantity} unidades
+            {product.demo === true && ' (precio y stock de muestra)'}
+          </span>
+        ),
+        price: Number(product.price)
+      }));
+
+      const loadCatalog = async () => {
+        try {
+          let response;
+          let notice = '';
+          try {
+            response = await axios.get(endpoint, requestOptions);
+            if (!Array.isArray(response.data)) throw new Error('El catálogo devolvió un formato inesperado.');
+          } catch (primaryError) {
+            if (!usePreferences) throw primaryError;
+            response = await axios.get(fullCatalogEndpoint, requestOptions);
+            if (!Array.isArray(response.data)) throw new Error('El catálogo devolvió un formato inesperado.');
+            notice = 'No pudimos cargar las recomendaciones; mostramos el catálogo completo.';
+          }
+
+          let available = purchasable(response.data);
+          if (usePreferences && available.length === 0 && !notice) {
+            const fullCatalog = await axios.get(fullCatalogEndpoint, requestOptions);
+            if (!Array.isArray(fullCatalog.data)) throw new Error('El catálogo devolvió un formato inesperado.');
+            available = purchasable(fullCatalog.data);
+            if (available.length > 0) {
+              notice = 'No encontramos productos disponibles en tus preferencias; mostramos el catálogo completo.';
+            }
+          }
+
+          setAvailableProducts(toOptions(available));
+          setProductLoadNotice(notice);
+          setProductLoadError(available.length === 0
             ? 'No hay productos con existencias disponibles para seleccionar en este momento.'
             : '');
-          setAvailableProducts(purchasableProducts.map(product => ({
-            value: product._id,
-            label: (
-              <span>
-                {product.demo === true && <strong>[DEMO] </strong>}
-                <strong>Producto:</strong> {product.name} | <strong>Categoría:</strong> {product.category} | <strong>Stock:</strong> {product.quantity} unidades
-                {product.demo === true && ' (precio y stock de muestra)'}
-              </span>
-            ),
-            price: Number(product.price)
-          })));
-        })
-        .catch(error => {
+        } catch (error) {
           setAvailableProducts([]);
+          setProductLoadNotice('');
           setProductLoadError('No pudimos cargar los productos. Intenta nuevamente más tarde.');
           console.error('Error cargando productos:', error.message);
-        });
+        }
+      };
+
+      loadCatalog();
     }, [user]);
 
   // Maneja el cambio de selección de producto
@@ -276,7 +303,8 @@ const userId = user?._id;  // Usar userId desde el contexto
         <div className="evh-form-field evh-form-field-wide">
           <label htmlFor="checkout-product">Producto</label>
           <Select inputId="checkout-product" placeholder="Selecciona un producto disponible" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable isDisabled={availableProducts.length === 0} classNamePrefix="evh-select" />
-          {productLoadError && <p className="evh-form-feedback is-error" role="status">{productLoadError}</p>}
+          {productLoadNotice && <p className="evh-form-feedback" role="status">{productLoadNotice}</p>}
+          {productLoadError && <p className="evh-form-feedback is-error" role="alert">{productLoadError}</p>}
         </div>
         </div>
 
