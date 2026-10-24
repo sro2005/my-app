@@ -119,7 +119,7 @@ const AdminDashboard = () => {
               <h2>Accesos de administración</h2>
               <div className="evh-admin-actions">
                 <Link to="/listado-clientes">Consultar clientes</Link>
-                <Link to="/listado-productos">Revisar inventario</Link>
+                <Link to="/admin-inventario">Gestionar inventario</Link>
                 <Link to="/producto-form">Agregar producto ficticio</Link>
                 <Link to="/listado-pedidos">Gestionar estados de pedidos</Link>
               </div>
