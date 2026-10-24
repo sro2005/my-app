@@ -18,7 +18,7 @@ const AboutPage = () => (
       },
       {
         title: 'Una guía con Inteligencia Artificial',
-        body: 'La Guía ElectroVibe permite describir una necesidad del hogar y recibir orientación basada en las opciones disponibles. Su papel es acompañar la exploración: la persona conserva el control de la decisión y debe revisar las características del producto antes de continuar.'
+        body: 'La Guía ElectroVibe permite describir una necesidad del hogar y recibir orientación basada en el catálogo. Cuando la conexión de IA generativa está habilitada, puede crear recomendaciones en lenguaje natural; mientras tanto, el modo de demostración local compara tu consulta con nombres, categorías y descripciones de productos. En ambos casos, revisa las características del producto antes de decidir.'
       },
       {
         title: 'Una idea académica que sigue creciendo',
