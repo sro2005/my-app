@@ -115,6 +115,49 @@ async function main() {
       'Visible catalog elements overflow at 390px: ' + JSON.stringify(catalogLayout.overflow));
     await page.screenshot({ path: path.join(artifactsDir, 'catalog-mobile.png'), fullPage: true });
 
+    // Navigate directly to every customer-facing public route at a mobile viewport.
+    // These checks render pages only: they do not submit forms, create users/orders, or send payments.
+    const resetTokenFixture = 'a'.repeat(64);
+    const publicRoutes = [
+      { path: '/register', heading: 'Crea tu espacio', screenshot: 'register-mobile.png' },
+      { path: '/login', heading: 'Qué bueno verte de nuevo', screenshot: 'login-mobile.png' },
+      { path: '/recover-password', heading: 'Volvamos a conectarte', screenshot: 'recover-password-mobile.png' },
+      { path: '/reset-password/' + resetTokenFixture, heading: 'Crea una nueva contraseña', screenshot: 'reset-password-mobile.png' },
+      { path: '/pago-resultado?reference=EVH-TEST-BROWSER&status=APPROVED', heading: 'Resultado de la simulación de pago' },
+      { path: '/catalogo', heading: 'Encuentra tu próximo favorito' },
+      { path: '/about', heading: 'Sobre ElectroVibeHome' },
+      { path: '/privacy', heading: 'Política de Privacidad' },
+      { path: '/terms', heading: 'Términos de Servicio' }
+    ];
+
+    for (const route of publicRoutes) {
+      const routeResponse = await page.goto(new URL(route.path, baseUrl).toString(), {
+        waitUntil: 'domcontentloaded',
+        timeout: 60000
+      });
+      assert.ok(routeResponse && routeResponse.ok(),
+        'Public route returned a non-success status for ' + route.path + ': ' +
+        (routeResponse ? routeResponse.status() : 'no response'));
+
+      const heading = page.getByRole('heading', { name: new RegExp(route.heading.replace(/[.*+?^${}()|[\]\\]/g, '\\    await page.screenshot({ path: path.join(artifactsDir, 'catalog-mobile.png'), fullPage: true });
+
+    assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));'), 'i') });
+      await heading.first().waitFor({ timeout: 45000 });
+      await page.waitForTimeout(100);
+
+      const routeLayout = await readLayout(page);
+      assert.equal(routeLayout.viewportWidth, 390, 'Unexpected viewport on ' + route.path);
+      assert.ok(routeLayout.documentWidth <= 391,
+        'Public route overflows horizontally at 390px (' + route.path + '): ' + JSON.stringify(routeLayout));
+      assert.ok(routeLayout.overflow.length === 0,
+        'Visible elements overflow at 390px on ' + route.path + ': ' + JSON.stringify(routeLayout.overflow));
+
+      console.log('Mobile public route passed: ' + route.path);
+      if (route.screenshot) {
+        await page.screenshot({ path: path.join(artifactsDir, route.screenshot), fullPage: true });
+      }
+    }
+
     assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));
     console.log('Responsive browser smoke passed: landing at 5 widths and mobile catalog with ' + productCount + ' product cards; screenshots saved to ' + artifactsDir + '.');
   } finally {
