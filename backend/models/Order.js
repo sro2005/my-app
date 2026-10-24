@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
   paymentConfirmed: { type: Boolean, default: false },
   paymentStatus: { type: String, enum: ['PENDING', 'APPROVED', 'DECLINED', 'ERROR', 'VOIDED'], default: 'PENDING' },
   paymentReference: { type: String, unique: true, sparse: true },
+  idempotencyKey: { type: String, unique: true, sparse: true, select: false, immutable: true, match: /^[A-Za-z0-9_-]{16,128}$/ },
   paymentTransactionId: { type: String },
   packed: { type: Boolean, default: false },
   delivered: { type: Boolean, default: false },
