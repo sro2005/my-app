@@ -73,3 +73,91 @@ jobs:
           find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
       - name: Run backend unit tests
         run: npm test
+
+  smoke-preview:
+    if: github.ref == 'refs/heads/preview/electrovibehome-v2'
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for API health and database readiness
+        env:
+          API_URL: https://electrovibehome-v2-api.onrender.com
+        shell: bash
+        run: |
+          set -euo pipefail
+          ready=false
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error --max-time 10 "$API_URL/health" -o /tmp/health.json \
+              && node -e 'const h = require("/tmp/health.json"); if (h.status !== "ok" || h.database !== "connected") process.exit(1)'; then
+              echo "API health and MongoDB readiness passed."
+              ready=true
+              break
+            fi
+            echo "API not ready yet (attempt $attempt/30); retrying."
+            sleep 10
+          done
+          if [ "$ready" != "true" ]; then
+            echo "API did not become healthy within the retry window."
+            cat /tmp/health.json 2>/dev/null || true
+            exit 1
+          fi
+
+      - name: Verify published frontend, API CORS, and demo catalog
+        env:
+          API_URL: https://electrovibehome-v2-api.onrender.com
+          FRONTEND_URL: https://electrovibehome-v2-preview.onrender.com
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 20 "$FRONTEND_URL/" -o /tmp/frontend.html
+          grep -Fq 'id="root"' /tmp/frontend.html
+
+          asset=$(grep -oE 'src="[^"]+\.js"' /tmp/frontend.html | head -n 1 | cut -d '"' -f 2)
+          if [ -z "$asset" ]; then
+            echo "Could not find the compiled frontend JavaScript asset."
+            exit 1
+          fi
+          case "$asset" in
+            http://*|https://*) asset_url="$asset" ;;
+            /*) asset_url="$FRONTEND_URL$asset" ;;
+            *) asset_url="$FRONTEND_URL/$asset" ;;
+          esac
+          curl --fail --silent --show-error --max-time 20 "$asset_url" -o /tmp/frontend.js
+          if ! grep -Fq "$API_URL" /tmp/frontend.js; then
+            echo "The built frontend bundle does not contain the configured preview API URL."
+            exit 1
+          fi
+
+          curl --fail --silent --show-error --max-time 20 \
+            -D /tmp/products.headers \
+            -H "Origin: $FRONTEND_URL" \
+            "$API_URL/api/products" -o /tmp/products.json
+          if ! grep -Fiq "access-control-allow-origin: $FRONTEND_URL" /tmp/products.headers; then
+            echo "The API did not allow the published preview origin through CORS."
+            cat /tmp/products.headers
+            exit 1
+          fi
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const products = JSON.parse(fs.readFileSync('/tmp/products.json', 'utf8'));
+          if (!Array.isArray(products)) throw new Error('The product endpoint did not return an array.');
+          if (products.length < 66) throw new Error(`Expected at least 66 demo products; received ${products.length}.`);
+          const categories = new Map();
+          const names = new Set();
+          for (const product of products) {
+            if (product.demo !== true) throw new Error(`Product ${product.name} is not marked as demo data.`);
+            if (!(Number(product.price) > 0)) throw new Error(`Invalid demo price for ${product.name}.`);
+            if (!(Number(product.quantity) > 0)) throw new Error(`No demo stock for ${product.name}.`);
+            const uniqueKey = `${product.category}::${product.name}`;
+            if (names.has(uniqueKey)) throw new Error(`Duplicate demo product: ${uniqueKey}`);
+            names.add(uniqueKey);
+            categories.set(product.category, (categories.get(product.category) || 0) + 1);
+          }
+          if (categories.size !== 22) throw new Error(`Expected 22 categories; received ${categories.size}.`);
+          for (const [category, count] of categories) {
+            if (count < 3) throw new Error(`Category ${category} has only ${count} product(s).`);
+          }
+          console.log(`Live smoke test passed: ${products.length} sample products in ${categories.size} categories; all are marked as demo, have positive price/stock, and have no duplicate names.`);
+          NODE
+
