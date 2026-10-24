@@ -39,6 +39,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
   const [pendingCheckoutOrderId, setPendingCheckoutOrderId] = useState(null);
+  const [orderRequestKey, setOrderRequestKey] = useState(null);
   const [productLoadError, setProductLoadError] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -130,6 +131,10 @@ const userId = user?._id;  // Usar userId desde el contexto
       setFormError('Ya existe un pedido pendiente de iniciar pago. Reintenta el pago de ese pedido antes de crear otro.');
       return;
     }
+    if (orderRequestKey) {
+      setFormError('Hay una solicitud de pedido pendiente de confirmar. Reintenta esa misma solicitud antes de iniciar otra compra.');
+      return;
+    }
 
     // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
 
@@ -161,6 +166,9 @@ const userId = user?._id;  // Usar userId desde el contexto
   const handleConfirm = async () => {
     const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken');
+    const requestKey = orderRequestKey ||
+      (window.crypto?.randomUUID ? window.crypto.randomUUID() : `evh-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`);
+    setOrderRequestKey(requestKey);
     if (!API_URL || !token) {
       setFormError('No se encontró la URL de la API o la sesión. Vuelve a iniciar sesión e inténtalo de nuevo.');
       setShowConfirmModal(false);
@@ -171,12 +179,17 @@ const userId = user?._id;  // Usar userId desde el contexto
     setLoading(true);
     try {
       const created = await axios.post(`${API_URL}/api/orders/realizar`, order, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Idempotency-Key': requestKey
+        }
       });
       createdOrderId = created.data?.order?._id;
       if (!createdOrderId) throw new Error('El servidor no devolvió el identificador del pedido.');
 
-      // Conserva el identificador para reintentar solo el checkout si falla el segundo paso.
+      // La API confirmó qué pedido corresponde a esta solicitud; a partir de aquí
+      // el reintento se hace sobre el mismo identificador del pedido.
+      setOrderRequestKey(null);
       setPendingCheckoutOrderId(createdOrderId);
       const checkout = await axios.post(`${API_URL}/api/orders/${createdOrderId}/wompi-checkout`, {}, {
         headers: { Authorization: `Bearer ${token}` }
@@ -187,8 +200,15 @@ const userId = user?._id;  // Usar userId desde el contexto
       window.location.assign(checkout.data.checkoutUrl);
     } catch (error) {
       console.error('No fue posible iniciar el pago:', error.response?.data?.message || error.message);
-      if (createdOrderId) setPendingCheckoutOrderId(createdOrderId);
-      setFormError(error.response?.data?.message || 'El pedido pudo haberse guardado, pero no se pudo abrir el checkout. Reintenta el pago del mismo pedido antes de crear otro.');
+      if (createdOrderId) {
+        setOrderRequestKey(null);
+        setPendingCheckoutOrderId(createdOrderId);
+      } else {
+        // Mantener la clave permite reintentar exactamente la misma solicitud si
+        // el servidor guardó el pedido pero la respuesta no llegó al navegador.
+        setOrderRequestKey(requestKey);
+      }
+      setFormError(error.response?.data?.message || 'No pudimos confirmar la respuesta del servidor. Reintenta la misma solicitud para evitar duplicar el pedido.');
     } finally {
       setLoading(false);
       setShowConfirmModal(false);
@@ -263,7 +283,13 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0 || Boolean(pendingCheckoutOrderId)}>Continuar al pago seguro</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0 || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>Continuar al pago seguro</button>
+        {orderRequestKey && !pendingCheckoutOrderId && !loading && order && (
+          <div className="evh-form-feedback" role="status">
+            <p>No se ha podido confirmar la respuesta del pedido. Reintenta la misma solicitud; el servidor verificará si ya existe.</p>
+            <button type="button" className="evh-form-submit" onClick={handleConfirm}>Reintentar la misma solicitud</button>
+          </div>
+        )}
         {pendingCheckoutOrderId && !loading && (
           <div className="evh-form-feedback" role="status">
             <p>El pedido {pendingCheckoutOrderId} ya está creado. Puedes reintentar el checkout sin reservar inventario nuevamente.</p>
