@@ -7,7 +7,7 @@ const Footer = () => {
   const exploreLinks = !user
     ? [['/', 'Inicio'], ['/catalogo', 'Catálogo'], ['/register', 'Crear cuenta'], ['/login', 'Iniciar sesión']]
     : user.role === 'admin'
-      ? [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-productos', 'Inventario'], ['/listado-pedidos', 'Pedidos']]
+      ? [['/home-page', 'Panel'], ['/admin-inventario', 'Inventario'], ['/listado-clientes', 'Clientes'], ['/listado-pedidos', 'Pedidos']]
       : [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-pedidos', 'Mis pedidos'], ['/perfil-cliente', 'Mi perfil']];
 
   return (
