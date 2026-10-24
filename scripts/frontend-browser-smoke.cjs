@@ -49,11 +49,27 @@ async function readLayout(page) {
       .slice(0, 8)
       .map(element => {
         const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        const parent = element.parentElement;
+        const parentRect = parent ? parent.getBoundingClientRect() : null;
+        const parentStyle = parent ? getComputedStyle(parent) : null;
         return {
           tag: element.tagName.toLowerCase(),
           className: typeof element.className === 'string' ? element.className : '',
           left: Math.round(rect.left),
-          right: Math.round(rect.right)
+          right: Math.round(rect.right),
+          rectWidth: Math.round(rect.width),
+          computedWidth: style.width,
+          computedMinWidth: style.minWidth,
+          computedMaxWidth: style.maxWidth,
+          computedBoxSizing: style.boxSizing,
+          computedFlex: style.flex,
+          inlineStyle: element.getAttribute('style'),
+          parentClassName: parent && typeof parent.className === 'string' ? parent.className : '',
+          parentWidth: parentRect ? Math.round(parentRect.width) : null,
+          parentComputedWidth: parentStyle ? parentStyle.width : null,
+          parentFlexWrap: parentStyle ? parentStyle.flexWrap : null,
+          parentMinWidth: parentStyle ? parentStyle.minWidth : null
         };
       });
 
