@@ -107,7 +107,7 @@ async function main() {
   try {
     const response = await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     assert.ok(response && response.ok(), 'Preview returned a non-success status: ' + (response ? response.status() : 'no response'));
-    await page.getByRole('heading', { name: /tu hogar merece algo extraordinario/i }).waitFor({ timeout: 45000 });
+    await page.getByRole('heading', { name: /encuentra tecnología que haga más fácil tu día a día/i }).waitFor({ timeout: 45000 });
     await page.getByRole('navigation', { name: /navegación principal/i }).waitFor();
 
     for (const viewport of viewportCases) {
