@@ -13,7 +13,13 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('./FormPage', () => ({
-  default: ({ children }) => <div>{children}</div>
+  default: ({ title, description, children }) => (
+    <main>
+      <h1>{title}</h1>
+      <p>{description}</p>
+      {children}
+    </main>
+  )
 }));
 
 afterEach(() => {
