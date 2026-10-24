@@ -98,6 +98,9 @@ exports.updateCustomer = async (req, res) => {
 exports.deleteCustomer = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!Customer.base.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Identificador de cliente inválido.' });
+    }
 
     const customer = await Customer.findById(id);
     if (!customer) return res.status(404).json({ message: 'Cliente no encontrado' });
