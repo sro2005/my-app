@@ -3,6 +3,7 @@ const Customer = require('../models/Customer');
 const { registerOrUpdateLoginLog } = require('../models/LoginLog');
 const { generateToken } = require('../utils/tokenUtils');
 const { registerSchema } = require('../validations/customerValidation');
+const { isAdult, toColombianCalendarDate } = require('../utils/ageValidation');
 
 // Función para formatear el número de teléfono
 const formatPhoneNumber = (value) => {
@@ -13,14 +14,7 @@ const formatPhoneNumber = (value) => {
   return `+57 ${digits}`;
 };
 
-const isAdult = (value) => {
-  if (!(value instanceof Date) || Number.isNaN(value.getTime())) return false;
-  const today = new Date();
-  let age = today.getFullYear() - value.getFullYear();
-  if (today.getMonth() < value.getMonth() ||
-      (today.getMonth() === value.getMonth() && today.getDate() < value.getDate())) age -= 1;
-  return age >= 18;
-};
+
 
 // Registro de cliente con validación del lado del servidor (no se confía en el formulario web).
 const registerUser = async (req, res, role) => {
@@ -50,7 +44,7 @@ const registerUser = async (req, res, role) => {
       newUserData.firstName = value.firstName.trim();
       newUserData.lastName = value.lastName.trim();
       newUserData.identificationNumber = value.identificationNumber.trim();
-      newUserData.birthDate = value.birthDate;
+      newUserData.birthDate = toColombianCalendarDate(value.birthDate);
       newUserData.phone = formatPhoneNumber(value.phone);
       newUserData.preferences = value.preferences || [];
     }
