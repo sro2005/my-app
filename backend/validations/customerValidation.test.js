@@ -35,3 +35,20 @@ test('registration schema rejects missing required customer fields and weak pass
   assert.ok(result.error);
   assert.ok(result.error.details.length >= 3);
 });
+
+
+test('registration schema rejects passwords over the configured length limit', () => {
+  const result = registerSchema.validate({
+    role: 'user',
+    firstName: 'Ana',
+    lastName: 'Pérez',
+    email: 'ana@example.com',
+    identificationNumber: '1.234.567',
+    birthDate: '2000-01-01',
+    phone: '3001234567',
+    preferences: [],
+    password: 'StrongPass1!' + 'a'.repeat(128)
+  });
+  assert.ok(result.error);
+  assert.ok(result.error.details.some(detail => detail.type === 'string.max'));
+});
