@@ -30,7 +30,7 @@ test('validateProducts aggregates repeated product ids and uses the transaction 
 test('validateProducts rejects insufficient aggregated stock', async t => {
   const originalFindById = Product.findById;
   t.after(() => restoreMethod('findById', originalFindById));
-  Product.findById = () => ({ session: async () => ({ name: 'Demo', quantity: 2 }) });
+  Product.findById = async () => ({ name: 'Demo', quantity: 2 });
 
   await assert.rejects(
     validateProducts([
