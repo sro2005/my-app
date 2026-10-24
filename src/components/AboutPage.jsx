@@ -3,26 +3,39 @@ import InformationalPage from './InformationalPage';
 
 const AboutPage = () => (
   <InformationalPage
-    eyebrow="LA IDEA DETRÁS DE LA TIENDA"
-    title="Sobre ElectroVibeHome"
-    lead="Una idea de comercio electrónico que acerca la tecnología cotidiana a los espacios donde transcurre la vida."
-    notice="ElectroVibeHome nació como un proyecto académico y personal. Hoy se presenta como una demostración de portafolio: permite explorar la experiencia y sus funciones, pero no es una tienda abierta al público."
+    eyebrow="CONCEPTO Y PROPÓSITO"
+    title="Qué es ElectroVibeHome"
+    lead="Una propuesta de comercio electrónico para descubrir electrodomésticos y tecnología útil para la vida en casa."
+    notice="ElectroVibeHome es actualmente un proyecto personal y un prototipo de portafolio. No es una tienda abierta al público: los productos, precios, existencias y pedidos se usan para demostrar la experiencia. No se afirma que exista una operación comercial activa ni un registro empresarial."
     sections={[
       {
-        title: 'Una casa más cómoda y conectada',
-        body: 'La propuesta reúne electrodomésticos y tecnología para el hogar en un solo lugar. La idea es ayudar a cada persona a descubrir opciones útiles para su rutina, comparar lo que ofrece el catálogo y elegir con mayor claridad.'
+        title: 'La idea de negocio',
+        body: 'Reunir en una experiencia digital electrodomésticos y tecnología para el hogar, organizados por categorías y acompañados de información clara. La propuesta busca que las personas puedan explorar alternativas según sus necesidades, su espacio y las tareas que quieren resolver.'
       },
       {
-        title: 'Una experiencia pensada para las personas',
-        body: 'El recorrido combina una vitrina de productos, categorías de interés, cuentas de cliente y consulta de pedidos. La organización del catálogo busca que encontrar un producto sea sencillo desde el inicio hasta la revisión de sus detalles.'
+        title: 'Misión propuesta',
+        body: 'Facilitar el descubrimiento de soluciones tecnológicas para el hogar mediante un catálogo organizado, información comprensible y herramientas que ayuden a comparar opciones antes de tomar una decisión.'
       },
       {
-        title: 'Una guía con Inteligencia Artificial',
-        body: 'La Guía ElectroVibe permite describir una necesidad del hogar y recibir orientación basada en el catálogo. Cuando la conexión de IA generativa está habilitada, puede crear recomendaciones en lenguaje natural; mientras tanto, el modo de demostración local compara tu consulta con nombres, categorías y descripciones de productos. En ambos casos, revisa las características del producto antes de decidir.'
+        title: 'Visión propuesta',
+        body: 'Evolucionar hacia una experiencia de comercio electrónico confiable y fácil de usar, con una selección útil de productos, orientación responsable y procesos de atención y seguimiento claros. Esta visión describe una meta futura, no una operación comercial vigente.'
       },
       {
-        title: 'Una idea académica que sigue creciendo',
-        body: 'El proyecto conserva la visión original de ElectroVibeHome y la lleva a una nueva etapa con una experiencia más clara, una base técnica más sólida y funciones de IA integradas con propósito. Es una muestra de cómo podría evolucionar el concepto de negocio.'
+        title: 'Principios de la propuesta',
+        items: [
+          'Claridad: explicar las características y las condiciones de cada producto sin promesas difíciles de verificar.',
+          'Utilidad: organizar el catálogo para que la búsqueda responda a necesidades cotidianas.',
+          'Confianza: distinguir la información real de los datos de demostración y no presentar pedidos o pagos ficticios como ventas reales.',
+          'Uso responsable de la tecnología: ofrecer orientación digital como apoyo, no como sustituto de la revisión de las características del producto.'
+        ]
+      },
+      {
+        title: 'Una guía para explorar el catálogo',
+        body: 'La Guía ElectroVibe permite describir una necesidad y recibir sugerencias relacionadas con los productos disponibles. Según la configuración, utiliza reglas locales o asistencia generativa. Sus sugerencias son orientativas: revisa siempre las características del producto.'
+      },
+      {
+        title: 'Un proyecto en desarrollo',
+        body: 'La versión actual permite recorrer pantallas de catálogo, crear cuentas de prueba, explorar funciones de cliente y administración, y ensayar pedidos sin pagos reales. Antes de una eventual apertura comercial se necesitarían, entre otros elementos, inventario verificable, condiciones de venta y entrega, canales de atención, y revisión jurídica y de protección de datos.'
       }
     ]}
   />
