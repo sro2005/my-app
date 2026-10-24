@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
   category: { type: String, required: true, index: true }, // Categoría del producto con índice
   price: { type: Number, required: true, min: 0.01, max: 1000000000 }, // Precio positivo con límite para evitar importes fuera de rango
   quantity: { type: Number, required: true, min: 0 }, // Cantidad disponible en inventario, asegurando que sea al menos 0
-  imageUrl: { type: String, default: '', validate: { validator: value => value === '' || /^https?:\/\/[^/\s?#]+\/[^\s?#]*\.(?:jpe?g|gif|png|svg)(?:\?[^\s#]*)?(?:#[^\s]*)?$/i.test(value) || /^\/images\/products\/[a-z0-9-]+\.svg$/i.test(value), message: 'La imagen debe ser una URL válida o una ruta local segura.' } },
+  imageUrl: { type: String, default: '', validate: { validator: value => value === '' || /^https?:\/\/[^/\s?#]+\/[^\s?#]*\.(?:jpe?g|gif|png|webp|avif)(?:\?[^\s#]*)?(?:#[^\s]*)?$/i.test(value) || /^\/images\/products\/[a-z0-9-]+\.svg$/i.test(value), message: 'La imagen debe ser una URL válida o una ruta local segura.' } },
   demo: { type: Boolean, default: false },
   demoIcon: { type: String, default: '' },
   catalogVersion: { type: String, default: '' }
