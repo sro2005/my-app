@@ -25,6 +25,25 @@ test('createCheckout rejects malformed order ids before querying MongoDB', async
   assert.equal(calls, 0);
 });
 
+test('createCheckout refuses administrator accounts before reading an order', async () => {
+  const originalFindById = Order.findById;
+  let calls = 0;
+  Order.findById = async () => { calls += 1; return null; };
+  try {
+    const response = createResponse();
+    await createCheckout({
+      params: { id: validId },
+      user: { _id: validId, role: 'admin' }
+    }, response);
+
+    assert.equal(response.statusCode, 403);
+    assert.match(response.body.message, /cuentas de cliente/i);
+    assert.equal(calls, 0);
+  } finally {
+    Order.findById = originalFindById;
+  }
+});
+
 test('createCheckout refuses production credentials and never emits a live checkout', async t => {
   const originalFindById = Order.findById;
   const envNames = ['WOMPI_PUBLIC_KEY', 'WOMPI_INTEGRITY_SECRET', 'WOMPI_EVENTS_SECRET', 'FRONTEND_URL'];
