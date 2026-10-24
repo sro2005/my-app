@@ -32,6 +32,20 @@ const renderCatalog = (user = null) => render(
 );
 
 describe('ListadoProductos', () => {
+  test('keeps the loading view minimal and removes the generic catalogue phrase', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    let finishRequest;
+    axios.get.mockReturnValue(new Promise(resolve => { finishRequest = resolve; }));
+
+    renderCatalog();
+
+    expect(screen.queryByText(/estamos preparando tu catálogo/i)).toBeNull();
+    expect(screen.getByText('Cargando catálogo').className).toContain('evh-sr-only');
+
+    finishRequest({ data: [] });
+    expect(await screen.findByRole('heading', { name: /encuentra tu próximo favorito/i })).toBeTruthy();
+  });
+
   test('shows the local demo catalog when the API URL is not configured', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', '');
 
