@@ -8,7 +8,8 @@
     "quantity": 7,
     "demoIcon": "❄️",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "aspiradora-nube",
@@ -19,7 +20,8 @@
     "quantity": 11,
     "demoIcon": "🧹",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "batidora-mix",
@@ -30,7 +32,8 @@
     "quantity": 9,
     "demoIcon": "🥣",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "parlante-onda",
@@ -41,7 +44,8 @@
     "quantity": 15,
     "demoIcon": "🔊",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "cafetera-am",
@@ -52,7 +56,8 @@
     "quantity": 12,
     "demoIcon": "☕",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "celular-pulso",
@@ -63,7 +68,8 @@
     "quantity": 8,
     "demoIcon": "📱",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "desktop-nucleo",
@@ -74,7 +80,8 @@
     "quantity": 5,
     "demoIcon": "🖥️",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "portatil-ruta",
@@ -85,7 +92,8 @@
     "quantity": 7,
     "demoIcon": "💻",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "consola-play",
@@ -96,7 +104,8 @@
     "quantity": 6,
     "demoIcon": "🎮",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "estufa-hogar",
@@ -107,7 +116,8 @@
     "quantity": 6,
     "demoIcon": "🔥",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "impresora-trazo",
@@ -118,7 +128,8 @@
     "quantity": 9,
     "demoIcon": "🖨️",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "lavadora-ciclo",
@@ -129,7 +140,8 @@
     "quantity": 5,
     "demoIcon": "🧺",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "licuadora-viva",
@@ -140,7 +152,8 @@
     "quantity": 16,
     "demoIcon": "🥤",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "microondas-rapido",
@@ -151,7 +164,8 @@
     "quantity": 10,
     "demoIcon": "🍲",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "plancha-suave",
@@ -162,7 +176,8 @@
     "quantity": 14,
     "demoIcon": "👔",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "refrigerador-fresco",
@@ -173,7 +188,8 @@
     "quantity": 5,
     "demoIcon": "🧊",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "sandwichera-lista",
@@ -184,7 +200,8 @@
     "quantity": 18,
     "demoIcon": "🥪",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "secador-brillo",
@@ -195,7 +212,8 @@
     "quantity": 12,
     "demoIcon": "💨",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "tablet-idea",
@@ -206,7 +224,8 @@
     "quantity": 8,
     "demoIcon": "📲",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "televisor-escena",
@@ -217,7 +236,8 @@
     "quantity": 6,
     "demoIcon": "📺",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "tostadora-dorada",
@@ -228,7 +248,8 @@
     "quantity": 17,
     "demoIcon": "🍞",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   },
   {
     "id": "ventilador-brisa",
@@ -239,6 +260,535 @@
     "quantity": 13,
     "demoIcon": "🌀",
     "demo": true,
-    "imageUrl": ""
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "aire-compacto-9000",
+    "name": "AeroClima Compact Inverter 9000 BTU",
+    "description": "Aire acondicionado tipo split de 9.000 BTU con modo silencioso, temporizador, control remoto y filtro lavable para habitaciones pequeñas.",
+    "category": "Aires Acondicionados",
+    "price": 1349900,
+    "quantity": 8,
+    "demoIcon": "❄️",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "aire-dual-18000",
+    "name": "BrisaPolar Inverter 18000 BTU",
+    "description": "Aire acondicionado inverter de 18.000 BTU, modo eco, reinicio automático y temporizador para salas y espacios amplios.",
+    "category": "Aires Acondicionados",
+    "price": 2399900,
+    "quantity": 5,
+    "demoIcon": "❄️",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "aspiradora-robot-smart",
+    "name": "NovaClean Robot Smart S8",
+    "description": "Robot aspirador de perfil bajo con sensores anticaída, programación de limpieza, retorno automático a la base y depósito fácil de vaciar.",
+    "category": "Aspiradoras",
+    "price": 799900,
+    "quantity": 7,
+    "demoIcon": "🧹",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "aspiradora-vertical-2en1",
+    "name": "PolvoZero Vertical 2 en 1",
+    "description": "Aspiradora vertical convertible en equipo de mano, con filtro lavable, accesorios para esquinas y depósito sin bolsa.",
+    "category": "Aspiradoras",
+    "price": 329900,
+    "quantity": 12,
+    "demoIcon": "🧹",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "batidora-compacta-3l",
+    "name": "ChefMix Compact Bowl 3 L",
+    "description": "Batidora compacta con tazón de 3 L, cinco velocidades, función turbo y accesorios para mezclas, cremas y preparaciones caseras.",
+    "category": "Batidoras",
+    "price": 299900,
+    "quantity": 10,
+    "demoIcon": "🥣",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "batidora-doremix-65l",
+    "name": "DoreMix Stand 6,5 L",
+    "description": "Batidora de pedestal con recipiente de acero de 6,5 L, seis velocidades y gancho para masas, batidor y pala mezcladora.",
+    "category": "Batidoras",
+    "price": 699900,
+    "quantity": 6,
+    "demoIcon": "🥣",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "parlante-sonora-pulse-40",
+    "name": "Sonora Pulse 40 W",
+    "description": "Parlante Bluetooth portátil de 40 W con bajos reforzados, resistencia a salpicaduras y batería recargable para reuniones y exteriores.",
+    "category": "Bocinas Inteligentes o Parlantes Bluetooth",
+    "price": 389900,
+    "quantity": 9,
+    "demoIcon": "🔊",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "parlante-echowave-mini",
+    "name": "EchoWave Mini Asistente",
+    "description": "Bocina inteligente compacta de demostración con conexión Wi-Fi, reproducción Bluetooth y controles táctiles de volumen.",
+    "category": "Bocinas Inteligentes o Parlantes Bluetooth",
+    "price": 279900,
+    "quantity": 14,
+    "demoIcon": "🔊",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "cafetera-espresso-15",
+    "name": "CaféMio Espresso 15 Bar",
+    "description": "Cafetera espresso con bomba de 15 bares, vaporizador para leche, depósito extraíble y bandeja ajustable para diferentes tazas.",
+    "category": "Cafeteras",
+    "price": 649900,
+    "quantity": 7,
+    "demoIcon": "☕",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "cafetera-aromago-10",
+    "name": "AromaGo Program 10",
+    "description": "Cafetera de goteo programable para diez tazas, función mantener caliente, filtro reutilizable y apagado automático.",
+    "category": "Cafeteras",
+    "price": 189900,
+    "quantity": 13,
+    "demoIcon": "☕",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "celular-orion-m7-256",
+    "name": "Orion M7 256 GB",
+    "description": "Smartphone de demostración con pantalla FHD+ de 6,7 pulgadas, 8 GB de RAM, 256 GB de almacenamiento y batería de 5.000 mAh.",
+    "category": "Celulares",
+    "price": 1499900,
+    "quantity": 6,
+    "demoIcon": "📱",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "celular-novamobile-lite-64",
+    "name": "NovaMobile Lite 64 GB",
+    "description": "Celular de gama de entrada con pantalla HD+ de 6,5 pulgadas, 4 GB de RAM, 64 GB de almacenamiento y lector de huella lateral.",
+    "category": "Celulares",
+    "price": 699900,
+    "quantity": 11,
+    "demoIcon": "📱",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "desktop-coredesk-creator",
+    "name": "CoreDesk Creator i7 32 GB",
+    "description": "Computador de escritorio de demostración con procesador Core i7 de gama media, 32 GB de RAM, SSD de 1 TB y Wi-Fi integrado. Monitor no incluido.",
+    "category": "Computadores de Escritorio",
+    "price": 4299900,
+    "quantity": 4,
+    "demoIcon": "🖥️",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "desktop-pixelforge-mini",
+    "name": "PixelForge Mini Ryzen 7",
+    "description": "Computador compacto para productividad y edición ligera, con procesador Ryzen 7, 16 GB de RAM, SSD de 1 TB y conectividad inalámbrica.",
+    "category": "Computadores de Escritorio",
+    "price": 3199900,
+    "quantity": 5,
+    "demoIcon": "🖥️",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "portatil-alturabook-15",
+    "name": "AlturaBook 15 Ryzen 7",
+    "description": "Portátil de 15,6 pulgadas Full HD con procesador Ryzen 7, 16 GB de RAM, SSD de 1 TB y teclado en español para trabajo y estudio.",
+    "category": "Computadores Portátiles",
+    "price": 3299900,
+    "quantity": 6,
+    "demoIcon": "💻",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "portatil-nexobook-air-13",
+    "name": "NexoBook Air 13 Core i5",
+    "description": "Portátil ligero de 13,3 pulgadas, procesador Core i5 de gama media, 8 GB de RAM, SSD de 512 GB y cámara HD integrada.",
+    "category": "Computadores Portátiles",
+    "price": 1899900,
+    "quantity": 8,
+    "demoIcon": "💻",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "consola-playsphere-s-512",
+    "name": "PlaySphere S 512 GB",
+    "description": "Consola de videojuegos ficticia con SSD de 512 GB, salida de video 4K compatible, conexión Wi-Fi y mando inalámbrico incluido.",
+    "category": "Consolas de Videojuegos",
+    "price": 1499900,
+    "quantity": 5,
+    "demoIcon": "🎮",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "consola-pixelplay-go",
+    "name": "PixelPlay Go Portátil",
+    "description": "Consola portátil de demostración con pantalla de 7 pulgadas, controles integrados, conexión inalámbrica y almacenamiento ampliable.",
+    "category": "Consolas de Videojuegos",
+    "price": 1099900,
+    "quantity": 7,
+    "demoIcon": "🎮",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "estufa-hogarchef-5",
+    "name": "HogarChef 5 Puestos",
+    "description": "Estufa de piso a gas con cinco quemadores, horno de 70 L, parrillas resistentes y encendido eléctrico.",
+    "category": "Estufas",
+    "price": 1499900,
+    "quantity": 5,
+    "demoIcon": "🔥",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "estufa-terracook-induccion",
+    "name": "TerraCook Inducción Doble",
+    "description": "Parrilla de inducción de dos zonas con controles digitales, temporizador por zona y apagado de seguridad. Requiere recipientes compatibles.",
+    "category": "Estufas",
+    "price": 499900,
+    "quantity": 9,
+    "demoIcon": "🔥",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "impresora-printiva-laser",
+    "name": "Printiva Laser M310",
+    "description": "Impresora láser monocromática con conexión USB y Wi-Fi, impresión dúplex manual y bandeja para documentos de uso doméstico o de oficina.",
+    "category": "Impresoras",
+    "price": 1299900,
+    "quantity": 6,
+    "demoIcon": "🖨️",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "impresora-colorflow-tank",
+    "name": "ColorFlow InkTank Wi-Fi",
+    "description": "Multifuncional de tanque de tinta con impresión a color, copia y escaneo, conectividad Wi-Fi y recarga de tinta por depósitos.",
+    "category": "Impresoras",
+    "price": 899900,
+    "quantity": 8,
+    "demoIcon": "🖨️",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "lavadora-aquawash-20",
+    "name": "AquaWash Digital 20 kg",
+    "description": "Lavadora automática de carga superior con capacidad de 20 kg, programas rápidos, bloqueo infantil y selección de nivel de agua.",
+    "category": "Lavadoras",
+    "price": 2199900,
+    "quantity": 5,
+    "demoIcon": "🧺",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "lavadora-lavaclean-front",
+    "name": "LavaClean FrontLoad 12 kg",
+    "description": "Lavadora de carga frontal de 12 kg con programas de lavado delicado, ahorro de agua y pantalla digital de control.",
+    "category": "Lavadoras",
+    "price": 2499900,
+    "quantity": 4,
+    "demoIcon": "🧺",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "licuadora-vitablend-turbo",
+    "name": "VitaBlend Turbo 1000 W",
+    "description": "Licuadora de 1.000 W con vaso de 1,8 L, cuchillas de acero, función pulso y varias velocidades para preparaciones espesas.",
+    "category": "Licuadoras",
+    "price": 349900,
+    "quantity": 10,
+    "demoIcon": "🥤",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "licuadora-frutamix-personal",
+    "name": "FrutaMix Personal 600 W",
+    "description": "Licuadora personal de 600 W con vaso portátil de 600 ml, tapa para llevar y cuchillas desmontables para facilitar la limpieza.",
+    "category": "Licuadoras",
+    "price": 129900,
+    "quantity": 15,
+    "demoIcon": "🥤",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "microondas-quickheat-30",
+    "name": "QuickHeat Digital 30 L",
+    "description": "Horno microondas de 30 L con panel digital, múltiples niveles de potencia, descongelación por peso y bloqueo infantil.",
+    "category": "Microondas",
+    "price": 799900,
+    "quantity": 6,
+    "demoIcon": "🍲",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "microondas-heatwave-20",
+    "name": "HeatWave Compact 20 L",
+    "description": "Microondas compacto de 20 L con controles sencillos, seis niveles de potencia y temporizador para cocinas pequeñas.",
+    "category": "Microondas",
+    "price": 399900,
+    "quantity": 9,
+    "demoIcon": "🍲",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "plancha-vaporcare-pro",
+    "name": "VaporCare Pro Ceramic 2800",
+    "description": "Plancha de vapor de 2.800 W con suela cerámica, golpe de vapor, sistema antical y apagado automático de seguridad.",
+    "category": "Planchas de Ropa",
+    "price": 229900,
+    "quantity": 12,
+    "demoIcon": "👔",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "plancha-travel-fold",
+    "name": "TravelSteam Fold Compact",
+    "description": "Plancha de viaje compacta con mango plegable, vapor regulable y depósito pequeño para prendas ligeras y equipaje.",
+    "category": "Planchas de Ropa",
+    "price": 79900,
+    "quantity": 16,
+    "demoIcon": "👔",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "nevera-frostline-french",
+    "name": "FrostLine French Door 420 L",
+    "description": "Refrigerador de cuatro puertas con capacidad de 420 L, tecnología No Frost, bandejas ajustables e iluminación LED interior.",
+    "category": "Refrigeradores",
+    "price": 3499900,
+    "quantity": 4,
+    "demoIcon": "🧊",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "nevera-ecofrost-250",
+    "name": "EcoFrost No Frost 250 L",
+    "description": "Nevera No Frost de 250 L con congelador superior, control de temperatura, bandejas de vidrio e iluminación interior.",
+    "category": "Refrigeradores",
+    "price": 1899900,
+    "quantity": 6,
+    "demoIcon": "🧊",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "sandwich-toastgo-duo",
+    "name": "Toast&Go Duo Grill",
+    "description": "Sanduchera para dos porciones con placas antiadherentes, indicadores luminosos, cierre seguro y almacenamiento vertical.",
+    "category": "Sandwicheras",
+    "price": 99900,
+    "quantity": 18,
+    "demoIcon": "🥪",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "sandwich-presspanini",
+    "name": "PressPanini Grill 4.0",
+    "description": "Parrilla tipo panini con placas profundas, apertura amplia, superficie antiadherente y bandeja para recoger grasa.",
+    "category": "Sandwicheras",
+    "price": 159900,
+    "quantity": 13,
+    "demoIcon": "🥪",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "secador-silkair-pro",
+    "name": "SilkAir Pro Ionic 2300",
+    "description": "Secador de cabello de 2.300 W con tecnología iónica, tres temperaturas, dos velocidades y boquilla concentradora.",
+    "category": "Secadores de Cabello",
+    "price": 249900,
+    "quantity": 10,
+    "demoIcon": "💨",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "secador-salonwind-mini",
+    "name": "SalonWind Compact 1600",
+    "description": "Secador compacto de 1.600 W con mango plegable, dos velocidades y boquilla concentradora para uso diario o viaje.",
+    "category": "Secadores de Cabello",
+    "price": 99900,
+    "quantity": 16,
+    "demoIcon": "💨",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "tablet-novatab-11-256",
+    "name": "NovaTab 11 256 GB",
+    "description": "Tableta de demostración con pantalla de 11 pulgadas, 256 GB de almacenamiento, 8 GB de RAM y conectividad Wi-Fi.",
+    "category": "Tablets",
+    "price": 1299900,
+    "quantity": 6,
+    "demoIcon": "📲",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "tablet-study-tab-8",
+    "name": "StudyTab 8 64 GB",
+    "description": "Tableta compacta de 8 pulgadas con 64 GB de almacenamiento, 4 GB de RAM, cámara frontal y controles parentales configurables.",
+    "category": "Tablets",
+    "price": 649900,
+    "quantity": 9,
+    "demoIcon": "📲",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "tv-visionmax-oled-65",
+    "name": "VisionMax OLED 65 4K",
+    "description": "Televisor inteligente ficticio de 65 pulgadas con panel OLED, resolución 4K UHD, Wi-Fi integrado y puertos HDMI.",
+    "category": "Televisores",
+    "price": 3799900,
+    "quantity": 4,
+    "demoIcon": "📺",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "tv-visionmax-qled-43",
+    "name": "VisionMax QLED 43",
+    "description": "Televisor inteligente de 43 pulgadas con resolución 4K compatible, panel QLED, aplicaciones de streaming y conectividad Wi-Fi.",
+    "category": "Televisores",
+    "price": 1499900,
+    "quantity": 7,
+    "demoIcon": "📺",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "tostadora-doratoast-4",
+    "name": "DoraToast 4 Rebanadas",
+    "description": "Tostadora de cuatro rebanadas con seis niveles de dorado, función descongelar, cancelar y bandeja recogemigas extraíble.",
+    "category": "Tostadoras",
+    "price": 159900,
+    "quantity": 12,
+    "demoIcon": "🍞",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "tostadora-crispmorning-retro",
+    "name": "CrispMorning Retro 2",
+    "description": "Tostadora compacta de estilo retro con dos ranuras anchas, control de dorado y elevación extra para retirar rebanadas pequeñas.",
+    "category": "Tostadoras",
+    "price": 139900,
+    "quantity": 15,
+    "demoIcon": "🍞",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "ventilador-ecobreeze-pedestal",
+    "name": "EcoBreeze Pedestal 18",
+    "description": "Ventilador de pedestal de 18 pulgadas con tres velocidades, inclinación ajustable, oscilación y base estable.",
+    "category": "Ventiladores",
+    "price": 299900,
+    "quantity": 9,
+    "demoIcon": "🌀",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
+  },
+  {
+    "id": "ventilador-airnova-table",
+    "name": "AirNova Table 12",
+    "description": "Ventilador de mesa de 12 pulgadas con tres velocidades, rejilla de seguridad y cabezal inclinable para espacios pequeños.",
+    "category": "Ventiladores",
+    "price": 129900,
+    "quantity": 14,
+    "demoIcon": "🌀",
+    "demo": true,
+    "imageUrl": "",
+    "catalogVersion": "electrovibehome-v2-demo"
   }
 ]
