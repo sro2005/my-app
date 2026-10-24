@@ -238,6 +238,12 @@ const ListadoProductos = () => {
         )}
       </section>
 
+      {user?.role !== 'admin' && (
+        <div className="evh-catalog-assistant" id="guia-electrovibe">
+          <ShoppingAssistant products={products} />
+        </div>
+      )}
+
       {showPreferencesOnly && canFilterByPreferences && (
         <div className="evh-preference-summary">
           <span>Preferencias:</span>
@@ -261,7 +267,6 @@ const ListadoProductos = () => {
         </section>
       )}
 
-      {user?.role !== 'admin' && <div className="evh-catalog-assistant"><ShoppingAssistant products={products} /></div>}
       <p className="evh-catalog-footnote">
         {allProductsAreDemo
           ? 'Experiencia demostrativa: no se realizan compras ni transacciones reales desde este catálogo.'
