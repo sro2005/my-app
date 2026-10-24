@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Select from 'react-select'; // Importa React-Select
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import FormPage from './FormPage';
@@ -28,6 +28,8 @@ const PedidoForm = () => {
   });
 
 const { user } = useContext(AuthContext);
+const [searchParams] = useSearchParams();
+const requestedProductId = searchParams.get('productId');
 const userId = user?._id;  // Usar userId desde el contexto 
   
   const [address, setAddress] = useState("");
@@ -78,7 +80,7 @@ const userId = user?._id;  // Usar userId desde el contexto
 
       const fullCatalogEndpoint = `${API_URL}/api/products`;
       const usePreferences =
-        Boolean(token && user && Array.isArray(user.preferences) && user.preferences.length > 0);
+        !requestedProductId && Boolean(token && user && Array.isArray(user.preferences) && user.preferences.length > 0);
       const endpoint = usePreferences ? `${API_URL}/api/products/preferences` : fullCatalogEndpoint;
       const requestOptions = {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
@@ -127,11 +129,24 @@ const userId = user?._id;  // Usar userId desde el contexto
             }
           }
 
-          setAvailableProducts(toOptions(available));
+          const options = toOptions(available);
+          setAvailableProducts(options);
           setProductLoadNotice(notice);
           setProductLoadError(available.length === 0
             ? 'No hay productos con existencias disponibles para seleccionar en este momento.'
             : '');
+
+          if (requestedProductId) {
+            const requestedProduct = options.find(option => option.value === requestedProductId);
+            if (requestedProduct) {
+              setSelectedProduct(requestedProduct);
+              setSelectedQuantity('1');
+              setFormError('');
+            } else {
+              setSelectedProduct(null);
+              setFormError('El producto que elegiste ya no tiene existencias o dejó de estar disponible. Elige otra opción del catálogo.');
+            }
+          }
         } catch (error) {
           setAvailableProducts([]);
           setProductLoadNotice('');
@@ -141,7 +156,7 @@ const userId = user?._id;  // Usar userId desde el contexto
       };
 
       loadCatalog();
-    }, [user]);
+    }, [user, requestedProductId]);
 
   const handleProductChange = (selectedOption) => {
     setSelectedProduct(selectedOption);
