@@ -15,3 +15,17 @@
 .evh-admin-panel a{display:inline-block;margin-top:.8rem;color:#144c88;font-weight:700}
 .evh-admin-actions{display:flex;flex-direction:column;align-items:flex-start}
 @media(max-width:760px){.evh-admin-grid{grid-template-columns:1fr}.evh-admin-stats{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+
+.evh-admin-hero-link{display:inline-block;margin-top:1rem;background:#ff9d4a;color:#182033!important;padding:.7rem 1rem;border-radius:9px;text-decoration:none;font-weight:700}
+.evh-admin-inventory-tools{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin:1.5rem 0}
+.evh-admin-inventory-tools input{flex:1;min-width:180px;padding:.7rem;border:1px solid #a5b2c0;border-radius:8px}
+.evh-admin-inventory-tools button,.evh-admin-product-actions button{padding:.65rem .9rem;border-radius:8px;border:1px solid #8ba3b8;background:#f2f7fa;color:#173451;cursor:pointer}
+.evh-admin-inventory-list{display:grid;gap:.8rem}.evh-admin-product{border:1px solid #ced7e2;border-radius:12px;padding:1rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;background:#fff;color:#1b314a}
+.evh-admin-product h2{font-size:1.1rem;margin:.35rem 0}.evh-admin-product p{margin:0}
+.evh-admin-product-category{font-size:.85rem;color:#496985}
+.evh-admin-product-actions{display:flex;gap:.55rem;flex-wrap:wrap}
+.evh-admin-editor{margin:1.5rem 0;border:2px solid #adc5d8;border-radius:15px;padding:1.25rem;background:#f6f9fc;color:#19334a}
+.evh-admin-editor form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem}
+.evh-admin-editor label{display:flex;flex-direction:column;gap:.4rem;font-weight:600}
+.evh-admin-editor input,.evh-admin-editor textarea{padding:.75rem;border:1px solid #879aaf;border-radius:8px;width:100%;box-sizing:border-box}
+.evh-admin-editor textarea{min-height:95px}.evh-admin-editor form>.evh-admin-product-actions{align-self:end}
