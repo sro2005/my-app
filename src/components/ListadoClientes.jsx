@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
-import ClipLoader from 'react-spinners/ClipLoader';
 import moment from 'moment-timezone';
 
 // Función para formatear fechas
@@ -195,22 +194,43 @@ const ListadoClientes = () => {
     };
   }, [clientesFiltrados]);
 
-  if (loading) return <div className="spinner-container"><ClipLoader size={50} color="#FFA500" /></div>;
-  if (error) return <div className="error-message"><p>{error}</p></div>;
-
   return (
-    <div className="container">
-      <h2>Gestión de Clientes</h2>
+    <main className="container evh-admin-customers" aria-busy={loading}>
+      <header className="evh-admin-customers-heading">
+        <span className="evh-eyebrow">CENTRO DE CONTROL · DEMOSTRACIÓN</span>
+        <h1>Gestión de clientes</h1>
+        <p>Consulta los perfiles de prueba, la actividad y el historial de pedidos ilustrativos. Toda la información pertenece a este entorno de demostración.</p>
+      </header>
 
+      {loading ? (
+        <div className="evh-loading-panel evh-customers-loading" role="status" aria-live="polite">
+          <div className="evh-loading-mark" aria-hidden="true">EV</div>
+          <div className="evh-loading-copy">
+            <span className="evh-loading-kicker">ELECTROVIBEHOME</span>
+            <h2>Preparando el directorio de clientes</h2>
+            <p>Estamos ordenando los perfiles y su actividad reciente.</p>
+            <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
+          </div>
+        </div>
+      ) : error ? (
+        <div className="evh-list-state is-error" role="alert">
+          <span className="evh-list-state-icon" aria-hidden="true">!</span>
+          <h2>No pudimos cargar los clientes</h2>
+          <p>{error}</p>
+        </div>
+      ) : (
+        <>
+      <div className="evh-customers-toolbar">
       <div className="search-container">
-        <input type="text" placeholder="🔍 Buscar por nombre, correo, celular o ID..." 
+        <input type="text" aria-label="Buscar clientes por nombre, correo, celular o ID" placeholder="Buscar por nombre, correo, celular o ID…" 
           value={search} onChange={(e) => setSearch(e.target.value)} className="search-input" />
       </div>
 
-      <div className="filters-container">
-        <button onClick={() => setFiltroActivo(null)}>Todos</button>
-        <button onClick={() => setFiltroActivo(true)}>Activos</button>
-        <button onClick={() => setFiltroActivo(false)}>Inactivos</button>
+      <div className="filters-container" aria-label="Filtrar clientes por actividad">
+        <button type="button" aria-pressed={filtroActivo === null} onClick={() => setFiltroActivo(null)}>Todos</button>
+        <button type="button" aria-pressed={filtroActivo === true} onClick={() => setFiltroActivo(true)}>Activos</button>
+        <button type="button" aria-pressed={filtroActivo === false} onClick={() => setFiltroActivo(false)}>Inactivos</button>
+      </div>
       </div>
 
       <div className="dashboard-container">
@@ -249,7 +269,10 @@ const ListadoClientes = () => {
       </div>
     </div>
 
-    <h2>Listado de Clientes</h2>
+    <div className="evh-customers-list-heading">
+      <h2>Directorio de clientes</h2>
+      <span>{clientesFiltrados.length} {clientesFiltrados.length === 1 ? 'resultado' : 'resultados'}</span>
+    </div>
     {clientesFiltrados.length > 0 ? (
       <ul className="clientes-list">
         {clientesFiltrados.map(cliente => (
@@ -259,7 +282,10 @@ const ListadoClientes = () => {
     ) : (
       <p>No hay clientes disponibles.</p>
    )}
-    </div>
-)};
+        </>
+      )}
+    </main>
+  );
+};
 
 export default ListadoClientes;
