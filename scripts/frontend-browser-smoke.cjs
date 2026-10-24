@@ -78,7 +78,7 @@ async function main() {
     const requestPath = new URL(request.url()).pathname;
     if (
       request.method() === 'POST' &&
-      /\\/api\\/(?:auth\\/(?:register|login)|customers\\/(?:forgot-password|reset-password\\/))/.test(requestPath)
+      /\/api\/(?:auth\/(?:register|login)|customers\/(?:forgot-password|reset-password\/))/.test(requestPath)
     ) {
       mutationRequests.push(request.method() + ' ' + requestPath);
     }
