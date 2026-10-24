@@ -44,7 +44,10 @@ const seedDemoProducts = async () => {
         category: product.category,
         price: product.price,
         quantity: product.quantity,
-        imageUrl: product.imageUrl
+        imageUrl: product.imageUrl || '',
+        demo: product.demo === true,
+        demoIcon: product.demoIcon || '',
+        catalogVersion: product.catalogVersion || 'electrovibehome-v2-demo'
       };
       const result = await Product.updateOne(
         { name: product.name, category: product.category },
