@@ -65,6 +65,21 @@ test('moves a paid order from processing to shipped when admin marks it prepared
   assert.equal(order.saved, true);
 });
 
+test('allows an admin to ship a confirmed fictional purchase without a real payment', async t => {
+  const originalFindById = Order.findById;
+  t.after(() => { Order.findById = originalFindById; });
+  const order = makeOrder({ paymentStatus: 'SIMULATED', paymentMethod: 'Demostración' });
+  Order.findById = async () => order;
+
+  const response = createResponse();
+  await updateOrderStatusAutomatically({ params: { id: validId }, body: { packed: true } }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(order.packed, true);
+  assert.equal(order.status, 'Enviado');
+  assert.equal(order.saved, true);
+});
+
 test('requires the order to be shipped before marking it delivered', async t => {
   const originalFindById = Order.findById;
   t.after(() => { Order.findById = originalFindById; });
