@@ -6,6 +6,9 @@ const { secureEquals, calculateIntegritySignature, calculateEventChecksum, hasSa
 
 exports.createCheckout = async (req, res) => {
   try {
+    if (req.user?.role !== 'user') {
+      return res.status(403).json({ message: 'Solo las cuentas de cliente pueden abrir el checkout de prueba.' });
+    }
     const { id } = req.params;
     if (!mongoose.isValidObjectId(id)) {
       return res.status(400).json({ message: 'Identificador de pedido inválido.' });
