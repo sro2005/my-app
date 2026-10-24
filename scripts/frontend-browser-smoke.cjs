@@ -72,7 +72,8 @@ async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
   const pageErrors = [];
-  const mutationRequests = [];\n  const assistantChatRequests = [];
+  const mutationRequests = [];
+  const assistantChatRequests = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   page.on('request', request => {
     const requestPath = new URL(request.url()).pathname;
@@ -81,6 +82,9 @@ async function main() {
       /\/api\/(?:auth\/(?:register|login)|customers\/(?:forgot-password|reset-password\/))/.test(requestPath)
     ) {
       mutationRequests.push(request.method() + ' ' + requestPath);
+    }
+    if (request.method() === 'POST' && /\/api\/assistant\/chat$/.test(requestPath)) {
+      assistantChatRequests.push(request.method() + ' ' + requestPath);
     }
   });
 
@@ -286,7 +290,8 @@ async function main() {
     console.log('Safe form validations passed: registration required fields, malformed login email, empty recovery email, and weak reset password; no mutating API requests were sent.');
 
     assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));
-    assert.deepEqual(assistantChatRequests, [], 'Browser acceptance must not call the paid generative chat API: ' + assistantChatRequests.join('; '));\n    console.log('Responsive browser smoke passed: landing at 5 widths, 66-product mobile catalog, catalogue filters, 9 public routes, safe form validation, and a no-token AI fallback. Screenshots saved to ' + artifactsDir + '.');
+    assert.deepEqual(assistantChatRequests, [], 'Browser acceptance must not call the paid generative chat API: ' + assistantChatRequests.join('; '));
+    console.log('Responsive browser smoke passed: landing at 5 widths, 66-product mobile catalog, catalogue filters, 9 public routes, safe form validation, and a no-token AI fallback. Screenshots saved to ' + artifactsDir + '.');
   } finally {
     await browser.close();
   }
