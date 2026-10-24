@@ -22,30 +22,29 @@ import PaymentResult from './components/PaymentResult';
 import AboutPage from './components/AboutPage';
 import PrivacyPage from './components/PrivacyPage';
 import TermsPage from './components/TermsPage';
+import RoleGuard from './components/RoleGuard';
 import AuthProvider from './contexts/AuthContext';
 
 const AppContent = () => {
-  const { user, loading, handleLogout } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
 
-  if (loading) {
-    return <Loading />;
-  }
+  if (loading) return <Loading />;
 
-  const ProtectedRoute = ({ component: Component }) => {
-    return user ? <Component /> : <Navigate to="/login" />;
-  };
+  const isAdmin = user?.role === 'admin';
+  const isCustomer = user?.role === 'user';
 
   return (
     <>
-      <Header isAuthenticated={!!user} onLogout={handleLogout} user={user} />
+      <Header isAuthenticated={!!user} user={user} />
       <Routes>
-            <Route path="/recover-password" element={<RecoverPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/pago-resultado" element={<PaymentResult />} />
-        <Route path="/catalogo" element={<ListadoProductos />} />
+        <Route path="/recover-password" element={isAdmin ? <Navigate to="/home-page" replace /> : <RecoverPassword />} />
+        <Route path="/reset-password/:token" element={isAdmin ? <Navigate to="/home-page" replace /> : <ResetPassword />} />
+        <Route path="/pago-resultado" element={isCustomer ? <PaymentResult /> : <Navigate to={user ? '/home-page' : '/login'} replace />} />
+        <Route path="/catalogo" element={isAdmin ? <Navigate to="/home-page" replace /> : <ListadoProductos />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+
         {!user ? (
           <>
             <Route path="/" element={<LandingPage />} />
@@ -54,23 +53,35 @@ const AppContent = () => {
           </>
         ) : (
           <>
-            <Route path="/" element={<Navigate to="/home-page" />} />
-            <Route path="/home-page" element={user?.role === 'admin' ? <AdminDashboard /> : <ProtectedRoute component={HomePage} />} />
-            <Route path="/pedido-form" element={<ProtectedRoute component={PedidoForm} />} />
-            <Route path="/listado-productos" element={<ProtectedRoute component={ListadoProductos} />} />
-            <Route path="/listado-pedidos" element={<ProtectedRoute component={ListadoPedidos} />} />
-            <Route path="/perfil-cliente" element={<ProtectedRoute component={PerfilCliente} />} />
+            <Route path="/" element={<Navigate to="/home-page" replace />} />
+            <Route path="/home-page" element={isAdmin
+              ? <AdminDashboard />
+              : <RoleGuard user={user} allowedRole="user"><HomePage /></RoleGuard>} />
+            <Route path="/pedido-form" element={
+              <RoleGuard user={user} allowedRole="user"><PedidoForm /></RoleGuard>
+            } />
+            <Route path="/listado-productos" element={isAdmin
+              ? <Navigate to="/admin-inventario" replace />
+              : <RoleGuard user={user} allowedRole="user"><ListadoProductos /></RoleGuard>} />
+            <Route path="/listado-pedidos" element={
+              <RoleGuard user={user} allowedRoles={['user', 'admin']}><ListadoPedidos /></RoleGuard>
+            } />
+            <Route path="/perfil-cliente" element={
+              <RoleGuard user={user} allowedRole="user"><PerfilCliente /></RoleGuard>
+            } />
 
-            {user?.role === 'admin' && (
-              <>
-                <Route path="/producto-form" element={<ProtectedRoute component={ProductoForm} />} />
-                <Route path="/listado-clientes" element={<ProtectedRoute component={ListadoClientes} />} />
-                <Route path="/admin-inventario" element={<AdminInventory />} />
-              </>
-            )}
+            <Route path="/producto-form" element={
+              <RoleGuard user={user} allowedRole="admin"><ProductoForm /></RoleGuard>
+            } />
+            <Route path="/listado-clientes" element={
+              <RoleGuard user={user} allowedRole="admin"><ListadoClientes /></RoleGuard>
+            } />
+            <Route path="/admin-inventario" element={
+              <RoleGuard user={user} allowedRole="admin"><AdminInventory /></RoleGuard>
+            } />
           </>
         )}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<Navigate to={user ? '/home-page' : '/'} replace />} />
       </Routes>
       <Footer />
     </>
