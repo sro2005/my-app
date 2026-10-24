@@ -173,6 +173,7 @@ describe('PedidoForm catalog loading', () => {
 
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();
+    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
     expect(screen.getByRole('button', { name: 'Registrar compra ficticia' }).disabled).toBe(true);
   });
 
