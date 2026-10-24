@@ -6,7 +6,12 @@ import moment from 'moment-timezone';
 // Función para formatear fechas
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return `${String(date.getUTCDate()).padStart(2, '0')}/${String(date.getUTCMonth() + 1).padStart(2, '0')}/${date.getUTCFullYear()}`;
+  if (Number.isNaN(date.getTime())) return 'No disponible';
+  return [
+    String(date.getUTCDate()).padStart(2, '0'),
+    String(date.getUTCMonth() + 1).padStart(2, '0'),
+    String(date.getUTCFullYear())
+  ].join('/');
 };
 
 // Función para formatear fecha y hora
@@ -39,7 +44,7 @@ const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
 }).format(Number(amount) || 0);
 
 // Formatear número de identificación
-const formatIdentificationNumber = (number) => number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const formatIdentificationNumber = (number) => String(number || '').replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.');
 
 // Calcular estado del cliente
 const calcularEstado = (lastActivityDate) => {
