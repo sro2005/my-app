@@ -86,3 +86,17 @@ test('product schema rejects unsupported image protocols, extensions and extra f
     assert.ok(productSchema.validate({ ...validProduct, ...changes }).error, JSON.stringify(changes));
   }
 });
+
+test('product image formats supported by the API are compatible with MongoDB validation', () => {
+  const Product = require('../models/Product');
+  for (const imageUrl of [
+    'https://images.example.com/photo.webp',
+    'https://images.example.com/photo.avif',
+    '/images/products/cafetera-demo.svg'
+  ]) {
+    const input = { ...validProduct, imageUrl };
+    assert.equal(productSchema.validate(input).error, undefined, imageUrl);
+    const document = new Product(input);
+    assert.equal(document.validateSync(), undefined, imageUrl);
+  }
+});
