@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Select from 'react-select'; // Importa React-Select
 import { Link, useSearchParams } from 'react-router-dom';
@@ -49,6 +49,8 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [productLoadError, setProductLoadError] = useState('');
   const [productLoadNotice, setProductLoadNotice] = useState('');
   const [formError, setFormError] = useState('');
+  const confirmationDialogRef = useRef(null);
+  const confirmOrderButtonRef = useRef(null);
 
   useEffect(() => {
     const savedCustomerData = localStorage.getItem('userData');
@@ -66,6 +68,51 @@ const userId = user?._id;  // Usar userId desde el contexto
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!showConfirmModal) return undefined;
+
+    const previousActiveElement = document.activeElement;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    confirmOrderButtonRef.current?.focus();
+
+    const handleDialogKeys = event => {
+      if (event.key === 'Escape' && !loading) {
+        event.preventDefault();
+        setShowConfirmModal(false);
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusable = Array.from(
+        confirmationDialogRef.current?.querySelectorAll('button:not([disabled]), a[href], input:not([disabled])') || []
+      );
+      if (focusable.length === 0) {
+        event.preventDefault();
+        confirmationDialogRef.current?.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleDialogKeys);
+    return () => {
+      document.removeEventListener('keydown', handleDialogKeys);
+      document.body.style.overflow = previousBodyOverflow;
+      if (previousActiveElement?.isConnected && typeof previousActiveElement.focus === 'function') {
+        previousActiveElement.focus();
+      }
+    };
+  }, [showConfirmModal, loading]);
 
     // Cargar productos disponibles filtrados según las preferencias del usuario.
     // Si no hay productos afines con stock (o falla ese endpoint), usamos el catálogo completo.
@@ -341,6 +388,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const handleCancel = () => {
+    if (loading) return;
     setShowConfirmModal(false);
   };
 
@@ -439,41 +487,126 @@ const userId = user?._id;  // Usar userId desde el contexto
       </form>
 
       {showConfirmModal && (
-        <div className="modal" aria-live="assertive">
-        <div className="modal-content">
-          <h3 className="modal-title">CONFIRMACIÓN DEL PEDIDO</h3>
-          <hr className="modal-divider" />
-        <div className="modal-details">
-          {loading ? (
-        <div className="spinner">Procesando...</div>
-        ) : (
-          <>
-            <p><strong>Cliente:</strong> {customerData.firstName} {customerData.lastName}</p>
-            <p><strong>Correo Electrónico:</strong> {customerData.email}</p>
-            <p><strong>Número de Celular:</strong> {customerData.phone}</p>
-            <p><strong>Dirección:</strong> {address}</p>
-            <p><strong>Método de pago:</strong> {paymentMethod ? paymentMethod.label : 'No especificado'}</p>
-            <p>{paymentMethod?.value === 'Demostración' ? 'Esta compra se registrará como demostración, sin pago ni salida del sitio.' : 'Se abrirá el checkout externo de Wompi Sandbox para la prueba.'}</p>
+        <div className="evh-confirmation-backdrop">
+          <section
+            ref={confirmationDialogRef}
+            className="evh-confirmation-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="evh-confirmation-title"
+            aria-describedby="evh-confirmation-description"
+            tabIndex={-1}
+          >
+            <header className="evh-confirmation-header">
+              <span className="evh-confirmation-mark" aria-hidden="true">⚡</span>
+              <div className="evh-confirmation-title-wrap">
+                <span className="evh-eyebrow">REVISIÓN FINAL</span>
+                <h2 id="evh-confirmation-title">Confirma tu pedido</h2>
+                <p id="evh-confirmation-description">Revisa los productos y la información de entrega antes de continuar.</p>
+              </div>
+              <button
+                type="button"
+                className="evh-confirmation-close"
+                aria-label="Cerrar revisión del pedido"
+                onClick={handleCancel}
+                disabled={loading}
+              >×</button>
+            </header>
 
-            <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
-            <div>
-              <p><strong>Productos del pedido:</strong></p>
-              <ul>{cartItems.map(item => <li key={item.value}>{item.name} × {item.quantity} — {formatPrice(item.price * item.quantity)}</li>)}</ul>
+            <div className="evh-confirmation-notice" role="note">
+              <span className="evh-confirmation-notice-icon" aria-hidden="true">i</span>
+              <div>
+                <strong>Entorno de demostración</strong>
+                <p>{paymentMethod?.value === 'Demostración'
+                  ? 'Se registrará un pedido ficticio dentro del sitio. No se enviará a Wompi ni se hará ningún cobro real.'
+                  : 'Continuarás al checkout de prueba de Wompi Sandbox. Utiliza únicamente datos de prueba; no ingreses una tarjeta real.'}</p>
+              </div>
             </div>
-            <p><strong>Total estimado de la orden:</strong> {formatPrice(totalAmount)}</p>
-          </>
-        )}
-      </div>
 
-      {!loading && (
-        <div className="button-container">
-          <button className="cancel-button" onClick={handleCancel}>CANCELAR</button>
-          <button className="confirm-button" onClick={handleConfirm}>{paymentMethod?.value === 'Demostración' ? 'CONFIRMAR COMPRA FICTICIA' : 'CONTINUAR A WOMPI'}</button>
+            <div className="evh-confirmation-layout">
+              <section className="evh-confirmation-details" aria-labelledby="evh-confirmation-delivery-title">
+                <h3 id="evh-confirmation-delivery-title">Datos de entrega</h3>
+                <dl className="evh-confirmation-facts">
+                  <div>
+                    <dt>Nombre del destinatario</dt>
+                    <dd>{customerData.firstName} {customerData.lastName}</dd>
+                  </div>
+                  <div>
+                    <dt>Correo electrónico</dt>
+                    <dd>{customerData.email}</dd>
+                  </div>
+                  <div>
+                    <dt>Celular</dt>
+                    <dd>{customerData.phone}</dd>
+                  </div>
+                  <div className="is-wide">
+                    <dt>Dirección de entrega</dt>
+                    <dd>{address}</dd>
+                  </div>
+                  <div>
+                    <dt>Fecha deseada</dt>
+                    <dd>{deliveryDate}</dd>
+                  </div>
+                  <div>
+                    <dt>Modalidad</dt>
+                    <dd>{paymentMethod?.value === 'Demostración' ? 'Pedido simulado, sin cobro' : 'Checkout Wompi Sandbox'}</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <aside className="evh-confirmation-summary" aria-labelledby="evh-confirmation-summary-title">
+                <div className="evh-confirmation-summary-heading">
+                  <h3 id="evh-confirmation-summary-title">Resumen del pedido</h3>
+                  <span>{cartItems.length} {cartItems.length === 1 ? 'producto' : 'productos'}</span>
+                </div>
+                <ul className="evh-confirmation-products" aria-label="Productos incluidos">
+                  {cartItems.map(item => (
+                    <li key={item.value}>
+                      <div className="evh-confirmation-product-info">
+                        <strong>{item.name}</strong>
+                        <span>{item.category} · Cantidad: {item.quantity}</span>
+                      </div>
+                      <strong className="evh-confirmation-line-total">{formatPrice(item.price * item.quantity)}</strong>
+                    </li>
+                  ))}
+                </ul>
+                <div className="evh-confirmation-total">
+                  <span>Total estimado</span>
+                  <strong>{formatPrice(totalAmount)}</strong>
+                </div>
+                <p className="evh-confirmation-total-note">Precio ilustrativo para esta demostración; el servidor verificará nuevamente el inventario.</p>
+              </aside>
+            </div>
+
+            {loading && (
+              <div className="evh-confirmation-processing" role="status">
+                <span className="evh-confirmation-spinner" aria-hidden="true" />
+                <span>{paymentMethod?.value === 'Demostración' ? 'Registrando el pedido de prueba…' : 'Preparando el checkout de prueba…'}</span>
+              </div>
+            )}
+
+            <footer className="evh-confirmation-actions">
+              <button type="button" className="evh-confirmation-secondary" onClick={handleCancel} disabled={loading}>
+                Volver a editar
+              </button>
+              <button
+                ref={confirmOrderButtonRef}
+                type="button"
+                className="evh-confirmation-primary"
+                onClick={handleConfirm}
+                disabled={loading}
+              >
+                {loading
+                  ? 'Procesando…'
+                  : paymentMethod?.value === 'Demostración'
+                    ? 'Confirmar pedido de prueba'
+                    : 'Continuar a Wompi Sandbox'}
+              </button>
+            </footer>
+          </section>
         </div>
       )}
-    </div>
-  </div>
-)}
+
   </FormPage>
 )}
 
