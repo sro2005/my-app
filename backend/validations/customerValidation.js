@@ -2,7 +2,7 @@ const Joi = require('joi');
 const { isColombianCalendarDate } = require('../utils/ageValidation');
 
 const birthDateSchema = Joi.string()
-  .pattern(/^\\d{4}-\\d{2}-\\d{2}$/)
+  .pattern(/^\d{4}-\d{2}-\d{2}$/)
   .custom((value, helpers) => isColombianCalendarDate(value) ? value : helpers.error('any.invalid'))
   .required()
   .messages({
