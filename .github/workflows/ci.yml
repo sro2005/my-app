@@ -138,6 +138,25 @@ jobs:
             exit 1
           fi
 
+
+          # Verify protected routes fail closed without a bearer token.
+          check_status() {
+            expected="$1"; shift
+            actual=$(curl --silent --show-error --max-time 20 -o /tmp/protected-response.json -w '%{http_code}' "$@")
+            if [ "$actual" != "$expected" ]; then
+              echo "Expected HTTP $expected, received HTTP $actual for $*"
+              cat /tmp/protected-response.json 2>/dev/null || true
+              exit 1
+            fi
+          }
+          check_status 401 "$API_URL/api/customers/profile"
+          check_status 401 "$API_URL/api/orders/my-orders"
+          check_status 401 "$API_URL/api/orders/all"
+          check_status 401 -X POST -H 'Content-Type: application/json' -d '{}' "$API_URL/api/orders/realizar"
+          check_status 401 -X POST -H 'Content-Type: application/json' -d '{}' "$API_URL/api/products/agregar"
+          check_status 400 -X POST -H 'Content-Type: application/json' -d '{}' "$API_URL/api/auth/register"
+          echo "Protected routes deny unauthenticated access; invalid registration is rejected without writing data."
+
           node <<'NODE'
           const fs = require('node:fs');
           const products = JSON.parse(fs.readFileSync('/tmp/products.json', 'utf8'));
