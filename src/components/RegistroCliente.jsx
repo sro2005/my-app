@@ -28,7 +28,7 @@ const getLatestAdultBirthDate = () => {
 };
 
 const isAdult = (birthDate) => {
-  if (typeof birthDate !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(birthDate)) return false;
+  if (typeof birthDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) return false;
   const parsed = new Date(`${birthDate}T00:00:00.000Z`);
   if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== birthDate) return false;
 
