@@ -83,7 +83,7 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\\"ping\\").ok'"
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
@@ -105,6 +105,26 @@ jobs:
           cache-dependency-path: backend/package-lock.json
       - name: Install backend dependencies
         run: npm ci --no-audit
+      - name: Start isolated backend and wait for MongoDB readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          nohup node server.js > "$RUNNER_TEMP/e2e-backend.log" 2>&1 &
+          ready=false
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent --show-error --max-time 3 "$E2E_API_URL/health" -o "$RUNNER_TEMP/e2e-health.json" \\
+              && node -e 'const fs=require("node:fs"); const h=JSON.parse(fs.readFileSync(process.argv[1],"utf8")); if(h.status!=="ok"||h.database!=="connected") process.exit(1)' "$RUNNER_TEMP/e2e-health.json"; then
+              echo "Isolated API and disposable MongoDB are ready."
+              ready=true
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ready" != "true" ]; then
+            echo "Isolated API failed to become ready."
+            cat "$RUNNER_TEMP/e2e-backend.log" || true
+            exit 1
+          fi
       - name: Run HTTP end-to-end test against isolated MongoDB
         run: node scripts/e2e-auth-profile.js
 
