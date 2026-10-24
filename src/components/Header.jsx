@@ -50,15 +50,26 @@ const Header = () => {
                 {navLink('/register', faUserPlus, 'Crear cuenta')}
                 {navLink('/login', faDoorOpen, 'Iniciar sesión')}
               </>
+            ) : user.role === 'admin' ? (
+              <>
+                {navLink('/home-page', faHome, 'Panel')}
+                {navLink('/admin-inventario', faBoxOpen, 'Inventario')}
+                {navLink('/listado-clientes', faUsers, 'Clientes')}
+                {navLink('/listado-pedidos', faClipboardList, 'Pedidos')}
+                <li>
+                  <button className="evh-site-logout" type="button" onClick={logout} aria-label="Cerrar sesión">
+                    <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
+                    <span>Salir</span>
+                  </button>
+                </li>
+              </>
             ) : (
               <>
                 {navLink('/home-page', faHome, 'Inicio')}
-                {user.role === 'admin' && navLink('/admin-inventario', faPlusCircle, 'Gestionar productos')}
-                {user.role === 'user' && navLink('/pedido-form', faCheckSquare, 'Realizar pedido')}
-                {user.role === 'admin' && navLink('/listado-clientes', faUsers, 'Clientes')}
-                {navLink('/listado-productos', faBoxOpen, user.role === 'admin' ? 'Inventario' : 'Preferencias')}
-                {navLink('/listado-pedidos', faClipboardList, user.role === 'admin' ? 'Pedidos' : 'Mis pedidos')}
-                {user.role === 'user' && navLink('/perfil-cliente', faUser, 'Mi perfil')}
+                {navLink('/catalogo', faBoxOpen, 'Catálogo')}
+                {navLink('/pedido-form', faCheckSquare, 'Realizar pedido')}
+                {navLink('/listado-pedidos', faClipboardList, 'Mis pedidos')}
+                {navLink('/perfil-cliente', faUser, 'Mi perfil')}
                 <li>
                   <button className="evh-site-logout" type="button" onClick={logout} aria-label="Cerrar sesión">
                     <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
