@@ -21,6 +21,10 @@ const PrivacyPage = () => (
         body: 'Cuando se prueba el flujo de compra, el sistema registra los datos de contacto y entrega, los productos y cantidades, el total, la fecha del pedido y el estado del pago. La base de datos del proyecto conserva los pedidos para que se puedan consultar durante la demostración.'
       },
       {
+        title: 'Actividad de inicio de sesión',
+        body: 'La base de datos de la demo conserva un registro de actividad con el identificador de la cuenta, el correo y la fecha del último acceso. Los registros operativos del servidor no deben imprimir estos datos personales.'
+      },
+      {
         title: 'Sesión en el navegador',
         body: 'La sesión guarda en el almacenamiento local del navegador un token de autenticación y datos básicos del perfil. Cerrar sesión elimina esos elementos del navegador; por sí solo, no elimina el perfil ni los pedidos guardados en la base de datos.'
       },
