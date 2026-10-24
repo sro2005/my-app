@@ -209,6 +209,18 @@ async function main() {
         'Visible elements overflow at 390px on ' + route.path + ': ' + JSON.stringify(routeLayout.overflow));
 
       console.log('Mobile public route passed: ' + route.path);
+      if (route.path === '/catalogo') {
+        await page.waitForFunction(() => {
+          const note = document.querySelector('.evh-assistant-chat .evh-assistant-note');
+          return note && !/conectando la guía/i.test(note.textContent || '');
+        }, null, { timeout: 15000 });
+        const assistantState = await page.locator('.evh-assistant-status').getAttribute('aria-label');
+        assert.ok(
+          ['Asistente disponible', 'Asistente sin configurar'].includes(assistantState),
+          'Unexpected ElectroVibe Guide state: ' + assistantState
+        );
+        console.log('ElectroVibe Guide live status: ' + assistantState + '. No prompt was sent.');
+      }
       if (route.screenshot) {
         await page.screenshot({ path: path.join(artifactsDir, route.screenshot), fullPage: true });
       }
