@@ -14,6 +14,7 @@ import ListadoClientes from './components/ListadoClientes';
 import ListadoProductos from './components/ListadoProductos';
 import ListadoPedidos from './components/ListadoPedidos';
 import PerfilCliente from './components/PerfilCliente';
+import ChangePassword from './components/ChangePassword';
 import RegistroCliente from './components/RegistroCliente';
 import LoginCliente from './components/LoginCliente';
 import RecoverPassword from './components/RecoverPassword';
@@ -68,6 +69,9 @@ const AppContent = () => {
             } />
             <Route path="/perfil-cliente" element={
               <RoleGuard user={user} allowedRole="user"><PerfilCliente /></RoleGuard>
+            } />
+            <Route path="/seguridad" element={
+              <RoleGuard user={user} allowedRoles={['user', 'admin']}><ChangePassword /></RoleGuard>
             } />
 
             <Route path="/producto-form" element={
