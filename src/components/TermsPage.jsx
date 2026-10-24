@@ -6,7 +6,7 @@ const TermsPage = () => (
     eyebrow="REGLAS DE ESTA DEMOSTRACIÓN"
     title="Términos de Servicio"
     lead="Estas pautas explican el propósito de ElectroVibeHome y las condiciones para recorrer su experiencia de prueba."
-    notice="ElectroVibeHome es un prototipo académico para portafolio, no un comercio abierto al público. Este contenido explica el alcance de la demo; no constituye un contrato para una operación comercial."
+    notice="ElectroVibeHome es un prototipo personal y de portafolio, no un comercio abierto al público. Este contenido explica el alcance de la demo; no constituye un contrato para una operación comercial."
     sections={[
       {
         title: 'Propósito y disponibilidad',
@@ -15,6 +15,10 @@ const TermsPage = () => (
       {
         title: 'Cuentas de prueba',
         body: 'Las cuentas permiten recorrer funciones como el perfil, las preferencias y la consulta de pedidos. Usa datos ficticios, conserva tus credenciales de prueba de forma segura y no intentes acceder a cuentas o información de otras personas.'
+      },
+      {
+        title: 'Correo y recuperación de acceso',
+        body: 'En esta versión el registro valida el formato del correo, pero todavía no confirma automáticamente que la dirección pertenezca a quien se registra. Para probar la recuperación debes usar una bandeja de entrada propia; esta limitación debe revisarse antes de abrir el prototipo a personas no confiables.'
       },
       {
         title: 'Pedidos y pagos',
