@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './components/HomePage';
 import AdminDashboard from './components/AdminDashboard';
+import AdminInventory from './components/AdminInventory';
 import ProductoForm from './components/ProductoForm';
 import PedidoForm from './components/PedidoForm';
 import ListadoClientes from './components/ListadoClientes';
@@ -64,6 +65,7 @@ const AppContent = () => {
               <>
                 <Route path="/producto-form" element={<ProtectedRoute component={ProductoForm} />} />
                 <Route path="/listado-clientes" element={<ProtectedRoute component={ListadoClientes} />} />
+                <Route path="/admin-inventario" element={<AdminInventory />} />
               </>
             )}
           </>
