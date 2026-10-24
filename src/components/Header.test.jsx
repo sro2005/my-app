@@ -46,7 +46,6 @@ describe('Header navigation', () => {
     });
 
     expect(screen.getByRole('link', { name: /realizar pedido/i }).getAttribute('href')).toBe('/pedido-form');
-    expect(screen.getByRole('link', { name: /preferencias/i }).getAttribute('href')).toBe('/listado-productos');
     expect(screen.getByRole('link', { name: /mis pedidos/i }).getAttribute('href')).toBe('/listado-pedidos');
     expect(screen.getByRole('link', { name: /mi perfil/i }).getAttribute('href')).toBe('/perfil-cliente');
     expect(screen.queryByRole('link', { name: /inventario|clientes|agregar producto/i })).toBeNull();
@@ -58,11 +57,10 @@ describe('Header navigation', () => {
       role: 'admin'
     });
 
-    expect(screen.getByRole('link', { name: /gestionar productos/i }).getAttribute('href')).toBe('/admin-inventario');
     expect(screen.getByRole('link', { name: /^clientes$/i }).getAttribute('href')).toBe('/listado-clientes');
-    expect(screen.getByRole('link', { name: /inventario/i }).getAttribute('href')).toBe('/listado-productos');
+    expect(screen.getByRole('link', { name: /^inventario$/i }).getAttribute('href')).toBe('/admin-inventario');
     expect(screen.getByRole('link', { name: /^pedidos$/i }).getAttribute('href')).toBe('/listado-pedidos');
-    expect(screen.queryByRole('link', { name: /mi perfil|realizar pedido/i })).toBeNull();
+    expect(screen.queryByRole('link', { name: /mi perfil|realizar pedido|catálogo|preferencias/i })).toBeNull();
   });
 
   test('closes the session immediately without a misaligned goodbye notice', () => {
