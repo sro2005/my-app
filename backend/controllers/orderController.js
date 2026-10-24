@@ -331,8 +331,8 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
       }
 
       if (value.packed === true) {
-        if (!order.paymentConfirmed || order.paymentStatus !== 'APPROVED' || order.status !== 'Procesando') {
-          return res.status(409).json({ message: 'Solo se puede preparar un pedido con pago aprobado y estado Procesando.' });
+        if (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus) || order.status !== 'Procesando') {
+          return res.status(409).json({ message: 'Solo se puede preparar un pedido con pago aprobado o simulado y estado Procesando.' });
         }
         order.packed = true;
         order.status = 'Enviado';
