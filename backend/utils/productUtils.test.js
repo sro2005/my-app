@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const Product = require('../models/Product');
-const { validateProducts, reduceInventory } = require('./productUtils');
+const { validateProducts, reduceInventory, restoreInventory } = require('./productUtils');
 
 const restoreMethod = (name, original) => { Product[name] = original; };
 
@@ -87,4 +87,24 @@ test('reduceInventory compensates earlier changes if a later product cannot be r
   assert.equal(applied.length, 1);
   assert.equal(applied[0][0]._id, 'product-a');
   assert.equal(applied[0][1].$inc.quantity, 2);
+});
+
+
+test('restoreInventory uses the provided session and fails if a referenced product is missing', async t => {
+  const originalUpdateOne = Product.updateOne;
+  t.after(() => restoreMethod('updateOne', originalUpdateOne));
+  const session = { id: 'restore-session' };
+  let received;
+  Product.updateOne = async (...args) => {
+    received = args;
+    return { matchedCount: 0 };
+  };
+
+  await assert.rejects(
+    restoreInventory([{ productId: 'product-missing', quantity: 2 }], { session }),
+    /No se pudo restaurar el inventario/
+  );
+  assert.equal(received[0]._id, 'product-missing');
+  assert.equal(received[1].$inc.quantity, 2);
+  assert.equal(received[2].session, session);
 });
