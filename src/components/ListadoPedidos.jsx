@@ -3,6 +3,7 @@ import axios from 'axios';
 import ClipLoader from 'react-spinners/ClipLoader'; // Importar el spinner
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
 import moment from 'moment-timezone';
+import { Link } from 'react-router-dom';
 
 // Función para formatear el precio en formato local (COP)
 const formatPrice = (price) => {
@@ -11,13 +12,29 @@ const formatPrice = (price) => {
 
 // Función para formatear la fecha en formato 12 horas con AM/PM
 const formatOrderDate = (dateString) => {
-  return moment(dateString).tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss'); // Hora en formato militar (24 horas)
+  if (!dateString || !moment(dateString).isValid()) return 'No disponible';
+  return moment(dateString).tz('America/Bogota').format('DD/MM/YYYY · HH:mm');
 };
 
 // Función para formatear la fecha estimada de entrega
 const formatDeliveryDate = (deliveryDate) => {
-  return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY'); // 12 horas con AM/PM
+  if (!deliveryDate || !moment(deliveryDate).isValid()) return 'No definida';
+  return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY');
 };
+
+const formatPaymentMethod = (pedido) => {
+  if (pedido.paymentStatus === 'SIMULATED') return 'Simulación interna · sin cobro';
+  if (pedido.paymentMethod === 'Wompi') return 'Wompi Sandbox · entorno de prueba';
+  return pedido.paymentMethod || 'No especificado';
+};
+
+const formatPaymentStatus = (status) => ({
+  SIMULATED: 'Simulado · sin cobro real',
+  APPROVED: 'Aprobado en entorno de prueba',
+  PENDING: 'Pendiente en entorno de prueba',
+  DECLINED: 'Rechazado en entorno de prueba',
+  ERROR: 'Error en entorno de prueba'
+}[status] || status || 'No disponible');
 
 const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
   <li className="pedido-item">
@@ -27,11 +44,11 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
       </div>
       <div className="pedido-details">
         <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
-        <p><strong>🙍‍♂️ Nombre del Cliente:</strong> {pedido.firstName} {pedido.lastName}</p>
+        <p><strong>{isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
-        <p><strong>💳 Método de Pago:</strong> {pedido.paymentMethod || 'No especificado'}</p>
-        <p><strong>💰 Estado del pago:</strong> {pedido.paymentStatus === 'SIMULATED' ? 'SIMULADO · sin cobro real' : (pedido.paymentStatus || 'No disponible')}</p>
+        <p><strong>Medio de prueba:</strong> {formatPaymentMethod(pedido)}</p>
+        <p><strong>Estado del pago de prueba:</strong> {formatPaymentStatus(pedido.paymentStatus)}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
         <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
@@ -39,7 +56,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
         <p><strong>🛍️ Producto Escogido: </strong> 
           {Array.isArray(pedido.products) && pedido.products.length > 0 ? pedido.products.map((item, index) => (
             <span key={index}>
-              {item.productId?.name || "Producto desconocido"} -  {item.productId?.category || "Sin categoría"}
+              {item.productId?.name || "Producto desconocido"} · {item.productId?.category || "Sin categoría"} · Cantidad: {item.quantity || 1}
               {index < pedido.products.length - 1 ? ', ' : ''}
             </span>
           )) : " No hay productos en este pedido."}
@@ -170,95 +187,48 @@ const ListadoPedidos = () => {
     );
   }
 
+  const isAdmin = user?.role === 'admin';
+
   return (
-    <div className="container">
-      <h2>Gestión de Pedidos</h2>
-      <hr />
-      <p><strong>📖 DEFINICIÓN:</strong> La <strong>Gestión de Pedidos</strong> en <strong>ElectroVibeHome</strong> es el proceso mediante el cual se <strong>reciben, procesan y entregan</strong> electrodomésticos y productos tecnológicos a nuestros clientes de manera <strong>organizada, segura y eficiente.</strong> Este proceso incluye:</p>
-        <ul>
-          <li>Captura de información del cliente.</li>
-          <li>Validación del pedido.</li>
-          <li>Procesamiento del pago.</li>
-          <li>Preparación del producto para su envío.</li>
-          <li>Entrega final.</li>
-        </ul>
-      <hr />
-      <p><b>🎯 OBJETIVO:</b> Asegurar que cada pedido se procese correctamente, sin errores ni retrasos, garantizando que el cliente reciba su compra en el tiempo esperado y en las condiciones adecuadas.</p>
-      <hr />
-      <p><b>📈 IMPORTANCIA:</b></p>
-        <ul>
-          <li><b>Optimización del flujo de trabajo:</b> Permite manejar múltiples pedidos simultáneamente sin confusiones.</li>
-          <li><b>Mejora en la satisfacción del cliente:</b> Reduce tiempos de espera y mejora la experiencia de usuario.</li>
-          <li><b>Control y trazabilidad:</b> Cada pedido tiene un estado actualizado, permitiendo su seguimiento en tiempo real.</li>
-          <li><b>Reducción de errores:</b> Minimiza problemas como envíos incorrectos, productos agotados o pagos fallidos.</li>
-        </ul>
-      <hr />
-      <p><b>🔍 PROCESO DE GESTIÓN DE PEDIDOS:</b></p>
-        <ol>
-          <li><b>Recepción del pedido:</b> El cliente selecciona los productos y genera la solicitud de compra en la plataforma.</li>
-          <li><b>Validación:</b> Se verifica la disponibilidad de los productos y la información ingresada por el usuario.</li>
-          <li><b>Procesamiento del pago:</b> Se confirma el pago a través de los métodos disponibles (tarjeta de crédito, débito, billeteras virtuales, etc.).</li>
-          <li><b>Preparación del pedido:</b> Se organiza el producto en el almacén y se alista para el envío.</li>
-          <li><b>Envió y entrega:</b> El pedido es enviado por un servicio de logística y entregado al cliente dentro del plazo estipulado.</li>
-          <li><b>Confirmación y cierre:</b> El cliente recibe su pedido y puede calificar la experiencia de compra.</li>
-        </ol>
-      <hr />
-      <p><b>🚀 BENEFICIOS DE UNA BUENA GESTIÓN DE PEDIDOS:</b></p>
-        <ul>
-          <li><b>Rapidez en el procesamiento:</b> Disminuye los tiempos de espera entre la compra y la entrega.</li>
-          <li><b>Mayor confianza del cliente:</b> Ofrece transparencia en el estado del pedido y tiempos de entrega exactos.</li>
-          <li><b>Reducción de costos operativos:</b> Optimiza los recursos logísticos y evita reprocesos innecesarios.</li>
-          <li><b>Mejora en la gestión de inventarios:</b> Permite tener control de los productos disponibles y evitar sobreventas.</li>
-        </ul>
-      <hr />
-      <p><b>👥 ¿CÓMO INTERACTÚAN LOS USUARIOS CON LA GESTIÓN DE PEDIDOS?</b></p>
-        <ul>
-          <li><b>Clientes:</b>
-            <ul>
-              <li>Realizan pedidos.</li>
-              <li>Consultan el estado del pedido.</li>
-              <li>Reciben notificaciones de entrega.</li>
-            </ul>
-          </li>
-          <li><b>Administradores:</b>
-            <ul>
-              <li>Gestionan los pedidos.</li>
-              <li>Verifican pagos.</li>
-              <li>Actualizan estados.</li>
-              <li>Resuelven incidencias.</li>
-            </ul>
-          </li>
-          <li><b>Almacén / Logística:</b>
-            <ul>
-              <li>Reciben las órdenes.</li>
-              <li>Preparan los productos.</li>
-              <li>Coordinan el envío.</li>
-            </ul>
-          </li>
-        </ul>
-      <hr />
-      <h2>Listado de Pedidos</h2>
-      {statusMessage && <p role="status" className="order-status-feedback">{statusMessage}</p>}
-    {emptyOrders ? (
-      <p>Aún no has realizado ningún pedido. ¡Comienza a explorar nuestros productos y haz tu primera compra!</p>
-    ) : (
-      <ul className="pedidos-list">
-        {pedidos.length > 0 ? (
-          pedidos.map((pedido) => (
-            <PedidoItem
-              key={pedido._id}
-              pedido={pedido}
-              isAdmin={user?.role === 'admin'}
-              updating={updatingOrderId === pedido._id}
-              onStatusUpdate={handleStatusUpdate}
-            />
-          ))
+    <main className={`container evh-orders-page ${isAdmin ? 'is-admin' : 'is-customer'}`}>
+      <header className="evh-orders-heading">
+        <span className="evh-eyebrow">{isAdmin ? 'CENTRO DE CONTROL · DEMOSTRACIÓN' : 'TU CUENTA ELECTROVIBE'}</span>
+        <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
+        <p>{isAdmin
+          ? 'Consulta pedidos de prueba y revisa su estado para ensayar el flujo operativo. Los importes son ilustrativos y no representan ventas ni cobros reales.'
+          : 'Aquí puedes revisar los pedidos de demostración asociados a tu cuenta. Los importes son ilustrativos y este recorrido no genera pagos ni entregas reales.'}</p>
+      </header>
+
+      <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos de demostración' : 'Historial de mis pedidos'}>
+        {statusMessage && <p role="status" className="order-status-feedback">{statusMessage}</p>}
+        {emptyOrders ? (
+          <div className="evh-orders-empty">
+            <span aria-hidden="true">▤</span>
+            <h2>{isAdmin ? 'Aún no hay pedidos de prueba' : 'Aún no has realizado ningún pedido de demostración'}</h2>
+            <p>{isAdmin
+              ? 'Cuando se registre un pedido ficticio en este entorno, aparecerá aquí para que puedas consultar su estado.'
+              : 'Explora el catálogo y prueba el recorrido de compra con datos ilustrativos, sin usar dinero real.'}</p>
+            {!isAdmin && <Link className="evh-button evh-button-primary" to="/catalogo">Explorar catálogo <span aria-hidden="true">→</span></Link>}
+          </div>
         ) : (
-          <p>No hay pedidos disponibles.</p>
+          <ul className="pedidos-list">
+            {pedidos.length > 0 ? (
+              pedidos.map((pedido) => (
+                <PedidoItem
+                  key={pedido._id}
+                  pedido={pedido}
+                  isAdmin={isAdmin}
+                  updating={updatingOrderId === pedido._id}
+                  onStatusUpdate={handleStatusUpdate}
+                />
+              ))
+            ) : (
+              <p>No hay pedidos disponibles.</p>
+            )}
+          </ul>
         )}
-      </ul>
-    )}
-    </div>
+      </section>
+    </main>
   );
 }
 
