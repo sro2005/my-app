@@ -19,7 +19,7 @@ const formatDeliveryDate = (deliveryDate) => {
   return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY'); // 12 horas con AM/PM
 };
 
-const PedidoItem = ({ pedido }) => (
+const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
   <li className="pedido-item">
     <div className="pedido-info">
       <div className="pedido-image">
@@ -31,6 +31,7 @@ const PedidoItem = ({ pedido }) => (
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
         <p><strong>💳 Método de Pago:</strong> {pedido.paymentMethod || 'No especificado'}</p>
+        <p><strong>💰 Estado del pago:</strong> {pedido.paymentStatus || 'No disponible'}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
         <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
@@ -43,6 +44,16 @@ const PedidoItem = ({ pedido }) => (
             </span>
           )) : " No hay productos en este pedido."}
         </p>
+        {isAdmin && pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed && (
+          <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'packed')}>
+            {updating ? 'Actualizando…' : 'Marcar preparado y enviado'}
+          </button>
+        )}
+        {isAdmin && pedido.status === 'Enviado' && pedido.packed && !pedido.delivered && (
+          <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'delivered')}>
+            {updating ? 'Actualizando…' : 'Marcar como entregado'}
+          </button>
+        )}
       </div>
     </div>
   </li>
@@ -53,7 +64,9 @@ const ListadoPedidos = () => {
   const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [emptyOrders, setEmptyOrders] = useState(false); // Declarar emptyOrders
+  const [emptyOrders, setEmptyOrders] = useState(false);
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
+  const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -79,12 +92,10 @@ const ListadoPedidos = () => {
         });
         
         if (response.data && Array.isArray(response.data)) {
-          if (response.data.length === 0) {
-            setEmptyOrders(true);
-          } else {
-            setPedidos(response.data);
-          }
+          setPedidos(response.data);
+          setEmptyOrders(response.data.length === 0);
         } else {
+          setPedidos([]);
           setEmptyOrders(true);
         }        
   
@@ -104,6 +115,41 @@ const ListadoPedidos = () => {
     }
   
   }, [user]);  // Dependencia de `user` para que se ejecute cada vez que cambie
+
+  const handleStatusUpdate = async (orderId, field) => {
+    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+    const token = localStorage.getItem('authToken');
+    if (!API_URL || !token) {
+      setStatusMessage('No se pudo verificar la conexión o la sesión de administración.');
+      return;
+    }
+
+    setUpdatingOrderId(orderId);
+    setStatusMessage('');
+    try {
+      const response = await axios.put(
+        `${API_URL}/api/orders/${orderId}/status`,
+        { [field]: true },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const updated = response.data?.order;
+      if (updated) {
+        setPedidos(current => current.map(item => item._id === orderId ? {
+          ...item,
+          status: updated.status,
+          packed: updated.packed,
+          delivered: updated.delivered,
+          paymentStatus: updated.paymentStatus,
+          paymentConfirmed: updated.paymentConfirmed
+        } : item));
+      }
+      setStatusMessage(response.data?.message || 'Estado del pedido actualizado.');
+    } catch (requestError) {
+      setStatusMessage(requestError.response?.data?.message || 'No se pudo actualizar el estado. Vuelve a intentarlo.');
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
   
 
   // Mostrar el spinner de carga mientras se obtienen los datos
@@ -192,12 +238,21 @@ const ListadoPedidos = () => {
         </ul>
       <hr />
       <h2>Listado de Pedidos</h2>
+      {statusMessage && <p role="status" className="order-status-feedback">{statusMessage}</p>}
     {emptyOrders ? (
       <p>Aún no has realizado ningún pedido. ¡Comienza a explorar nuestros productos y haz tu primera compra!</p>
     ) : (
       <ul className="pedidos-list">
         {pedidos.length > 0 ? (
-          pedidos.map((pedido) => <PedidoItem key={pedido._id} pedido={pedido} />)
+          pedidos.map((pedido) => (
+            <PedidoItem
+              key={pedido._id}
+              pedido={pedido}
+              isAdmin={user?.role === 'admin'}
+              updating={updatingOrderId === pedido._id}
+              onStatusUpdate={handleStatusUpdate}
+            />
+          ))
         ) : (
           <p>No hay pedidos disponibles.</p>
         )}
