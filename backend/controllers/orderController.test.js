@@ -200,7 +200,7 @@ test('createOrder rejects malformed idempotency keys before querying orders', as
 
   const response = createResponse();
   await createOrder({
-    user: { _id: validId },
+    user: { _id: validId, role: 'user' },
     get: name => name === 'Idempotency-Key' ? 'short' : undefined,
     body: {}
   }, response);
@@ -247,7 +247,7 @@ test('createOrder returns 500 for uncertain transaction failures so the client c
 
   const response = createResponse();
   await createOrder({
-    user: { _id: validId },
+    user: { _id: validId, role: 'user' },
     get: () => undefined,
     body: validOrderBody()
   }, response);
@@ -279,7 +279,7 @@ test('createOrder recovers the winner when a concurrent idempotent insert report
   const key = 'request-key-concurrent-123456';
   const response = createResponse();
   await createOrder({
-    user: { _id: validId },
+    user: { _id: validId, role: 'user' },
     get: name => name === 'Idempotency-Key' ? key : undefined,
     body: validOrderBody()
   }, response);
