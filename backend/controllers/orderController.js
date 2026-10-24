@@ -174,8 +174,11 @@ exports.updateOrder = async (req, res) => {
 exports.deleteOrder = async (req, res) => {
   let session;
   try {
-    session = await mongoose.startSession();
     const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Identificador de pedido inválido.' });
+    }
+    session = await mongoose.startSession();
     let outcome = 'not-found';
 
     // El borrado y la devolución de inventario deben ser atómicos para evitar
