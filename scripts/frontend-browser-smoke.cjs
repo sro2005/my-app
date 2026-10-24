@@ -72,7 +72,7 @@ async function main() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
   const pageErrors = [];
-  const mutationRequests = [];
+  const mutationRequests = [];\n  const assistantChatRequests = [];
   page.on('pageerror', error => pageErrors.push(error.message));
   page.on('request', request => {
     const requestPath = new URL(request.url()).pathname;
@@ -216,10 +216,29 @@ async function main() {
         }, null, { timeout: 15000 });
         const assistantState = await page.locator('.evh-assistant-status').getAttribute('aria-label');
         assert.ok(
-          ['Asistente disponible', 'Asistente sin configurar'].includes(assistantState),
+          ['Asistente disponible', 'Guía en modo local', 'Asistente sin configurar'].includes(assistantState),
           'Unexpected ElectroVibe Guide state: ' + assistantState
         );
         console.log('ElectroVibe Guide live status: ' + assistantState + '. No prompt was sent.');
+        if (assistantState === 'Guía en modo local') {
+          await page.getByRole('button', { name: /cocina pequeña/i }).click();
+          const assistantInput = page.locator('#evh-assistant-input');
+          assert.equal(
+            await assistantInput.inputValue(),
+            'Busco algo práctico para una cocina pequeña.',
+            'The local guide suggestion should populate the prompt field.'
+          );
+          await page.getByRole('button', { name: /enviar pregunta/i }).click();
+          const localReply = page.locator('.evh-assistant-message.is-assistant').filter({
+            hasText: /modo de demostración local/i
+          }).last();
+          await localReply.waitFor({ timeout: 15000 });
+          assert.match(await localReply.innerText(), /\bprecio ilustrativo\b/i,
+            'The local guide should provide a grounded catalogue suggestion with illustrative price context.');
+          assert.deepEqual(assistantChatRequests, [],
+            'Local guide mode must not send a chat request to the backend.');
+          console.log('Local ElectroVibe Guide interaction passed without an OpenAI request.');
+        }
       }
       if (route.screenshot) {
         await page.screenshot({ path: path.join(artifactsDir, route.screenshot), fullPage: true });
@@ -267,7 +286,7 @@ async function main() {
     console.log('Safe form validations passed: registration required fields, malformed login email, empty recovery email, and weak reset password; no mutating API requests were sent.');
 
     assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));
-    console.log('Responsive browser smoke passed: landing at 5 widths, 66-product mobile catalog, catalogue filters, 9 public routes, and safe form validation. Screenshots saved to ' + artifactsDir + '.');
+    assert.deepEqual(assistantChatRequests, [], 'Browser acceptance must not call the paid generative chat API: ' + assistantChatRequests.join('; '));\n    console.log('Responsive browser smoke passed: landing at 5 widths, 66-product mobile catalog, catalogue filters, 9 public routes, safe form validation, and a no-token AI fallback. Screenshots saved to ' + artifactsDir + '.');
   } finally {
     await browser.close();
   }
