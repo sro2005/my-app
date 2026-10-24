@@ -17,6 +17,7 @@ exports.getCustomers = async (req, res) => {
     const customerIds = customers.map(customer => customer._id);
     const orders = customerIds.length
       ? await Order.find({ userId: { $in: customerIds } })
+        .populate({ path: 'products.productId', select: 'name category' })
       : [];
 
     // Indexar los pedidos en memoria evita una consulta individual por cliente.
