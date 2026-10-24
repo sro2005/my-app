@@ -28,6 +28,11 @@ exports.createOrder = async (req, res) => {
   let session;
   try {
     const userId = req.user._id;
+    const rawIdempotencyKey = req.get?.('Idempotency-Key');
+    const idempotencyKey = typeof rawIdempotencyKey === 'string' ? rawIdempotencyKey.trim() : '';
+    if (idempotencyKey && !/^[A-Za-z0-9_-]{16,128}$/.test(idempotencyKey)) {
+      return res.status(400).json({ message: 'La clave de solicitud no tiene un formato válido.' });
+    }
     const payload = { ...(req.body || {}), userId: userId.toString() };
 
     // Validar los datos antes de abrir la transacción.
@@ -37,6 +42,16 @@ exports.createOrder = async (req, res) => {
     }
 
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = payload;
+
+    // Si la petición anterior llegó al servidor pero la respuesta se perdió, devuelve
+    // el mismo pedido en lugar de volver a descontar existencias.
+    if (idempotencyKey) {
+      const existingOrder = await Order.findOne({ userId, idempotencyKey });
+      if (existingOrder) {
+        return res.status(200).json({ message: 'Esta solicitud ya había creado un pedido.', order: existingOrder });
+      }
+    }
+
     if (
       !hasSandboxWompiCredentials({
         publicKey: process.env.WOMPI_PUBLIC_KEY,
@@ -53,7 +68,17 @@ exports.createOrder = async (req, res) => {
     // Así no quedan unidades descontadas si falla el guardado del pedido.
     session = await mongoose.startSession();
     let createdOrder;
+    let reusedExistingOrder = false;
     await session.withTransaction(async () => {
+      if (idempotencyKey) {
+        const existingOrder = await Order.findOne({ userId, idempotencyKey }).session(session);
+        if (existingOrder) {
+          createdOrder = existingOrder;
+          reusedExistingOrder = true;
+          return;
+        }
+      }
+
       await validateProducts(products, { session });
       const productIds = products.map(item => item.productId);
       const dbProducts = await Product.find({ _id: { $in: productIds } }).session(session);
@@ -81,13 +106,29 @@ exports.createOrder = async (req, res) => {
         orderDate: new Date(),
         userId,
         paymentStatus: 'PENDING',
-        paymentConfirmed: false
+        paymentConfirmed: false,
+        ...(idempotencyKey ? { idempotencyKey } : {})
       });
       await createdOrder.save({ session });
     });
 
-    return res.status(201).json({ message: 'Pedido realizado exitosamente', order: createdOrder });
+    return res.status(reusedExistingOrder ? 200 : 201).json({
+      message: reusedExistingOrder ? 'Esta solicitud ya había creado un pedido.' : 'Pedido realizado exitosamente',
+      order: createdOrder
+    });
   } catch (error) {
+    // Dos solicitudes simultáneas con la misma clave pueden competir por el índice único.
+    // En ese caso, recupera el pedido ganador en vez de crear un duplicado.
+    if (error?.code === 11000 && idempotencyKey) {
+      try {
+        const existingOrder = await Order.findOne({ userId, idempotencyKey });
+        if (existingOrder) {
+          return res.status(200).json({ message: 'Esta solicitud ya había creado un pedido.', order: existingOrder });
+        }
+      } catch (lookupError) {
+        console.error('No se pudo recuperar la solicitud de pedido repetida:', lookupError.message);
+      }
+    }
     console.error('Error al crear pedido:', error.message);
     return res.status(400).json({ message: 'No fue posible crear el pedido. Verifica los datos e inténtalo nuevamente.' });
   } finally {
