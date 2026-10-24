@@ -42,6 +42,17 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
         <img src="/icono-order.jpg" alt="Icono de pedido" />
       </div>
       <div className="pedido-details">
+        <div className="evh-order-card-heading">
+          <div className="evh-order-card-title">
+            <span>{isAdmin ? 'PEDIDO DE PRUEBA' : 'PEDIDO DE DEMOSTRACIÓN'}</span>
+            <h2>#{String(pedido._id || '').slice(-8).toUpperCase()}</h2>
+          </div>
+          <div className="evh-order-card-state">
+            <span className={`evh-order-status ${pedido.delivered || pedido.status === 'Entregado' ? 'is-delivered' : pedido.status === 'Enviado' ? 'is-shipped' : pedido.status === 'Procesando' ? 'is-processing' : 'is-neutral'}`}>{pedido.status || 'Sin estado'}</span>
+            <strong>{formatPrice(pedido.totalAmount)}</strong>
+            <small>Importe ilustrativo</small>
+          </div>
+        </div>
         <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
         <p><strong>{isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
@@ -50,8 +61,6 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
         <p><strong>Estado del pago de prueba:</strong> {formatPaymentStatus(pedido.paymentStatus)}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
-        <p><strong>💰 Monto Total:</strong> {formatPrice(pedido.totalAmount)}</p>
-        <p><strong>📦 Estado del Pedido:</strong> {pedido.status}</p>
         <p><strong>🛍️ Producto Escogido: </strong> 
           {Array.isArray(pedido.products) && pedido.products.length > 0 ? pedido.products.map((item, index) => (
             <span key={index}>
@@ -180,6 +189,31 @@ const ListadoPedidos = () => {
           : 'Aquí puedes revisar los pedidos de demostración asociados a tu cuenta. Los importes son ilustrativos y este recorrido no genera pagos ni entregas reales.'}</p>
       </header>
 
+      {isAdmin && !loading && !error && (
+        <section className="evh-order-stats" aria-label="Resumen operativo de pedidos de prueba">
+          <article className="evh-order-stat">
+            <span>Total de pedidos</span>
+            <strong>{pedidos.length}</strong>
+            <small>Registros de demostración</small>
+          </article>
+          <article className="evh-order-stat is-processing">
+            <span>En preparación</span>
+            <strong>{pedidos.filter(item => item.status === 'Procesando').length}</strong>
+            <small>Pendientes del siguiente paso</small>
+          </article>
+          <article className="evh-order-stat is-shipped">
+            <span>En camino</span>
+            <strong>{pedidos.filter(item => item.status === 'Enviado' && !item.delivered).length}</strong>
+            <small>Marcados como enviados</small>
+          </article>
+          <article className="evh-order-stat is-delivered">
+            <span>Entregados</span>
+            <strong>{pedidos.filter(item => item.delivered || item.status === 'Entregado').length}</strong>
+            <small>Estado final de la prueba</small>
+          </article>
+        </section>
+      )}
+
       <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos de demostración' : 'Historial de mis pedidos'} aria-busy={loading}>
         {loading ? (
           <div className="evh-loading-panel evh-orders-loading" role="status" aria-live="polite">
@@ -222,7 +256,7 @@ const ListadoPedidos = () => {
                 />
               ))
             ) : (
-              <p>No hay pedidos disponibles.</p>
+              <li className="evh-list-no-results">No hay pedidos disponibles.</li>
             )}
           </ul>
         )}
