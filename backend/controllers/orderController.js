@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
-const { orderSchema } = require('../validations/orderValidation');
+const { orderSchema, deliveryDateSchema } = require('../validations/orderValidation');
 const Joi = require('joi');
 const { validateProducts, reduceInventory, restoreInventory } = require('../utils/productUtils');
 const Product = require('../models/Product');
@@ -142,7 +142,7 @@ exports.updateOrder = async (req, res) => {
       email: Joi.string().trim().email().max(254),
       phone: Joi.string().trim().min(5).max(30),
       address: Joi.string().trim().min(1).max(300),
-      deliveryDate: Joi.date().iso()
+      deliveryDate: deliveryDateSchema.optional()
     }).min(1).unknown(false);
 
     const { error, value } = updateSchema.validate(updates, { abortEarly: false, stripUnknown: true });
@@ -150,7 +150,13 @@ exports.updateOrder = async (req, res) => {
       return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(item => item.message) });
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(id, { $set: value }, {
+    // Interpret YYYY-MM-DD as a Colombia calendar date, not midnight UTC.
+    const normalizedValue = { ...value };
+    if (typeof normalizedValue.deliveryDate === 'string') {
+      normalizedValue.deliveryDate = moment.tz(normalizedValue.deliveryDate, 'YYYY-MM-DD', 'America/Bogota').toDate();
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(id, { $set: normalizedValue }, {
       new: true,
       runValidators: true,
       context: 'query'
