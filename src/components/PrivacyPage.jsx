@@ -22,7 +22,7 @@ const PrivacyPage = () => (
       },
       {
         title: 'Servicios que participan',
-        body: 'La aplicación utiliza Render para alojar servicios y MongoDB para guardar los registros del proyecto. Si la Guía ElectroVibe está habilitada, el mensaje que escribes se envía al backend y a OpenAI para generar una respuesta; ElectroVibeHome no guarda el historial de esa conversación. Para pagos, el flujo abre el checkout de Wompi en Sandbox.'
+        body: 'La aplicación utiliza Render para alojar servicios y MongoDB para guardar los registros del proyecto. Cuando la IA generativa de la Guía ElectroVibe está configurada, el mensaje que escribes se envía al backend y a OpenAI; ElectroVibeHome no guarda el historial de esa conversación. Si no está configurada, la guía usa reglas locales y el catálogo cargado en la página: el texto no se envía a OpenAI ni se guarda. Para pagos, el flujo utiliza el checkout de Wompi en Sandbox.'
       },
       {
         title: 'Uso prudente de la demostración',
