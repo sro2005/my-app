@@ -26,15 +26,8 @@ const navLink = (to, icon, label) => (
 
 const Header = () => {
   const { user, handleLogout } = useContext(AuthContext);
-  const [showGoodbyeMessage, setShowGoodbyeMessage] = React.useState(false);
-
-  const logout = () => {
-    setShowGoodbyeMessage(true);
-    setTimeout(() => {
-      setShowGoodbyeMessage(false);
-      handleLogout();
-    }, 1800);
-  };
+  // Cierra la sesión inmediatamente y evita un aviso flotante que se desplace bajo el encabezado.
+  const logout = () => handleLogout();
 
   return (
     <header className="evh-site-header">
@@ -43,7 +36,7 @@ const Header = () => {
           <span className="evh-site-brand-mark" aria-hidden="true">⚡</span>
           <span className="evh-site-brand-copy">
             <strong>ELECTROVIBEHOME</strong>
-            <small>• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</small>
+            <small>TECNOLOGÍA Y ELECTRODOMÉSTICOS PARA TU HOGAR</small>
           </span>
         </Link>
 
@@ -62,10 +55,10 @@ const Header = () => {
                 {user.role === 'user' && navLink('/pedido-form', faCheckSquare, 'Realizar pedido')}
                 {user.role === 'admin' && navLink('/listado-clientes', faUsers, 'Clientes')}
                 {navLink('/listado-productos', faBoxOpen, user.role === 'admin' ? 'Inventario' : 'Preferencias')}
-                {navLink('/listado-pedidos', faClipboardList, user.role === 'admin' ? 'Pedidos' : 'Mis órdenes')}
+                {navLink('/listado-pedidos', faClipboardList, user.role === 'admin' ? 'Pedidos' : 'Mis pedidos')}
                 {user.role === 'user' && navLink('/perfil-cliente', faUser, 'Mi perfil')}
                 <li>
-                  <button className="evh-site-logout" type="button" onClick={logout}>
+                  <button className="evh-site-logout" type="button" onClick={logout} aria-label="Cerrar sesión">
                     <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
                     <span>Salir</span>
                   </button>
@@ -75,11 +68,6 @@ const Header = () => {
           </ul>
         </nav>
       </div>
-      {showGoodbyeMessage && (
-        <div className="goodbye-message" role="status">
-          <p>¡Gracias por visitarnos! Te esperamos de vuelta pronto.</p>
-        </div>
-      )}
     </header>
   );
 };
