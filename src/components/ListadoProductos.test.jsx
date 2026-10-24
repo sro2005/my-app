@@ -118,9 +118,13 @@ describe('ListadoProductos', () => {
     ];
     const actualCategories = [...new Set(demoProducts.map((product) => product.category))];
 
-    expect(demoProducts).toHaveLength(22);
-    expect(actualCategories).toHaveLength(22);
+    expect(demoProducts.length).toBeGreaterThanOrEqual(expectedCategories.length * 3);
+    expect(actualCategories).toHaveLength(expectedCategories.length);
     expect(actualCategories).toEqual(expect.arrayContaining(expectedCategories));
+    expect(new Set(demoProducts.map((product) => `${product.category}::${product.name}`)).size).toBe(demoProducts.length);
+    expectedCategories.forEach((category) => {
+      expect(demoProducts.filter((product) => product.category === category).length).toBeGreaterThanOrEqual(3);
+    });
     expect(demoProducts.every((product) => product.demo === true)).toBe(true);
     expect(demoProducts.every((product) => Number.isFinite(product.price) && product.price > 0)).toBe(true);
     expect(demoProducts.every((product) => Number.isInteger(product.quantity) && product.quantity > 0)).toBe(true);
