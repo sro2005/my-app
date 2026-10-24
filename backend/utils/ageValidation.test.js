@@ -34,3 +34,12 @@ test('stores date-of-birth values at midnight in Colombia without changing the c
   assert.equal(moment(stored).tz('America/Bogota').format('YYYY-MM-DD'), value);
   assert.equal(toColombianCalendarDate('2025-02-29'), null);
 });
+
+
+test('preserves the calendar day for legacy birth dates stored at midnight UTC', () => {
+  const today = moment.tz('America/Bogota');
+  const birthdayToday = today.clone().subtract(18, 'years').format('YYYY-MM-DD');
+  const legacyStoredDate = new Date(`${birthdayToday}T00:00:00.000Z`);
+
+  assert.equal(isAdult(legacyStoredDate), true);
+});
