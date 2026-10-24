@@ -11,7 +11,8 @@ import {
   faBoxOpen,
   faClipboardList,
   faUserPlus,
-  faDoorOpen
+  faDoorOpen,
+  faInfoCircle
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -36,7 +37,7 @@ const Header = () => {
           <span className="evh-site-brand-mark" aria-hidden="true">⚡</span>
           <span className="evh-site-brand-copy">
             <strong>ELECTROVIBEHOME</strong>
-            <small>TECNOLOGÍA Y ELECTRODOMÉSTICOS PARA TU HOGAR</small>
+            <small>TECNOLOGÍA PARA EL HOGAR</small>
           </span>
         </Link>
 
@@ -45,7 +46,8 @@ const Header = () => {
             {!user ? (
               <>
                 {navLink('/catalogo', faBoxOpen, 'Catálogo')}
-                {navLink('/register', faUserPlus, 'Únete hoy')}
+                {navLink('/about', faInfoCircle, 'La propuesta')}
+                {navLink('/register', faUserPlus, 'Crear cuenta')}
                 {navLink('/login', faDoorOpen, 'Iniciar sesión')}
               </>
             ) : (
