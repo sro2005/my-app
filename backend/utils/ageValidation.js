@@ -11,8 +11,9 @@ const isAdult = (value) => {
     if (!isColombianCalendarDate(value)) return false;
     birthDate = moment.tz(value, 'YYYY-MM-DD', 'America/Bogota');
   } else if (value instanceof Date && !Number.isNaN(value.getTime())) {
-    // Compatibility for legacy dates already stored as Date objects.
-    birthDate = moment(value).tz('America/Bogota');
+    // Legacy date-only forms were stored at midnight UTC. Preserve their UTC
+    // calendar components rather than shifting the birthday to the prior day.
+    birthDate = moment.utc(value);
   } else {
     return false;
   }
