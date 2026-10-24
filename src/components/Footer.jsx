@@ -7,8 +7,8 @@ const Footer = () => {
   const exploreLinks = !user
     ? [['/', 'Inicio'], ['/catalogo', 'Catálogo'], ['/register', 'Crear cuenta'], ['/login', 'Iniciar sesión']]
     : user.role === 'admin'
-      ? [['/home-page', 'Panel'], ['/admin-inventario', 'Inventario'], ['/listado-clientes', 'Clientes'], ['/listado-pedidos', 'Pedidos']]
-      : [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-pedidos', 'Mis pedidos'], ['/perfil-cliente', 'Mi perfil']];
+      ? [['/home-page', 'Panel'], ['/admin-inventario', 'Inventario'], ['/listado-clientes', 'Clientes'], ['/listado-pedidos', 'Pedidos'], ['/seguridad', 'Seguridad']]
+      : [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-pedidos', 'Mis pedidos'], ['/perfil-cliente', 'Mi perfil'], ['/seguridad', 'Seguridad']];
 
   return (
   <footer className="footer evh-site-footer">
