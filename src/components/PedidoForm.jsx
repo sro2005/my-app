@@ -33,8 +33,10 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState(null); // Cambiado a objeto para React-Select
   const [deliveryDate, setDeliveryDate] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState(null); // Cambiado a objeto para React-Select
-  const [totalAmount, setTotalAmount] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedQuantity, setSelectedQuantity] = useState('1');
+  const [cartItems, setCartItems] = useState([]);
+  const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const [availableProducts, setAvailableProducts] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -95,7 +97,10 @@ const userId = user?._id;  // Usar userId desde el contexto
             {product.demo === true && ' (precio y stock de muestra)'}
           </span>
         ),
-        price: Number(product.price)
+        price: Number(product.price),
+        name: product.name,
+        category: product.category,
+        stock: Number(product.quantity)
       }));
 
       const loadCatalog = async () => {
@@ -138,15 +143,47 @@ const userId = user?._id;  // Usar userId desde el contexto
       loadCatalog();
     }, [user]);
 
-  // Maneja el cambio de selección de producto
   const handleProductChange = (selectedOption) => {
     setSelectedProduct(selectedOption);
-    if (!selectedOption) {
-      setTotalAmount(0);
-    } else if (selectedOption.price > 0) {
-      setTotalAmount(selectedOption.price);
+    setSelectedQuantity('1');
+    setFormError('');
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedProduct) {
+      setFormError('Selecciona un producto antes de agregarlo al pedido.');
+      return;
     }
-  };  
+    const quantity = Number(selectedQuantity);
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      setFormError('La cantidad debe ser un número entero igual o superior a uno.');
+      return;
+    }
+    const existing = cartItems.find(item => item.value === selectedProduct.value);
+    const combinedQuantity = (existing?.quantity || 0) + quantity;
+    if (combinedQuantity > selectedProduct.stock) {
+      setFormError(`Solo hay ${selectedProduct.stock} unidades disponibles de ${selectedProduct.name}.`);
+      return;
+    }
+    setCartItems(current => existing
+      ? current.map(item => item.value === selectedProduct.value ? { ...item, quantity: combinedQuantity } : item)
+      : [...current, { ...selectedProduct, quantity }]);
+    setSelectedProduct(null);
+    setSelectedQuantity('1');
+    setFormError('');
+  };
+
+  const handleCartQuantityChange = (productId, delta) => {
+    setCartItems(current => current.map(item => item.value === productId
+      ? { ...item, quantity: Math.max(1, Math.min(item.stock, item.quantity + delta)) }
+      : item));
+    setFormError('');
+  };
+
+  const handleRemoveFromCart = (productId) => {
+    setCartItems(current => current.filter(item => item.value !== productId));
+    setFormError('');
+  };
 
   // Maneja el cambio en el método de pago
   const handlePaymentMethodChange = (selectedOption) => {
@@ -168,7 +205,7 @@ const userId = user?._id;  // Usar userId desde el contexto
     // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
 
     // Validación antes de enviar el pedido
-    if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || !selectedProduct || totalAmount <= 0) {
+    if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || cartItems.length === 0 || totalAmount <= 0) {
      setFormError('Revisa los datos del pedido y selecciona un producto disponible.');
      return;
     }
@@ -182,7 +219,7 @@ const userId = user?._id;  // Usar userId desde el contexto
       address,
       paymentMethod: paymentMethod.value,
       deliveryDate,
-      products: [{ productId: selectedProduct.value, quantity: 1 }],
+      products: cartItems.map(item => ({ productId: item.value, quantity: item.quantity })),
       totalAmount,
     };
 
@@ -223,7 +260,8 @@ const userId = user?._id;  // Usar userId desde el contexto
         setPendingCheckoutOrderId(null);
         setCompletedDemoOrderId(createdOrderId);
         setSelectedProduct(null);
-        setTotalAmount(0);
+        setSelectedQuantity('1');
+        setCartItems([]);
         setPaymentMethod(null);
         setAddress('');
         setDeliveryDate('');
@@ -318,19 +356,49 @@ const userId = user?._id;  // Usar userId desde el contexto
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
         </div>
         <div className="evh-form-field evh-form-field-wide">
-          <label htmlFor="checkout-product">Producto</label>
-          <Select inputId="checkout-product" placeholder="Selecciona un producto disponible" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable isDisabled={availableProducts.length === 0} classNamePrefix="evh-select" />
+          <label htmlFor="checkout-product">Añade productos a tu pedido</label>
+          <Select inputId="checkout-product" placeholder="Busca un producto disponible" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable isDisabled={availableProducts.length === 0} classNamePrefix="evh-select" />
+          <div className="evh-cart-add-controls">
+            <label htmlFor="checkout-product-quantity">Unidades</label>
+            <input id="checkout-product-quantity" type="number" min="1" max={selectedProduct?.stock || 1} step="1" value={selectedQuantity} disabled={!selectedProduct} onChange={(e) => setSelectedQuantity(e.target.value)} />
+            <button type="button" onClick={handleAddToCart} disabled={!selectedProduct || loading}>Agregar al pedido</button>
+          </div>
+          {selectedProduct && <p className="evh-form-feedback">Disponibles para muestra: {selectedProduct.stock} · Precio unitario: {formatPrice(selectedProduct.price)}</p>}
           {productLoadNotice && <p className="evh-form-feedback" role="status">{productLoadNotice}</p>}
           {productLoadError && <p className="evh-form-feedback is-error" role="alert">{productLoadError}</p>}
         </div>
         </div>
+
+        {cartItems.length > 0 && (
+          <section className="evh-cart" aria-label="Resumen de productos del pedido">
+            <div className="evh-cart-heading"><h3>Tu pedido</h3><span>{cartItems.length} {cartItems.length === 1 ? 'producto' : 'productos distintos'}</span></div>
+            <ul className="evh-cart-items">
+              {cartItems.map(item => (
+                <li key={item.value} className="evh-cart-item">
+                  <div className="evh-cart-item-info">
+                    <strong>{item.name}</strong>
+                    <span>{item.category} · {formatPrice(item.price)} por unidad</span>
+                  </div>
+                  <div className="evh-cart-quantity" aria-label={`Cantidad de ${item.name}`}>
+                    <button type="button" aria-label={`Disminuir cantidad de ${item.name}`} disabled={item.quantity <= 1} onClick={() => handleCartQuantityChange(item.value, -1)}>−</button>
+                    <span>{item.quantity}</span>
+                    <button type="button" aria-label={`Aumentar cantidad de ${item.name}`} disabled={item.quantity >= item.stock} onClick={() => handleCartQuantityChange(item.value, 1)}>+</button>
+                  </div>
+                  <strong className="evh-cart-line-total">{formatPrice(item.price * item.quantity)}</strong>
+                  <button type="button" className="evh-cart-remove" aria-label={`Quitar ${item.name}`} onClick={() => handleRemoveFromCart(item.value)}>Quitar</button>
+                </li>
+              ))}
+            </ul>
+            <p className="evh-cart-note">Productos de demostración: los precios y las existencias son ilustrativos. El servidor volverá a validar la disponibilidad.</p>
+          </section>
+        )}
 
         <div className="evh-order-summary">
           <span>Total estimado</span>
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{paymentMethod?.value === 'Demostración' ? 'Registrar compra ficticia' : 'Continuar al checkout de prueba'}</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{paymentMethod?.value === 'Demostración' ? 'Registrar compra ficticia' : 'Continuar al checkout de prueba'}</button>
         {completedDemoOrderId && (
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido de demostración creado!</h3>
@@ -374,10 +442,10 @@ const userId = user?._id;  // Usar userId desde el contexto
 
             <p><strong>Fecha Deseada para la Entrega:</strong> {deliveryDate}</p>
             <div>
-              <p><strong>Producto Seleccionado:</strong></p>
-              <div>{selectedProduct ? selectedProduct.label : 'No seleccionado'}</div>
+              <p><strong>Productos del pedido:</strong></p>
+              <ul>{cartItems.map(item => <li key={item.value}>{item.name} × {item.quantity} — {formatPrice(item.price * item.quantity)}</li>)}</ul>
             </div>
-            <p><strong>Total a Pagar:</strong> {formatPrice(totalAmount)}</p>
+            <p><strong>Total estimado de la orden:</strong> {formatPrice(totalAmount)}</p>
           </>
         )}
       </div>
