@@ -8,25 +8,21 @@ const loginLogSchema = new mongoose.Schema({
 
 const LoginLog = mongoose.model('LoginLog', loginLogSchema);
 
-// Función para registrar o actualizar el log de login
+// Registra la actividad sin escribir correos, identificadores ni documentos completos en los logs del servidor.
 async function registerOrUpdateLoginLog(customer) {
   try {
-    // Verificar si ya existe un registro para este usuario
     const existingLog = await LoginLog.findOne({ userId: customer._id });
 
     if (existingLog) {
-      // Si ya existe, actualiza el loginTime
       existingLog.loginTime = new Date();
       await existingLog.save();
-      console.log('Login log actualizado:', existingLog);
     } else {
-      // Si no existe, crea un nuevo registro
       const loginLog = new LoginLog({ userId: customer._id, email: customer.email });
       await loginLog.save();
-      console.log('Nuevo login log registrado:', loginLog);
     }
-  } catch (error) {
-    console.error('Error registrando el login log:', error);
+  } catch {
+    // No incluir errores del driver ni datos de la cuenta en los logs operativos.
+    console.error('No fue posible guardar la actividad de inicio de sesión.');
   }
 }
 
