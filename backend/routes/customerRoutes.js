@@ -3,10 +3,11 @@ const router = express.Router();
 const customerController = require('../controllers/customerController');
 const emailController = require('../controllers/emailController');
 const { authenticateToken, authenticateAdminToken } = require('../middlewares/authMiddleware');
+const { limitPasswordRecovery, limitPasswordReset } = require('../middlewares/requestRateLimit');
 
 // Ruta para manejar la solicitud de recuperación de contraseña
-router.post('/forgot-password', emailController.forgotPassword);
-router.post('/reset-password/:token', emailController.resetPassword);
+router.post('/forgot-password', limitPasswordRecovery, emailController.forgotPassword);
+router.post('/reset-password/:token', limitPasswordReset, emailController.resetPassword);
 
 // Ruta para obtener todos los clientes (solo para admins)
 router.get('/all', authenticateAdminToken, customerController.getCustomers);
