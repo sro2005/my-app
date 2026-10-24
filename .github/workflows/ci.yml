@@ -74,9 +74,43 @@ jobs:
       - name: Run backend unit tests
         run: npm test
 
+  backend-e2e:
+    needs: [backend]
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\\"ping\\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      NODE_ENV: test
+      PORT: 5001
+      JWT_SECRET: ci-only-e2e-jwt-secret-with-enough-length-123456
+      MONGO_URI: mongodb://127.0.0.1:27017/electrovibehome_e2e?directConnection=true
+      E2E_API_URL: http://127.0.0.1:5001
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install backend dependencies
+        run: npm ci --no-audit
+      - name: Run HTTP end-to-end test against isolated MongoDB
+        run: node scripts/e2e-auth-profile.js
+
   smoke-preview:
     if: github.ref == 'refs/heads/preview/electrovibehome-v2'
-    needs: [frontend, backend]
+    needs: [frontend, backend, backend-e2e]
     runs-on: ubuntu-latest
     steps:
       - name: Wait for API health and database readiness
