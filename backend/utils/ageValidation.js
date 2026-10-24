@@ -2,14 +2,14 @@ const moment = require('moment-timezone');
 
 const isColombianCalendarDate = (value) =>
   typeof value === 'string' &&
-  moment.tz(value, 'YYYY-MM-DD', 'America/Bogota', true).isValid();
+  moment(value, 'YYYY-MM-DD', true).isValid();
 
 const isAdult = (value) => {
   let birthDate;
 
   if (typeof value === 'string') {
     if (!isColombianCalendarDate(value)) return false;
-    birthDate = moment.tz(value, 'YYYY-MM-DD', 'America/Bogota', true);
+    birthDate = moment.tz(value, 'YYYY-MM-DD', 'America/Bogota');
   } else if (value instanceof Date && !Number.isNaN(value.getTime())) {
     // Compatibility for legacy dates already stored as Date objects.
     birthDate = moment(value).tz('America/Bogota');
@@ -30,7 +30,7 @@ const isAdult = (value) => {
 
 const toColombianCalendarDate = (value) =>
   isColombianCalendarDate(value)
-    ? moment.tz(value, 'YYYY-MM-DD', 'America/Bogota', true).toDate()
+    ? moment.tz(value, 'YYYY-MM-DD', 'America/Bogota').toDate()
     : null;
 
 module.exports = { isColombianCalendarDate, isAdult, toColombianCalendarDate };
