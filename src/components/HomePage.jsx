@@ -1,106 +1,78 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
-// Componente funcional HomePage que representa la página de inicio de la aplicación
 const HomePage = () => {
+  const { user } = useContext(AuthContext);
+  const firstName = String(user?.firstName || '').trim().split(/\s+/)[0];
+  const preferences = Array.isArray(user?.preferences) ? user.preferences.filter(Boolean).slice(0, 4) : [];
+
   return (
-    <div className="container">
-      {/* Título principal de la página de inicio */}
-      <h2 className="home-title">¡BIENVENID@ A ⚡ELECTROVIBEHOME⚡!</h2>
-      <hr />
-
-      {/* Introducción de la empresa */}
-      <p>
-        En <strong>⚡ELECTROVIBEHOME⚡</strong>, nos enorgullece ser líderes en la gestión de inventarios y proporcionar soluciones innovadoras para transformar la manera en que
-        administras y accedes a tus productos. Desde nuestra fundación en el año <strong>2023</strong>, hemos estado dedicados a ofrecer servicios de calidad que no solo facilitan la gestión
-        de tus inventarios, sino que también elevan la experiencia de nuestros clientes.
-      </p>
-      <hr />
-
-      {/* Misión */}
-      <h3>MISIÓN</h3>
-      <p>
-        Nuestra misión es ser el socio confiable para la administración eficiente de inventarios, proporcionando herramientas y servicios que maximicen
-        la eficiencia operativa y la satisfacción del cliente. Nos comprometemos a ofrecer soluciones personalizadas y tecnológicamente avanzadas que
-        se adapten a las necesidades cambiantes de nuestros usuarios.
-      </p>
-      <hr />
-
-      {/* Visión */}
-      <h3>VISIÓN</h3>
-      <p>
-        Nuestra visión es liderar el mercado en la provisión de servicios de gestión de inventarios, estableciendo nuevos estándares de excelencia y
-        convirtiéndonos en la referencia indiscutible en nuestro sector. Aspiramos a ser reconocidos por nuestra innovación continua, nuestro compromiso
-        con la calidad y nuestra capacidad para anticipar y satisfacer las necesidades de nuestros clientes.
-      </p>
-      <hr />
-
-      {/* ¿Quiénes Somos? */}
-      <h3>¿QUIÉNES SOMOS?</h3>
-      <p>
-        Somos <strong>⚡ELECTROVIBEHOME⚡</strong>, una empresa comprometida con la excelencia y la innovación en la gestión de inventarios. No producimos electrodomésticos; 
-        en cambio, proporcionamos soluciones y servicios que te ayudan a mantener tus productos organizados y accesibles. Nuestro enfoque está en la 
-        integración de tecnologías avanzadas y prácticas sostenibles para ofrecerte las mejores herramientas de inventario.
-      </p>
-      <hr />
-
-      {/* Nuestros Valores */}
-      <h3>VALORES</h3>
-      <ul>
-        <li><strong>Innovación:</strong> Constantemente buscamos nuevas formas de mejorar nuestros servicios y ofrecer soluciones vanguardistas.</li>
-        <li><strong>Calidad:</strong> Cada aspecto de nuestro trabajo está enfocado en alcanzar los más altos estándares de calidad.</li>
-        <li><strong>Compromiso:</strong> Nos dedicamos a entender y satisfacer las necesidades únicas de cada cliente.</li>
-        <li><strong>Sostenibilidad:</strong> Promovemos prácticas sostenibles para contribuir positivamente al medio ambiente.</li>
-      </ul>
-      <hr />
-
-      {/* Testimonios */}
-      <h3>TESTIMONIOS</h3>
-      <div className="testimonials-wrapper">
-        <div className="testimonial">
-          <div className="image-container">
-            <img src="/testimonial-image-1.png" alt="Cliente satisfecho" className="testimonial-image" />
+    <main className="evh-customer-home">
+      <section className="evh-customer-hero">
+        <div className="evh-customer-hero-copy">
+          <span className="evh-eyebrow">TU ESPACIO ELECTROVIBE</span>
+          <h1>{firstName ? `Hola, ${firstName}. ¿Qué hacemos más fácil hoy?` : '¿Qué hacemos más fácil en tu hogar hoy?'}</h1>
+          <p>No se trata solo de encontrar un electrodoméstico. Cuéntanos qué quieres resolver y explora opciones que tengan sentido para tu hogar.</p>
+          <div className="evh-customer-actions">
+            <Link className="evh-button evh-button-primary" to="/catalogo">Descubrir productos <span aria-hidden="true">→</span></Link>
+            <Link className="evh-button evh-button-secondary" to="/listado-pedidos">Ver mis pedidos</Link>
           </div>
-        <blockquote>
-          "Desde que comenzamos a utilizar los servicios de <strong>⚡ELECTROVIBEHOME⚡</strong>, nuestra eficiencia en la gestión de inventarios ha mejorado notablemente.
-          Sus soluciones tecnológicas son intuitivas y efectivas. ¡Altamente recomendado!"
-        </blockquote>
-          <p>- Juan Pérez</p>
+          <p className="evh-demo-notice"><strong>Modo de demostración:</strong> los precios y existencias son ilustrativos. Las compras no generan cobros ni transferencias reales.</p>
         </div>
-        <div className="testimonial">
-          <div className="image-container">
-            <img src="/testimonial-image-2.png" alt="Cliente satisfecho" className="testimonial-image" />
-          </div>
-        <blockquote>
-          "El equipo de <strong>⚡ELECTROVIBEHOME⚡</strong> ha sido increíblemente útil y profesional. Sus soluciones han transformado nuestra operación diaria."
-        </blockquote>
-          <p>- Laura Gómez</p>
+        <div className="evh-customer-hero-mark" aria-hidden="true">
+          <span className="evh-customer-bolt">⚡</span>
+          <span className="evh-customer-orbit evh-customer-orbit-a" />
+          <span className="evh-customer-orbit evh-customer-orbit-b" />
+          <strong>Vive mejor.</strong>
+          <small>Elige con intención.</small>
         </div>
-        <div className="testimonial">
-          <div className="image-container">
-            <img src="/testimonial-image-3.png" alt="Cliente satisfecho" className="testimonial-image" />
-          </div>
-        <blockquote>
-          "Gracias a <strong>⚡ELECTROVIBEHOME⚡</strong>, hemos optimizado nuestro inventario de una manera que nunca creímos posible. ¡Estamos muy contentos con los resultados!"
-        </blockquote>
-          <p>- Carlos Martinez</p>
-        </div>
-      </div>
-      <hr />
+      </section>
 
-      {/* Descubre Más Con Nosotros */}
-      <h3>DESCUBRE MÁS CON NOSOTROS</h3>
-      <p>
-        En <strong>⚡ELECTROVIBEHOME⚡</strong>, cada solución cuenta una historia de precisión y dedicación al detalle. Nuestro equipo de expertos trabaja incansablemente para 
-        garantizar que cada servicio cumpla con tus expectativas de rendimiento y fiabilidad. Creemos que la verdadera calidad se encuentra en la combinación 
-        perfecta de funcionalidad y eficiencia, y nos esforzamos por lograr esa perfección en cada una de nuestras ofertas.
-      </p>
-      <p>
-        Únete a nosotros en nuestro viaje hacia el futuro de la gestión de inventarios. Descubre cómo nuestra marca y compañia <strong>⚡ELECTROVIBEHOME⚡</strong> puede transformar tu experiencia con 
-        soluciones diseñadas para durar e impresionar.
-      </p>
-    </div>
+      <section className="evh-customer-guidance" aria-labelledby="evh-customer-guidance-title">
+        <div className="evh-customer-section-heading">
+          <span className="evh-eyebrow">MÁS QUE UN CATÁLOGO</span>
+          <h2 id="evh-customer-guidance-title">Empieza por lo que necesitas resolver.</h2>
+          <p>Encuentra la ruta adecuada para ti: inspiración, recomendaciones o una compra ficticia de principio a fin.</p>
+        </div>
+        <div className="evh-customer-journey-grid">
+          <article className="evh-customer-journey-card">
+            <span className="evh-customer-journey-icon" aria-hidden="true">✦</span>
+            <span className="evh-customer-step">01 · DESCUBRIR</span>
+            <h3>Encuentra tu próxima idea</h3>
+            <p>Explora el catálogo y usa filtros para acercarte a lo que buscas.</p>
+            <Link to="/catalogo">Explorar catálogo <span aria-hidden="true">→</span></Link>
+          </article>
+          <article className="evh-customer-journey-card is-featured">
+            <span className="evh-customer-journey-icon" aria-hidden="true">◎</span>
+            <span className="evh-customer-step">02 · ORIENTARTE</span>
+            <h3>Pregunta a la Guía ElectroVibe</h3>
+            <p>Describe la tarea, el espacio o la necesidad. La guía te ayudará a revisar opciones del catálogo.</p>
+            <Link to="/catalogo">Pedir una recomendación <span aria-hidden="true">→</span></Link>
+          </article>
+          <article className="evh-customer-journey-card">
+            <span className="evh-customer-journey-icon" aria-hidden="true">▤</span>
+            <span className="evh-customer-step">03 · PROBAR</span>
+            <h3>Completa un pedido ficticio</h3>
+            <p>Agrega varios productos, revisa cantidades y prueba el flujo sin usar dinero real.</p>
+            <Link to="/pedido-form">Preparar pedido de prueba <span aria-hidden="true">→</span></Link>
+          </article>
+        </div>
+      </section>
+
+      <section className="evh-customer-preferences" aria-labelledby="evh-customer-preferences-title">
+        <div>
+          <span className="evh-eyebrow">HECHO A TU MEDIDA</span>
+          <h2 id="evh-customer-preferences-title">Tus intereses, a un solo paso.</h2>
+          <p>{preferences.length
+            ? 'Tendremos estas categorías presentes al explorar opciones. Puedes cambiar tus preferencias cuando quieras.'
+            : 'Guarda tus intereses en el perfil para filtrar con más facilidad. Siempre podrás consultar el catálogo completo.'}</p>
+          {preferences.length > 0 && <div className="evh-customer-chips">{preferences.map(preference => <span key={preference}>{preference}</span>)}</div>}
+        </div>
+        <Link className="evh-button evh-button-secondary" to="/perfil-cliente">Revisar mi perfil</Link>
+      </section>
+    </main>
   );
 };
 
-// Exportar el componente HomePage para que pueda ser utilizado en otros archivos
 export default HomePage;
