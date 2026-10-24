@@ -80,15 +80,25 @@ const userId = user?._id;  // Usar userId desde el contexto
       })
         .then(response => {
           if (!Array.isArray(response.data)) throw new Error('El catálogo devolvió un formato inesperado.');
-          setProductLoadError('');
-          setAvailableProducts(response.data.map(product => ({
+          const purchasableProducts = response.data.filter(product =>
+            Number(product.quantity) > 0 &&
+            Number.isFinite(Number(product.price)) &&
+            Number(product.price) > 0
+          );
+
+          setProductLoadError(purchasableProducts.length === 0
+            ? 'No hay productos con existencias disponibles para seleccionar en este momento.'
+            : '');
+          setAvailableProducts(purchasableProducts.map(product => ({
             value: product._id,
             label: (
               <span>
+                {product.demo === true && <strong>[DEMO] </strong>}
                 <strong>Producto:</strong> {product.name} | <strong>Categoría:</strong> {product.category} | <strong>Stock:</strong> {product.quantity} unidades
+                {product.demo === true && ' (precio y stock de muestra)'}
               </span>
             ),
-            price: product.price
+            price: Number(product.price)
           })));
         })
         .catch(error => {
@@ -235,7 +245,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         <div className="payment-method-container">
           <label htmlFor="checkout-payment">Método de pago</label>
           <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
-          <p>El pago se completa en el checkout oficial de Wompi. No guardamos datos de tu tarjeta.</p>
+          <p>Este entorno utiliza productos de muestra y el checkout de Wompi en modo de prueba. No guardamos datos de tu tarjeta ni se realizan cobros reales.</p>
         </div>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
