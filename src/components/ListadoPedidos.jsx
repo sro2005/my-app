@@ -23,7 +23,7 @@ const formatDeliveryDate = (deliveryDate) => {
 
 const formatPaymentMethod = (pedido, isAdmin) => {
   if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Simulación interna · sin cobro' : 'Pedido sin cobro';
-  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi Sandbox · entorno de prueba' : 'Wompi · entorno de pruebas';
+  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi Sandbox · entorno de prueba' : 'Wompi';
   return pedido.paymentMethod || 'No especificado';
 };
 
@@ -37,10 +37,10 @@ const formatPaymentStatus = (status, isAdmin) => {
   };
   const customerLabels = {
     SIMULATED: 'Sin cobro',
-    APPROVED: 'Resultado recibido',
-    PENDING: 'Pendiente de verificar',
-    DECLINED: 'No aprobado',
-    ERROR: 'No fue posible verificarlo'
+    APPROVED: 'Resultado recibido · sin cobro real',
+    PENDING: 'Pendiente de verificar · sin cobro',
+    DECLINED: 'No aprobado · sin cobro',
+    ERROR: 'No fue posible verificarlo · sin cobro'
   };
   return (isAdmin ? adminLabels : customerLabels)[status] || status || 'No disponible';
 };
