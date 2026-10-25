@@ -84,7 +84,7 @@ const AdminInventory = () => {
       setProducts(current => current.map(item => item._id === active._id ? response.data.product : item));
       setActive(null);
       setDraft(null);
-      setMessage('Producto actualizado. Los cambios ya están guardados en el inventario de demostración.');
+      setMessage('Producto actualizado. Los cambios ya están guardados.');
     } catch (requestError) {
       setError(requestError.response?.data?.message || 'No fue posible guardar el producto.');
     } finally {
@@ -101,7 +101,7 @@ const AdminInventory = () => {
       await axios.delete(`${baseUrl()}/api/products/${pendingDelete._id}`, config());
       setProducts(current => current.filter(item => item._id !== pendingDelete._id));
       setPendingDelete(null);
-      setMessage('Producto eliminado del inventario de demostración.');
+      setMessage('Producto eliminado del inventario.');
     } catch (requestError) {
       setError(requestError.response?.data?.message || 'No fue posible eliminar el producto.');
       setPendingDelete(null);
@@ -123,7 +123,17 @@ const AdminInventory = () => {
         <input id="inventory-search" type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder="Ej. cafeteras, televisores…" />
         <button type="button" disabled={loading || busy} onClick={refresh}>Actualizar listado</button>
       </div>
-      {loading && <p role="status">Cargando inventario…</p>}
+      {loading && (
+        <div className="evh-loading-panel evh-admin-loading" role="status" aria-live="polite">
+          <span className="evh-loading-mark" aria-hidden="true">EV</span>
+          <div className="evh-loading-copy">
+            <span className="evh-loading-kicker">INVENTARIO</span>
+            <h2>Actualizando productos</h2>
+            <p>Estamos organizando las categorías y las existencias registradas.</p>
+            <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
+          </div>
+        </div>
+      )}
       {error && <p role="alert">{error}</p>}
       {message && <p role="status">{message}</p>}
       {!loading && !error && products.length === 0 && <p>No hay productos registrados.</p>}
