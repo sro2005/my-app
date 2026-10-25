@@ -38,6 +38,17 @@ const renderProfile = (updateUser = vi.fn(), user = customer) => render(
 );
 
 describe('PerfilCliente', () => {
+  test('uses the shared branded loading panel while profile data is being fetched', () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    localStorage.setItem('authToken', 'test-token');
+    axios.get.mockReturnValue(new Promise(() => {}));
+
+    renderProfile();
+
+    expect(screen.getByRole('status').textContent).toMatch(/Preparando tu perfil/i);
+    expect(screen.queryByText(/Cargando tu perfil/i)).toBeNull();
+  });
+
   test('loads profile data, saves changes and updates the session context', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
     localStorage.setItem('authToken', 'test-token');
