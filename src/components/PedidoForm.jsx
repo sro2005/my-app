@@ -405,7 +405,7 @@ const userId = user?._id;  // Usar userId desde el contexto
 
   const paymentMethods = [
     { value: 'Demostración', label: 'Registrar pedido sin pago' },
-    { value: 'Wompi', label: 'Wompi' },
+    { value: 'Wompi', label: 'Wompi Sandbox' },
   ];
 
   return (
@@ -430,11 +430,11 @@ const userId = user?._id;  // Usar userId desde el contexto
           <p role="note">{!paymentMethod
             ? 'Elige una opción. Revisarás los detalles antes de confirmar.'
             : paymentMethod.value === 'Demostración'
-              ? 'El pedido se guardará en tu cuenta sin realizar ningún cobro ni programar una entrega.'
-              : 'Se abrirá Wompi para continuar el proceso. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
+              ? 'El pedido se guardará como demostración sin realizar un cobro real. La fecha y los estados del pedido son ilustrativos; no se coordina una entrega real.'
+              : 'El checkout de Wompi Sandbox requiere credenciales de prueba válidas en el backend. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
         </div>
         <div className="evh-form-field">
-          <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
+          <label htmlFor="deliveryDate">{paymentMethod?.value === 'Demostración' ? 'Fecha de referencia (solo simulación)' : 'Fecha deseada de entrega'}</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
         </div>
         <div className="evh-form-field evh-form-field-wide">
@@ -487,7 +487,7 @@ const userId = user?._id;  // Usar userId desde el contexto
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>La solicitud quedó registrada en tu cuenta. No se ha procesado ningún cobro ni programado una entrega.</p>
+            <p>La solicitud quedó registrada en tu cuenta como pedido de demostración. No se ha procesado ningún cobro; la fecha y los estados logísticos son únicamente ilustrativos.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
             <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Hacer otro pedido</button>
           </div>
@@ -539,8 +539,8 @@ const userId = user?._id;  // Usar userId desde el contexto
               <div>
                 <strong>Antes de confirmar</strong>
                 <p>{paymentMethod?.value === 'Demostración'
-                  ? 'El pedido quedará registrado en tu cuenta sin realizar un cobro ni programar una entrega.'
-                  : 'Se abrirá Wompi para continuar el proceso. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
+                  ? 'El pedido quedará registrado como demostración, sin realizar un cobro real. La fecha y los estados logísticos son ilustrativos; no se coordina un envío real.'
+                  : 'El checkout de Wompi Sandbox requiere credenciales de prueba válidas en el backend. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
               </div>
             </div>
 
@@ -565,7 +565,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                     <dd>{address}</dd>
                   </div>
                   <div>
-                    <dt>Fecha deseada</dt>
+                    <dt>{paymentMethod?.value === 'Demostración' ? 'Fecha (solo simulación)' : 'Fecha deseada'}</dt>
                     <dd>{deliveryDate}</dd>
                   </div>
                   <div>

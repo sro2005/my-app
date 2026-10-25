@@ -19,7 +19,7 @@ const TermsPage = () => (
       },
       {
         title: 'Pedidos y checkout',
-        body: 'La función de pedidos permite registrar una solicitud y consultar su estado dentro de la cuenta. Registrar una solicitud no equivale a una compra comercial ni programa una entrega. Si eliges Wompi, se abrirá la plataforma para continuar el proceso; no se procesará ningún cobro real.'
+        body: 'La función de pedidos permite registrar una solicitud y consultar su estado dentro de la cuenta. Registrar una solicitud no equivale a una compra comercial ni programa una entrega. Si eliges Wompi, el checkout de Sandbox solo podrá abrirse cuando el backend tenga credenciales de prueba válidas. Si faltan, el sistema bloqueará la solicitud; no se procesarán cobros reales.'
       },
       {
         title: 'Recuperación de contraseña',

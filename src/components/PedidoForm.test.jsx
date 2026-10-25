@@ -114,13 +114,14 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
     fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
-    fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
+    fireEvent.change(screen.getByLabelText('Fecha de referencia (solo simulación)'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Registrar pedido sin pago' }));
     const confirmation = await screen.findByRole('dialog', { name: /confirma tu pedido/i });
     expect(screen.getByText('Antes de confirmar')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
     expect(confirmation.textContent).toMatch(/sin realizar un cobro/i);
+    expect(confirmation.textContent).toMatch(/solo simulación/i);
     fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
     await screen.findByText(/pedido registrado/i);
@@ -153,7 +154,7 @@ describe('PedidoForm catalog loading', () => {
 
     fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
-    fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
+    fireEvent.change(screen.getByLabelText('Fecha de referencia (solo simulación)'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Registrar pedido sin pago' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido' }));
 
@@ -210,6 +211,21 @@ describe('PedidoForm catalog loading', () => {
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.getByRole('alert').textContent).toMatch(/ya no tiene existencias|dejó de estar disponible/i);
     expect(screen.getByLabelText('checkout-product').value).toBe('');
+  });
+
+
+  test('explains that Wompi Sandbox requires test credentials before checkout', async () => {
+    axios.get.mockResolvedValueOnce({ data: [
+      { _id: 'p-wompi', name: 'Monitor Demo', category: 'Computadores', price: 250000, quantity: 2 }
+    ] });
+    renderCheckout();
+
+    await screen.findByRole('option', { name: 'p-wompi' });
+    fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-wompi' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
+    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Wompi' } });
+
+    expect(screen.getByText(/checkout de Wompi Sandbox requiere credenciales de prueba válidas/i)).toBeTruthy();
   });
 
 });

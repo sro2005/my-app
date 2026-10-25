@@ -37,6 +37,7 @@ describe('Admin dashboard', () => {
       .mockResolvedValueOnce({ data: [{ quantity: 2 }] });
     render(<AdminDashboard />);
     expect(await screen.findByText('Cliente Demo')).toBeTruthy();
+    expect(screen.getByText(/checkout de Wompi Sandbox requiere credenciales de prueba válidas/i)).toBeTruthy();
     expect(screen.getByText('Sin pago')).toBeTruthy();
     expect(screen.getByText('Aprobado (Sandbox)')).toBeTruthy();
     expect(screen.queryByText('APPROVED')).toBeNull();
