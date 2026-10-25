@@ -96,16 +96,16 @@ const buildLocalRecommendation = (query, products) => {
     .slice(0, 3);
 
   if (ranked.length === 0) {
-    return 'Modo de demostración local: todavía no encuentro una coincidencia clara en el catálogo. Cuéntame qué tarea quieres resolver (por ejemplo, preparar alimentos, cuidar la ropa, limpiar o estudiar) y te sugeriré categorías para explorar. Esta guía usa reglas sencillas, no una IA generativa.';
+    return 'Por ahora no encuentro una coincidencia clara en el catálogo. Cuéntame qué quieres resolver en casa —por ejemplo, cocinar, cuidar la ropa, limpiar o estudiar— y te sugeriré categorías para explorar.';
   }
 
   const suggestions = ranked.map(({ product }) =>
     product.name + ' (' + product.category + ', precio ilustrativo ' + formatIllustrativePrice(product.price) + ')'
   ).join('; ');
 
-  return 'Modo de demostración local: según lo que describes, estas opciones del catálogo podrían servirte: ' +
+  return 'Según lo que describes, estas opciones del catálogo podrían servirte: ' +
     suggestions +
-    '. Los precios y existencias son ilustrativos. Revisa las características antes de decidir y cuéntame qué uso o presupuesto tienes para afinar la búsqueda.';
+    '. Revisa las características y cuéntame qué uso o presupuesto tienes para afinar la búsqueda.';
 };
 
 const ShoppingAssistant = ({ products = [] }) => {
@@ -179,8 +179,8 @@ const ShoppingAssistant = ({ products = [] }) => {
     : !statusLoaded
       ? 'Comprobando disponibilidad'
       : localMode
-        ? 'Guía en modo local'
-        : 'Asistente sin configurar';
+        ? 'Guía disponible'
+        : 'Guía no disponible';
 
   return (
     <section className="evh-assistant" aria-labelledby="evh-assistant-title">
@@ -210,7 +210,7 @@ const ShoppingAssistant = ({ products = [] }) => {
         </div>
 
         {!statusLoaded ? (
-          <p className="evh-assistant-note">Conectando la guía…</p>
+          <p className="evh-assistant-note">Preparando recomendaciones…</p>
         ) : canUseGuide ? (
           <>
             {error && <p className="evh-assistant-error" role="alert">{error}</p>}
@@ -220,13 +220,13 @@ const ShoppingAssistant = ({ products = [] }) => {
               <button type="submit" disabled={loading || !draft.trim()} aria-label="Enviar pregunta">Enviar</button>
             </form>
             {enabled ? (
-              <p className="evh-assistant-note">Tus mensajes se envían a OpenAI para generar recomendaciones y ElectroVibeHome no guarda el historial. Evita incluir datos personales.</p>
+              <p className="evh-assistant-note">Tus mensajes se procesan mediante un servicio de IA para generar recomendaciones. Evita incluir datos personales o información sensible.</p>
             ) : (
-              <p className="evh-assistant-note">Modo de demostración local: tus mensajes se procesan en el navegador con el catálogo disponible. No se envían a OpenAI ni se guardan. Las sugerencias usan reglas sencillas, no IA generativa.</p>
+              <p className="evh-assistant-note">Tus mensajes se procesan en este navegador con el catálogo disponible; no se guardan ni se envían a servicios externos.</p>
             )}
           </>
         ) : (
-          <p className="evh-assistant-note">La guía no tiene productos disponibles en este momento. Prueba de nuevo cuando el catálogo esté cargado.</p>
+          <p className="evh-assistant-note">La guía no tiene productos disponibles en este momento. Vuelve a intentarlo cuando el catálogo se actualice.</p>
         )}
       </div>
     </section>
