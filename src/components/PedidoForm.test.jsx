@@ -115,15 +115,15 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Registrar compra ficticia' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
     const confirmation = await screen.findByRole('dialog', { name: /confirma tu pedido/i });
-    expect(screen.getByText('Entorno de demostración')).toBeTruthy();
+    expect(screen.getByText('Antes de confirmar')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
-    expect(confirmation.textContent).toContain('No se hará ningún cobro real');
-    fireEvent.click(screen.getByRole('button', { name: /confirmar pedido de prueba/i }));
+    expect(confirmation.textContent).toMatch(/no genera un cobro/i);
+    fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
-    await screen.findByText(/pedido de demostración creado/i);
+    await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
     expect(axios.post.mock.calls[0][0]).toBe('https://api.example.test/api/orders/realizar');
     expect(axios.post.mock.calls[0][1].products).toEqual([{ productId: 'p-demo', quantity: 1 }]);
@@ -155,9 +155,9 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Registrar compra ficticia' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido de prueba' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido' }));
 
-    await screen.findByText(/pedido de demostración creado/i);
+    await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
     expect(axios.post.mock.calls[0][1].products).toEqual([
       { productId: 'p-1', quantity: 2 },
