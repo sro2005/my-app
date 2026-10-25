@@ -120,7 +120,7 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByText('Antes de confirmar')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
-    expect(confirmation.textContent).toMatch(/no genera un cobro/i);
+    expect(confirmation.textContent).toMatch(/sin realizar un cobro/i);
     fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
     await screen.findByText(/pedido registrado/i);
@@ -154,7 +154,7 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Registrar compra ficticia' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Registrar pedido' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido' }));
 
     await screen.findByText(/pedido registrado/i);
@@ -179,7 +179,7 @@ describe('PedidoForm catalog loading', () => {
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();
     fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
-    expect(screen.getByRole('button', { name: 'Registrar compra ficticia' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: 'Registrar pedido' }).disabled).toBe(true);
   });
 
   test('preselects a requested live catalogue product using the full catalogue endpoint', async () => {
