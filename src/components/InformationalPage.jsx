@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const InformationalPage = ({ eyebrow, title, lead, notice, sections }) => (
+const InformationalPage = ({ eyebrow, title, lead, notice, noticeTitle = 'Información importante', sections }) => (
   <main className="evh-info-page">
     <div className="evh-info-container">
       <Link className="evh-info-back" to="/">← Volver al inicio</Link>
@@ -11,10 +11,12 @@ const InformationalPage = ({ eyebrow, title, lead, notice, sections }) => (
         <p>{lead}</p>
       </header>
 
-      <aside className="evh-info-notice">
-        <strong>Alcance de esta página</strong>
-        <p>{notice}</p>
-      </aside>
+      {notice && (
+        <aside className="evh-info-notice">
+          <strong>{noticeTitle}</strong>
+          <p>{notice}</p>
+        </aside>
+      )}
 
       <div className="evh-info-sections">
         {sections.map(section => (
