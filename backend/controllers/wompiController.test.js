@@ -340,3 +340,41 @@ test('createCheckout returns a restartable result for an already expired Sandbox
   assert.equal(response.body.code, 'WOMPI_CHECKOUT_EXPIRED');
   assert.match(response.body.message, /confirma un nuevo pedido/i);
 });
+
+
+test('ignores a correctly signed late approval after a Wompi order expired', async t => {
+  configureSandbox(t);
+  const originals = {
+    findOne: Order.findOne,
+    findOneAndUpdate: Order.findOneAndUpdate
+  };
+  t.after(() => {
+    Order.findOne = originals.findOne;
+    Order.findOneAndUpdate = originals.findOneAndUpdate;
+  });
+
+  let updates = 0;
+  Order.findOne = async () => ({
+    _id: validId,
+    paymentReference: 'EVH-expired-order',
+    totalAmount: 123.45,
+    paymentStatus: 'EXPIRED',
+    paymentConfirmed: false,
+    status: 'Cancelado'
+  });
+  Order.findOneAndUpdate = async () => { updates += 1; return null; };
+
+  const event = buildSignedEvent({
+    id: 'TX-LATE-APPROVAL',
+    status: 'APPROVED',
+    amount_in_cents: 12345,
+    currency: 'COP',
+    reference: 'EVH-expired-order'
+  });
+  const response = createResponse();
+  await handleWebhook({ body: event, get: () => undefined }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.body.ignored, true);
+  assert.equal(updates, 0);
+});
