@@ -15,10 +15,12 @@ const orderSchema = new mongoose.Schema({
   orderDate: { type: Date, default: Date.now }, 
   status: { type: String, default: 'Pendiente', enum: ['Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado'] }, // Añadir estados posibles
   paymentConfirmed: { type: Boolean, default: false },
-  paymentStatus: { type: String, enum: ['PENDING', 'APPROVED', 'DECLINED', 'ERROR', 'VOIDED', 'SIMULATED'], default: 'PENDING' },
+  paymentStatus: { type: String, enum: ['PENDING', 'APPROVED', 'DECLINED', 'ERROR', 'VOIDED', 'EXPIRED', 'SIMULATED'], default: 'PENDING' },
   paymentReference: { type: String, unique: true, sparse: true },
   idempotencyKey: { type: String, unique: true, sparse: true, select: false, immutable: true, match: /^[A-Za-z0-9_-]{16,128}$/ },
   paymentTransactionId: { type: String },
+  // Última vez que se emitió el checkout: permite expirar sesiones abandonadas sin cortar una sesión recién abierta.
+  checkoutStartedAt: { type: Date },
   packed: { type: Boolean, default: false },
   delivered: { type: Boolean, default: false },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: true }, // Agregado para asociar al usuario
