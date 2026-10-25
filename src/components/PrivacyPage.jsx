@@ -19,7 +19,7 @@ const PrivacyPage = () => (
       },
       {
         title: 'Información de pedidos',
-        body: 'Al registrar un pedido se guardan los datos de contacto y entrega, los productos y cantidades, el importe mostrado, la fecha y el estado. En la versión actual, registrar un pedido no genera una entrega real ni un cobro. La integración de Wompi está configurada en un entorno de pruebas.'
+        body: 'Al registrar un pedido se guardan los datos de contacto y entrega, los productos y cantidades, el importe mostrado, la fecha y el estado. Actualmente, registrar un pedido no genera un cobro ni coordina una entrega. Si eliges Wompi, solo se simula la etapa de pago; no se procesan cargos ni transferencias reales.'
       },
       {
         title: 'Sesión y seguridad',
@@ -27,7 +27,7 @@ const PrivacyPage = () => (
       },
       {
         title: 'Servicios que participan',
-        body: 'Render aloja los servicios de la aplicación y MongoDB almacena los registros de cuentas, productos y pedidos. Cuando la Guía ElectroVibe utiliza asistencia generativa, el mensaje que escribes se envía al servidor y a OpenAI para generar la respuesta. Si no está configurada, la guía puede funcionar con reglas locales. El flujo de Wompi utiliza su entorno de pruebas y no procesa pagos reales.'
+        body: 'Render aloja los servicios de la aplicación y MongoDB almacena los registros de cuentas, productos y pedidos. Cuando la Guía ElectroVibe utiliza asistencia generativa, el mensaje que escribes se envía al servidor y a OpenAI para generar la respuesta. Si no está configurada, la guía puede funcionar con reglas locales. La opción de Wompi solo simula la etapa de pago; no procesa pagos reales.'
       },
       {
         title: 'Consultas sobre tu información',
