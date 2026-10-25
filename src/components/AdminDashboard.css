@@ -217,3 +217,108 @@
     overflow-wrap: anywhere;
   }
 }
+
+
+/* Ajuste visual fino: jerarquía centrada, controles compactos y medidas consistentes. */
+.evh-admin-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.evh-admin-hero > p {
+  width: min(100%, 720px);
+  margin: .45rem auto 1rem;
+}
+.evh-admin .evh-admin-session {
+  margin: .65rem auto .2rem;
+  text-align: left;
+}
+.evh-admin .evh-admin-hero > button,
+.evh-admin .evh-admin-hero-link {
+  width: auto;
+  min-height: 40px;
+  padding: .6rem .95rem;
+  font-size: .82rem;
+  line-height: 1.25;
+}
+.evh-admin-inventory-tools {
+  display: grid;
+  grid-template-columns: auto minmax(220px, 1fr) auto;
+  gap: .7rem 1rem;
+  align-items: center;
+}
+.evh-admin-inventory-tools label {
+  margin: 0;
+}
+.evh-admin-inventory-tools input {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: .65rem .8rem;
+  font-size: .9rem;
+}
+.evh-admin-inventory-tools button,
+.evh-admin-product-actions button {
+  min-height: 38px;
+  padding: .55rem .8rem;
+  font-size: .8rem;
+  line-height: 1.25;
+  font-weight: 700;
+}
+.evh-admin-product-actions {
+  gap: .45rem;
+}
+.evh-admin .evh-admin-product-actions button {
+  min-height: 36px;
+  padding: .5rem .75rem;
+}
+.evh-admin .evh-admin-panel > a,
+.evh-admin .evh-admin-actions a {
+  font-size: .82rem;
+  line-height: 1.4;
+}
+@media (max-width: 760px) {
+  .evh-admin-inventory-tools {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  }
+  .evh-admin-inventory-tools label {
+    grid-column: 1 / -1;
+  }
+  .evh-admin-inventory-tools input {
+    grid-column: 1;
+  }
+  .evh-admin-inventory-tools button {
+    grid-column: 2;
+    width: 100%;
+  }
+}
+@media (max-width: 480px) {
+  .evh-admin-hero {
+    align-items: stretch;
+  }
+  .evh-admin-hero > p {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .evh-admin .evh-admin-session {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .evh-admin .evh-admin-hero > button,
+  .evh-admin .evh-admin-hero-link {
+    align-self: stretch;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .evh-admin-inventory-tools {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .evh-admin-inventory-tools label,
+  .evh-admin-inventory-tools input,
+  .evh-admin-inventory-tools button {
+    grid-column: 1;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
