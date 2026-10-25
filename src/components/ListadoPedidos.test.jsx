@@ -88,7 +88,7 @@ describe('ListadoPedidos', () => {
 
     expect(await screen.findByRole('button', { name: /marcar como entregado/i })).toBeTruthy();
     expect(screen.getByText(/Estado del pedido actualizado/i)).toBeTruthy();
-    expect(screen.getByText(/Estado del Pedido:/i).parentElement.textContent).toContain('Enviado');
+    expect(screen.getByText('Enviado').className).toContain('is-shipped');
   });
 
   test('does not expose admin logistics actions to a customer', async () => {
