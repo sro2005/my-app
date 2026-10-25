@@ -31,7 +31,7 @@ const Footer = () => {
       <div className="evh-footer-section">
         <h2>Recursos</h2>
         <div className="evh-footer-resources">
-          <Link to="/about">Qué es ElectroVibeHome</Link>
+          <Link to="/about">Sobre nosotros</Link>
           <Link to="/privacy">Política de Privacidad</Link>
           <Link to="/terms">Términos de Servicio</Link>
         </div>
