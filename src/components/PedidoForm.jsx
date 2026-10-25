@@ -340,18 +340,26 @@ const userId = user?._id;  // Usar userId desde el contexto
       setPendingCheckoutOrderId(null);
       window.location.assign(checkout.data.checkoutUrl);
     } catch (error) {
+      const checkoutExpired = error.response?.data?.code === 'WOMPI_CHECKOUT_EXPIRED';
       console.error('No fue posible iniciar el pago:', error.response?.data?.message || error.message);
-      if (createdOrderId) {
+      if (checkoutExpired) {
+        // El backend ya canceló el pedido vencido y liberó el stock; permite confirmar uno nuevo.
         setOrderRequestKey(null);
-        setPendingCheckoutOrderId(createdOrderId);
+        setPendingCheckoutOrderId(null);
+        setFormError(error.response?.data?.message || 'La sesión de pago venció. Revisa el carrito y confirma un nuevo pedido.');
       } else {
-        const status = error.response?.status;
-        const outcomeIsUncertain = !error.response || status >= 500 || [408, 425, 429].includes(status);
-        // Reutiliza la clave solo cuando no es posible saber si el servidor llegó
-        // a registrar el pedido. Errores definitivos dejan iniciar una nueva solicitud.
-        setOrderRequestKey(outcomeIsUncertain ? requestKey : null);
+        if (createdOrderId) {
+          setOrderRequestKey(null);
+          setPendingCheckoutOrderId(createdOrderId);
+        } else {
+          const status = error.response?.status;
+          const outcomeIsUncertain = !error.response || status >= 500 || [408, 425, 429].includes(status);
+          // Reutiliza la clave solo cuando no es posible saber si el servidor llegó
+          // a registrar el pedido. Errores definitivos dejan iniciar una nueva solicitud.
+          setOrderRequestKey(outcomeIsUncertain ? requestKey : null);
+        }
+        setFormError(error.response?.data?.message || 'No pudimos confirmar la respuesta del servidor. Reintenta la misma solicitud para evitar duplicar el pedido.');
       }
-      setFormError(error.response?.data?.message || 'No pudimos confirmar la respuesta del servidor. Reintenta la misma solicitud para evitar duplicar el pedido.');
     } finally {
       setLoading(false);
       setShowConfirmModal(false);
@@ -379,7 +387,12 @@ const userId = user?._id;  // Usar userId desde el contexto
       window.location.assign(checkout.data.checkoutUrl);
     } catch (error) {
       console.error('No fue posible reintentar el checkout:', error.response?.data?.message || error.message);
-      setFormError(error.response?.data?.message || 'No se pudo reabrir el checkout. Intenta nuevamente sin crear otro pedido.');
+      if (error.response?.data?.code === 'WOMPI_CHECKOUT_EXPIRED') {
+        setPendingCheckoutOrderId(null);
+        setFormError(error.response?.data?.message || 'La sesión de pago venció. Revisa el carrito y confirma un nuevo pedido.');
+      } else {
+        setFormError(error.response?.data?.message || 'No se pudo reabrir el checkout. Intenta nuevamente sin crear otro pedido.');
+      }
     } finally {
       setLoading(false);
     }
