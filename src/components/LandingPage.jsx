@@ -12,7 +12,7 @@ const LandingPage = () => (
   <main className="evh-landing">
     <section className="evh-hero">
       <div className="evh-hero-copy">
-        <span className="evh-eyebrow">TECNOLOGÍA ÚTIL PARA LA VIDA EN CASA</span>
+        <span className="evh-eyebrow evh-hero-tagline">• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</span>
         <h1>Encuentra tecnología que haga <span>más fácil tu día a día.</span></h1>
         <p>Explora electrodomésticos y tecnología para el hogar, compara categorías y descubre opciones según el espacio y las tareas de tu rutina.</p>
         <div className="evh-hero-actions" style={{ maxWidth: 'calc(100vw - 40px)', minWidth: 0, boxSizing: 'border-box' }}>
@@ -20,8 +20,8 @@ const LandingPage = () => (
           <Link className="evh-button evh-button-secondary" to="/register" style={{ maxWidth: 'calc(100vw - 50px)', minWidth: 0, boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere' }}>Crear mi cuenta</Link>
         </div>
         <div className="evh-trust-row">
-          <span><strong>✓</strong> Catálogo fácil de explorar</span>
-          <span><strong>✓</strong> Recorrido de compra simulado</span>
+          <span><strong>✓</strong> Categorías fáciles de explorar</span>
+          <span><strong>✓</strong> Tu cuenta y preferencias en un solo lugar</span>
         </div>
       </div>
       <div className="evh-hero-art" aria-label="Ilustración de electrodomésticos para el hogar" role="img">
@@ -62,8 +62,8 @@ const LandingPage = () => (
 
     <section className="evh-promise">
       <div><span>01</span><strong>Explora con facilidad</strong><p>Consulta productos y disponibilidad sin complicaciones.</p></div>
-      <div><span>02</span><strong>Prueba el flujo de pago</strong><p>La integración usa el entorno de pruebas de Wompi. No se realizan cobros ni transferencias reales.</p></div>
-      <div><span>03</span><strong>Ten el control</strong><p>Accede a tu cuenta y consulta el estado de tus pedidos de prueba.</p></div>
+      <div><span>02</span><strong>Decide con información clara</strong><p>Revisa las características, las cantidades y los detalles de tu pedido antes de confirmarlo.</p></div>
+      <div><span>03</span><strong>Ten el control</strong><p>Accede a tu cuenta, administra tus preferencias y consulta el estado de tus pedidos.</p></div>
     </section>
   </main>
 );
