@@ -12,16 +12,17 @@ const LandingPage = () => (
   <main className="evh-landing">
     <section className="evh-hero">
       <div className="evh-hero-copy">
-        <span className="evh-eyebrow evh-hero-tagline">• TRANSFORMA TU HOGAR CON LA ENERGÍA DEL FUTURO •</span>
+        <span className="evh-eyebrow evh-hero-tagline">ELECTRODOMÉSTICOS Y TECNOLOGÍA PARA TU HOGAR</span>
         <h1>Encuentra tecnología que haga <span>más fácil tu día a día.</span></h1>
         <p>Explora electrodomésticos y tecnología para el hogar, compara categorías y descubre opciones según el espacio y las tareas de tu rutina.</p>
-        <div className="evh-hero-actions" style={{ maxWidth: 'calc(100vw - 40px)', minWidth: 0, boxSizing: 'border-box' }}>
-          <Link className="evh-button evh-button-primary" to="/catalogo" style={{ maxWidth: 'calc(100vw - 50px)', minWidth: 0, boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere' }}>Explorar productos <span aria-hidden="true">→</span></Link>
-          <Link className="evh-button evh-button-secondary" to="/register" style={{ maxWidth: 'calc(100vw - 50px)', minWidth: 0, boxSizing: 'border-box', whiteSpace: 'normal', overflowWrap: 'anywhere' }}>Crear mi cuenta</Link>
+        <div className="evh-hero-actions">
+          <Link className="evh-button evh-button-primary" to="/catalogo">Explorar productos <span aria-hidden="true">→</span></Link>
+          <Link className="evh-button evh-button-secondary" to="/register">Crear mi cuenta</Link>
         </div>
         <div className="evh-trust-row">
-          <span><strong>✓</strong> Categorías fáciles de explorar</span>
-          <span><strong>✓</strong> Tu cuenta y preferencias en un solo lugar</span>
+          <span><strong aria-hidden="true">✓</strong> Categorías fáciles de explorar</span>
+          <span><strong aria-hidden="true">✓</strong> Tus preferencias en un solo lugar</span>
+          <span><strong aria-hidden="true">✓</strong> Pedidos de prueba, sin cobros reales</span>
         </div>
       </div>
       <div className="evh-hero-art" aria-label="Ilustración de electrodomésticos para el hogar" role="img">
