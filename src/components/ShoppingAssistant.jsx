@@ -100,7 +100,7 @@ const buildLocalRecommendation = (query, products) => {
   }
 
   const suggestions = ranked.map(({ product }) =>
-    product.name + ' (' + product.category + ', precio ilustrativo ' + formatIllustrativePrice(product.price) + ')'
+    product.name + ' (' + product.category + ', precio de referencia ' + formatIllustrativePrice(product.price) + ')'
   ).join('; ');
 
   return 'Según lo que describes, estas opciones del catálogo podrían servirte: ' +
