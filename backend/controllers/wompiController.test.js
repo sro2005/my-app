@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const Order = require('../models/Order');
 const { createCheckout, handleWebhook } = require('./wompiController');
-const { calculateEventChecksum } = require('../utils/wompiSecurity');
+const { calculateEventChecksum, calculateIntegritySignature } = require('../utils/wompiSecurity');
 
 const validId = '507f1f77bcf86cd799439011';
 const createResponse = () => ({
@@ -245,4 +245,98 @@ test('handleWebhook ignores a repeated event after the order is no longer pendin
   assert.equal(response.statusCode, 200);
   assert.equal(response.body.ignored, true);
   assert.equal(updates, 0);
+});
+
+
+test('createCheckout emits a signed Sandbox checkout and records when checkout starts', async t => {
+  const originals = {
+    findById: Order.findById,
+    findOneAndUpdate: Order.findOneAndUpdate
+  };
+  const envNames = ['WOMPI_PUBLIC_KEY', 'WOMPI_INTEGRITY_SECRET', 'WOMPI_EVENTS_SECRET', 'FRONTEND_URL'];
+  const oldEnv = Object.fromEntries(envNames.map(name => [name, process.env[name]]));
+  t.after(() => {
+    Order.findById = originals.findById;
+    Order.findOneAndUpdate = originals.findOneAndUpdate;
+    for (const name of envNames) {
+      if (oldEnv[name] === undefined) delete process.env[name];
+      else process.env[name] = oldEnv[name];
+    }
+  });
+
+  process.env.WOMPI_PUBLIC_KEY = 'pub_test_unit-test';
+  process.env.WOMPI_INTEGRITY_SECRET = 'test_integrity_unit-test';
+  process.env.WOMPI_EVENTS_SECRET = 'test_events_unit-test';
+  process.env.FRONTEND_URL = 'https://preview.example.test';
+
+  const order = {
+    _id: validId,
+    userId: validId,
+    status: 'Pendiente',
+    paymentMethod: 'Wompi',
+    paymentStatus: 'PENDING',
+    paymentConfirmed: false,
+    totalAmount: 123.45,
+    paymentReference: 'EVH-unit-order',
+    orderDate: new Date()
+  };
+  let savedUpdate;
+  let savedFilter;
+  let savedOptions;
+  Order.findById = async () => order;
+  Order.findOneAndUpdate = async (filter, update, options) => {
+    savedFilter = filter;
+    savedUpdate = update;
+    savedOptions = options;
+    return { ...order, ...update.$set };
+  };
+
+  const response = createResponse();
+  await createCheckout({
+    params: { id: validId },
+    user: { _id: validId, role: 'user' }
+  }, response);
+
+  assert.equal(response.statusCode, 200);
+  const checkoutUrl = new URL(response.body.checkoutUrl);
+  assert.equal(checkoutUrl.origin + checkoutUrl.pathname, 'https://checkout.wompi.co/p/');
+  assert.equal(checkoutUrl.searchParams.get('public-key'), 'pub_test_unit-test');
+  assert.equal(checkoutUrl.searchParams.get('currency'), 'COP');
+  assert.equal(checkoutUrl.searchParams.get('amount-in-cents'), '12345');
+  assert.equal(checkoutUrl.searchParams.get('reference'), 'EVH-unit-order');
+  assert.equal(
+    checkoutUrl.searchParams.get('signature:integrity'),
+    calculateIntegritySignature('EVH-unit-order', 12345, 'COP', 'test_integrity_unit-test')
+  );
+  assert.equal(checkoutUrl.searchParams.get('redirect-url'), 'https://preview.example.test/pago-resultado');
+  assert.equal(response.body.reference, 'EVH-unit-order');
+  assert.equal(savedFilter.paymentStatus, 'PENDING');
+  assert.equal(savedFilter.paymentReference, 'EVH-unit-order');
+  assert.ok(savedUpdate.$set.checkoutStartedAt instanceof Date);
+  assert.equal(savedOptions.runValidators, true);
+});
+
+test('createCheckout returns a restartable result for an already expired Sandbox order', async t => {
+  const originalFindById = Order.findById;
+  t.after(() => { Order.findById = originalFindById; });
+  Order.findById = async () => ({
+    _id: validId,
+    userId: validId,
+    status: 'Cancelado',
+    paymentMethod: 'Wompi',
+    paymentStatus: 'EXPIRED',
+    paymentConfirmed: false,
+    totalAmount: 123.45,
+    orderDate: new Date(Date.now() - 60 * 60 * 1000)
+  });
+
+  const response = createResponse();
+  await createCheckout({
+    params: { id: validId },
+    user: { _id: validId, role: 'user' }
+  }, response);
+
+  assert.equal(response.statusCode, 409);
+  assert.equal(response.body.code, 'WOMPI_CHECKOUT_EXPIRED');
+  assert.match(response.body.message, /confirma un nuevo pedido/i);
 });
