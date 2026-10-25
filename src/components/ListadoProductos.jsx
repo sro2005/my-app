@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import ClipLoader from 'react-spinners/ClipLoader';
 import { AuthContext } from '../contexts/AuthContext';
 import ShoppingAssistant from './ShoppingAssistant';
 import demoProducts from '../../data/demo-products.json';
@@ -64,26 +63,23 @@ const ProductCard = ({ product, demoMode, canOrder = false }) => {
         ) : (
           <div className="evh-product-art" role="img" aria-label={'Ilustración de ' + (product.category || 'producto')}>
             <span aria-hidden="true">{getCategoryIcon(product.category)}</span>
-            <small>{illustrative ? 'Producto de muestra' : (product.category || 'ElectroVibeHome')}</small>
+            <small>{product.category || 'Tecnología para el hogar'}</small>
           </div>
         )}
-        {illustrative && <span className="evh-product-demo-tag">DEMO</span>}
       </div>
       <div className="evh-product-card-body">
         <div className="evh-product-card-topline">
           <span className="evh-product-category">{product.category || 'Tecnología para el hogar'}</span>
         </div>
         <h3>{product.name || 'Producto sin nombre'}</h3>
-        <p className="evh-product-description">{product.description || 'Consulta los detalles de este producto de muestra.'}</p>
+        <p className="evh-product-description">{product.description || 'Consulta las características de este producto.'}</p>
         <div className="evh-product-card-bottom">
           <div>
-            <span className="evh-product-price-label">{illustrative ? 'Precio ilustrativo' : 'Precio'}</span>
+            <span className="evh-product-price-label">Precio</span>
             <strong className="evh-product-price">{formatPrice(product.price)}</strong>
           </div>
           <span className={'evh-stock-pill ' + (Number(product.quantity) > 0 ? 'is-available' : 'is-unavailable')}>
-            {illustrative
-              ? 'Stock de muestra: ' + (Number(product.quantity) || 0)
-              : Number(product.quantity) > 0 ? 'Disponible' : 'Agotado'}
+            {Number(product.quantity) > 0 ? 'Disponible' : 'Agotado'}
           </span>
         </div>
         {canOrder && product._id && (
@@ -134,7 +130,7 @@ const ListadoProductos = () => {
       setSourceMessage('');
 
       if (!apiUrl) {
-        useDemoCatalog('Este entorno no tiene conexión con la API; se muestran productos locales de demostración, con precios y existencias ilustrativos.');
+        useDemoCatalog('No pudimos conectar con el catálogo. Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.');
         return;
       }
 
@@ -146,7 +142,7 @@ const ListadoProductos = () => {
           throw new Error('La respuesta de productos no tiene el formato esperado.');
         }
         if (response.data.length === 0) {
-          useDemoCatalog('La API respondió correctamente, pero aún no tiene productos registrados. Mostramos ejemplos para que puedas recorrer la experiencia.');
+          useDemoCatalog('Aún no hay productos sincronizados. Mostramos una selección de referencia mientras se restablece el catálogo.');
           return;
         }
         if (active) {
@@ -156,7 +152,7 @@ const ListadoProductos = () => {
           setLoading(false);
         }
       } catch {
-        useDemoCatalog('No pudimos recuperar los productos desde la API. Se muestran ejemplos locales; los precios y las existencias no representan inventario real.');
+        useDemoCatalog('No pudimos actualizar el catálogo. Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.');
       }
     };
 
@@ -183,16 +179,19 @@ const ListadoProductos = () => {
     });
   }, [products, search, category, showPreferencesOnly, preferenceSignature]);
 
-  const allProductsAreDemo = source === 'demo' || (
-    products.length > 0 && products.every((product) => product.demo === true || isPlaceholderImage(product.imageUrl))
-  );
-  const hasSomeDemoProducts = products.some((product) => product.demo === true || isPlaceholderImage(product.imageUrl));
 
   if (loading) {
     return (
-      <main className="evh-catalog-page evh-catalog-loading" aria-live="polite">
-        <span className="evh-sr-only">Cargando catálogo</span>
-        <ClipLoader size={42} color="#F47B20" />
+      <main className="evh-catalog-page evh-catalog-loading" aria-busy="true">
+        <div className="evh-loading-panel" role="status" aria-live="polite">
+          <span className="evh-loading-mark" aria-hidden="true">EV</span>
+          <div className="evh-loading-copy">
+            <span className="evh-loading-kicker">DESCUBRE TU PRÓXIMO FAVORITO</span>
+            <h2>Preparando el catálogo</h2>
+            <p>Estamos organizando los productos y sus categorías.</p>
+            <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
+          </div>
+        </div>
       </main>
     );
   }
@@ -211,14 +210,14 @@ const ListadoProductos = () => {
         </div>
       </section>
 
-      {(allProductsAreDemo || hasSomeDemoProducts) && (
+      {source === 'demo' && (
         <aside className="evh-catalog-notice" role="status">
-          <span className="evh-catalog-notice-icon" aria-hidden="true">✦</span>
+          <span className="evh-catalog-notice-icon" aria-hidden="true">i</span>
           <div>
-            <strong>{allProductsAreDemo ? 'Catálogo de demostración' : 'Incluye productos de demostración'}</strong>
-            <p>{sourceMessage || 'Algunos registros son ejemplos creados para demostrar la nueva experiencia. Sus precios e inventario son ilustrativos y no representan existencias reales.'}</p>
+            <strong>Catálogo temporalmente sin conexión</strong>
+            <p>{sourceMessage || 'Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.'}</p>
           </div>
-          {source === 'demo' && <button type="button" onClick={() => setRetryCount((count) => count + 1)}>Reintentar conexión</button>}
+          <button type="button" onClick={() => setRetryCount((count) => count + 1)}>Actualizar</button>
         </aside>
       )}
 
@@ -282,9 +281,7 @@ const ListadoProductos = () => {
       )}
 
       <p className="evh-catalog-footnote">
-        {allProductsAreDemo
-          ? 'Experiencia demostrativa: no se realizan compras ni transacciones reales desde este catálogo.'
-          : 'Las preferencias ayudan a filtrar productos, pero puedes volver a ver el catálogo completo cuando quieras.'}
+        Las preferencias ayudan a filtrar productos, pero puedes volver a ver el catálogo completo cuando quieras. La disponibilidad se revisará antes de confirmar tu pedido.
       </p>
     </main>
   );
