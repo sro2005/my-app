@@ -4526,3 +4526,181 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     overflow-wrap: anywhere;
   }
 }
+
+/* Confirmation dialog palette refinement: cohesive blue-first finish */
+.evh-confirmation-backdrop {
+  background: rgba(12, 28, 49, .76);
+  backdrop-filter: blur(9px);
+}
+.evh-confirmation-dialog {
+  border: 1px solid #d9e5f3;
+  border-top: 4px solid #2f68b2;
+  background: #ffffff;
+  color: #172c46;
+  box-shadow: 0 28px 84px rgba(9, 25, 46, .32);
+}
+.evh-confirmation-header {
+  align-items: flex-start;
+}
+.evh-confirmation-mark {
+  border: 1px solid #cddff5;
+  background: linear-gradient(145deg, #f1f7ff 0%, #dceaff 100%);
+  color: #285b9d;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+.evh-confirmation-title-wrap {
+  min-width: 0;
+}
+.evh-confirmation-title-wrap .evh-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 .55rem;
+  padding: .35rem .68rem;
+  border: 1px solid #d4e3f7;
+  border-radius: 999px;
+  background: #edf4ff;
+  color: #285b9d;
+  font-size: .66rem;
+  font-weight: 850;
+  letter-spacing: .095em;
+  line-height: 1.45;
+}
+.evh-confirmation-title-wrap h2 {
+  margin: 0 0 .4rem;
+  color: #162f50;
+  font-size: clamp(1.42rem, 2.8vw, 1.9rem);
+  font-weight: 850;
+  letter-spacing: -.035em;
+  line-height: 1.2;
+}
+.evh-confirmation-title-wrap p {
+  margin: 0;
+  color: #586b82;
+  font-size: .88rem;
+  line-height: 1.65;
+}
+.evh-confirmation-notice {
+  border: 1px solid #d7e5f7;
+  background: #f2f7ff;
+  color: #294563;
+  box-shadow: inset 3px 0 0 #6a98d5;
+}
+.evh-confirmation-notice-icon {
+  flex: 0 0 auto;
+  border: 1px solid #c9dcf5;
+  background: #e1edff;
+  color: #285b9d;
+}
+.evh-confirmation-notice strong {
+  color: #1d3e65;
+}
+.evh-confirmation-notice p {
+  color: #526982;
+}
+.evh-confirmation-details,
+.evh-confirmation-summary {
+  border: 1px solid #e0e9f4;
+  box-shadow: 0 4px 14px rgba(28, 55, 88, .035);
+}
+.evh-confirmation-details {
+  background: #ffffff;
+}
+.evh-confirmation-details h3,
+.evh-confirmation-summary h3 {
+  color: #1a3557;
+  font-weight: 800;
+}
+.evh-confirmation-facts dt {
+  color: #687b91;
+}
+.evh-confirmation-facts dd {
+  color: #263e59;
+  font-weight: 650;
+}
+.evh-confirmation-summary {
+  border-color: #dce7f5;
+  background: linear-gradient(150deg, #f8fbff 0%, #f1f6fd 100%);
+}
+.evh-confirmation-summary-heading > span {
+  padding: .28rem .55rem;
+  border: 1px solid #d6e4f7;
+  border-radius: 999px;
+  background: #eaf2ff;
+  color: #315d91;
+  font-weight: 750;
+}
+.evh-confirmation-products li {
+  border-bottom-color: #e0e9f4;
+}
+.evh-confirmation-line-total {
+  color: #234d7d;
+}
+.evh-confirmation-total {
+  border-top-color: #d8e4f2;
+}
+.evh-confirmation-total span {
+  color: #5f738a;
+}
+.evh-confirmation-total strong {
+  color: #1d4f8b;
+}
+.evh-confirmation-total-note {
+  color: #62758b;
+}
+.evh-confirmation-processing {
+  border-color: #d2e2f7;
+  background: #edf5ff;
+  color: #285489;
+}
+.evh-confirmation-secondary {
+  border-color: #d4e0ed;
+  background: #ffffff;
+  color: #34536f;
+}
+.evh-confirmation-secondary:hover:not(:disabled) {
+  border-color: #a9c3e3;
+  background: #f4f8fd;
+  color: #203f66;
+}
+.evh-confirmation-primary {
+  border-color: #24599f;
+  background: #285fa8;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(40, 95, 168, .22);
+}
+.evh-confirmation-primary:hover:not(:disabled) {
+  border-color: #1e4c89;
+  background: #1e4c89;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(30, 76, 137, .25);
+}
+.evh-confirmation-close {
+  border: 1px solid #e0e8f2;
+  border-radius: 10px;
+  background: #f7faff;
+  color: #56708c;
+  transition: color .16s ease, background .16s ease, border-color .16s ease;
+}
+.evh-confirmation-close:hover:not(:disabled) {
+  border-color: #c8d8ec;
+  background: #edf4ff;
+  color: #244f86;
+}
+.evh-confirmation-actions {
+  border-top-color: #e2eaf4;
+}
+.evh-confirmation-actions button:focus-visible,
+.evh-confirmation-close:focus-visible {
+  outline: 3px solid #8ab7f3;
+  outline-offset: 3px;
+}
+.evh-confirmation-products li:last-child {
+  border-bottom: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .evh-confirmation-close,
+  .evh-confirmation-actions button {
+    transition: none;
+  }
+}
+
