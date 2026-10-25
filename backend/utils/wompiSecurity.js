@@ -13,10 +13,15 @@ const calculateIntegritySignature = (reference, amountInCents, currency, secret)
     .update(`${reference}${amountInCents}${currency}${secret}`)
     .digest('hex');
 
+const isConfiguredSandboxValue = (value, prefix) =>
+  typeof value === 'string' &&
+  value.startsWith(prefix) &&
+  !/(?:REEMPLAZAR|REPLACE[_ -]?ME|CHANGE[_ -]?ME|PLACEHOLDER|YOUR[_ -]?(?:KEY|SECRET))/i.test(value);
+
 const hasSandboxWompiCredentials = ({ publicKey, integritySecret, eventsSecret } = {}) =>
-  typeof publicKey === 'string' && publicKey.startsWith('pub_test_') &&
-  typeof integritySecret === 'string' && integritySecret.startsWith('test_integrity_') &&
-  typeof eventsSecret === 'string' && eventsSecret.startsWith('test_events_');
+  isConfiguredSandboxValue(publicKey, 'pub_test_') &&
+  isConfiguredSandboxValue(integritySecret, 'test_integrity_') &&
+  isConfiguredSandboxValue(eventsSecret, 'test_events_');
 
 const calculateEventChecksum = (event, secret) => {
   if (!event || !Array.isArray(event.signature?.properties) || event.timestamp == null || !secret) {

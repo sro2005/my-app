@@ -48,6 +48,11 @@ test('accepts only complete Wompi Sandbox credentials', () => {
     eventsSecret: 'test_events_example'
   }), true);
   assert.equal(hasSandboxWompiCredentials({
+    publicKey: 'pub_test_REEMPLAZAR',
+    integritySecret: 'test_integrity_REEMPLAZAR',
+    eventsSecret: 'test_events_REEMPLAZAR'
+  }), false, 'sample placeholders must not be accepted as usable Sandbox secrets');
+  assert.equal(hasSandboxWompiCredentials({
     publicKey: 'pub_prod_example',
     integritySecret: 'test_integrity_example',
     eventsSecret: 'test_events_example'

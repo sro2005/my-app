@@ -8,6 +8,7 @@ const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
 const { expireAbandonedWompiOrders, PENDING_WOMPI_TTL_MINUTES } = require('./utils/wompiPendingOrderCleanup');
+const { hasSandboxWompiCredentials } = require('./utils/wompiSecurity');
 
 // Define el archivo de entorno a usar según NODE_ENV
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
@@ -26,6 +27,22 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 const isProduction = process.env.NODE_ENV === 'production';
+
+if (isProduction) {
+  const publicKey = process.env.WOMPI_PUBLIC_KEY;
+  const integritySecret = process.env.WOMPI_INTEGRITY_SECRET;
+  const eventsSecret = process.env.WOMPI_EVENTS_SECRET;
+  const frontendUrl = process.env.FRONTEND_URL;
+  const wompiConfigStatus = {
+    publicKeyConfigured: Boolean(String(publicKey || '').trim()),
+    integritySecretConfigured: Boolean(String(integritySecret || '').trim()),
+    eventsSecretConfigured: Boolean(String(eventsSecret || '').trim()),
+    frontendUrlHttps: typeof frontendUrl === 'string' && /^https:\/\//.test(frontendUrl),
+    sandboxCredentialsReady: hasSandboxWompiCredentials({ publicKey, integritySecret, eventsSecret }) &&
+      typeof frontendUrl === 'string' && /^https:\/\//.test(frontendUrl)
+  };
+  console.log('Estado de configuración Wompi Sandbox (solo indicadores, sin valores secretos):', JSON.stringify(wompiConfigStatus));
+}
 
 // Render requests pass through Cloudflare and Render's load balancer.
 // Trust only those two proxy hops so Express derives req.ip from the forwarded chain.
