@@ -33,14 +33,18 @@ const formatPaymentStatus = (status, isAdmin) => {
     APPROVED: 'Aprobado en entorno de prueba',
     PENDING: 'Pendiente en entorno de prueba',
     DECLINED: 'Rechazado en entorno de prueba',
-    ERROR: 'Error en entorno de prueba'
+    ERROR: 'Error en entorno de prueba',
+    EXPIRED: 'Checkout vencido · pedido cancelado y stock liberado',
+    VOIDED: 'Pago anulado en entorno de prueba'
   };
   const customerLabels = {
     SIMULATED: 'Sin cobro',
     APPROVED: 'Resultado recibido · sin cobro real',
     PENDING: 'Pendiente de verificar · sin cobro',
     DECLINED: 'No aprobado · sin cobro',
-    ERROR: 'No fue posible verificarlo · sin cobro'
+    ERROR: 'No fue posible verificarlo · sin cobro',
+    EXPIRED: 'Sesión vencida · pedido cancelado, sin cobro',
+    VOIDED: 'Pago anulado · sin cobro'
   };
   return (isAdmin ? adminLabels : customerLabels)[status] || status || 'No disponible';
 };
