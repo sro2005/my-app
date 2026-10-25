@@ -20,6 +20,15 @@ const configureTransporter = (email, password) => {
 const transporterGeneral = configureTransporter(process.env.GENERAL_EMAIL_ADDRESS, process.env.GENERAL_EMAIL_PASSWORD);
 const transporterNoReply = configureTransporter(process.env.NO_REPLY_EMAIL_ADDRESS, process.env.NO_REPLY_EMAIL_PASSWORD);
 
+if (process.env.NODE_ENV === 'production') {
+  const recoveryMailConfigStatus = {
+    senderConfigured: Boolean(String(process.env.NO_REPLY_EMAIL_ADDRESS || '').trim()),
+    passwordConfigured: Boolean(String(process.env.NO_REPLY_EMAIL_PASSWORD || '').trim()),
+    frontendUrlHttps: typeof process.env.FRONTEND_URL === 'string' && /^https:\/\//.test(process.env.FRONTEND_URL)
+  };
+  console.log('Estado de configuración de correo de recuperación (solo indicadores, sin valores secretos):', JSON.stringify(recoveryMailConfigStatus));
+}
+
 // ✅ Función para enviar correos genéricos
 exports.sendGeneralEmail = async (to, subject, text) => {
   try {
