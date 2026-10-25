@@ -104,6 +104,7 @@ const ListadoProductos = () => {
   const [retryCount, setRetryCount] = useState(0);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [sortBy, setSortBy] = useState('featured');
   const preferenceValues = Array.isArray(user?.preferences) ? user.preferences : [];
   const preferenceSignature = preferenceValues.join('|');
   const canFilterByPreferences = user?.role === 'user' && preferenceValues.length > 0;
@@ -167,7 +168,7 @@ const ListadoProductos = () => {
   const filteredProducts = useMemo(() => {
     const normalizedSearch = normalize(search);
     const normalizedPreferences = new Set(preferenceValues.map(normalize));
-    return products.filter((product) => {
+    const matchingProducts = products.filter((product) => {
       const matchesSearch = !normalizedSearch || [
         product.name,
         product.description,
@@ -177,7 +178,34 @@ const ListadoProductos = () => {
       const matchesPreferences = !showPreferencesOnly || normalizedPreferences.has(normalize(product.category));
       return matchesSearch && matchesCategory && matchesPreferences;
     });
-  }, [products, search, category, showPreferencesOnly, preferenceSignature]);
+
+    switch (sortBy) {
+      case 'price-low':
+        return [...matchingProducts].sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+      case 'price-high':
+        return [...matchingProducts].sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+      case 'name':
+        return [...matchingProducts].sort((a, b) =>
+          String(a.name || '').localeCompare(String(b.name || ''), 'es', { sensitivity: 'base' })
+        );
+      case 'availability':
+        return [...matchingProducts].sort((a, b) =>
+          Number(Number(b.quantity) > 0) - Number(Number(a.quantity) > 0)
+        );
+      default:
+        return matchingProducts;
+    }
+  }, [products, search, category, showPreferencesOnly, preferenceSignature, sortBy]);
+
+  const hasActiveFilters = Boolean(
+    search.trim() || category !== 'all' || (canFilterByPreferences && showPreferencesOnly)
+  );
+  const resetCatalogControls = () => {
+    setSearch('');
+    setCategory('all');
+    setSortBy('featured');
+    setShowPreferencesOnly(false);
+  };
 
 
   if (loading) {
@@ -234,6 +262,16 @@ const ListadoProductos = () => {
             {categories.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
         </label>
+        <label className="evh-catalog-sort-filter">
+          <span>Ordenar por</span>
+          <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
+            <option value="featured">Recomendados</option>
+            <option value="price-low">Menor precio</option>
+            <option value="price-high">Mayor precio</option>
+            <option value="name">Nombre (A–Z)</option>
+            <option value="availability">Disponibilidad</option>
+          </select>
+        </label>
         {canFilterByPreferences && (
           <button
             type="button"
@@ -244,13 +282,18 @@ const ListadoProductos = () => {
             {showPreferencesOnly ? '✓ Solo mis preferencias' : 'Filtrar por mis preferencias'}
           </button>
         )}
+        {(hasActiveFilters || sortBy !== 'featured') && (
+          <button type="button" className="evh-catalog-reset" onClick={resetCatalogControls}>
+            Restablecer
+          </button>
+        )}
       </section>
 
-      {user?.role !== 'admin' && (
-        <div className="evh-catalog-assistant" id="guia-electrovibe">
-          <ShoppingAssistant products={products} />
-        </div>
-      )}
+      <div className="evh-catalog-results-bar" aria-live="polite">
+        <span>Mostrando <strong>{filteredProducts.length}</strong> de <strong>{products.length}</strong> productos</span>
+        {category !== 'all' && <span className="evh-catalog-active-filter">Categoría: {category}</span>}
+        {search.trim() && <span className="evh-catalog-active-filter">Búsqueda: “{search.trim()}”</span>}
+      </div>
 
       {showPreferencesOnly && canFilterByPreferences && (
         <div className="evh-preference-summary">
@@ -276,8 +319,14 @@ const ListadoProductos = () => {
           <span aria-hidden="true">⌕</span>
           <h2>No encontramos productos con esos filtros</h2>
           <p>Prueba otra búsqueda o amplía las categorías para ver más opciones.</p>
-          <button type="button" className="evh-button evh-button-secondary" onClick={() => { setSearch(''); setCategory('all'); setShowPreferencesOnly(false); }}>Limpiar filtros</button>
+          <button type="button" className="evh-button evh-button-secondary" onClick={resetCatalogControls}>Limpiar filtros</button>
         </section>
+      )}
+
+      {user?.role !== 'admin' && (
+        <div className="evh-catalog-assistant" id="guia-electrovibe">
+          <ShoppingAssistant products={products} />
+        </div>
       )}
 
       <p className="evh-catalog-footnote">
