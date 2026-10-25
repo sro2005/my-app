@@ -22,7 +22,7 @@ describe('Customer home', () => {
     expect(screen.getByRole('heading', { name: /hola, Camila/i })).toBeTruthy();
     expect(screen.getByRole('link', { name: /descubrir productos/i }).getAttribute('href')).toBe('/catalogo');
     expect(screen.getByRole('link', { name: /pedir una recomendación/i }).getAttribute('href')).toBe('/catalogo');
-    expect(screen.getByRole('link', { name: /preparar pedido de prueba/i }).getAttribute('href')).toBe('/pedido-form');
+    expect(screen.getByRole('link', { name: /preparar mi pedido/i }).getAttribute('href')).toBe('/pedido-form');
     expect(screen.getByRole('link', { name: /ver mis pedidos/i }).getAttribute('href')).toBe('/listado-pedidos');
     expect(screen.getByRole('link', { name: /revisar mi perfil/i }).getAttribute('href')).toBe('/perfil-cliente');
     expect(screen.getByText('Cafeteras')).toBeTruthy();
@@ -34,9 +34,10 @@ describe('Customer home', () => {
     expect(screen.getByText(/guarda tus intereses en el perfil/i)).toBeTruthy();
   });
 
-  test('clearly states that prices, inventory and orders are demonstrative', () => {
+  test('keeps customer guidance clear without internal demo language', () => {
     renderHome({ _id: 'u3', firstName: 'Demo', role: 'user', preferences: [] });
-    expect(screen.getByText(/los precios y existencias son ilustrativos/i)).toBeTruthy();
-    expect(screen.getByText(/no generan cobros ni transferencias reales/i)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /revisa antes de confirmar/i })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /preparar mi pedido/i })).toBeTruthy();
+    expect(screen.queryByText(/modo de demostración/i)).toBeNull();
   });
 });
