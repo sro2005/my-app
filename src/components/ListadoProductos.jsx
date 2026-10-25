@@ -75,11 +75,11 @@ const ProductCard = ({ product, demoMode, canOrder = false }) => {
         <p className="evh-product-description">{product.description || 'Consulta las características de este producto.'}</p>
         <div className="evh-product-card-bottom">
           <div>
-            <span className="evh-product-price-label">Precio</span>
+            <span className="evh-product-price-label">{illustrative ? 'Precio de referencia' : 'Precio'}</span>
             <strong className="evh-product-price">{formatPrice(product.price)}</strong>
           </div>
-          <span className={'evh-stock-pill ' + (Number(product.quantity) > 0 ? 'is-available' : 'is-unavailable')}>
-            {Number(product.quantity) > 0 ? 'Disponible' : 'Agotado'}
+          <span className={'evh-stock-pill ' + (illustrative ? 'is-pending' : Number(product.quantity) > 0 ? 'is-available' : 'is-unavailable')}>
+            {illustrative ? 'Disponibilidad por confirmar' : Number(product.quantity) > 0 ? 'Disponible' : 'Agotado'}
           </span>
         </div>
         {canOrder && product._id && (
