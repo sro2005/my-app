@@ -1,7 +1,7 @@
 {
-  "name": "ElectroVibeHome",
-  "short_name": "EVH",
-  "description": "Tu tienda de tecnología y electrodomésticos con la mejor calidad.",
+  "name": "ElectroVibeHome | Tecnología para el hogar",
+  "short_name": "ElectroVibe",
+  "description": "Electrodomésticos y tecnología útil para la vida en casa.",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -16,8 +16,8 @@
       "purpose": "any maskable"
     }
   ],
-  "theme_color": "#3d3d3d",
-  "background_color": "#ffffff",
+  "theme_color": "#122f53",
+  "background_color": "#f6f9fd",
   "display": "standalone",
   "orientation": "portrait-primary",
   "start_url": "/",
