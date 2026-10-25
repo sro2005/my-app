@@ -36,7 +36,7 @@ const InformationalPage = ({ eyebrow, title, lead, notice, noticeTitle = 'Inform
         <div>
           <span className="evh-eyebrow">ELECTROVIBEHOME</span>
           <h2>¿Quieres seguir explorando?</h2>
-          <p>Conoce las categorías y productos que dan vida a esta idea.</p>
+          <p>Descubre categorías y soluciones pensadas para tu hogar.</p>
         </div>
         <Link to="/catalogo">Ver catálogo</Link>
       </div>
