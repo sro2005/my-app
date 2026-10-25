@@ -179,7 +179,7 @@ describe('PedidoForm catalog loading', () => {
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();
     fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Demostración' } });
-    expect(screen.getByRole('button', { name: 'Registrar pedido sin pago' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: 'Añade productos para continuar' }).disabled).toBe(true);
   });
 
   test('preselects a requested live catalogue product using the full catalogue endpoint', async () => {

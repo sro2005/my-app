@@ -2,6 +2,7 @@ import React from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
+import { MemoryRouter } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import ListadoPedidos from './ListadoPedidos';
 
@@ -36,9 +37,11 @@ const order = (overrides = {}) => ({
 });
 
 const renderOrders = (user = { _id: 'customer-1', role: 'admin' }) => render(
-  <AuthContext.Provider value={{ user }}>
-    <ListadoPedidos />
-  </AuthContext.Provider>
+  <MemoryRouter>
+    <AuthContext.Provider value={{ user }}>
+      <ListadoPedidos />
+    </AuthContext.Provider>
+  </MemoryRouter>
 );
 
 const setApiEnvironment = () => {
