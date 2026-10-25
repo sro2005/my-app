@@ -393,12 +393,12 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const paymentMethods = [
-    { value: 'Demostración', label: 'Compra de demostración (sin cobro)' },
-    { value: 'Wompi', label: 'Wompi Sandbox (checkout de prueba)' },
+    { value: 'Demostración', label: 'Pedido sin cobro' },
+    { value: 'Wompi', label: 'Wompi (entorno de pruebas)' },
   ];
 
   return (
-    <FormPage eyebrow="COMPRA DE DEMOSTRACIÓN" title="Completa tu pedido ficticio" description="Registra una compra simulada dentro del sitio o abre el checkout de prueba de Wompi Sandbox. No se realizan cobros reales." className="evh-checkout-page">
+    <FormPage eyebrow="FINALIZA TU PEDIDO" title="Revisa tu pedido" description="Selecciona cómo quieres continuar y revisa los datos de entrega antes de confirmar. Ten presente la información del método elegido." className="evh-checkout-page">
       <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
         <div className="evh-form-grid">
         <div className="evh-form-field"><label htmlFor="checkout-first-name">Nombre</label><input id="checkout-first-name" type="text" autoComplete="given-name" value={customerData.firstName} onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })} required disabled className="disabled-input" /></div>
@@ -412,7 +412,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         <div className="payment-method-container">
           <label htmlFor="checkout-payment">Método de pago</label>
           <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
-          <p>La compra de demostración registra el pedido aquí mismo, sin abrir Wompi ni hacer cobros. Wompi Sandbox es una opción externa independiente, reservada para pruebas.</p>
+          <p>Puedes registrar el pedido sin cobro o continuar con Wompi en entorno de pruebas. Este sitio no procesa pagos reales.</p>
         </div>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
@@ -426,7 +426,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             <input id="checkout-product-quantity" type="number" min="1" max={selectedProduct?.stock || 1} step="1" value={selectedQuantity} disabled={!selectedProduct} onChange={(e) => setSelectedQuantity(e.target.value)} />
             <button type="button" onClick={handleAddToCart} disabled={!selectedProduct || loading}>Agregar al pedido</button>
           </div>
-          {selectedProduct && <p className="evh-form-feedback">Disponibles para muestra: {selectedProduct.stock} · Precio unitario: {formatPrice(selectedProduct.price)}</p>}
+          {selectedProduct && <p className="evh-form-feedback">Disponibles: {selectedProduct.stock} · Precio unitario: {formatPrice(selectedProduct.price)}</p>}
           {productLoadNotice && <p className="evh-form-feedback" role="status">{productLoadNotice}</p>}
           {productLoadError && <p className="evh-form-feedback is-error" role="alert">{productLoadError}</p>}
         </div>
@@ -452,7 +452,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                 </li>
               ))}
             </ul>
-            <p className="evh-cart-note">Productos de demostración: los precios y las existencias son ilustrativos. El servidor volverá a validar la disponibilidad.</p>
+            <p className="evh-cart-note">Revisa el precio y la cantidad de cada producto. La disponibilidad se validará antes de registrar el pedido.</p>
           </section>
         )}
 
@@ -461,12 +461,12 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{paymentMethod?.value === 'Demostración' ? 'Registrar compra ficticia' : 'Continuar al checkout de prueba'}</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{paymentMethod?.value === 'Demostración' ? 'Registrar pedido' : 'Continuar a Wompi'}</button>
         {completedDemoOrderId && (
           <div className="evh-form-feedback is-success" role="status">
-            <h3>¡Pedido de demostración creado!</h3>
+            <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>El pedido quedó registrado como simulado y se actualizó el inventario de demostración. No se realizó ningún cobro ni se contactó a Wompi.</p>
+            <p>Tu pedido quedó registrado en la cuenta. Este registro no genera un cobro ni coordina una entrega real.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
             <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Hacer otro pedido</button>
           </div>
@@ -480,7 +480,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         {pendingCheckoutOrderId && !loading && (
           <div className="evh-form-feedback" role="status">
             <p>El pedido {pendingCheckoutOrderId} ya está creado. Puedes reintentar el checkout sin reservar inventario nuevamente.</p>
-            <button type="button" className="evh-form-submit" onClick={handleRetryCheckout}>Reintentar pago de este pedido</button>
+            <button type="button" className="evh-form-submit" onClick={handleRetryCheckout}>Reintentar checkout</button>
           </div>
         )}
         {formError && <p className="evh-form-feedback is-error" role="alert">{formError}</p>}
@@ -516,10 +516,10 @@ const userId = user?._id;  // Usar userId desde el contexto
             <div className="evh-confirmation-notice" role="note">
               <span className="evh-confirmation-notice-icon" aria-hidden="true">i</span>
               <div>
-                <strong>Entorno de demostración</strong>
+                <strong>Antes de confirmar</strong>
                 <p>{paymentMethod?.value === 'Demostración'
-                  ? 'Se registrará un pedido ficticio dentro del sitio. No se enviará a Wompi ni se hará ningún cobro real.'
-                  : 'Continuarás al checkout de prueba de Wompi Sandbox. Utiliza únicamente datos de prueba; no ingreses una tarjeta real.'}</p>
+                  ? 'El pedido quedará registrado en tu cuenta, pero no genera un cobro ni coordina una entrega real.'
+                  : 'Se abrirá Wompi en su entorno de pruebas. No se procesará un cobro real; no ingreses datos de una tarjeta real.'}</p>
               </div>
             </div>
 
@@ -549,7 +549,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>{paymentMethod?.value === 'Demostración' ? 'Pedido simulado, sin cobro' : 'Checkout Wompi Sandbox'}</dd>
+                    <dd>{paymentMethod?.value === 'Demostración' ? 'Pedido sin cobro' : 'Wompi · entorno de pruebas'}</dd>
                   </div>
                 </dl>
               </section>
@@ -574,14 +574,14 @@ const userId = user?._id;  // Usar userId desde el contexto
                   <span>Total estimado</span>
                   <strong>{formatPrice(totalAmount)}</strong>
                 </div>
-                <p className="evh-confirmation-total-note">Precio ilustrativo para esta demostración; el servidor verificará nuevamente el inventario.</p>
+                <p className="evh-confirmation-total-note">Importes de referencia. El servidor volverá a validar la disponibilidad antes de registrar el pedido.</p>
               </aside>
             </div>
 
             {loading && (
               <div className="evh-confirmation-processing" role="status">
-                <span className="evh-confirmation-spinner" aria-hidden="true" />
-                <span>{paymentMethod?.value === 'Demostración' ? 'Registrando el pedido de prueba…' : 'Preparando el checkout de prueba…'}</span>
+                <span className="evh-confirmation-processing-mark" aria-hidden="true">EV</span>
+                <span>{paymentMethod?.value === 'Demostración' ? 'Registrando tu pedido…' : 'Abriendo el checkout de Wompi…'}</span>
               </div>
             )}
 
@@ -599,8 +599,8 @@ const userId = user?._id;  // Usar userId desde el contexto
                 {loading
                   ? 'Procesando…'
                   : paymentMethod?.value === 'Demostración'
-                    ? 'Confirmar pedido de prueba'
-                    : 'Continuar a Wompi Sandbox'}
+                    ? 'Confirmar pedido'
+                    : 'Continuar a Wompi'}
               </button>
             </footer>
           </section>
