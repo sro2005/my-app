@@ -64,8 +64,33 @@ describe('RecoverPassword', () => {
     expect(await screen.findByText(/si el correo está registrado/i)).toBeTruthy();
     expect(axios.post).toHaveBeenCalledWith(
       'https://api.example.test/api/customers/forgot-password',
-      { email: 'cliente@example.com' }
+      { email: 'cliente@example.com' },
+      { timeout: 15000 }
     );
+  });
+
+  test('shows a clear message when the backend reports unavailable email delivery', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    axios.post.mockRejectedValue({
+      response: { data: { message: 'El servicio de recuperación de contraseña no está disponible temporalmente. Inténtalo de nuevo más tarde.' } }
+    });
+    render(<RecoverPassword />);
+
+    fillAndSubmit('cliente@example.com');
+
+    expect(await screen.findByText(/servicio de recuperación de contraseña no está disponible/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /enviar enlace seguro/i }).disabled).toBe(false);
+  });
+
+  test('stops loading and shows a clear message when the request times out', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    axios.post.mockRejectedValue({ code: 'ECONNABORTED' });
+    render(<RecoverPassword />);
+
+    fillAndSubmit('cliente@example.com');
+
+    expect(await screen.findByText(/la solicitud tardó demasiado/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /enviar enlace seguro/i }).disabled).toBe(false);
   });
 
   test('shows a safe connection message when the request cannot reach the backend', async () => {
@@ -75,6 +100,6 @@ describe('RecoverPassword', () => {
 
     fillAndSubmit('cliente@example.com');
 
-    expect(await screen.findByText(/error de conexión/i)).toBeTruthy();
+    expect(await screen.findByText(/no pudimos conectar con el servicio/i)).toBeTruthy();
   });
 });
