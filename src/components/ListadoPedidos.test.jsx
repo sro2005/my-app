@@ -122,6 +122,6 @@ describe('ListadoPedidos', () => {
 
     renderOrders({ _id: 'customer-1', role: 'user' });
 
-    expect(await screen.findByText(/Aún no has realizado ningún pedido/i)).toBeTruthy();
+    expect(await screen.findByText(/Aún no tienes pedidos/i)).toBeTruthy();
   });
 });
