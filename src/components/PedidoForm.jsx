@@ -391,7 +391,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const paymentMethods = [
-    { value: 'Demostración', label: 'Pedido sin pago' },
+    { value: 'Demostración', label: 'Registrar pedido sin pago' },
     { value: 'Wompi', label: 'Wompi' },
   ];
 
@@ -418,7 +418,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             ? 'Elige una opción. Revisarás los detalles antes de confirmar.'
             : paymentMethod.value === 'Demostración'
               ? 'El pedido se guardará en tu cuenta sin realizar ningún cobro ni programar una entrega.'
-              : 'Se abrirá Wompi para simular el paso de pago. No se hará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
+              : 'Se abrirá Wompi para continuar el proceso. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
         </div>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
@@ -527,7 +527,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                 <strong>Antes de confirmar</strong>
                 <p>{paymentMethod?.value === 'Demostración'
                   ? 'El pedido quedará registrado en tu cuenta sin realizar un cobro ni programar una entrega.'
-                  : 'Se abrirá Wompi para simular el paso de pago. No se hará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
+                  : 'Se abrirá Wompi para continuar el proceso. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
               </div>
             </div>
 
