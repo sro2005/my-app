@@ -37,7 +37,7 @@ const formatPaymentStatus = (status, isAdmin) => {
   };
   const customerLabels = {
     SIMULATED: 'Sin cobro',
-    APPROVED: 'Resultado de prueba aprobado',
+    APPROVED: 'Resultado recibido',
     PENDING: 'Pendiente de verificar',
     DECLINED: 'No aprobado',
     ERROR: 'No fue posible verificarlo'
@@ -60,14 +60,14 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
           <div className="evh-order-card-state">
             <span className={`evh-order-status ${pedido.delivered || pedido.status === 'Entregado' ? 'is-delivered' : pedido.status === 'Enviado' ? 'is-shipped' : pedido.status === 'Procesando' ? 'is-processing' : 'is-neutral'}`}>{pedido.status || 'Sin estado'}</span>
             <strong>{formatPrice(pedido.totalAmount)}</strong>
-            <small>Importe ilustrativo</small>
+            <small>{isAdmin ? 'Importe ilustrativo' : 'Total del pedido'}</small>
           </div>
         </div>
         <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
         <p><strong>{isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
-        <p><strong>Medio de prueba:</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
+        <p><strong>{isAdmin ? 'Medio de prueba:' : 'Método de pago:'}</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
         <p><strong>{isAdmin ? 'Estado del pago de prueba:' : 'Estado del pago:'}</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
