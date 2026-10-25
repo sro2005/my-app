@@ -553,12 +553,12 @@ const userId = user?._id;  // Usar userId desde el contexto
                     <dd>{customerData.firstName} {customerData.lastName}</dd>
                   </div>
                   <div>
-                    <dt>Correo electrónico</dt>
-                    <dd>{customerData.email}</dd>
-                  </div>
-                  <div>
                     <dt>Celular</dt>
                     <dd>{customerData.phone}</dd>
+                  </div>
+                  <div className="is-wide evh-confirmation-email">
+                    <dt>Correo electrónico</dt>
+                    <dd>{customerData.email}</dd>
                   </div>
                   <div className="is-wide">
                     <dt>Dirección de entrega</dt>
