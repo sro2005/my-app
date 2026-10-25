@@ -71,7 +71,7 @@ const ClienteItem = ({ cliente }) => {
           <p><strong>Cliente:</strong> {cliente.firstName} {cliente.lastName || ''}</p>
           <p><strong>Email:</strong> {cliente.email}</p>
           <p><strong>Celular:</strong> {cliente.phone}</p>
-          <p><strong>Tipo & Número de Identificación (C.C):</strong> {formatIdentificationNumber(cliente.identificationNumber)}</p>
+          <p><strong>Número de identificación:</strong> {formatIdentificationNumber(cliente.identificationNumber)}</p>
           <p><strong>Fecha de Nacimiento:</strong> {formatDate(cliente.birthDate)}</p>
           <p><strong>Historial de Pedidos:</strong> {pedidosCount} Pedido{pedidosCount === 1 ? '' : 's'}</p>
           {pedidosCount > 0 && (
