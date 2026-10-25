@@ -109,7 +109,6 @@ const ProductoForm = () => {
       </div>
       </div>
       <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Guardando producto…' : 'Agregar al inventario'}</button>
-      {loading && <div className="evh-form-feedback" role="status">Guardando los datos del producto…</div>}
       {error && <p className="evh-form-feedback is-error" role="alert">{error}</p>}
       {success && <p className="evh-form-feedback is-success" role="status">{success}</p>}
     </form>
