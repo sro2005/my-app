@@ -132,3 +132,19 @@
   .evh-admin-editor form { grid-template-columns: minmax(0, 1fr); }
   .evh-admin-editor form > .evh-admin-product-actions { flex-direction: column; align-items: stretch; }
 }
+
+/* Refinamiento de jerarquía y distribución del panel administrativo. */
+.evh-admin-session { display: flex; flex-wrap: wrap; width: fit-content; box-sizing: border-box; }
+.evh-admin-session-copy { flex: 1 1 180px; }
+.evh-admin-session-copy small { line-height: 1.45; }
+.evh-admin-session-copy strong { line-height: 1.5; overflow-wrap: anywhere; }
+.evh-admin-session-role { margin-left: auto; white-space: nowrap; font-size: .7rem; }
+.evh-admin-hero > button { display: flex; margin-top: 1rem; }
+.evh-admin-inventory-tools { align-items: end; }
+.evh-admin-inventory-tools label { line-height: 1.45; }
+.evh-admin-product-actions button { white-space: normal; line-height: 1.35; }
+@media (max-width: 480px) {
+  .evh-admin-session { width: 100%; gap: .55rem; }
+  .evh-admin-session-role { margin-left: 0; }
+  .evh-admin-hero > button { width: 100%; }
+}
