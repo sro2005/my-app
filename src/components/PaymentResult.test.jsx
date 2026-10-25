@@ -14,8 +14,8 @@ describe('PaymentResult', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('heading', { name: /resultado de la simulación de pago/i })).toBeTruthy();
-    expect(screen.getByText(/la redirección por sí sola no confirma el resultado/i)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /estamos revisando el resultado/i })).toBeTruthy();
+    expect(screen.getByText(/la redirección, por sí sola, no confirma el estado/i)).toBeTruthy();
     expect(screen.getByText(/EVH-test-123/)).toBeTruthy();
     expect(screen.getByText(/APPROVED/)).toBeTruthy();
     expect(screen.getByRole('link', { name: /consultar mis pedidos/i }).getAttribute('href')).toBe('/listado-pedidos');
@@ -29,6 +29,6 @@ describe('PaymentResult', () => {
     );
 
     expect(screen.queryByText(/referencia de prueba:/i)).toBeNull();
-    expect(screen.queryByText(/estado informado por wompi/i)).toBeNull();
+    expect(screen.queryByText(/estado recibido/i)).toBeNull();
   });
 });
