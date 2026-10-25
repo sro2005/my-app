@@ -4098,3 +4098,155 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: -.04em;
 }
 .evh-confirmation-spinner { display: none !important; animation: none !important; }
+
+
+/* Last alignment pass for registration and checkout */
+.evh-checkout-section-heading {
+  margin: 0 0 1.1rem;
+  padding: 0 0 .95rem;
+  border-bottom: 1px solid #e3eaf2;
+}
+.evh-checkout-section-heading h2 {
+  margin: 0 0 .35rem;
+  color: #1a3558;
+  font-size: 1.02rem;
+  font-weight: 850;
+  letter-spacing: -.015em;
+  line-height: 1.4;
+  text-align: left;
+}
+.evh-checkout-section-heading p {
+  max-width: 66ch;
+  margin: 0;
+  color: #687b92;
+  font-size: .79rem;
+  line-height: 1.6;
+  text-align: left;
+}
+.evh-checkout-form .evh-form-grid {
+  align-items: start;
+  column-gap: clamp(.85rem, 2vw, 1.15rem);
+  row-gap: 1.1rem;
+}
+.evh-checkout-form .evh-form-field,
+.evh-checkout-form .payment-method-container {
+  min-width: 0;
+  align-self: start;
+  align-content: start;
+}
+.evh-checkout-form .evh-form-field > label,
+.evh-checkout-form .payment-method-container > label {
+  display: block;
+  min-height: 1.25em;
+  margin: 0;
+  color: #263a54;
+  font-size: .82rem;
+  font-weight: 800;
+  line-height: 1.45;
+  text-align: left;
+}
+.evh-checkout-form .evh-form-field > input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  min-height: 48px;
+  box-sizing: border-box;
+  margin: 0;
+  border-radius: 12px;
+}
+.evh-checkout-form .evh-form-field > input:disabled {
+  border-color: #e0e7f0;
+  background: #f4f7fb;
+  color: #65758a;
+  opacity: 1;
+  cursor: default;
+}
+.evh-checkout-form .payment-method-container {
+  display: grid;
+  gap: .45rem;
+  margin: 0;
+}
+.evh-checkout-form .payment-method-container > p[role="note"] {
+  margin: .2rem 0 0;
+  padding: .68rem .75rem;
+  border: 1px solid #d8e5f5;
+  border-radius: 11px;
+  background: #f3f7fd;
+  color: #526780;
+  font-size: .75rem;
+  line-height: 1.55;
+  text-align: left;
+}
+.evh-checkout-form .evh-select__control { min-height: 48px !important; box-sizing: border-box; }
+.evh-checkout-form .evh-form-field-wide { min-width: 0; }
+.evh-checkout-form .evh-cart-add-controls {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: .85rem;
+}
+.evh-checkout-form .evh-cart-quantity-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: .38rem;
+  min-width: 110px;
+}
+.evh-checkout-form .evh-cart-quantity-field > label {
+  display: block;
+  margin: 0;
+  color: #263a54;
+  font-size: .79rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-align: left;
+}
+.evh-checkout-form .evh-cart-quantity-field > input {
+  width: 112px;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid #d4e0ee;
+  border-radius: 11px;
+  background: #fff;
+}
+.evh-checkout-form .evh-cart-add-controls > button {
+  min-height: 44px;
+  border: 1px solid #294f7d;
+  border-radius: 11px;
+  background: #294f7d;
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 800;
+  transition: background .16s ease, transform .16s ease;
+}
+.evh-checkout-form .evh-cart-add-controls > button:hover:not(:disabled) {
+  background: #1d3d65;
+  transform: translateY(-1px);
+}
+.evh-checkout-form .evh-cart-add-controls > button:disabled { cursor: not-allowed; opacity: .55; }
+.evh-checkout-form .evh-cart-note {
+  margin: .8rem 0 0;
+  padding: .75rem .85rem;
+  border: 1px solid #e0e8f2;
+  border-radius: 11px;
+  background: #fbfcfe;
+  color: #617187;
+  font-size: .77rem;
+  line-height: 1.6;
+}
+@media (max-width: 760px) {
+  .evh-checkout-form .evh-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .evh-checkout-form .evh-form-field-wide { grid-column: auto; }
+  .evh-checkout-section-heading { margin-bottom: .9rem; }
+  .evh-checkout-form .evh-cart-add-controls { align-items: flex-end; }
+  .evh-checkout-form .evh-cart-add-controls > button { flex: 1 1 170px; }
+}
+@media (max-width: 380px) {
+  .evh-checkout-form .evh-cart-add-controls { align-items: stretch; flex-direction: column; }
+  .evh-checkout-form .evh-cart-quantity-field > input { width: 100%; }
+  .evh-checkout-form .evh-cart-add-controls > button { width: 100%; }
+}
