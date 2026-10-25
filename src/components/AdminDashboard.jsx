@@ -75,7 +75,7 @@ const AdminDashboard = () => {
       <header className="evh-admin-hero">
         <span className="evh-admin-eyebrow">PANEL DE ADMINISTRACIÓN · RESUMEN OPERATIVO</span>
         <h1>Tu tienda, bajo control.</h1>
-        <p>Supervisa pedidos, clientes y productos desde un solo lugar. Los pagos se procesan únicamente en modo de pruebas.</p>
+        <p>Supervisa pedidos, clientes y productos desde un solo lugar. Wompi está configurado en modo Sandbox.</p>
         <div className="evh-admin-session" aria-label="Cuenta administrativa conectada">
           <span className="evh-admin-session-mark" aria-hidden="true">✓</span>
           <span className="evh-admin-session-copy"><small>SESIÓN DE ADMINISTRACIÓN</small><strong>{adminEmail}</strong></span>

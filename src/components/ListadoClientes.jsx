@@ -287,7 +287,7 @@ const ListadoClientes = () => {
       <div className="evh-orders-empty evh-customers-empty">
         <span aria-hidden="true">⌕</span>
         <h2>{clientes.length === 0 ? 'Aún no hay clientes registrados' : 'No hay clientes que coincidan'}</h2>
-        <p>{clientes.length === 0 ? 'Los clientes registrados aparecerán aquí.' : 'Prueba con otro término de búsqueda o cambia el filtro de actividad.'}</p>
+        <p>{clientes.length === 0 ? 'Los clientes registrados aparecerán aquí.' : 'Intenta con otro término de búsqueda o cambia el filtro de actividad.'}</p>
         {(search.trim() || filtroActivo !== null) && <button type="button" className="evh-button evh-button-primary" onClick={() => { setSearch(''); setFiltroActivo(null); }}>Restablecer filtros</button>}
       </div>
    )}

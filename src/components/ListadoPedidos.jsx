@@ -207,7 +207,7 @@ const ListadoPedidos = () => {
         <span className="evh-eyebrow">{isAdmin ? 'ADMINISTRACIÓN · PEDIDOS' : 'TU CUENTA ELECTROVIBE'}</span>
         <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
         <p>{isAdmin
-          ? 'Consulta los pedidos registrados, verifica su estado y gestiona las etapas de preparación y entrega. Los pagos están habilitados únicamente en modo de pruebas.'
+          ? 'Consulta los pedidos registrados, verifica su estado y gestiona las etapas de preparación y entrega. Wompi está configurado en modo Sandbox.'
           : 'Consulta los pedidos asociados a tu cuenta, revisa los productos y sigue el estado de cada solicitud.'}</p>
       </header>
 
