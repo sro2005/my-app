@@ -21,19 +21,29 @@ const formatDeliveryDate = (deliveryDate) => {
   return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY');
 };
 
-const formatPaymentMethod = (pedido) => {
-  if (pedido.paymentStatus === 'SIMULATED') return 'Simulación interna · sin cobro';
-  if (pedido.paymentMethod === 'Wompi') return 'Wompi Sandbox · entorno de prueba';
+const formatPaymentMethod = (pedido, isAdmin) => {
+  if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Simulación interna · sin cobro' : 'Pedido sin cobro';
+  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi Sandbox · entorno de prueba' : 'Wompi · entorno de pruebas';
   return pedido.paymentMethod || 'No especificado';
 };
 
-const formatPaymentStatus = (status) => ({
-  SIMULATED: 'Simulado · sin cobro real',
-  APPROVED: 'Aprobado en entorno de prueba',
-  PENDING: 'Pendiente en entorno de prueba',
-  DECLINED: 'Rechazado en entorno de prueba',
-  ERROR: 'Error en entorno de prueba'
-}[status] || status || 'No disponible');
+const formatPaymentStatus = (status, isAdmin) => {
+  const adminLabels = {
+    SIMULATED: 'Simulado · sin cobro real',
+    APPROVED: 'Aprobado en entorno de prueba',
+    PENDING: 'Pendiente en entorno de prueba',
+    DECLINED: 'Rechazado en entorno de prueba',
+    ERROR: 'Error en entorno de prueba'
+  };
+  const customerLabels = {
+    SIMULATED: 'Sin cobro',
+    APPROVED: 'Resultado de prueba aprobado',
+    PENDING: 'Pendiente de verificar',
+    DECLINED: 'No aprobado',
+    ERROR: 'No fue posible verificarlo'
+  };
+  return (isAdmin ? adminLabels : customerLabels)[status] || status || 'No disponible';
+};
 
 const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
   <li className="pedido-item">
@@ -44,7 +54,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
       <div className="pedido-details">
         <div className="evh-order-card-heading">
           <div className="evh-order-card-title">
-            <span>{isAdmin ? 'PEDIDO DE PRUEBA' : 'PEDIDO DE DEMOSTRACIÓN'}</span>
+            <span>{isAdmin ? 'PEDIDO DE PRUEBA' : 'PEDIDO'}</span>
             <h2>#{String(pedido._id || '').slice(-8).toUpperCase()}</h2>
           </div>
           <div className="evh-order-card-state">
@@ -57,8 +67,8 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
         <p><strong>{isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
-        <p><strong>Medio de prueba:</strong> {formatPaymentMethod(pedido)}</p>
-        <p><strong>Estado del pago de prueba:</strong> {formatPaymentStatus(pedido.paymentStatus)}</p>
+        <p><strong>Medio de prueba:</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
+        <p><strong>{isAdmin ? 'Estado del pago de prueba:' : 'Estado del pago:'}</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
         <p><strong>🛍️ Producto Escogido: </strong> 
@@ -186,7 +196,7 @@ const ListadoPedidos = () => {
         <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
         <p>{isAdmin
           ? 'Consulta pedidos de prueba y revisa su estado para ensayar el flujo operativo. Los importes son ilustrativos y no representan ventas ni cobros reales.'
-          : 'Aquí puedes revisar los pedidos de demostración asociados a tu cuenta. Los importes son ilustrativos y este recorrido no genera pagos ni entregas reales.'}</p>
+          : 'Consulta los pedidos asociados a tu cuenta, revisa los productos y sigue el estado de cada solicitud.'}</p>
       </header>
 
       {isAdmin && !loading && !error && (
@@ -237,10 +247,10 @@ const ListadoPedidos = () => {
         {emptyOrders ? (
           <div className="evh-orders-empty">
             <span aria-hidden="true">▤</span>
-            <h2>{isAdmin ? 'Aún no hay pedidos de prueba' : 'Aún no has realizado ningún pedido de demostración'}</h2>
+            <h2>{isAdmin ? 'Aún no hay pedidos de prueba' : 'Aún no tienes pedidos'}</h2>
             <p>{isAdmin
               ? 'Cuando se registre un pedido ficticio en este entorno, aparecerá aquí para que puedas consultar su estado.'
-              : 'Explora el catálogo y prueba el recorrido de compra con datos ilustrativos, sin usar dinero real.'}</p>
+              : 'Explora el catálogo y prepara tu primer pedido. Podrás revisar los productos y los detalles antes de confirmarlo.'}</p>
             {!isAdmin && <Link className="evh-button evh-button-primary" to="/catalogo">Explorar catálogo <span aria-hidden="true">→</span></Link>}
           </div>
         ) : (
