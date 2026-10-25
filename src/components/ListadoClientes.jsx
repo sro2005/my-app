@@ -16,9 +16,9 @@ const formatDate = (dateString) => {
 // Función para formatear fecha y hora
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return 'No hay Fecha Disponible';
+  if (Number.isNaN(date.getTime())) return 'Sin actividad registrada';
   
-  const formattedDate = date.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const formattedDate = date.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Bogota' });
   const formattedTime = date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Bogota' });
 
   return (
@@ -47,7 +47,10 @@ const formatIdentificationNumber = (number) => String(number || '').replace(/\B(
 
 // Calcular estado del cliente
 const calcularEstado = (lastActivityDate) => {
-  const diferenciaEnDias = (new Date() - new Date(lastActivityDate)) / (1000 * 60 * 60 * 24);
+  if (!lastActivityDate) return false;
+  const activity = new Date(lastActivityDate);
+  if (Number.isNaN(activity.getTime()) || activity.getTime() > Date.now()) return false;
+  const diferenciaEnDias = (Date.now() - activity.getTime()) / (1000 * 60 * 60 * 24);
   return diferenciaEnDias <= 30; // Activo si la última actividad fue hace menos de 30 días
 };
 
@@ -123,13 +126,16 @@ const ListadoClientes = () => {
       setLoading(false);
       return;
     }
+    setLoading(true);
+    setError(null);
     try {
       const response = await axios.get(`${API_URL}/api/customers/all`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      if (!Array.isArray(response.data)) throw new Error('Formato inesperado del servidor');
       setClientes(response.data.filter(cliente => cliente.role === 'user'));
     } catch (error) {
-      setError(`Error al obtener los clientes: ${error.response?.data?.message || 'Intente nuevamente más tarde.'}`);
+      setError(`Error al obtener los clientes: ${error.response?.data?.message || 'Intenta nuevamente más tarde.'}`);
     } finally {
       setLoading(false);
     }
@@ -217,6 +223,7 @@ const ListadoClientes = () => {
           <span className="evh-list-state-icon" aria-hidden="true">!</span>
           <h2>No pudimos cargar los clientes</h2>
           <p>{error}</p>
+          <button type="button" onClick={fetchClientes}>Reintentar</button>
         </div>
       ) : (
         <>
