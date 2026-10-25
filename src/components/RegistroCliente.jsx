@@ -194,7 +194,7 @@ const RegistroCliente = () => {
         <div className="evh-form-field">
           <label htmlFor="register-identification">Número de identificación</label>
           <input id="register-identification" type="text" inputMode="numeric" autoComplete="off" placeholder="Ej. 1.234.567" value={identificationNumber} onChange={(e) => setIdentificationNumber(formatIdentificationNumber(e.target.value))} required />
-          <span className="evh-field-hint">Hasta 10 dígitos, sin puntos al escribir.</span>
+          <span className="evh-field-hint">Hasta 10 dígitos.</span>
         </div>
         <div className="evh-form-field">
           <label htmlFor="birthDate">Fecha de nacimiento</label>
