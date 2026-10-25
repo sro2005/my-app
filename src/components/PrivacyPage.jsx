@@ -3,38 +3,35 @@ import InformationalPage from './InformationalPage';
 
 const PrivacyPage = () => (
   <InformationalPage
-    eyebrow="DATOS Y TRANSPARENCIA"
+    eyebrow="TUS DATOS Y TU PRIVACIDAD"
     title="Política de Privacidad"
-    lead="Aquí explicamos qué información utiliza el prototipo, para qué la necesita y qué ocurre al probar sus funciones."
-    notice="Este texto describe la versión personal de demostración actual y sirve para explicar su funcionamiento. No es un aviso legal aprobado para una tienda en producción. Para explorar la demo, utiliza información ficticia y nunca compartas datos sensibles."
+    lead="Te explicamos qué información utiliza ElectroVibeHome para gestionar tu cuenta, personalizar la experiencia y dar seguimiento a tus solicitudes."
+    noticeTitle="Antes de compartir tus datos"
+    notice="Al crear una cuenta solicitamos información personal para que puedas acceder a tu perfil. Comparte únicamente los datos necesarios y nunca introduzcas información de tarjetas ni contraseñas que uses en otros servicios."
     sections={[
       {
-        title: 'Información de una cuenta',
-        body: 'Al crear un perfil de prueba, el sistema solicita nombre, apellidos, correo, número de identificación, fecha de nacimiento, celular y preferencias de productos. Estos datos se usan para crear la cuenta, iniciar sesión, mostrar el perfil y personalizar la navegación del catálogo.'
+        title: 'Información de tu cuenta',
+        body: 'El formulario solicita nombre, apellidos, correo electrónico, identificación, fecha de nacimiento, celular y preferencias de productos. Estos datos permiten crear tu cuenta, iniciar sesión, mostrar tu perfil y ajustar la exploración del catálogo.'
       },
       {
-        title: 'Verificación del correo',
-        body: 'El registro actual no confirma automáticamente la titularidad del correo. Si vas a probar la recuperación de contraseña, utiliza una dirección cuya bandeja de entrada controles. En los campos de identificación, fecha de nacimiento, celular y entrega utiliza datos ficticios.'
+        title: 'Uso del correo y recuperación del acceso',
+        body: 'Tu correo se utiliza para iniciar sesión y solicitar la recuperación de contraseña. La confirmación de titularidad del correo no está automatizada en todos los flujos; utiliza una dirección que controles y puedas consultar.'
       },
       {
         title: 'Información de pedidos',
-        body: 'Cuando se prueba el flujo de compra, el sistema registra los datos de contacto y entrega, los productos y cantidades, el total, la fecha del pedido y el estado del pago. La base de datos del proyecto conserva los pedidos para que se puedan consultar durante la demostración.'
+        body: 'Al registrar un pedido se guardan los datos de contacto y entrega, los productos y cantidades, el importe mostrado, la fecha y el estado. En la versión actual, registrar un pedido no genera una entrega real ni un cobro. La integración de Wompi está configurada en un entorno de pruebas.'
       },
       {
-        title: 'Actividad de inicio de sesión',
-        body: 'La base de datos de la demo conserva un registro de actividad con el identificador de la cuenta, el correo y la fecha del último acceso. Los registros operativos del servidor no deben imprimir estos datos personales.'
-      },
-      {
-        title: 'Sesión en el navegador',
-        body: 'La sesión guarda en el almacenamiento local del navegador un token de autenticación y datos básicos del perfil. Cerrar sesión elimina esos elementos del navegador; por sí solo, no elimina el perfil ni los pedidos guardados en la base de datos.'
+        title: 'Sesión y seguridad',
+        body: 'El navegador conserva un token de autenticación y datos básicos de tu perfil para mantener la sesión. Al cerrar sesión, estos datos se eliminan del navegador; cerrar sesión no elimina la cuenta ni los pedidos guardados.'
       },
       {
         title: 'Servicios que participan',
-        body: 'La aplicación utiliza Render para alojar servicios y MongoDB para guardar los registros del proyecto. Cuando la IA generativa de la Guía ElectroVibe está configurada, el mensaje que escribes se envía al backend y a OpenAI; ElectroVibeHome no guarda el historial de esa conversación. Si no está configurada, la guía usa reglas locales y el catálogo cargado en la página: el texto no se envía a OpenAI ni se guarda. Para pagos, el flujo utiliza el checkout de Wompi en Sandbox.'
+        body: 'Render aloja los servicios de la aplicación y MongoDB almacena los registros de cuentas, productos y pedidos. Cuando la Guía ElectroVibe utiliza asistencia generativa, el mensaje que escribes se envía al servidor y a OpenAI para generar la respuesta. Si no está configurada, la guía puede funcionar con reglas locales. El flujo de Wompi utiliza su entorno de pruebas y no procesa pagos reales.'
       },
       {
-        title: 'Uso prudente de la demostración',
-        body: 'No introduzcas documentos, teléfonos, direcciones, contraseñas habituales, datos de tarjetas ni información de otras personas. La demo no tiene todavía un panel de autoservicio para solicitar correcciones o eliminación de registros. Las consultas sobre el proyecto pueden dirigirse a company.electrovibehome@gmail.com.'
+        title: 'Consultas sobre tu información',
+        body: 'Para consultas relacionadas con la cuenta o el tratamiento de información, escribe a company.electrovibehome@gmail.com. Evita incluir documentos, contraseñas o datos financieros sensibles en el mensaje.'
       }
     ]}
   />
