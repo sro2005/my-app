@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
+const { expireAbandonedWompiOrders, PENDING_WOMPI_TTL_MINUTES } = require('./utils/wompiPendingOrderCleanup');
 
 // Define el archivo de entorno a usar según NODE_ENV
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
@@ -54,6 +55,36 @@ if (!isProduction) {
   const accessLogStream = fs.createWriteStream(path.join(logDirectory, 'access.log'), { flags: 'a' });
   app.use(morgan('dev', { stream: accessLogStream }));
 }
+
+
+const schedulePendingWompiCleanup = () => {
+  const intervalMs = 5 * 60 * 1000;
+  let sweepInProgress = false;
+
+  const runSweep = async () => {
+    if (sweepInProgress) return;
+    sweepInProgress = true;
+    try {
+      const result = await expireAbandonedWompiOrders();
+      if (result.expiredCount > 0) {
+        console.log(`Limpieza Wompi: ${result.expiredCount} pedido(s) vencido(s); inventario liberado.`);
+      }
+      if (result.failedCount > 0) {
+        console.error(`Limpieza Wompi: ${result.failedCount} pedido(s) no pudieron procesarse; se reintentará en el siguiente ciclo.`);
+      }
+    } catch (error) {
+      console.error('Falló el ciclo de expiración de pedidos Wompi:', error.message);
+    } finally {
+      sweepInProgress = false;
+    }
+  };
+
+  // El barrido inicial también recupera trabajo pendiente después de reinicios del servicio.
+  void runSweep();
+  const timer = setInterval(() => { void runSweep(); }, intervalMs);
+  timer.unref?.();
+  console.log(`Limpieza automática de checkout Wompi activa: expiración tras ${PENDING_WOMPI_TTL_MINUTES} minutos.`);
+};
 
 // Conectar primero a MongoDB. No iniciar la API si la base de datos no está lista:
  // así Render puede detectar una configuración rota en lugar de dejar un backend aparentemente activo.
@@ -122,6 +153,7 @@ connectDatabase()
   .then(() => {
     server.listen(PORT, () => {
       console.log(`🚀 Servidor corriendo en ${server === app ? 'http' : 'https'}://localhost:${PORT}`);
+      if (isProduction) schedulePendingWompiCleanup();
     });
   })
   .catch((error) => {
