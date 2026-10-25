@@ -3,39 +3,38 @@ import InformationalPage from './InformationalPage';
 
 const AboutPage = () => (
   <InformationalPage
-    eyebrow="IDENTIDAD Y PROPÓSITO"
-    title="Sobre nosotros"
-    lead="Conoce la idea, los principios y la visión que orientan ElectroVibeHome: un proyecto de experiencia digital enfocado en tecnología útil para el hogar."
-    notice="ElectroVibeHome es actualmente un proyecto personal y un prototipo de portafolio. No es una tienda abierta al público: los productos, precios, existencias y pedidos se usan para demostrar la experiencia. No se afirma que exista una operación comercial activa ni un registro empresarial."
+    eyebrow="NUESTRO PROPÓSITO"
+    title="Sobre Nosotros"
+    lead="En ElectroVibeHome creemos que la tecnología debe hacer más sencilla la vida en casa. Reunimos inspiración, categorías y orientación para ayudarte a descubrir lo que mejor encaja contigo."
     sections={[
       {
-        title: 'La idea de negocio',
-        body: 'Reunir en una experiencia digital electrodomésticos y tecnología para el hogar, organizados por categorías y acompañados de información clara. La propuesta busca que las personas puedan explorar alternativas según sus necesidades, su espacio y las tareas que quieren resolver.'
+        title: 'Lo que nos inspira',
+        body: 'Acercar los electrodomésticos y la tecnología a las necesidades del día a día. Queremos que descubrir opciones para tu hogar sea una experiencia sencilla, organizada y agradable.
       },
       {
-        title: 'Misión propuesta',
-        body: 'Facilitar el descubrimiento de soluciones tecnológicas para el hogar mediante un catálogo organizado, información comprensible y herramientas que ayuden a comparar opciones antes de tomar una decisión.'
+        title: 'Nuestra misión',
+        body: 'Ayudarte a descubrir soluciones para el hogar mediante un catálogo organizado, información clara y herramientas que faciliten la comparación de alternativas.
       },
       {
-        title: 'Visión propuesta',
-        body: 'Evolucionar hacia una experiencia de comercio electrónico confiable y fácil de usar, con una selección útil de productos, orientación responsable y procesos de atención y seguimiento claros. Esta visión describe una meta futura, no una operación comercial vigente.'
+        title: 'Nuestra visión',
+        body: 'Construir una experiencia digital fácil de usar, con información útil, orientación responsable y procesos de consulta y seguimiento cada vez más claros.
       },
       {
-        title: 'Principios de la propuesta',
+        title: 'Lo que nos guía',
         items: [
           'Claridad: explicar las características y las condiciones de cada producto sin promesas difíciles de verificar.',
           'Utilidad: organizar el catálogo para que la búsqueda responda a necesidades cotidianas.',
-          'Confianza: distinguir la información real de los datos de demostración y no presentar pedidos o pagos ficticios como ventas reales.',
+          'Confianza: ofrecer información clara sobre los productos, los pedidos y las condiciones de cada proceso.',
           'Uso responsable de la tecnología: ofrecer orientación digital como apoyo, no como sustituto de la revisión de las características del producto.'
         ]
       },
       {
-        title: 'Una guía para explorar el catálogo',
-        body: 'La Guía ElectroVibe permite describir una necesidad y recibir sugerencias relacionadas con los productos disponibles. Según la configuración, utiliza reglas locales o asistencia generativa. Sus sugerencias son orientativas: revisa siempre las características del producto.'
+        title: 'Una guía para decidir mejor',
+        body: 'La Guía ElectroVibe te permite describir una necesidad y descubrir sugerencias relacionadas con el catálogo. Revisa las características y elige según las necesidades de tu hogar.
       },
       {
-        title: 'Un proyecto en desarrollo',
-        body: 'La versión actual permite recorrer pantallas de catálogo, crear cuentas de prueba, explorar funciones de cliente y administración, y ensayar pedidos sin pagos reales. Antes de una eventual apertura comercial se necesitarían, entre otros elementos, inventario verificable, condiciones de venta y entrega, canales de atención, y revisión jurídica y de protección de datos.'
+        title: 'Una experiencia en evolución',
+        body: 'Trabajamos para que la navegación, la información de producto y el seguimiento de pedidos sean claros y fáciles de usar. Cada mejora busca que encuentres lo que necesitas y entiendas cada paso del proceso.
       }
     ]}
   />
