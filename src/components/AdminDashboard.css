@@ -148,3 +148,26 @@
   .evh-admin-session-role { margin-left: 0; }
   .evh-admin-hero > button { width: 100%; }
 }
+
+
+/* Session identity: keep label, email, and role on a controlled grid. */
+.evh-admin .evh-admin-session {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  width: min(100%, 560px);
+  min-width: 0;
+  box-sizing: border-box;
+}
+.evh-admin .evh-admin-session-copy { min-width: 0; flex: initial; }
+.evh-admin .evh-admin-session-copy small { line-height: 1.45; }
+.evh-admin .evh-admin-session-copy strong { min-width: 0; line-height: 1.5; overflow-wrap: anywhere; }
+.evh-admin .evh-admin-session-role { margin-left: 0; white-space: nowrap; }
+.evh-admin .evh-admin-hero > button { width: fit-content; max-width: 100%; }
+@media (max-width: 760px) {
+  .evh-admin .evh-admin-session { grid-template-columns: 28px minmax(0, 1fr); align-items: start; }
+  .evh-admin .evh-admin-session-role { grid-column: 2; justify-self: start; margin: 0; }
+}
+@media (max-width: 480px) {
+  .evh-admin .evh-admin-hero > button { width: 100%; }
+}

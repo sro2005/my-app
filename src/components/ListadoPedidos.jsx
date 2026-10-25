@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 // Función para formatear el precio en formato local (COP)
 const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(price) || 0);
 };
 
 // Función para formatear la fecha en formato 12 horas con AM/PM
@@ -22,7 +22,7 @@ const formatDeliveryDate = (deliveryDate) => {
 };
 
 const formatPaymentMethod = (pedido, isAdmin) => {
-  if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Simulación interna · sin cobro' : 'Pedido sin cobro';
+  if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Sin pago' : 'Pedido sin cobro';
   if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi Sandbox' : 'Wompi';
   return pedido.paymentMethod || 'No especificado';
 };
@@ -53,12 +53,12 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
   <li className="pedido-item">
     <div className="pedido-info">
       <div className="pedido-image">
-        <img src="/icono-order.jpg" alt="Icono de pedido" />
+        <img src="/icono-order.jpg" alt="" />
       </div>
       <div className="pedido-details">
         <div className="evh-order-card-heading">
           <div className="evh-order-card-title">
-            <span>{isAdmin ? 'PEDIDO' : 'PEDIDO'}</span>
+            <span>PEDIDO</span>
             <h2>#{String(pedido._id || '').slice(-8).toUpperCase()}</h2>
           </div>
           <div className="evh-order-card-state">
@@ -67,17 +67,17 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
             <small>{isAdmin ? 'Valor del pedido' : 'Total del pedido'}</small>
           </div>
         </div>
-        <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
-        <p><strong>👤 {isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
-        <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
-        <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
-        <p><strong>💳 {isAdmin ? 'Método de pago:' : 'Método de pago:'}</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
-        <p><strong>🧾 {isAdmin ? 'Estado del pago:' : 'Estado del pago:'}</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
-        <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
-        <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
-        <p><strong>🛍️ Producto Escogido: </strong> 
+        <p><strong>ID del pedido:</strong> {pedido._id || 'No disponible'}</p>
+        <p><strong>{isAdmin ? 'Cliente:' : 'Titular del pedido:'}</strong> {pedido.firstName || ''} {pedido.lastName || ''}</p>
+        <p><strong>Dirección de entrega:</strong> {pedido.address || 'No disponible'}</p>
+        <p><strong>Teléfono de contacto:</strong> {pedido.phone || 'No disponible'}</p>
+        <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
+        <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
+        <p><strong>Fecha del pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
+        <p><strong>Entrega estimada:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
+        <p><strong>Productos:</strong>  
           {Array.isArray(pedido.products) && pedido.products.length > 0 ? pedido.products.map((item, index) => (
-            <span key={index}>
+            <span key={item._id || item.productId?._id || index}>
               {item.productId?.name || "Producto desconocido"} · {item.productId?.category || "Sin categoría"} · Cantidad: {item.quantity || 1}
               {index < pedido.products.length - 1 ? ', ' : ''}
             </span>
@@ -106,12 +106,17 @@ const ListadoPedidos = () => {
   const [emptyOrders, setEmptyOrders] = useState(false);
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
   const [statusMessage, setStatusMessage] = useState('');
+  const [statusMessageType, setStatusMessageType] = useState('success');
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     const fetchOrders = async () => {
       const token = localStorage.getItem('authToken');
       const userId = user?._id;  // Acceder al id del usuario desde el contexto
-      const API_URL = process.env.REACT_APP_API_BASE_URL;
+      const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+      setError(null);
+      setStatusMessage('');
+      setLoading(true);
   
       if (!token || !userId || !API_URL) {
         setError('Faltan datos esenciales: URL de API, token o userId.');
@@ -153,18 +158,20 @@ const ListadoPedidos = () => {
       setLoading(false);
     }
   
-  }, [user]);  // Dependencia de `user` para que se ejecute cada vez que cambie
+  }, [user, retryCount]);  // Recarga cuando cambia el usuario o se solicita un reintento.
 
   const handleStatusUpdate = async (orderId, field) => {
     const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken');
     if (!API_URL || !token) {
+      setStatusMessageType('error');
       setStatusMessage('No se pudo verificar la conexión o la sesión de administración.');
       return;
     }
 
     setUpdatingOrderId(orderId);
     setStatusMessage('');
+    setStatusMessageType('success');
     try {
       const response = await axios.put(
         `${API_URL}/api/orders/${orderId}/status`,
@@ -184,6 +191,7 @@ const ListadoPedidos = () => {
       }
       setStatusMessage(response.data?.message || 'Estado del pedido actualizado.');
     } catch (requestError) {
+      setStatusMessageType('error');
       setStatusMessage(requestError.response?.data?.message || 'No se pudo actualizar el estado. Vuelve a intentarlo.');
     } finally {
       setUpdatingOrderId(null);
@@ -244,10 +252,11 @@ const ListadoPedidos = () => {
             <span className="evh-list-state-icon" aria-hidden="true">!</span>
             <h2>No pudimos cargar los pedidos</h2>
             <p>{error}</p>
+            <button type="button" className="evh-button evh-button-primary" onClick={() => setRetryCount(value => value + 1)}>Reintentar</button>
           </div>
         ) : (
           <>
-        {statusMessage && <p role="status" className="order-status-feedback">{statusMessage}</p>}
+        {statusMessage && <p role={statusMessageType === 'error' ? 'alert' : 'status'} className={`order-status-feedback is-${statusMessageType}`}>{statusMessage}</p>}
         {emptyOrders ? (
           <div className="evh-orders-empty">
             <span aria-hidden="true">▤</span>

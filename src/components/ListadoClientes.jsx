@@ -4,6 +4,7 @@ import moment from 'moment-timezone';
 
 // Función para formatear fechas
 const formatDate = (dateString) => {
+  if (!dateString) return 'No disponible';
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return 'No disponible';
   return [
@@ -15,25 +16,17 @@ const formatDate = (dateString) => {
 
 // Función para formatear fecha y hora
 const formatDateTime = (dateString) => {
+  if (!dateString) return 'Sin actividad registrada';
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return 'Sin actividad registrada';
-  
-  const formattedDate = date.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Bogota' });
-  const formattedTime = date.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Bogota' });
-
-  return (
-    <span className="fecha-hora">
-      <span className="separador"> | </span>
-      <span className="fecha">Fecha: {formattedDate}</span>
-      <span className="separador"> | </span>
-      <span className="hora">Hora: {formattedTime}</span>
-      <span className="separador"> | </span>
-    </span>
-  );
+  const dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Bogota' };
+  const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Bogota' };
+  return `${date.toLocaleDateString('es-CO', dateOptions)} · ${date.toLocaleTimeString('es-CO', timeOptions)}`;
 };
 
 // Función para formatear la fecha en formato 12 horas con AM/PM
 const formatOrderDate = (dateString) => {
+  if (!dateString) return 'Fecha no disponible';
   const parsed = moment(dateString);
   return parsed.isValid() ? parsed.tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss') : 'Fecha no disponible';
 };
@@ -43,7 +36,10 @@ const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
 }).format(Number(amount) || 0);
 
 // Formatear número de identificación
-const formatIdentificationNumber = (number) => String(number || '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const formatIdentificationNumber = (number) => {
+  const value = String(number ?? '').trim();
+  return value ? value.replace(/\B(?=(\d{3})+(?!\d))/g, '.') : 'No disponible';
+};
 
 // Calcular estado del cliente
 const calcularEstado = (lastActivityDate) => {
@@ -65,18 +61,18 @@ const ClienteItem = ({ cliente }) => {
     <li className={`cliente-item ${estadoActivo === 'Inactivo' ? 'inactivo' : ''}`}>
       <div className="cliente-info">
         <div className="cliente-avatar">
-          <img src="/icono-user.png" alt="Icono de Usuario" />
+          <img src="/icono-user.png" alt="" />
         </div>
         <div className="cliente-details">
           <p><strong>Cliente:</strong> {cliente.firstName} {cliente.lastName || ''}</p>
-          <p><strong>Email:</strong> {cliente.email}</p>
-          <p><strong>Celular:</strong> {cliente.phone}</p>
+          <p><strong>Correo electrónico:</strong> {cliente.email || 'No disponible'}</p>
+          <p><strong>Teléfono de contacto:</strong> {cliente.phone || 'No disponible'}</p>
           <p><strong>Número de identificación:</strong> {formatIdentificationNumber(cliente.identificationNumber)}</p>
-          <p><strong>Fecha de Nacimiento:</strong> {formatDate(cliente.birthDate)}</p>
-          <p><strong>Historial de Pedidos:</strong> {pedidosCount} Pedido{pedidosCount === 1 ? '' : 's'}</p>
+          <p><strong>Fecha de nacimiento:</strong> {formatDate(cliente.birthDate)}</p>
+          <p><strong>Historial de pedidos:</strong> {pedidosCount} pedido{pedidosCount === 1 ? '' : 's'}</p>
           {pedidosCount > 0 && (
             <details className="cliente-historial-pedidos">
-              <summary>Ver historial de compras ({pedidosCount})</summary>
+              <summary>Ver historial de pedidos ({pedidosCount})</summary>
               <ul>
                 {cliente.orders.map(pedido => (
                   <li key={pedido._id}>
@@ -100,7 +96,7 @@ const ClienteItem = ({ cliente }) => {
               </ul>
             </details>
           )}
-          <p><strong>Última Interacción:</strong> {formatDateTime(cliente.lastActivityDate)}</p>
+          <p><strong>Última interacción:</strong> {formatDateTime(cliente.lastActivityDate)}</p>
           <p><strong>Estado:</strong> {estadoActivo}</p>
         </div>
       </div>
@@ -229,7 +225,7 @@ const ListadoClientes = () => {
         <>
       <div className="evh-customers-toolbar">
       <div className="search-container">
-        <input type="text" aria-label="Buscar clientes por nombre, correo, celular o ID" placeholder="Buscar por nombre, correo, celular o ID…" 
+        <input type="search" aria-label="Buscar clientes por nombre, correo, teléfono o identificación" placeholder="Buscar por nombre, correo, teléfono o identificación…" 
           value={search} onChange={(e) => setSearch(e.target.value)} className="search-input" />
       </div>
 
@@ -237,6 +233,7 @@ const ListadoClientes = () => {
         <button type="button" aria-pressed={filtroActivo === null} onClick={() => setFiltroActivo(null)}>Todos</button>
         <button type="button" aria-pressed={filtroActivo === true} onClick={() => setFiltroActivo(true)}>Activos</button>
         <button type="button" aria-pressed={filtroActivo === false} onClick={() => setFiltroActivo(false)}>Inactivos</button>
+        {(search.trim() || filtroActivo !== null) && <button type="button" className="evh-filter-reset" onClick={() => { setSearch(''); setFiltroActivo(null); }}>Limpiar filtros</button>}
       </div>
       </div>
 
@@ -245,29 +242,29 @@ const ListadoClientes = () => {
           <h2>📊 Resumen de clientes</h2>
           <div className="client-stats">
             <div className="stat-item">
-              <h3>👥 Total de clientes</h3>
+              <h3>Total de clientes</h3>
               <p>{clientesFiltrados.length}</p>
             </div>
             <div className="stat-item active">
-              <h3>🟢 Clientes activos</h3>
+              <h3>Clientes activos</h3>
               <p>{activos}</p>
             </div>
             <div className="stat-item inactive">
-              <h3>🔴 Clientes inactivos</h3>
+              <h3>Clientes inactivos</h3>
               <p>{inactivos}</p>
             </div>
             <div className="stat-item">
-              <h3>📦 Pedidos registrados</h3>
+              <h3>Pedidos registrados</h3>
               <p>{pedidosTotales}</p>
             </div>
             <div className="stat-item">
-              <h3>🕒 Último pedido</h3>
+              <h3>Último pedido</h3>
               <p>{ultimoPedido}</p>
             </div>
             <div className="stat-item top-client">
-              <h3>🏆 Cliente con más pedidos</h3>
+              <h3>Cliente con más pedidos</h3>
               {clienteMasPedidos ? (
-                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({clienteMasPedidos.orders?.length || 0} Pedidos)</p>
+                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({clienteMasPedidos.orders?.length || 0} pedidos)</p>
               ) : (
                 <p>No se encontró un cliente con más pedidos.</p>
               )}
@@ -287,7 +284,12 @@ const ListadoClientes = () => {
         ))}
       </ul>
     ) : (
-      <p>No hay clientes disponibles.</p>
+      <div className="evh-orders-empty evh-customers-empty">
+        <span aria-hidden="true">⌕</span>
+        <h2>{clientes.length === 0 ? 'Aún no hay clientes registrados' : 'No hay clientes que coincidan'}</h2>
+        <p>{clientes.length === 0 ? 'Los clientes registrados aparecerán aquí.' : 'Prueba con otro término de búsqueda o cambia el filtro de actividad.'}</p>
+        {(search.trim() || filtroActivo !== null) && <button type="button" className="evh-button evh-button-primary" onClick={() => { setSearch(''); setFiltroActivo(null); }}>Restablecer filtros</button>}
+      </div>
    )}
         </>
       )}
