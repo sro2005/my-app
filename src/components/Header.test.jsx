@@ -1,6 +1,6 @@
 import React from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import Header from './Header';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -33,7 +33,7 @@ describe('Header navigation', () => {
 
     expect(screen.getByRole('navigation', { name: /navegación principal/i })).toBeTruthy();
     expect(screen.getByRole('link', { name: /catálogo/i }).getAttribute('href')).toBe('/catalogo');
-    expect(screen.getByRole('link', { name: /sobre nosotros/i }).getAttribute('href')).toBe('/about');
+    expect(screen.queryByRole('link', { name: /sobre nosotros/i })).toBeNull();
     expect(screen.getByRole('link', { name: /crear cuenta/i }).getAttribute('href')).toBe('/register');
     expect(screen.getByRole('link', { name: /iniciar sesión/i }).getAttribute('href')).toBe('/login');
     expect(screen.queryByRole('link', { name: /inventario|clientes|agregar producto/i })).toBeNull();
@@ -65,11 +65,15 @@ describe('Header navigation', () => {
     expect(screen.queryByRole('link', { name: /mi perfil|realizar pedido|catálogo|preferencias/i })).toBeNull();
   });
 
-  test('closes the session immediately without a misaligned goodbye notice', () => {
+  test('asks for confirmation and offers a calm way to cancel logout', () => {
     const { handleLogout } = renderHeader({ _id: 'customer-1', role: 'user' });
 
     fireEvent.click(screen.getByRole('button', { name: /salir/i }));
+    const dialog = screen.getByRole('dialog', { name: /quieres cerrar sesión/i });
+
+    expect(handleLogout).not.toHaveBeenCalled();
+    expect(within(dialog).getByRole('button', { name: /seguir aquí/i })).toBeTruthy();
+    fireEvent.click(within(dialog).getByRole('button', { name: /cerrar sesión/i }));
     expect(handleLogout).toHaveBeenCalledOnce();
-    expect(screen.queryByText(/gracias por visitarnos/i)).toBeNull();
   });
 });
