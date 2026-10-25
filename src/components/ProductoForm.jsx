@@ -19,9 +19,13 @@ const ProductoForm = () => {
   // Función para manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(''); // Limpiar errores previos
+    setError('');
     setSuccess('');
+    if (!name.trim() || !category.trim() || !description.trim() || !Number.isFinite(Number(price)) || Number(price) <= 0 || !Number.isInteger(Number(quantity)) || Number(quantity) < 0 || quantity === '') {
+      setError('Completa la información del producto con un precio mayor que cero y existencias válidas.');
+      return;
+    }
+    setLoading(true);
 
     const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken'); // Obtener el token desde localStorage
@@ -41,12 +45,12 @@ const ProductoForm = () => {
 
     try {
       await axios.post(`${API_URL}/api/products/agregar`, {
-        name,
-        description,
-        category,
-        price,
-        quantity,
-        imageUrl
+        name: name.trim(),
+        description: description.trim(),
+        category: category.trim(),
+        price: Number(price),
+        quantity: Number(quantity),
+        imageUrl: imageUrl.trim()
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -104,8 +108,8 @@ const ProductoForm = () => {
       </div>
       <div className="evh-form-field evh-form-field-wide">
         <label htmlFor="product-image">Imagen del producto</label>
-        <input id="product-image" type="url" placeholder="https://sitio.com/imagen.jpg" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} required />
-        <span className="evh-field-hint">Usa un enlace público a una imagen JPG, PNG o GIF.</span>
+        <input id="product-image" type="url" placeholder="https://sitio.com/imagen.jpg" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+        <span className="evh-field-hint">Opcional. Si no agregas una imagen, el catálogo puede mostrar una ilustración de la categoría.</span>
       </div>
       </div>
       <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Guardando producto…' : 'Agregar al inventario'}</button>
