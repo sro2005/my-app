@@ -518,7 +518,7 @@ async function main() {
     assert.ok(await page.locator('.evh-product-order-link').count() >= 1,
       'Authenticated customers should see links to add available products to an order.');
 
-    await captureAuthenticatedRoute('/pedido-form', /Realizar pedido/i, 'customer-order-form', '#checkout-product');
+    await captureAuthenticatedRoute('/pedido-form', /Revisa tu pedido/i, 'customer-order-form', '#checkout-product');
     await page.locator('#checkout-product').click();
     await page.getByRole('option', { name: /Cafetera Boreal 12 tazas/i }).click();
     await page.getByRole('button', { name: 'Agregar al pedido' }).click();
