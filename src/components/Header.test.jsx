@@ -68,7 +68,7 @@ describe('Header navigation', () => {
   test('asks for confirmation and offers a calm way to cancel logout', () => {
     const { handleLogout } = renderHeader({ _id: 'customer-1', role: 'user' });
 
-    fireEvent.click(screen.getByRole('button', { name: /salir/i }));
+    fireEvent.click(screen.getByRole('button', { name: /cerrar sesión/i }));
     const dialog = screen.getByRole('dialog', { name: /quieres cerrar sesión/i });
 
     expect(handleLogout).not.toHaveBeenCalled();
