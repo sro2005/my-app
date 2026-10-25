@@ -7,16 +7,24 @@ const PaymentResult = () => {
   const status = params.get('status');
 
   return (
-    <main className="container" style={{ maxWidth: 720, margin: '3rem auto', padding: '2rem', textAlign: 'center' }}>
-      <h1>Resultado de la simulación de pago</h1>
-      <p>Esta tienda usa el entorno de pruebas de Wompi. No se realizan cobros ni transferencias reales.</p>
-      <p>La redirección por sí sola no confirma el resultado de una transacción de prueba.</p>
-      {reference && <p><strong>Referencia de prueba:</strong> {reference}</p>}
-      {status && <p><strong>Estado informado por Wompi (pruebas):</strong> {status}</p>}
-      <p>Si el evento de prueba se valida correctamente, el estado aparecerá en tus pedidos de demostración.</p>
-      <Link to="/listado-pedidos">Consultar mis pedidos</Link>
-      {' · '}
-      <Link to="/catalogo">Volver al catálogo</Link>
+    <main className="evh-payment-result">
+      <section className="evh-payment-result-card">
+        <span className="evh-payment-result-mark" aria-hidden="true">↗</span>
+        <span className="evh-eyebrow">ESTADO DE TU PAGO</span>
+        <h1>Estamos revisando el resultado</h1>
+        <p>La respuesta del proveedor puede tardar unos instantes. La redirección, por sí sola, no confirma el estado de una transacción.</p>
+        <aside className="evh-payment-result-notice" role="note">
+          <strong>Información importante</strong>
+          <p>El checkout de Wompi está en entorno de pruebas. No se procesan cobros ni transferencias reales; no ingreses datos de una tarjeta real.</p>
+        </aside>
+        {reference && <p className="evh-payment-result-detail"><strong>Referencia:</strong> {reference}</p>}
+        {status && <p className="evh-payment-result-detail"><strong>Estado recibido:</strong> {status}</p>}
+        <p>Consulta tus pedidos para revisar la información más reciente disponible.</p>
+        <div className="evh-payment-result-actions">
+          <Link className="evh-button evh-button-primary" to="/listado-pedidos">Consultar mis pedidos</Link>
+          <Link className="evh-button evh-button-secondary" to="/catalogo">Volver al catálogo</Link>
+        </div>
+      </section>
     </main>
   );
 };
