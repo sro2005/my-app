@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
-import { ClipLoader } from 'react-spinners';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 
@@ -220,7 +219,19 @@ const PerfilCliente = () => {
   };
 
   if (loading) {
-    return <main className="evh-profile-page evh-profile-state" aria-live="polite"><ClipLoader size={42} color="#F47B20" /><p>Cargando tu perfil…</p></main>;
+    return (
+      <main className="evh-profile-page evh-profile-loading" aria-busy="true">
+        <div className="evh-loading-panel" role="status" aria-live="polite">
+          <span className="evh-loading-mark" aria-hidden="true">EV</span>
+          <div className="evh-loading-copy">
+            <span className="evh-loading-kicker">TU ESPACIO PERSONAL</span>
+            <h2>Preparando tu perfil</h2>
+            <p>Estamos organizando tus datos y preferencias.</p>
+            <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   if (!customer) {
