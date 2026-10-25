@@ -19,19 +19,20 @@ describe('LandingPage', () => {
     expect(
       screen.getByRole('heading', { name: /encuentra tecnología que haga más fácil tu día a día/i })
     ).toBeTruthy();
+    expect(screen.getByText(/transforma tu hogar con la energía del futuro/i)).toBeTruthy();
 
     expect(screen.getByRole('link', { name: /explorar productos/i }).getAttribute('href')).toBe('/catalogo');
     expect(screen.getByRole('link', { name: /crear mi cuenta/i }).getAttribute('href')).toBe('/register');
   });
 
-  test('renders the four product categories and explains that payments are test-only', () => {
+  test('renders the four product categories without exposing internal payment-environment details', () => {
     render(<LandingPage />);
 
     expect(screen.getByText('Refrigeración')).toBeTruthy();
     expect(screen.getByText('Lavado y cuidado')).toBeTruthy();
     expect(screen.getByText('Cocina')).toBeTruthy();
     expect(screen.getByText('Limpieza del hogar')).toBeTruthy();
-    expect(screen.getByText(/no se realizan cobros ni transferencias reales/i)).toBeTruthy();
+    expect(screen.queryByText(/entorno de pruebas|cuenta de demostración|prototipo/i)).toBeNull();
   });
 
   test('introduces the ElectroVibe guide and links visitors to explore recommendations', () => {
