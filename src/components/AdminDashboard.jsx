@@ -132,10 +132,10 @@ const AdminDashboard = () => {
                     <thead><tr><th scope="col">Cliente</th><th scope="col">Valor del pedido</th><th scope="col">Pago</th><th scope="col">Pedido</th></tr></thead>
                     <tbody>{recent.map(order => (
                       <tr key={order._id}>
-                        <td>{order.firstName} {order.lastName}<small>{order.email}</small></td>
-                        <td>{money(order.totalAmount)}</td>
-                        <td>{formatPaymentStatus(order.paymentStatus)}</td>
-                        <td>{order.status || 'Sin estado'}</td>
+                        <td data-label="Cliente"><span className="evh-admin-order-customer">{order.firstName} {order.lastName}<small>{order.email}</small></span></td>
+                        <td data-label="Valor del pedido">{money(order.totalAmount)}</td>
+                        <td data-label="Pago">{formatPaymentStatus(order.paymentStatus)}</td>
+                        <td data-label="Pedido">{order.status || 'Sin estado'}</td>
                       </tr>
                     ))}</tbody>
                   </table>

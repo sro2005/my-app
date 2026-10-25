@@ -143,6 +143,17 @@ async function main() {
       'Desktop catalog overflows horizontally: ' + JSON.stringify(catalogDesktopLayout));
     assert.ok(catalogDesktopLayout.overflow.length === 0,
       'Visible desktop catalog elements overflow: ' + JSON.stringify(catalogDesktopLayout.overflow));
+    const categoryLabelMetrics = await page.locator('.evh-catalog-category-filter select').evaluate(select => {
+      const style = getComputedStyle(select);
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      context.font = style.font;
+      const text = select.selectedOptions[0]?.textContent || '';
+      const availableWidth = select.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0);
+      return { text, textWidth: context.measureText(text).width, availableWidth, selectWidth: select.clientWidth };
+    });
+    assert.ok(categoryLabelMetrics.textWidth <= categoryLabelMetrics.availableWidth,
+      'Desktop category label is clipped: ' + JSON.stringify(categoryLabelMetrics));
     await page.screenshot({ path: path.join(artifactsDir, 'catalog-desktop.png'), fullPage: true });
 
     await page.setViewportSize({ width: 390, height: 844 });
@@ -447,6 +458,14 @@ async function main() {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.waitForTimeout(100);
       const mobileLayout = await assertNoOverflow(routePath + ' at mobile');
+      if (await page.locator('.evh-admin-table-scroll').count()) {
+        const tableMetrics = await page.locator('.evh-admin-table-scroll').evaluate(element => ({
+          clientWidth: element.clientWidth,
+          scrollWidth: element.scrollWidth
+        }));
+        assert.ok(tableMetrics.scrollWidth <= tableMetrics.clientWidth + 1,
+          'Admin recent-orders table needs horizontal scrolling at mobile width: ' + JSON.stringify(tableMetrics));
+      }
       await page.screenshot({ path: path.join(artifactsDir, basename + '-mobile.png'), fullPage: true });
       await page.setViewportSize({ width: 1440, height: 1000 });
       console.log('Authenticated visual pass: ' + routePath + ' at desktop (' + desktopLayout.documentWidth + 'px document) and mobile (' + mobileLayout.documentWidth + 'px document).');

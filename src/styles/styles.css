@@ -6356,3 +6356,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-orders-page .pedido-details p strong { flex: initial; }
   .evh-orders-page .pedido-details button { width: 100%; margin: .65rem 0 0; }
 }
+
+
+/* Keep the full selected category label visible on desktop catalog filters. */
+@media (min-width: 1001px) {
+  .evh-catalog-toolbar .evh-catalog-category-filter {
+    flex: 0 0 225px;
+    min-width: 225px;
+  }
+}

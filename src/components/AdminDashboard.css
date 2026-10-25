@@ -171,3 +171,49 @@
 @media (max-width: 480px) {
   .evh-admin .evh-admin-hero > button { width: 100%; }
 }
+
+
+/* Compact the recent-orders summary into labelled rows on narrow screens. */
+@media (max-width: 600px) {
+  .evh-admin .evh-admin-table-scroll {
+    overflow: visible;
+  }
+  .evh-admin .evh-admin-table-scroll table,
+  .evh-admin .evh-admin-table-scroll tbody {
+    display: block;
+    width: 100%;
+  }
+  .evh-admin .evh-admin-table-scroll thead {
+    display: none;
+  }
+  .evh-admin .evh-admin-table-scroll tr {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: .65rem 0;
+    border-bottom: 1px solid var(--evh-border, #e0e6ed);
+  }
+  .evh-admin .evh-admin-table-scroll td {
+    display: grid;
+    grid-template-columns: minmax(94px, .78fr) minmax(0, 1.22fr);
+    gap: .55rem;
+    width: 100%;
+    box-sizing: border-box;
+    padding: .42rem .15rem;
+    border-bottom: 0;
+    overflow-wrap: anywhere;
+  }
+  .evh-admin .evh-admin-table-scroll td::before {
+    content: attr(data-label);
+    color: var(--evh-muted, #617084);
+    font-weight: 750;
+  }
+  .evh-admin .evh-admin-order-customer {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .evh-admin .evh-admin-order-customer small {
+    margin-top: .2rem;
+    overflow-wrap: anywhere;
+  }
+}
