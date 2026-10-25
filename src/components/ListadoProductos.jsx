@@ -130,7 +130,7 @@ const ListadoProductos = () => {
       setSourceMessage('');
 
       if (!apiUrl) {
-        useDemoCatalog('No pudimos conectar con el catálogo. Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.');
+        useDemoCatalog('No pudimos conectar con el catálogo. La disponibilidad que ves puede no estar actualizada y no podrás registrar un pedido hasta recuperar la conexión.');
         return;
       }
 
@@ -142,7 +142,7 @@ const ListadoProductos = () => {
           throw new Error('La respuesta de productos no tiene el formato esperado.');
         }
         if (response.data.length === 0) {
-          useDemoCatalog('Aún no hay productos sincronizados. Mostramos una selección de referencia mientras se restablece el catálogo.');
+          useDemoCatalog('No encontramos productos disponibles en línea en este momento. La selección que ves es solo informativa y no permite registrar un pedido hasta recuperar la disponibilidad.');
           return;
         }
         if (active) {
@@ -152,7 +152,7 @@ const ListadoProductos = () => {
           setLoading(false);
         }
       } catch {
-        useDemoCatalog('No pudimos actualizar el catálogo. Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.');
+        useDemoCatalog('No pudimos actualizar el catálogo. La disponibilidad que ves puede no estar actualizada y no podrás registrar un pedido hasta recuperar la conexión.');
       }
     };
 
@@ -214,7 +214,7 @@ const ListadoProductos = () => {
         <aside className="evh-catalog-notice" role="status">
           <span className="evh-catalog-notice-icon" aria-hidden="true">i</span>
           <div>
-            <strong>Catálogo temporalmente sin conexión</strong>
+            <strong>Disponibilidad pendiente de verificación</strong>
             <p>{sourceMessage || 'Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.'}</p>
           </div>
           <button type="button" onClick={() => setRetryCount((count) => count + 1)}>Actualizar</button>
