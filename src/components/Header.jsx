@@ -63,8 +63,8 @@ const Header = () => {
             {!user ? (
               <>
                 {navLink('/catalogo', faBoxOpen, 'Catálogo')}
-                {navLink('/register', faUserPlus, 'Crear cuenta')}
-                {navLink('/login', faDoorOpen, 'Iniciar sesión')}
+                {navLink('/register', faUserPlus, 'Crear Cuenta')}
+                {navLink('/login', faDoorOpen, 'Iniciar Sesión')}
               </>
             ) : user.role === 'admin' ? (
               <>
@@ -84,9 +84,9 @@ const Header = () => {
               <>
                 {navLink('/home-page', faHome, 'Inicio')}
                 {navLink('/catalogo', faBoxOpen, 'Catálogo')}
-                {navLink('/pedido-form', faCheckSquare, 'Realizar pedido')}
-                {navLink('/listado-pedidos', faClipboardList, 'Mis pedidos')}
-                {navLink('/perfil-cliente', faUser, 'Mi perfil')}
+                {navLink('/pedido-form', faCheckSquare, 'Realizar Pedido')}
+                {navLink('/listado-pedidos', faClipboardList, 'Mis Pedidos')}
+                {navLink('/perfil-cliente', faUser, 'Mi Perfil')}
                 {navLink('/seguridad', faLock, 'Seguridad')}
                 <li>
                   <button className="evh-site-logout" type="button" onClick={() => setLogoutDialogOpen(true)} aria-label="Cerrar sesión">
