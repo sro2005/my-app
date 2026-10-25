@@ -89,7 +89,7 @@ const Header = () => {
                 {navLink('/perfil-cliente', faUser, 'Mi perfil')}
                 {navLink('/seguridad', faLock, 'Seguridad')}
                 <li>
-                  <button className="evh-site-logout" type="button" onClick={logout} aria-label="Cerrar sesión">
+                  <button className="evh-site-logout" type="button" onClick={() => setLogoutDialogOpen(true)} aria-label="Cerrar sesión">
                     <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
                     <span>Salir</span>
                   </button>
