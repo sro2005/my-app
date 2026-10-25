@@ -196,6 +196,8 @@ const ListadoClientes = () => {
     };
   }, [clientesFiltrados]);
 
+  const topClientOrderCount = clienteMasPedidos?.orders?.length || 0;
+
   return (
     <main className="container evh-admin-customers" aria-busy={loading}>
       <header className="evh-admin-customers-heading">
@@ -264,7 +266,7 @@ const ListadoClientes = () => {
             <div className="stat-item top-client">
               <h3>Cliente con más pedidos</h3>
               {clienteMasPedidos ? (
-                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({clienteMasPedidos.orders?.length || 0} pedidos)</p>
+                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({topClientOrderCount} {topClientOrderCount === 1 ? 'pedido' : 'pedidos'})</p>
               ) : (
                 <p>No se encontró un cliente con más pedidos.</p>
               )}

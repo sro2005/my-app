@@ -24,14 +24,22 @@ describe('Admin dashboard', () => {
   test('loads operational information through admin-protected API endpoints', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
     localStorage.setItem('authToken', 'test-admin-token');
-    axios.get.mockResolvedValueOnce({ data: [{
-      _id: 'order-1', firstName: 'Cliente', lastName: 'Demo', email: 'demo@example.test',
-      paymentStatus: 'SIMULATED', totalAmount: 50000, status: 'Procesando'
-    }] }).mockResolvedValueOnce({ data: [{ role: 'user' }] })
+    axios.get.mockResolvedValueOnce({ data: [
+      {
+        _id: 'order-1', firstName: 'Cliente', lastName: 'Demo', email: 'demo@example.test',
+        paymentStatus: 'SIMULATED', totalAmount: 50000, status: 'Procesando'
+      },
+      {
+        _id: 'order-2', firstName: 'Cliente', lastName: 'Sandbox', email: 'sandbox@example.test',
+        paymentMethod: 'Wompi', paymentStatus: 'APPROVED', totalAmount: 90000, status: 'Entregado'
+      }
+    ] }).mockResolvedValueOnce({ data: [{ role: 'user' }] })
       .mockResolvedValueOnce({ data: [{ quantity: 2 }] });
     render(<AdminDashboard />);
     expect(await screen.findByText('Cliente Demo')).toBeTruthy();
     expect(screen.getByText('Sin pago')).toBeTruthy();
+    expect(screen.getByText('Aprobado (Sandbox)')).toBeTruthy();
+    expect(screen.queryByText('APPROVED')).toBeNull();
     expect(axios.get).toHaveBeenCalledTimes(3);
     expect(axios.get).toHaveBeenCalledWith('https://api.example.test/api/orders/all', {
       headers: { Authorization: 'Bearer test-admin-token' }

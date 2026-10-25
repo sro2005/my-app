@@ -51,6 +51,7 @@ describe('Admin customer history', () => {
   test('shows an expandable order history with payment status and product details', async () => {
     renderClients();
     const summary = await screen.findByText('Ver historial de pedidos (1)');
+    expect(screen.getByText('Demo Buyer (1 pedido)')).toBeTruthy();
     fireEvent.click(summary);
     expect(await screen.findByText(/Sin pago/)).toBeTruthy();
     expect(screen.getByText(/Valor del pedido:/)).toBeTruthy();

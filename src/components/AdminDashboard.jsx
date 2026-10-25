@@ -8,6 +8,16 @@ const money = value => new Intl.NumberFormat('es-CO', {
   style: 'currency', currency: 'COP', maximumFractionDigits: 0
 }).format(Number(value) || 0);
 
+const formatPaymentStatus = status => ({
+  SIMULATED: 'Sin pago',
+  APPROVED: 'Aprobado (Sandbox)',
+  PENDING: 'Pendiente (Sandbox)',
+  DECLINED: 'Rechazado (Sandbox)',
+  ERROR: 'Error de pago (Sandbox)',
+  EXPIRED: 'Checkout vencido',
+  VOIDED: 'Anulado (Sandbox)'
+})[status] || status || 'Pendiente';
+
 export const summarizeDemoOperations = (orders, customers, products) => {
   const simulated = orders.filter(order => order.paymentStatus === 'SIMULATED');
   const sandbox = orders.filter(order => order.paymentMethod === 'Wompi');
@@ -124,7 +134,7 @@ const AdminDashboard = () => {
                       <tr key={order._id}>
                         <td>{order.firstName} {order.lastName}<small>{order.email}</small></td>
                         <td>{money(order.totalAmount)}</td>
-                        <td>{order.paymentStatus === 'SIMULATED' ? 'Sin pago' : order.paymentStatus || 'Pendiente'}</td>
+                        <td>{formatPaymentStatus(order.paymentStatus)}</td>
                         <td>{order.status || 'Sin estado'}</td>
                       </tr>
                     ))}</tbody>
