@@ -7,7 +7,7 @@ const TermsPage = () => (
     title="Términos de Servicio"
     lead="Estas condiciones explican cómo utilizar ElectroVibeHome, administrar tu cuenta, explorar el catálogo y revisar tus pedidos."
     noticeTitle="Información sobre pedidos y pagos"
-    notice="Actualmente, los pedidos registrados en el sitio no generan entregas ni cobros reales. El checkout de Wompi utiliza su entorno de pruebas; no ingreses los datos de una tarjeta real."
+    notice="Actualmente, los pedidos registrados en el sitio no generan entregas ni cobros reales. La opción de Wompi solo simula la etapa de pago; no se realizará ningún cobro. No ingreses los datos de una tarjeta real."
     sections={[
       {
         title: 'Catálogo y disponibilidad',
@@ -19,7 +19,7 @@ const TermsPage = () => (
       },
       {
         title: 'Pedidos y checkout',
-        body: 'La función de pedidos permite registrar una solicitud y consultar su estado dentro de la cuenta. En esta versión, el registro no constituye una compra comercial ni coordina una entrega real. Si eliges Wompi, serás dirigido a su entorno de pruebas: no se procesa un pago real.'
+        body: 'La función de pedidos permite registrar una solicitud y consultar su estado dentro de la cuenta. En esta versión, el registro no constituye una compra comercial ni coordina una entrega real. Si eliges Wompi, se abrirá la plataforma para simular el paso de pago. No se procesará ningún cobro real.'
       },
       {
         title: 'Recuperación de contraseña',
