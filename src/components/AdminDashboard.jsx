@@ -83,7 +83,17 @@ const AdminDashboard = () => {
         </div>
         <button type="button" onClick={reload} disabled={loading}>Actualizar datos</button>
       </header>
-      {loading && <p role="status">Cargando información de administración…</p>}
+      {loading && (
+        <div className="evh-loading-panel evh-admin-loading" role="status" aria-live="polite">
+          <span className="evh-loading-mark" aria-hidden="true">EV</span>
+          <div className="evh-loading-copy">
+            <span className="evh-loading-kicker">CENTRO DE CONTROL</span>
+            <h2>Actualizando el panel</h2>
+            <p>Estamos reuniendo la información de pedidos, clientes e inventario.</p>
+            <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
+          </div>
+        </div>
+      )}
       {error && <p role="alert">{error}</p>}
       {!loading && !error && (
         <>
