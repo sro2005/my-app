@@ -65,7 +65,7 @@ describe('Admin customer history', () => {
   test('filters customers by name in addition to email and id', async () => {
     renderClients();
     await screen.findByText('buyer@example.test');
-    const search = screen.getByPlaceholderText(/nombre, correo, celular o ID/i);
+    const search = screen.getByPlaceholderText(/nombre, correo, teléfono o identificación/i);
     fireEvent.change(search, { target: { value: 'Demo' } });
     expect(screen.getAllByText(/Demo Buyer/)).toHaveLength(2);
     fireEvent.change(search, { target: { value: 'missing' } });
