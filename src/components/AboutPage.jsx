@@ -9,15 +9,15 @@ const AboutPage = () => (
     sections={[
       {
         title: 'Lo que nos inspira',
-        body: 'Acercar los electrodomésticos y la tecnología a las necesidades del día a día. Queremos que descubrir opciones para tu hogar sea una experiencia sencilla, organizada y agradable.
+        body: 'Acercar los electrodomésticos y la tecnología a las necesidades del día a día. Queremos que descubrir opciones para tu hogar sea una experiencia sencilla, organizada y agradable.'
       },
       {
         title: 'Nuestra misión',
-        body: 'Ayudarte a descubrir soluciones para el hogar mediante un catálogo organizado, información clara y herramientas que faciliten la comparación de alternativas.
+        body: 'Ayudarte a descubrir soluciones para el hogar mediante un catálogo organizado, información clara y herramientas que faciliten la comparación de alternativas.'
       },
       {
         title: 'Nuestra visión',
-        body: 'Construir una experiencia digital fácil de usar, con información útil, orientación responsable y procesos de consulta y seguimiento cada vez más claros.
+        body: 'Construir una experiencia digital fácil de usar, con información útil, orientación responsable y procesos de consulta y seguimiento cada vez más claros.'
       },
       {
         title: 'Lo que nos guía',
@@ -30,11 +30,11 @@ const AboutPage = () => (
       },
       {
         title: 'Una guía para decidir mejor',
-        body: 'La Guía ElectroVibe te permite describir una necesidad y descubrir sugerencias relacionadas con el catálogo. Revisa las características y elige según las necesidades de tu hogar.
+        body: 'La Guía ElectroVibe te permite describir una necesidad y descubrir sugerencias relacionadas con el catálogo. Revisa las características y elige según las necesidades de tu hogar.'
       },
       {
         title: 'Una experiencia en evolución',
-        body: 'Trabajamos para que la navegación, la información de producto y el seguimiento de pedidos sean claros y fáciles de usar. Cada mejora busca que encuentres lo que necesitas y entiendas cada paso del proceso.
+        body: 'Trabajamos para que la navegación, la información de producto y el seguimiento de pedidos sean claros y fáciles de usar. Cada mejora busca que encuentres lo que necesitas y entiendas cada paso del proceso.'
       }
     ]}
   />
