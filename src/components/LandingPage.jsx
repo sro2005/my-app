@@ -25,12 +25,25 @@ const LandingPage = () => (
           <span><strong aria-hidden="true">✓</strong> Pedidos de prueba, sin cobros reales</span>
         </div>
       </div>
-      <div className="evh-hero-art" aria-label="Ilustración de electrodomésticos para el hogar" role="img">
-        <div className="evh-orbit evh-orbit-one" />
-        <div className="evh-orbit evh-orbit-two" />
-        <div className="evh-appliance evh-fridge"><span>❄</span><i /></div>
-        <div className="evh-appliance evh-washer"><span>◉</span><i /></div>
-        <div className="evh-appliance evh-microwave"><span>▦</span><i /></div>
+      <div className="evh-hero-art evh-smart-home-illustration" aria-label="Ilustración de un hogar moderno con tecnología y electrodomésticos" role="img">
+        <div className="evh-room-window"><span className="evh-room-sun" /></div>
+        <div className="evh-room-shelf"><span aria-hidden="true">🌿</span><i /></div>
+        <div className="evh-room-wall-art" aria-hidden="true">⌂</div>
+        <div className="evh-room-floor" />
+        <div className="evh-room-rug" />
+        <div className="evh-room-sofa"><span /><i /></div>
+        <div className="evh-scene-appliance evh-scene-fridge"><span aria-hidden="true">❄</span><i /></div>
+        <div className="evh-scene-tv">
+          <div className="evh-tv-screen"><span aria-hidden="true">⌁</span></div>
+          <i className="evh-tv-stand" />
+        </div>
+        <div className="evh-scene-appliance evh-scene-washer">
+          <span className="evh-washer-controls" />
+          <i className="evh-washer-door" />
+        </div>
+        <div className="evh-scene-air-fryer"><span aria-hidden="true">≋</span><i /></div>
+        <div className="evh-smart-bubble evh-smart-bubble-one" aria-hidden="true">⌂</div>
+        <div className="evh-smart-bubble evh-smart-bubble-two" aria-hidden="true">✦</div>
         <div className="evh-art-label">Tecnología pensada para casa.</div>
       </div>
     </section>
