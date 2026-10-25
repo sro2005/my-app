@@ -38,6 +38,7 @@ const AdminInventory = () => {
     }
     setLoading(true);
     setError('');
+    setMessage('');
     try {
       const response = await axios.get(`${baseUrl()}/api/products`, config());
       if (!Array.isArray(response.data)) throw new Error('Catálogo inválido');
@@ -134,10 +135,11 @@ const AdminInventory = () => {
           </div>
         </div>
       )}
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert" className="evh-admin-inventory-error">{error}</p>}
+      {!loading && error && <button type="button" disabled={busy} onClick={refresh}>Reintentar carga de inventario</button>}
       {message && <p role="status">{message}</p>}
       {!loading && !error && products.length === 0 && <p>No hay productos registrados.</p>}
-      {!loading && <div className="evh-admin-inventory-list">
+      {!loading && products.length > 0 && <div className="evh-admin-inventory-list">
         {filtered.map(product => <article className="evh-admin-product" key={product._id}>
           <div>
             <span className="evh-admin-product-category">{product.category} {product.demo && '· DEMO'}</span>
