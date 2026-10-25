@@ -137,6 +137,15 @@ async function main() {
     const productCount = await page.locator('.evh-product-card').count();
     assert.ok(productCount >= 66, 'Expected at least 66 catalog cards, received ' + productCount + '.');
 
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    const catalogDesktopLayout = await readLayout(page);
+    assert.ok(catalogDesktopLayout.documentWidth <= 1441,
+      'Desktop catalog overflows horizontally: ' + JSON.stringify(catalogDesktopLayout));
+    assert.ok(catalogDesktopLayout.overflow.length === 0,
+      'Visible desktop catalog elements overflow: ' + JSON.stringify(catalogDesktopLayout.overflow));
+    await page.screenshot({ path: path.join(artifactsDir, 'catalog-desktop.png'), fullPage: true });
+
+    await page.setViewportSize({ width: 390, height: 844 });
     const catalogLayout = await readLayout(page);
     assert.equal(catalogLayout.viewportWidth, 390);
     assert.ok(catalogLayout.documentWidth <= 391,
@@ -185,13 +194,12 @@ async function main() {
     // These checks render pages only: they do not submit forms, create users/orders, or send payments.
     const resetTokenFixture = 'a'.repeat(64);
     const publicRoutes = [
-      { path: '/register', heading: 'Crea tu espacio', screenshot: 'register-mobile.png' },
+      { path: '/register', heading: 'Crea tu cuenta', screenshot: 'register-mobile.png' },
       { path: '/login', heading: 'Qué bueno verte de nuevo', screenshot: 'login-mobile.png' },
       { path: '/recover-password', heading: 'Volvamos a conectarte', screenshot: 'recover-password-mobile.png' },
       { path: '/reset-password/' + resetTokenFixture, heading: 'Crea una nueva contraseña', screenshot: 'reset-password-mobile.png' },
-      { path: '/pago-resultado?reference=EVH-TEST-BROWSER&status=APPROVED', heading: 'Resultado de la simulación de pago' },
       { path: '/catalogo', heading: 'Encuentra tu próximo favorito' },
-      { path: '/about', heading: 'Sobre ElectroVibeHome' },
+      { path: '/about', heading: 'Sobre Nosotros' },
       { path: '/privacy', heading: 'Política de Privacidad' },
       { path: '/terms', heading: 'Términos de Servicio' }
     ];
@@ -267,7 +275,7 @@ async function main() {
 
     // Check client-side form validation without creating accounts, requesting emails, or sending passwords.
     await page.goto(new URL('/register', baseUrl).toString(), { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.getByRole('heading', { name: /crea tu espacio/i }).waitFor({ timeout: 15000 });
+    await page.getByRole('heading', { name: /crea tu cuenta/i }).waitFor({ timeout: 15000 });
     const registrationName = page.locator('#register-first-name');
     assert.equal(await registrationName.evaluate(element => element.required), true,
       'Registration name should be required.');
@@ -304,6 +312,257 @@ async function main() {
     assert.deepEqual(mutationRequests, [],
       'Read-only browser acceptance must not send account, login, recovery, or reset POST requests: ' + mutationRequests.join('; '));
     console.log('Safe form validations passed: registration required fields, malformed login email, empty recovery email, and weak reset password; no mutating API requests were sent.');
+
+
+    // Visual and interactive checks for authenticated customer/admin modules.
+    // All API calls in this section are intercepted and answered with local fixtures.
+    // No account, product, order, password, or payment change is sent to a live backend.
+    let activeVisualRole = 'admin';
+    const mockApiCalls = [];
+    const mockApiWrites = [];
+    const fixtureProducts = [
+      { _id: 'product-coffee-001', name: 'Cafetera Boreal 12 tazas', category: 'Cafeteras', description: 'Cafetera programable con jarra de vidrio, filtro lavable y apagado automático.', price: 149900, quantity: 5, imageUrl: '', demo: false },
+      { _id: 'product-fridge-001', name: 'Refrigerador Nórdico 300 L', category: 'Refrigeración', description: 'Refrigerador de 300 litros con control de temperatura y bandejas ajustables.', price: 1299900, quantity: 7, imageUrl: '', demo: false },
+      { _id: 'product-vacuum-001', name: 'Aspiradora NovaClean 1800', category: 'Aspiradoras', description: 'Aspiradora doméstica con filtro lavable y accesorios para superficies múltiples.', price: 379900, quantity: 3, imageUrl: '', demo: false }
+    ];
+    const customerUser = {
+      _id: 'customer-browser-001', role: 'user', firstName: 'Marina', lastName: 'Rojas',
+      email: 'marina.browser@example.test', phone: '+57 300 555 0123',
+      identificationNumber: '1020304050', birthDate: '1994-05-12',
+      lastActivityDate: new Date().toISOString(), preferences: ['Cafeteras']
+    };
+    const inactiveCustomer = {
+      _id: 'customer-browser-002', role: 'user', firstName: 'Daniel', lastName: 'Pardo',
+      email: 'daniel.browser@example.test', phone: '+57 300 555 0199',
+      identificationNumber: '9080706050', birthDate: '1989-02-11',
+      lastActivityDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(),
+      preferences: [], orders: []
+    };
+    const fixtureOrder = {
+      _id: '507f1f77bcf86cd799439099', firstName: 'Marina', lastName: 'Rojas',
+      email: customerUser.email, address: 'Calle 10 # 20-30, Bogotá', phone: customerUser.phone,
+      paymentMethod: 'Wompi', paymentStatus: 'APPROVED', paymentConfirmed: true,
+      orderDate: new Date().toISOString(), deliveryDate: '2099-01-01T12:00:00.000Z',
+      totalAmount: 299800, status: 'Procesando', packed: false, delivered: false,
+      products: [{ productId: { _id: fixtureProducts[0]._id, name: fixtureProducts[0].name, category: fixtureProducts[0].category }, quantity: 2 }]
+    };
+    let fixtureOrders = [fixtureOrder];
+    let fixtureCustomers = [
+      { ...customerUser, orders: [fixtureOrder] },
+      inactiveCustomer
+    ];
+    const adminUser = {
+      _id: 'admin-browser-001', role: 'admin', firstName: 'Equipo',
+      lastName: 'Administración', email: 'admin.browser@example.test', preferences: []
+    };
+    const corsHeaders = {
+      'access-control-allow-origin': new URL(baseUrl).origin,
+      'access-control-allow-credentials': 'true',
+      'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'access-control-allow-headers': 'authorization, content-type'
+    };
+
+    await page.route('**/api/**', async route => {
+      const request = route.request();
+      const method = request.method();
+      const requestUrl = new URL(request.url());
+      const requestPath = requestUrl.pathname;
+      mockApiCalls.push(method + ' ' + requestPath);
+      if (method !== 'GET' && method !== 'OPTIONS') mockApiWrites.push(method + ' ' + requestPath);
+      if (method === 'OPTIONS') {
+        await route.fulfill({ status: 204, headers: corsHeaders, body: '' });
+        return;
+      }
+      const respond = (payload, status = 200) => route.fulfill({
+        status,
+        contentType: 'application/json',
+        headers: corsHeaders,
+        body: JSON.stringify(payload)
+      });
+      if (method === 'GET' && /\/api\/orders\/(?:all|my-orders)$/.test(requestPath)) {
+        return respond(fixtureOrders);
+      }
+      if (method === 'GET' && /\/api\/customers\/all$/.test(requestPath)) {
+        return respond(fixtureCustomers);
+      }
+      if (method === 'GET' && /\/api\/customers\/profile$/.test(requestPath)) {
+        return respond(customerUser);
+      }
+      if (method === 'GET' && /\/api\/products\/preferences$/.test(requestPath)) {
+        return respond(fixtureProducts.filter(product => customerUser.preferences.includes(product.category)));
+      }
+      if (method === 'GET' && /\/api\/products$/.test(requestPath)) {
+        return respond(fixtureProducts);
+      }
+      if (method === 'PUT' && /\/api\/orders\/[^/]+\/status$/.test(requestPath)) {
+        const fields = request.postDataJSON() || {};
+        const current = fixtureOrders.find(order => requestPath.includes(order._id)) || fixtureOrder;
+        const updated = {
+          ...current,
+          ...fields,
+          status: fields.delivered ? 'Entregado' : fields.packed ? 'Enviado' : current.status
+        };
+        fixtureOrders = fixtureOrders.map(order => order._id === updated._id ? updated : order);
+        return respond({ message: 'Estado del pedido actualizado.', order: updated });
+      }
+      if (method === 'PUT' && /\/api\/products\/[^/]+$/.test(requestPath)) {
+        const id = requestPath.split('/').pop();
+        const updated = { ...fixtureProducts.find(product => product._id === id), ...(request.postDataJSON() || {}) };
+        return respond({ message: 'Producto actualizado.', product: updated });
+      }
+      if (method === 'PUT' && /\/api\/customers\/[^/]+$/.test(requestPath)) {
+        return respond({ ...customerUser, ...(request.postDataJSON() || {}) });
+      }
+      return respond({ message: 'No fixture configured for ' + method + ' ' + requestPath }, 404);
+    });
+
+    const setVisualSession = async user => {
+      await page.evaluate(storedUser => {
+        localStorage.setItem('authToken', 'browser-visual-only-token');
+        localStorage.setItem('userData', JSON.stringify(storedUser));
+        localStorage.setItem('userId', String(storedUser._id));
+      }, user);
+    };
+    const assertNoOverflow = async label => {
+      const layout = await readLayout(page);
+      assert.ok(layout.documentWidth <= layout.viewportWidth + 1,
+        label + ' has horizontal document overflow: ' + JSON.stringify(layout));
+      assert.ok(layout.overflow.length === 0,
+        label + ' has visible elements overflowing the viewport: ' + JSON.stringify(layout.overflow));
+      return layout;
+    };
+    const captureAuthenticatedRoute = async (routePath, headingPattern, basename, waitForSelector) => {
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      const routeResponse = await page.goto(new URL(routePath, baseUrl).toString(), {
+        waitUntil: 'domcontentloaded',
+        timeout: 60000
+      });
+      assert.ok(routeResponse && routeResponse.ok(),
+        'Authenticated route returned a non-success status for ' + routePath);
+      await page.getByRole('heading', { name: headingPattern }).first().waitFor({ timeout: 20000 });
+      if (waitForSelector) await page.locator(waitForSelector).first().waitFor({ timeout: 20000 });
+      await page.waitForTimeout(100);
+      const desktopLayout = await assertNoOverflow(routePath + ' at desktop');
+      await page.screenshot({ path: path.join(artifactsDir, basename + '-desktop.png'), fullPage: true });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.waitForTimeout(100);
+      const mobileLayout = await assertNoOverflow(routePath + ' at mobile');
+      await page.screenshot({ path: path.join(artifactsDir, basename + '-mobile.png'), fullPage: true });
+      await page.setViewportSize({ width: 1440, height: 1000 });
+      console.log('Authenticated visual pass: ' + routePath + ' at desktop (' + desktopLayout.documentWidth + 'px document) and mobile (' + mobileLayout.documentWidth + 'px document).');
+    };
+
+    activeVisualRole = 'admin';
+    await setVisualSession(adminUser);
+    await captureAuthenticatedRoute('/home-page', /Tu tienda, bajo control/i, 'admin-dashboard', '.evh-admin-stat');
+    assert.equal(await page.locator('.evh-admin-session-role').innerText(), 'Administrador');
+    assert.equal(await page.locator('.evh-admin-session-copy strong').innerText(), adminUser.email);
+    await page.getByRole('button', { name: 'Actualizar resumen' }).click();
+    await page.locator('.evh-admin-stat').first().waitFor({ timeout: 15000 });
+    assert.ok(mockApiCalls.filter(call => /\/api\/orders\/all$/.test(call)).length >= 2,
+      'The admin dashboard reload button should refresh the operational summary.');
+
+    await captureAuthenticatedRoute('/admin-inventario', /Gestiona cada producto/i, 'admin-inventory', '.evh-admin-product');
+    await page.locator('#inventory-search').fill('Refrigerador');
+    assert.equal(await page.locator('.evh-admin-product').count(), 1, 'Inventory search should filter product cards.');
+    await page.locator('#inventory-search').fill('');
+    await page.getByRole('button', { name: 'Editar' }).first().click();
+    await page.getByLabel('Existencias', { exact: true }).fill('4');
+    await page.getByRole('button', { name: 'Guardar cambios' }).click();
+    await page.getByRole('status').filter({ hasText: /Producto actualizado|cambios ya están guardados/i }).waitFor({ timeout: 15000 });
+    assert.ok(mockApiWrites.some(call => /^PUT \/api\/products\//.test(call)),
+      'Editing inventory should issue only a mocked product update.');
+    await page.getByRole('button', { name: 'Eliminar' }).first().click();
+    await page.getByRole('alertdialog', { name: 'Confirmar eliminación' }).waitFor();
+    await page.getByRole('button', { name: 'Conservar producto' }).click();
+    assert.ok(!mockApiWrites.some(call => /^DELETE \/api\/products\//.test(call)),
+      'Cancelling product deletion must not issue a delete request.');
+
+    await captureAuthenticatedRoute('/producto-form', /Agregar un producto/i, 'admin-add-product');
+    await page.getByRole('button', { name: 'Agregar al inventario' }).click();
+    assert.equal(await page.locator('#product-name').evaluate(element => element.validity.valueMissing), true,
+      'Empty product form should be blocked by native browser validation.');
+    assert.ok(!mockApiWrites.some(call => /^POST \/api\/products\/agregar$/.test(call)),
+      'An empty product form must not call the create-product API.');
+
+    await captureAuthenticatedRoute('/listado-clientes', /Gestión de clientes/i, 'admin-customers', '.cliente-item');
+    await page.locator('input[aria-label*="Buscar clientes"]').fill('Marina');
+    assert.ok(await page.locator('.clientes-list .cliente-item').count() >= 1,
+      'Customer search should return matching records.');
+    await page.getByRole('button', { name: 'Limpiar filtros' }).click();
+    await page.getByRole('button', { name: 'Inactivos' }).click();
+    assert.equal(await page.locator('.clientes-list .cliente-item').count(), 1,
+      'The Inactivos filter should show only customers with old activity.');
+    assert.ok(await page.getByText('Daniel Pardo').count() >= 1,
+      'The inactive customer should be visible after filtering.');
+
+    await captureAuthenticatedRoute('/listado-pedidos', /Gestión de pedidos/i, 'admin-orders', '.pedido-item');
+    await page.getByRole('button', { name: /Marcar preparado y enviado/i }).click();
+    await page.getByRole('button', { name: /Marcar como entregado/i }).waitFor({ timeout: 15000 });
+    assert.ok(mockApiWrites.some(call => /^PUT \/api\/orders\/.+\/status$/.test(call)),
+      'Admin delivery workflow should use the mocked order-status route.');
+
+    await captureAuthenticatedRoute('/seguridad', /Cambia tu contraseña/i, 'admin-security');
+    await page.getByLabel('Contraseña actual').fill('CurrentPassword123!');
+    await page.getByLabel('Nueva contraseña').fill('NewSecurePass123!');
+    await page.getByLabel('Confirma la nueva contraseña').fill('OtherSecurePass123!');
+    await page.getByRole('button', { name: 'Actualizar contraseña' }).click();
+    await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
+    assert.ok(!mockApiWrites.some(call => /^PUT \/api\/auth\/change-password$/.test(call)),
+      'Mismatched password confirmation must not send a change-password request.');
+
+    activeVisualRole = 'user';
+    await setVisualSession(customerUser);
+    await captureAuthenticatedRoute('/home-page', /Hola, Marina/i, 'customer-home', '.evh-customer-hero');
+    await captureAuthenticatedRoute('/catalogo', /Encuentra tu próximo favorito/i, 'customer-catalog', '.evh-product-card');
+    assert.ok(await page.locator('.evh-product-order-link').count() >= 1,
+      'Authenticated customers should see links to add available products to an order.');
+
+    await captureAuthenticatedRoute('/pedido-form', /Realizar pedido/i, 'customer-order-form', '#checkout-product');
+    await page.locator('#checkout-product').click();
+    await page.getByRole('option', { name: /Cafetera Boreal 12 tazas/i }).click();
+    await page.getByRole('button', { name: 'Agregar al pedido' }).click();
+    await page.getByText('Cafetera Boreal 12 tazas').first().waitFor();
+    await page.locator('#checkout-payment').click();
+    await page.getByRole('option', { name: /Registrar pedido sin pago/i }).click();
+    await page.getByLabel('Dirección de entrega').fill('Calle 10 # 20-30, Bogotá');
+    await page.locator('#deliveryDate').fill('2099-01-01');
+    await page.getByRole('button', { name: 'Registrar pedido sin pago' }).click();
+    await page.getByRole('dialog', { name: /Confirma tu pedido/i }).waitFor({ timeout: 15000 });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await assertNoOverflow('Order confirmation dialog at mobile');
+    await page.screenshot({ path: path.join(artifactsDir, 'customer-order-confirmation-mobile.png'), fullPage: true });
+    await page.getByRole('button', { name: /Volver a editar/i }).click();
+    assert.ok(!mockApiWrites.some(call => /^POST \/api\/orders\/realizar$/.test(call)),
+      'Opening and cancelling order confirmation must not create an order.');
+
+    await captureAuthenticatedRoute('/listado-pedidos', /Mis pedidos/i, 'customer-orders', '.pedido-item');
+    assert.equal(await page.getByRole('button', { name: /Marcar preparado y enviado/i }).count(), 0,
+      'Customer views must not expose admin shipping actions.');
+    await captureAuthenticatedRoute('/perfil-cliente', /Mi perfil/i, 'customer-profile', '.evh-profile-card');
+    await page.getByRole('button', { name: 'Editar perfil' }).click();
+    await page.getByRole('heading', { name: 'Editar tus datos' }).waitFor();
+    await page.getByRole('button', { name: 'Cancelar' }).click();
+    await captureAuthenticatedRoute('/seguridad', /Cambia tu contraseña/i, 'customer-security');
+    await page.getByLabel('Contraseña actual').fill('CurrentPassword123!');
+    await page.getByLabel('Nueva contraseña').fill('NewSecurePass123!');
+    await page.getByLabel('Confirma la nueva contraseña').fill('OtherSecurePass123!');
+    await page.getByRole('button', { name: 'Actualizar contraseña' }).click();
+    await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
+
+    await captureAuthenticatedRoute('/pago-resultado?reference=EVH-TEST-BROWSER&status=APPROVED',
+      /Estamos revisando el resultado/i, 'customer-payment-result');
+
+    await page.goto(new URL('/admin-inventario', baseUrl).toString(), { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForFunction(() => window.location.pathname === '/home-page', null, { timeout: 15000 });
+    assert.match(page.url(), /\/home-page$/,
+      'A customer must be redirected away from the admin inventory route.');
+
+    assert.ok(mockApiCalls.some(call => /GET \/api\/customers\/all$/.test(call)),
+      'Browser role checks should exercise the customer-directory endpoint using intercepted fixtures.');
+    assert.ok(mockApiCalls.some(call => /GET \/api\/products$/.test(call)),
+      'Browser role checks should exercise the product endpoint using intercepted fixtures.');
+    console.log('Authenticated browser coverage passed. All role-route API calls were fulfilled by local Playwright fixtures; no live data was changed.');
 
     assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));
     assert.deepEqual(assistantChatRequests, [], 'Browser acceptance must not call the paid generative chat API: ' + assistantChatRequests.join('; '));
