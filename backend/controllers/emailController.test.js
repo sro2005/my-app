@@ -28,7 +28,50 @@ const createResponse = () => ({
 });
 
 
+const setRecoveryMailConfig = t => {
+  const previousAddress = process.env.NO_REPLY_EMAIL_ADDRESS;
+  const previousPassword = process.env.NO_REPLY_EMAIL_PASSWORD;
+  process.env.NO_REPLY_EMAIL_ADDRESS = 'no-reply@example.test';
+  process.env.NO_REPLY_EMAIL_PASSWORD = 'mock-only-smtp-password';
+  t.after(() => {
+    if (previousAddress === undefined) delete process.env.NO_REPLY_EMAIL_ADDRESS;
+    else process.env.NO_REPLY_EMAIL_ADDRESS = previousAddress;
+    if (previousPassword === undefined) delete process.env.NO_REPLY_EMAIL_PASSWORD;
+    else process.env.NO_REPLY_EMAIL_PASSWORD = previousPassword;
+  });
+};
+
+test('forgotPassword does not query customer records when SMTP configuration is missing', async t => {
+  const originalAddress = process.env.NO_REPLY_EMAIL_ADDRESS;
+  const originalPassword = process.env.NO_REPLY_EMAIL_PASSWORD;
+  delete process.env.NO_REPLY_EMAIL_ADDRESS;
+  delete process.env.NO_REPLY_EMAIL_PASSWORD;
+  const originalFindOne = Customer.findOne;
+  let lookups = 0;
+  Customer.findOne = async () => { lookups += 1; return null; };
+  capturedMail.length = 0;
+  mailFailure = null;
+  t.after(() => {
+    Customer.findOne = originalFindOne;
+    if (originalAddress === undefined) delete process.env.NO_REPLY_EMAIL_ADDRESS;
+    else process.env.NO_REPLY_EMAIL_ADDRESS = originalAddress;
+    if (originalPassword === undefined) delete process.env.NO_REPLY_EMAIL_PASSWORD;
+    else process.env.NO_REPLY_EMAIL_PASSWORD = originalPassword;
+    capturedMail.length = 0;
+    mailFailure = null;
+  });
+
+  const response = createResponse();
+  await forgotPassword({ body: { email: 'buyer@example.test' } }, response);
+
+  assert.equal(response.statusCode, 200);
+  assert.match(response.body.message, /Si el correo está registrado/i);
+  assert.equal(lookups, 0);
+  assert.equal(capturedMail.length, 0);
+});
+
 test('forgotPassword stores only a hash and emails a short-lived reset link through the mocked transport', async t => {
+  setRecoveryMailConfig(t);
   const originalFindOne = Customer.findOne;
   const originalFrontendUrl = process.env.FRONTEND_URL;
   capturedMail.length = 0;
@@ -76,6 +119,7 @@ test('forgotPassword stores only a hash and emails a short-lived reset link thro
 });
 
 test('forgotPassword responds generically for an unregistered email and sends no message', async t => {
+  setRecoveryMailConfig(t);
   const originalFindOne = Customer.findOne;
   capturedMail.length = 0;
   mailFailure = null;
@@ -98,6 +142,7 @@ test('forgotPassword responds generically for an unregistered email and sends no
 });
 
 test('forgotPassword removes the reset token if the mocked mail transport fails', async t => {
+  setRecoveryMailConfig(t);
   const originalFindOne = Customer.findOne;
   const originalFrontendUrl = process.env.FRONTEND_URL;
   capturedMail.length = 0;

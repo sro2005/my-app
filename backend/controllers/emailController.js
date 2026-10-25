@@ -45,6 +45,14 @@ exports.forgotPassword = async (req, res) => {
   if (!/^\S+@\S+\.\S+$/.test(email)) {
     return res.status(400).json({ message: 'Introduce un correo válido.' });
   }
+  const missingMailConfig = [];
+  if (!String(process.env.NO_REPLY_EMAIL_ADDRESS || '').trim()) missingMailConfig.push('NO_REPLY_EMAIL_ADDRESS');
+  if (!String(process.env.NO_REPLY_EMAIL_PASSWORD || '').trim()) missingMailConfig.push('NO_REPLY_EMAIL_PASSWORD');
+  if (missingMailConfig.length > 0) {
+    console.error('Configuración SMTP de recuperación incompleta. Variables faltantes:', missingMailConfig.join(', '));
+    return res.status(200).json({ message: recoveryMessage });
+  }
+
   try {
     const customer = await Customer.findOne({ email });
     if (customer) {
@@ -69,7 +77,12 @@ exports.forgotPassword = async (req, res) => {
         customer.resetPasswordToken = undefined;
         customer.resetPasswordExpires = undefined;
         await customer.save();
-        console.error('No fue posible enviar el correo de recuperación.');
+        const smtpDiagnostics = {
+          code: typeof mailError?.code === 'string' ? mailError.code.slice(0, 40) : 'UNKNOWN',
+          responseCode: Number.isInteger(mailError?.responseCode) ? mailError.responseCode : null,
+          command: typeof mailError?.command === 'string' ? mailError.command.slice(0, 32) : 'UNKNOWN'
+        };
+        console.error('No fue posible enviar el correo de recuperación. Diagnóstico SMTP sin credenciales:', JSON.stringify(smtpDiagnostics));
         return res.status(200).json({ message: recoveryMessage });
       }
     }
