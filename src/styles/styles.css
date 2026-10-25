@@ -4921,3 +4921,29 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   }
 }
 
+/* Confirmation facts: full-width email and even card spacing */
+.evh-confirmation-dialog .evh-confirmation-facts > .evh-confirmation-email {
+  grid-column: 1 / -1;
+}
+.evh-confirmation-dialog .evh-confirmation-email dd {
+  max-width: 100%;
+  font-size: .82rem;
+  font-variant-numeric: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.evh-confirmation-dialog .evh-confirmation-facts {
+  row-gap: .6rem;
+}
+.evh-confirmation-dialog .evh-confirmation-facts > div {
+  min-height: 0;
+}
+@media (max-width: 480px) {
+  .evh-confirmation-dialog .evh-confirmation-facts > .evh-confirmation-email {
+    grid-column: 1 / -1;
+  }
+  .evh-confirmation-dialog .evh-confirmation-email dd {
+    font-size: .8rem;
+  }
+}
+
