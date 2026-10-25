@@ -107,3 +107,28 @@
   .evh-admin-session { align-items: flex-start; }
   .evh-admin-session-role { display: none; }
 }
+
+/* Shared administration layout: consistent button placement and form hierarchy. */
+.evh-admin-hero { position: relative; }
+.evh-admin-hero button, .evh-admin-hero-link { width: fit-content; max-width: 100%; }
+.evh-admin-inventory-tools { padding: 1rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 14px; background: #fff; }
+.evh-admin-inventory-tools input { min-height: 44px; }
+.evh-admin-inventory-tools button, .evh-admin-product-actions button { min-height: 44px; font-weight: 750; }
+.evh-admin-product > div:first-child { flex: 1 1 240px; min-width: 0; }
+.evh-admin-product h2, .evh-admin-product p { overflow-wrap: anywhere; }
+.evh-admin-product-actions { align-items: center; justify-content: flex-end; }
+.evh-admin-editor form > label:has(textarea) { grid-column: 1 / -1; }
+.evh-admin-editor form > .evh-admin-product-actions { grid-column: 1 / -1; justify-content: flex-end; margin-top: .25rem; }
+.evh-admin-inventory-error { color: #9b2b28; font-weight: 650; }
+.evh-admin button:focus-visible, .evh-admin a:focus-visible, .evh-admin input:focus-visible, .evh-admin textarea:focus-visible {
+  outline: 3px solid var(--evh-accent, #f28c28);
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .evh-admin-inventory-tools { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .evh-admin-inventory-tools input, .evh-admin-inventory-tools button { width: 100%; min-width: 0; }
+  .evh-admin-product-actions { width: 100%; justify-content: stretch; }
+  .evh-admin-product-actions button { flex: 1 1 125px; }
+  .evh-admin-editor form { grid-template-columns: minmax(0, 1fr); }
+  .evh-admin-editor form > .evh-admin-product-actions { flex-direction: column; align-items: stretch; }
+}
