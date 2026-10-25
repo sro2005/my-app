@@ -4947,3 +4947,373 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   }
 }
 
+/* Checkout form final alignment pass: consistent fields, selects, and cart actions */
+.evh-checkout-form {
+  width: 100%;
+  min-width: 0;
+  gap: 1rem;
+}
+.evh-checkout-form .evh-checkout-section-heading {
+  width: 100%;
+  box-sizing: border-box;
+}
+.evh-checkout-form .evh-form-grid {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  column-gap: clamp(.85rem, 1.8vw, 1.1rem);
+  row-gap: 1rem;
+}
+.evh-checkout-form .evh-form-grid > .evh-form-field,
+.evh-checkout-form .evh-form-grid > .payment-method-container {
+  display: grid;
+  align-content: start;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  box-sizing: border-box;
+  gap: .45rem;
+}
+.evh-checkout-form .evh-form-grid > .evh-form-field > label,
+.evh-checkout-form .evh-form-grid > .payment-method-container > label,
+.evh-checkout-form .evh-cart-quantity-field > label {
+  min-height: 1.2rem;
+  margin: 0;
+  line-height: 1.4;
+}
+.evh-checkout-form .evh-form-field > input,
+.evh-checkout-form .evh-form-field > select {
+  display: block;
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 .85rem;
+  border-radius: 11px;
+  font: inherit;
+  font-size: .88rem;
+  line-height: normal;
+}
+.evh-checkout-form .evh-form-field > input[type="date"] {
+  min-width: 0;
+  padding-right: .55rem;
+  padding-left: .75rem;
+}
+.evh-checkout-form .evh-select__container {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.evh-checkout-form .evh-select__control {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 48px;
+  min-height: 48px !important;
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px solid #d4e0ee !important;
+  border-radius: 11px !important;
+  background: #fff;
+  box-shadow: none !important;
+}
+.evh-checkout-form .evh-select__control:hover {
+  border-color: #9fb5cf !important;
+}
+.evh-checkout-form .evh-select__control--is-focused {
+  border-color: #487fbd !important;
+  box-shadow: 0 0 0 3px rgba(72, 127, 189, .15) !important;
+}
+.evh-checkout-form .evh-select__value-container {
+  min-width: 0;
+  height: 46px;
+  padding: 0 .8rem;
+}
+.evh-checkout-form .evh-select__placeholder,
+.evh-checkout-form .evh-select__single-value {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.evh-checkout-form .evh-select__input-container {
+  margin: 0;
+  padding: 0;
+}
+.evh-checkout-form .evh-select__indicators {
+  height: 46px;
+}
+.evh-checkout-form .evh-select__indicator {
+  padding: 0 .45rem;
+}
+.evh-checkout-form .evh-form-field > input:focus,
+.evh-checkout-form .evh-form-field > select:focus {
+  outline: 0;
+}
+.evh-checkout-form .payment-method-container > p[role="note"] {
+  min-height: 0;
+  box-sizing: border-box;
+  margin: .25rem 0 0;
+  padding: .65rem .75rem;
+  border: 1px solid #d8e5f5;
+  border-radius: 10px;
+  background: #f3f7fd;
+  color: #526780;
+  font-size: .74rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.evh-checkout-form .evh-cart-add-controls {
+  display: grid;
+  grid-template-columns: minmax(108px, 132px) minmax(0, max-content);
+  align-items: end;
+  justify-content: start;
+  gap: .75rem;
+  margin-top: .8rem;
+}
+.evh-checkout-form .evh-cart-quantity-field {
+  display: grid;
+  align-content: start;
+  gap: .38rem;
+  min-width: 0;
+  width: 100%;
+}
+.evh-checkout-form .evh-cart-quantity-field > input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  min-height: 48px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 .75rem;
+  border: 1px solid #d4e0ee;
+  border-radius: 11px;
+  background: #fff;
+}
+.evh-checkout-form .evh-cart-add-controls > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+  min-height: 48px;
+  height: 48px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: .65rem 1rem;
+  border: 1px solid #294f7d;
+  border-radius: 11px;
+  font-size: .82rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+.evh-checkout-form .evh-cart-add-controls > button:focus-visible,
+.evh-checkout-form .evh-cart-quantity-field > input:focus-visible {
+  outline: 3px solid rgba(72, 127, 189, .35);
+  outline-offset: 2px;
+}
+.evh-checkout-form .evh-cart {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: clamp(.85rem, 2vw, 1.15rem);
+}
+.evh-checkout-form .evh-cart-heading {
+  min-width: 0;
+  align-items: center;
+  margin-bottom: .45rem;
+}
+.evh-checkout-form .evh-cart-heading h3 {
+  margin: 0;
+  line-height: 1.4;
+}
+.evh-checkout-form .evh-cart-heading > span {
+  font-size: .78rem;
+  text-align: right;
+}
+.evh-checkout-form .evh-cart-item {
+  grid-template-columns: minmax(0, 1fr) auto minmax(6.5rem, auto) auto;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+  padding: .9rem 0;
+}
+.evh-checkout-form .evh-cart-item-info {
+  min-width: 0;
+  gap: .28rem;
+}
+.evh-checkout-form .evh-cart-item-info > strong {
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.evh-checkout-form .evh-cart-item-info > span {
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.evh-checkout-form .evh-cart-quantity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4rem;
+  white-space: nowrap;
+}
+.evh-checkout-form .evh-cart-quantity button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 34px;
+  width: 34px;
+  min-width: 34px;
+  height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #cbd8e7;
+  border-radius: 9px;
+  background: #fff;
+  color: #244d80;
+  font-size: 1rem;
+  line-height: 1;
+}
+.evh-checkout-form .evh-cart-quantity > span {
+  min-width: 1.4rem;
+  color: #263e59;
+  font-size: .84rem;
+  font-weight: 750;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.evh-checkout-form .evh-cart-line-total {
+  min-width: 0;
+  color: #1d3e65;
+  font-size: .83rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-align: right;
+}
+.evh-checkout-form .evh-cart-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  min-width: 72px;
+  height: 36px;
+  min-height: 36px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: .35rem .55rem;
+  border: 1px solid #d4e0ed;
+  border-radius: 9px;
+  background: #fff;
+  color: #34536f;
+  font-size: .76rem;
+  font-weight: 750;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.evh-checkout-form .evh-cart-quantity button:hover:not(:disabled),
+.evh-checkout-form .evh-cart-remove:hover:not(:disabled) {
+  border-color: #a9c3e3;
+  background: #edf4ff;
+  color: #204f8a;
+  transform: none;
+}
+.evh-checkout-form .evh-order-summary {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: center;
+  gap: .35rem .8rem;
+  margin: 0;
+  padding: 1rem 1.1rem;
+  border-color: #dce5ef;
+  background: #f7f9fc;
+}
+.evh-checkout-form .evh-order-summary > strong {
+  color: #1d4f8b;
+  font-size: clamp(1.2rem, 2.7vw, 1.5rem);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.evh-checkout-form .evh-form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 50px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: .8rem 1rem;
+  border-radius: 12px;
+  line-height: 1.35;
+  text-align: center;
+}
+.evh-checkout-form .evh-form-feedback > .evh-form-submit {
+  margin-top: .65rem;
+}
+@media (max-width: 900px) {
+  .evh-checkout-form .evh-cart-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .7rem;
+  }
+  .evh-checkout-form .evh-cart-line-total {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: left;
+  }
+  .evh-checkout-form .evh-cart-remove {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+  .evh-checkout-form .evh-cart-quantity {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+@media (max-width: 760px) {
+  .evh-checkout-form .evh-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: .9rem;
+  }
+  .evh-checkout-form .evh-form-field-wide {
+    grid-column: auto;
+  }
+  .evh-checkout-form .evh-cart-add-controls {
+    grid-template-columns: minmax(100px, 132px) minmax(0, 1fr);
+  }
+  .evh-checkout-form .evh-cart-add-controls > button {
+    min-width: 0;
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  .evh-checkout-form .evh-cart-add-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .evh-checkout-form .evh-cart-add-controls > button {
+    width: 100%;
+  }
+  .evh-checkout-form .evh-cart-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .evh-checkout-form .evh-order-summary {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: .9rem;
+  }
+}
+
