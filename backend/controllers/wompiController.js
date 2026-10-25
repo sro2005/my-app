@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const { restoreInventory } = require('../utils/productUtils');
 const { secureEquals, calculateIntegritySignature, calculateEventChecksum, hasSandboxWompiCredentials } = require('../utils/wompiSecurity');
+const { expireAbandonedWompiOrders, PENDING_WOMPI_TTL_MS } = require('../utils/wompiPendingOrderCleanup');
 
 exports.createCheckout = async (req, res) => {
   try {
@@ -24,6 +25,39 @@ exports.createCheckout = async (req, res) => {
     if (order.paymentConfirmed || order.paymentStatus === 'APPROVED') {
       return res.status(409).json({ message: 'Este pedido ya tiene un pago aprobado.' });
     }
+    if (order.paymentStatus === 'EXPIRED') {
+      return res.status(409).json({
+        code: 'WOMPI_CHECKOUT_EXPIRED',
+        message: 'La sesión de pago de prueba venció. El pedido fue cancelado y su inventario quedó liberado. Confirma un nuevo pedido para continuar.'
+      });
+    }
+
+    // Expira también de forma inmediata una sesión vieja que el cliente intente reabrir,
+    // sin esperar al siguiente ciclo del proceso de limpieza.
+    const checkoutAgeAnchor = order.checkoutStartedAt || order.orderDate;
+    const checkoutAgeTime = checkoutAgeAnchor ? new Date(checkoutAgeAnchor).getTime() : Number.NaN;
+    if (
+      order.paymentStatus === 'PENDING' &&
+      !order.paymentConfirmed &&
+      Number.isFinite(checkoutAgeTime) &&
+      Date.now() - checkoutAgeTime >= PENDING_WOMPI_TTL_MS
+    ) {
+      await expireAbandonedWompiOrders({ now: new Date() });
+      const refreshedOrder = await Order.findById(id);
+      if (refreshedOrder?.paymentStatus === 'EXPIRED') {
+        return res.status(409).json({
+          code: 'WOMPI_CHECKOUT_EXPIRED',
+          message: 'La sesión de pago de prueba venció. El pedido fue cancelado y su inventario quedó liberado. Confirma un nuevo pedido para continuar.'
+        });
+      }
+      if (!refreshedOrder || refreshedOrder.status === 'Cancelado' || refreshedOrder.paymentStatus !== 'PENDING') {
+        return res.status(409).json({ message: 'Este pedido ya no admite pagos. Crea un nuevo pedido.' });
+      }
+      return res.status(503).json({
+        message: 'No fue posible liberar con seguridad el inventario de la sesión vencida. No se ha abierto otro checkout; vuelve a intentarlo más tarde.'
+      });
+    }
+
     // Los pedidos cancelados o con un pago rechazado no se pueden reutilizar.
     if (order.status === 'Cancelado' || order.paymentStatus !== 'PENDING') {
       return res.status(409).json({ message: 'Este pedido ya no admite pagos. Crea un nuevo pedido.' });
@@ -70,14 +104,25 @@ exports.createCheckout = async (req, res) => {
       }
     }
 
-    // Revalidar el estado antes de emitir el enlace por si un webhook lo cambió.
-    const latestOrder = await Order.findById(id);
-    if (!latestOrder || latestOrder.status === 'Cancelado' || latestOrder.paymentStatus !== 'PENDING' || latestOrder.paymentConfirmed) {
-      return res.status(409).json({ message: 'El pedido ya no admite un nuevo intento de pago.' });
+    // Marcar atómicamente cuándo se abre el checkout. La limpieza solo puede expirar
+    // pedidos cuya última sesión de pago ya superó el tiempo de espera.
+    const checkoutOrder = await Order.findOneAndUpdate(
+      {
+        _id: id,
+        paymentMethod: 'Wompi',
+        paymentStatus: 'PENDING',
+        paymentConfirmed: false,
+        status: { $ne: 'Cancelado' },
+        paymentReference: reference
+      },
+      { $set: { checkoutStartedAt: new Date() } },
+      { new: true, runValidators: true }
+    );
+    if (!checkoutOrder) {
+      return res.status(409).json({ message: 'El pedido ya no admite un nuevo intento de pago. Revisa el estado antes de crear otro.' });
     }
-    // Si una operación concurrente ya asignó otra referencia, usar siempre la persistida.
-    reference = latestOrder.paymentReference || reference;
-    const amountInCents = Math.round(latestOrder.totalAmount * 100);
+    reference = checkoutOrder.paymentReference || reference;
+    const amountInCents = Math.round(checkoutOrder.totalAmount * 100);
     if (!Number.isSafeInteger(amountInCents) || amountInCents < 1) {
       return res.status(400).json({ message: 'El importe del pedido no es válido.' });
     }
