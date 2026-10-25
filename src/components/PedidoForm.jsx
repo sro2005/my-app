@@ -482,7 +482,7 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{paymentMethod?.value === 'Demostración' ? 'Registrar pedido' : 'Continuar a Wompi'}</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentMethod ? 'Selecciona cómo continuar' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : paymentMethod.value === 'Demostración' ? 'Registrar pedido sin pago' : 'Continuar a Wompi Sandbox'}</button>
         {completedDemoOrderId && (
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
