@@ -41,7 +41,7 @@ describe('ShoppingAssistant', () => {
 
     render(<ShoppingAssistant products={products} />);
 
-    expect(await screen.findByText(/modo de demostración local/i)).toBeTruthy();
+    expect(await screen.findByText(/orientación local de catálogo/i)).toBeTruthy();
     expect(screen.getByRole('button', { name: /cocina pequeña/i }).disabled).toBe(false);
     const input = await screen.findByRole('textbox', { name: /escribe qué necesitas/i });
     fireEvent.change(input, { target: { value: 'cafetera para preparar café' } });
