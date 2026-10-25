@@ -51,7 +51,7 @@ describe('ListadoProductos', () => {
 
     renderCatalog();
 
-    expect(await screen.findByText('Catálogo temporalmente sin conexión')).toBeTruthy();
+    expect(await screen.findByText('Disponibilidad pendiente de verificación')).toBeTruthy();
     expect(screen.getByRole('heading', { name: demoProducts[0].name })).toBeTruthy();
     expect(screen.getByRole('heading', { name: demoProducts[1].name })).toBeTruthy();
     expect(axios.get).not.toHaveBeenCalled();
@@ -63,7 +63,7 @@ describe('ListadoProductos', () => {
 
     renderCatalog();
 
-    expect(await screen.findByText('Catálogo temporalmente sin conexión')).toBeTruthy();
+    expect(await screen.findByText('Disponibilidad pendiente de verificación')).toBeTruthy();
     expect(screen.getByRole('button', { name: /actualizar/i })).toBeTruthy();
     expect(screen.getByRole('heading', { name: demoProducts[0].name })).toBeTruthy();
   });
@@ -165,7 +165,7 @@ describe('ListadoProductos', () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', '');
     renderCatalog({ _id: 'customer-1', role: 'user', preferences: [] });
 
-    expect(await screen.findByText('Catálogo temporalmente sin conexión')).toBeTruthy();
+    expect(await screen.findByText('Disponibilidad pendiente de verificación')).toBeTruthy();
     expect(screen.queryByRole('link', { name: /agregar a pedido/i })).toBeNull();
   });
 });
