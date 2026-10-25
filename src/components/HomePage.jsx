@@ -18,7 +18,7 @@ const HomePage = () => {
             <Link className="evh-button evh-button-primary" to="/catalogo">Descubrir productos <span aria-hidden="true">→</span></Link>
             <Link className="evh-button evh-button-secondary" to="/listado-pedidos">Ver mis pedidos</Link>
           </div>
-          <p className="evh-demo-notice"><strong>Modo de demostración:</strong> los precios y existencias son ilustrativos. Las compras no generan cobros ni transferencias reales.</p>
+
         </div>
         <div className="evh-customer-hero-mark" aria-hidden="true">
           <span className="evh-customer-bolt">⚡</span>
@@ -33,7 +33,7 @@ const HomePage = () => {
         <div className="evh-customer-section-heading">
           <span className="evh-eyebrow">MÁS QUE UN CATÁLOGO</span>
           <h2 id="evh-customer-guidance-title">Empieza por lo que necesitas resolver.</h2>
-          <p>Encuentra la ruta adecuada para ti: inspiración, recomendaciones o una compra ficticia de principio a fin.</p>
+          <p>Encuentra la ruta adecuada para ti: inspiración, recomendaciones o ayuda para organizar tu pedido.</p>
         </div>
         <div className="evh-customer-journey-grid">
           <article className="evh-customer-journey-card">
@@ -52,10 +52,10 @@ const HomePage = () => {
           </article>
           <article className="evh-customer-journey-card">
             <span className="evh-customer-journey-icon" aria-hidden="true">▤</span>
-            <span className="evh-customer-step">03 · PROBAR</span>
-            <h3>Completa un pedido ficticio</h3>
-            <p>Agrega varios productos, revisa cantidades y prueba el flujo sin usar dinero real.</p>
-            <Link to="/pedido-form">Preparar pedido de prueba <span aria-hidden="true">→</span></Link>
+            <span className="evh-customer-step">03 · TU PEDIDO</span>
+            <h3>Revisa antes de confirmar</h3>
+            <p>Agrega productos, ajusta las cantidades y revisa los datos de entrega y el total.</p>
+            <Link to="/pedido-form">Preparar mi pedido <span aria-hidden="true">→</span></Link>
           </article>
         </div>
       </section>
