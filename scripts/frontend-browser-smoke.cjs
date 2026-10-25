@@ -504,7 +504,7 @@ async function main() {
 
     await captureAuthenticatedRoute('/seguridad', /Cambia tu contraseña/i, 'admin-security');
     await page.getByLabel('Contraseña actual').fill('CurrentPassword123!');
-    await page.getByLabel('Nueva contraseña').fill('NewSecurePass123!');
+    await page.getByLabel('Nueva contraseña', { exact: true }).fill('NewSecurePass123!');
     await page.getByLabel('Confirma la nueva contraseña').fill('OtherSecurePass123!');
     await page.getByRole('button', { name: 'Actualizar contraseña' }).click();
     await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
@@ -545,7 +545,7 @@ async function main() {
     await page.getByRole('button', { name: 'Cancelar' }).click();
     await captureAuthenticatedRoute('/seguridad', /Cambia tu contraseña/i, 'customer-security');
     await page.getByLabel('Contraseña actual').fill('CurrentPassword123!');
-    await page.getByLabel('Nueva contraseña').fill('NewSecurePass123!');
+    await page.getByLabel('Nueva contraseña', { exact: true }).fill('NewSecurePass123!');
     await page.getByLabel('Confirma la nueva contraseña').fill('OtherSecurePass123!');
     await page.getByRole('button', { name: 'Actualizar contraseña' }).click();
     await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
