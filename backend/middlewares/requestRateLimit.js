@@ -54,6 +54,11 @@ const createRequestRateLimiter = ({
   };
 };
 
+const limitRegistrationByIp = createRequestRateLimiter({
+  maxRequests: 10,
+  message: 'Demasiados intentos de registro desde esta conexión. Intenta más tarde.'
+});
+
 const limitLoginByIp = createRequestRateLimiter({
   maxRequests: 30,
   message: 'Demasiados intentos de inicio de sesión desde esta conexión. Intenta más tarde.'
@@ -86,6 +91,7 @@ const limitPasswordChange = createRequestRateLimiter({
 module.exports = {
   getClientAddress,
   createRequestRateLimiter,
+  limitRegistrationByIp,
   limitLoginByIp,
   limitLoginByAccount,
   limitPasswordRecovery,

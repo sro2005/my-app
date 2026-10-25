@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { limitLoginByIp, limitLoginByAccount, limitPasswordChange } = require('../middlewares/requestRateLimit');
+const { limitRegistrationByIp, limitLoginByIp, limitLoginByAccount, limitPasswordChange } = require('../middlewares/requestRateLimit');
 const { authenticateToken } = require('../middlewares/authMiddleware');
 
 // Ruta para registrar un nuevo cliente
-router.post('/register', authController.registerCustomer);
+router.post('/register', limitRegistrationByIp, authController.registerCustomer);
 
 // El alta de administradores no está expuesta públicamente.
 // Aprovisionar administradores mediante un proceso interno autorizado.

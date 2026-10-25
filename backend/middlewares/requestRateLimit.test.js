@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createRequestRateLimiter, getClientAddress } = require('./requestRateLimit');
+const { createRequestRateLimiter, getClientAddress, limitRegistrationByIp } = require('./requestRateLimit');
 
 const createResponse = () => ({
   headers: {},
@@ -66,4 +66,22 @@ test('supports a separate account-aware key without exposing the email in respon
   assert.equal(calls, 1);
   assert.equal(blocked.statusCode, 429);
   assert.equal(JSON.stringify(blocked.body).includes('demo@example.com'), false);
+});
+
+
+test('throttles public registration attempts by client IP', () => {
+  let nextCalls = 0;
+  const req = request('192.0.2.150');
+
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    limitRegistrationByIp(req, createResponse(), () => { nextCalls += 1; });
+  }
+
+  const blocked = createResponse();
+  limitRegistrationByIp(req, blocked, () => { nextCalls += 1; });
+
+  assert.equal(nextCalls, 10);
+  assert.equal(blocked.statusCode, 429);
+  assert.match(blocked.body.message, /registro/i);
+  assert.match(blocked.headers['Retry-After'], /^\d+$/);
 });

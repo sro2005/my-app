@@ -73,8 +73,10 @@ El checkout se integra con Wompi. Para pruebas utiliza únicamente credenciales 
 
 Los flujos de devolución de inventario usan transacciones MongoDB. El entorno de base de datos debe admitir transacciones, como MongoDB Atlas configurado como replica set.
 
-## CI y cambios de seguridad
+## CI y validación
 
-La rama `security/electrovibehome-hardening` ejecuta las pruebas del frontend, compilación, auditoría de dependencias y pruebas del backend. Los cambios de esta rama no se consideran desplegados en producción hasta que sean revisados, probados y aprobados explícitamente.
+El workflow [ElectroVibeHome CI](.github/workflows/ci.yml) valida los cambios de `preview/electrovibehome-v2`. Incluye pruebas unitarias del frontend y backend, compilación del frontend, comprobación de sintaxis, prueba HTTP integral con una instancia desechable de MongoDB, revisión de salud/CORS/catálogo en la vista previa y comprobación visual en varios tamaños de pantalla. Los informes de `npm audit` se adjuntan a cada ejecución para revisar las vulnerabilidades conocidas de las dependencias.
+
+La vista previa de Render se despliega desde `preview/electrovibehome-v2`. Estos cambios permanecen separados de `main` y no se integran en la versión original automáticamente.
 
 Repositorio: https://github.com/sro2005/my-app
