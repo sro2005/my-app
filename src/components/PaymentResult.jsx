@@ -15,7 +15,7 @@ const PaymentResult = () => {
         <p>La respuesta del proveedor puede tardar unos instantes. La redirección, por sí sola, no confirma el estado de una transacción.</p>
         <aside className="evh-payment-result-notice" role="note">
           <strong>Información importante</strong>
-          <p>El checkout de Wompi está en entorno de pruebas. No se procesan cobros ni transferencias reales; no ingreses datos de una tarjeta real.</p>
+          <p>Esta versión no procesa pagos reales. Si continuaste a Wompi, la etapa de pago es simulada; no ingreses datos de una tarjeta real.</p>
         </aside>
         {reference && <p className="evh-payment-result-detail"><strong>Referencia:</strong> {reference}</p>}
         {status && <p className="evh-payment-result-detail"><strong>Estado recibido:</strong> {status}</p>}
