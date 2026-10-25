@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import FormPage from './FormPage';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 const ChangePassword = () => {
+  const { user } = useContext(AuthContext);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -104,7 +106,7 @@ const ChangePassword = () => {
           </p>
         )}
       </form>
-      <p className="evh-form-alternate"><Link to="/home-page">Volver al panel principal</Link></p>
+      <p className="evh-form-alternate"><Link to="/home-page">{user?.role === 'admin' ? 'Volver al Panel de Administración' : 'Volver a Inicio'}</Link></p>
     </FormPage>
   );
 };
