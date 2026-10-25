@@ -244,11 +244,11 @@ async function main() {
         }, null, { timeout: 15000 });
         const assistantState = await page.locator('.evh-assistant-status').getAttribute('aria-label');
         assert.ok(
-          ['Asistente disponible', 'Guía en modo local', 'Asistente sin configurar'].includes(assistantState),
+          ['Asistente disponible', 'Guía disponible', 'Guía no disponible'].includes(assistantState),
           'Unexpected ElectroVibe Guide state: ' + assistantState
         );
         console.log('ElectroVibe Guide live status: ' + assistantState + '. No prompt was sent.');
-        if (assistantState === 'Guía en modo local') {
+        if (assistantState === 'Guía disponible') {
           await page.getByRole('button', { name: /cocina pequeña/i }).click();
           const assistantInput = page.locator('#evh-assistant-input');
           assert.equal(
