@@ -141,9 +141,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         value: product._id,
         label: (
           <span>
-            {product.demo === true && <strong>[DEMO] </strong>}
-            <strong>Producto:</strong> {product.name} | <strong>Categoría:</strong> {product.category} | <strong>Stock:</strong> {product.quantity} unidades
-            {product.demo === true && ' (precio y stock de muestra)'}
+            <strong>Producto:</strong> {product.name} | <strong>Categoría:</strong> {product.category} | <strong>Disponibles:</strong> {product.quantity} unidades
           </span>
         ),
         price: Number(product.price),
