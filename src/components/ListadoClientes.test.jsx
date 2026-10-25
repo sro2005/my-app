@@ -48,12 +48,12 @@ describe('Admin customer history', () => {
     expect(screen.queryByText('Cargando')).toBeNull();
   });
 
-  test('shows an expandable order history with fictional payment and product details', async () => {
+  test('shows an expandable order history with payment status and product details', async () => {
     renderClients();
-    const summary = await screen.findByText('Ver historial de compras (1)');
+    const summary = await screen.findByText('Ver historial de pedidos (1)');
     fireEvent.click(summary);
-    expect(await screen.findByText(/Simulado · sin cobro/)).toBeTruthy();
-    expect(screen.getByText(/Importe ficticio:/)).toBeTruthy();
+    expect(await screen.findByText(/Sin pago/)).toBeTruthy();
+    expect(screen.getByText(/Valor del pedido:/)).toBeTruthy();
     expect(screen.getByText(/45.000/)).toBeTruthy();
     expect(screen.getByText(/Cafetera de muestra/)).toBeTruthy();
     expect(screen.getByText(/Estado: Procesando/)).toBeTruthy();

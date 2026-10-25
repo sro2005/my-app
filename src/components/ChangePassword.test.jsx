@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { MemoryRouter } from 'react-router-dom';
 import axios from 'axios';
 import ChangePassword from './ChangePassword';
+import { AuthContext } from '../contexts/AuthContext';
 
 vi.mock('axios', () => ({ default: { put: vi.fn() } }));
 
@@ -19,7 +20,9 @@ const renderChangePassword = () => {
   vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
   return render(
     <MemoryRouter initialEntries={['/seguridad']}>
-      <ChangePassword />
+      <AuthContext.Provider value={{ user: { role: 'user' } }}>
+        <ChangePassword />
+      </AuthContext.Provider>
     </MemoryRouter>
   );
 };

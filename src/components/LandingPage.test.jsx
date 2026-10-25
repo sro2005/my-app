@@ -19,7 +19,7 @@ describe('LandingPage', () => {
     expect(
       screen.getByRole('heading', { name: /encuentra tecnología que haga más fácil tu día a día/i })
     ).toBeTruthy();
-    expect(screen.getByText(/transforma tu hogar con la energía del futuro/i)).toBeTruthy();
+    expect(screen.getByText(/ELECTRODOMÉSTICOS Y TECNOLOGÍA PARA TU HOGAR/i)).toBeTruthy();
 
     expect(screen.getByRole('link', { name: /explorar productos/i }).getAttribute('href')).toBe('/catalogo');
     expect(screen.getByRole('link', { name: /crear mi cuenta/i }).getAttribute('href')).toBe('/register');
