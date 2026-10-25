@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { BrowserRouter, HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import Loading from './components/Loading';
 import LandingPage from './components/LandingPage';
@@ -25,6 +25,20 @@ import PrivacyPage from './components/PrivacyPage';
 import TermsPage from './components/TermsPage';
 import RoleGuard from './components/RoleGuard';
 import AuthProvider from './contexts/AuthContext';
+
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    root.style.scrollBehavior = previousBehavior;
+  }, [pathname]);
+
+  return null;
+};
 
 const AppContent = () => {
   const { user, loading } = useContext(AuthContext);
@@ -96,6 +110,7 @@ const Router = process.env.REACT_APP_ROUTER_MODE === 'hash' ? HashRouter : Brows
 
 const App = () => (
   <Router>
+    <ScrollToTop />
     <AuthProvider>
       <AppContent />
     </AuthProvider>
