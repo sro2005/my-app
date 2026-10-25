@@ -4250,3 +4250,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-checkout-form .evh-cart-quantity-field > input { width: 100%; }
   .evh-checkout-form .evh-cart-add-controls > button { width: 100%; }
 }
+
+.evh-stock-pill.is-pending {
+  background: #edf4ff;
+  color: #294f7d;
+  border: 1px solid #d5e4f8;
+}
