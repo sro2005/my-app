@@ -13,10 +13,10 @@ const scrollToTopImmediately = () => {
 const Footer = () => {
   const { user } = useContext(AuthContext);
   const exploreLinks = !user
-    ? [['/', 'Inicio'], ['/catalogo', 'Catálogo'], ['/register', 'Crear cuenta'], ['/login', 'Iniciar sesión']]
+    ? [['/', 'Inicio'], ['/catalogo', 'Catálogo'], ['/register', 'Crear Cuenta'], ['/login', 'Iniciar Sesión']]
     : user.role === 'admin'
       ? [['/home-page', 'Panel'], ['/admin-inventario', 'Inventario'], ['/listado-clientes', 'Clientes'], ['/listado-pedidos', 'Pedidos'], ['/seguridad', 'Seguridad']]
-      : [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-pedidos', 'Mis pedidos'], ['/perfil-cliente', 'Mi perfil'], ['/seguridad', 'Seguridad']];
+      : [['/home-page', 'Inicio'], ['/catalogo', 'Catálogo'], ['/listado-pedidos', 'Mis Pedidos'], ['/perfil-cliente', 'Mi Perfil'], ['/seguridad', 'Seguridad']];
 
   return (
   <footer className="footer evh-site-footer">
