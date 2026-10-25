@@ -114,9 +114,9 @@ const AdminInventory = () => {
   return (
     <main className="evh-admin">
       <header className="evh-admin-hero">
-        <span className="evh-admin-eyebrow">OPERACIONES · INVENTARIO FICTICIO</span>
+        <span className="evh-admin-eyebrow">ADMINISTRACIÓN · INVENTARIO</span>
         <h1>Gestiona cada producto.</h1>
-        <p>Actualiza precios ilustrativos y existencias de prueba. Los productos asociados a pedidos conservan su historial.</p>
+        <p>Consulta existencias, actualiza precios y administra las fichas de producto. El historial de pedidos se conserva.</p>
         <Link className="evh-admin-hero-link" to="/producto-form">Agregar producto</Link>
       </header>
       <div className="evh-admin-inventory-tools">
@@ -144,7 +144,7 @@ const AdminInventory = () => {
           <div>
             <span className="evh-admin-product-category">{product.category} {product.demo && '· DEMO'}</span>
             <h2>{product.name}</h2>
-            <p>{money(product.price)} · {product.quantity} unidades de prueba</p>
+            <p>{money(product.price)} · {product.quantity} unidades disponibles</p>
           </div>
           <div className="evh-admin-product-actions">
             <button type="button" disabled={busy} onClick={() => beginEdit(product)}>Editar</button>
@@ -158,7 +158,7 @@ const AdminInventory = () => {
         <form onSubmit={save}>
           {[
             ['name', 'Nombre', 'text'], ['category', 'Categoría', 'text'],
-            ['price', 'Precio ficticio en COP', 'number'], ['quantity', 'Existencias de prueba', 'number'],
+            ['price', 'Precio (COP)', 'number'], ['quantity', 'Existencias', 'number'],
             ['imageUrl', 'URL de imagen (opcional)', 'text']
           ].map(([field, label, type]) => <label key={field}>{label}
             <input value={draft[field]} type={type} required={field !== 'imageUrl'} min={type === 'number' ? (field === 'price' ? '0.01' : '0') : undefined} step={type === 'number' ? (field === 'price' ? '0.01' : '1') : undefined}
@@ -173,7 +173,7 @@ const AdminInventory = () => {
       </section>}
       {pendingDelete && <section className="evh-admin-editor" role="alertdialog" aria-modal="true" aria-label="Confirmar eliminación" aria-describedby="inventory-delete-description">
         <h2>Confirmar eliminación</h2>
-        <p id="inventory-delete-description">¿Eliminar «{pendingDelete.name}»? No se eliminarán productos que ya estén asociados a pedidos. Esta acción cambia el inventario de demostración.</p>
+        <p id="inventory-delete-description">¿Eliminar «{pendingDelete.name}»? No se eliminarán productos que ya estén asociados a pedidos. Esta acción actualiza el inventario.</p>
         <div className="evh-admin-product-actions">
           <button type="button" disabled={busy} onClick={remove}>Confirmar eliminación</button>
           <button type="button" disabled={busy} onClick={() => setPendingDelete(null)}>Conservar producto</button>

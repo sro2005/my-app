@@ -83,8 +83,8 @@ const ClienteItem = ({ cliente }) => {
                     <strong>Pedido #{String(pedido._id).slice(-8)}</strong>
                     <span>Fecha: {formatOrderDate(pedido.orderDate)}</span>
                     <span>Estado: {pedido.status || 'Sin estado'}</span>
-                    <span>Pago: {pedido.paymentStatus === 'SIMULATED' ? 'Simulado · sin cobro' : (pedido.paymentStatus || 'No disponible')}</span>
-                    <span>Importe ficticio: {formatMoney(pedido.totalAmount)}</span>
+                    <span>Pago: {pedido.paymentStatus === 'SIMULATED' ? 'Sin pago' : (pedido.paymentStatus || 'No disponible')}</span>
+                    <span>Valor del pedido: {formatMoney(pedido.totalAmount)}</span>
                     {Array.isArray(pedido.products) && pedido.products.length > 0 && (
                       <ul>
                         {pedido.products.map((item, index) => (
@@ -203,9 +203,9 @@ const ListadoClientes = () => {
   return (
     <main className="container evh-admin-customers" aria-busy={loading}>
       <header className="evh-admin-customers-heading">
-        <span className="evh-eyebrow">CENTRO DE CONTROL · DEMOSTRACIÓN</span>
+        <span className="evh-eyebrow">ADMINISTRACIÓN · CLIENTES</span>
         <h1>Gestión de clientes</h1>
-        <p>Consulta los perfiles de prueba, la actividad y el historial de pedidos ilustrativos. Toda la información pertenece a este entorno de demostración.</p>
+        <p>Consulta clientes registrados, su actividad reciente y el historial de pedidos asociados.</p>
       </header>
 
       {loading ? (
@@ -242,30 +242,30 @@ const ListadoClientes = () => {
 
       <div className="dashboard-container">
         <div className="dashboard-card">
-          <h2>📊 Resumen de Clientes</h2>
+          <h2>📊 Resumen de clientes</h2>
           <div className="client-stats">
             <div className="stat-item">
-              <h3>👥 TOTAL DE CLIENTES:</h3>
+              <h3>👥 Total de clientes</h3>
               <p>{clientesFiltrados.length}</p>
             </div>
             <div className="stat-item active">
-              <h3>🟢 CLIENTES ACTIVOS:</h3>
+              <h3>🟢 Clientes activos</h3>
               <p>{activos}</p>
             </div>
             <div className="stat-item inactive">
-              <h3>🔴 CLIENTES INACTIVOS:</h3>
+              <h3>🔴 Clientes inactivos</h3>
               <p>{inactivos}</p>
             </div>
             <div className="stat-item">
-              <h3>📦 PEDIDOS TOTALES:</h3>
+              <h3>📦 Pedidos registrados</h3>
               <p>{pedidosTotales}</p>
             </div>
             <div className="stat-item">
-              <h3>🕒 ÚLTIMO PEDIDO:</h3>
+              <h3>🕒 Último pedido</h3>
               <p>{ultimoPedido}</p>
             </div>
             <div className="stat-item top-client">
-              <h3>🏆 CLIENTE CON MÁS PEDIDOS:</h3>
+              <h3>🏆 Cliente con más pedidos</h3>
               {clienteMasPedidos ? (
                 <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({clienteMasPedidos.orders?.length || 0} Pedidos)</p>
               ) : (

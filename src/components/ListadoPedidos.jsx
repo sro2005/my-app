@@ -23,19 +23,19 @@ const formatDeliveryDate = (deliveryDate) => {
 
 const formatPaymentMethod = (pedido, isAdmin) => {
   if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Simulación interna · sin cobro' : 'Pedido sin cobro';
-  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi Sandbox · entorno de prueba' : 'Wompi';
+  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi Sandbox' : 'Wompi';
   return pedido.paymentMethod || 'No especificado';
 };
 
 const formatPaymentStatus = (status, isAdmin) => {
   const adminLabels = {
-    SIMULATED: 'Simulado · sin cobro real',
-    APPROVED: 'Aprobado en entorno de prueba',
-    PENDING: 'Pendiente en entorno de prueba',
-    DECLINED: 'Rechazado en entorno de prueba',
-    ERROR: 'Error en entorno de prueba',
+    SIMULATED: 'Sin pago',
+    APPROVED: 'Aprobado (Sandbox)',
+    PENDING: 'Pendiente (Sandbox)',
+    DECLINED: 'Rechazado (Sandbox)',
+    ERROR: 'Error de pago (Sandbox)',
     EXPIRED: 'Checkout vencido · pedido cancelado y stock liberado',
-    VOIDED: 'Pago anulado en entorno de prueba'
+    VOIDED: 'Anulado (Sandbox)'
   };
   const customerLabels = {
     SIMULATED: 'Sin cobro',
@@ -58,21 +58,21 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
       <div className="pedido-details">
         <div className="evh-order-card-heading">
           <div className="evh-order-card-title">
-            <span>{isAdmin ? 'PEDIDO DE PRUEBA' : 'PEDIDO'}</span>
+            <span>{isAdmin ? 'PEDIDO' : 'PEDIDO'}</span>
             <h2>#{String(pedido._id || '').slice(-8).toUpperCase()}</h2>
           </div>
           <div className="evh-order-card-state">
             <span className={`evh-order-status ${pedido.delivered || pedido.status === 'Entregado' ? 'is-delivered' : pedido.status === 'Enviado' ? 'is-shipped' : pedido.status === 'Procesando' ? 'is-processing' : 'is-neutral'}`}>{pedido.status || 'Sin estado'}</span>
             <strong>{formatPrice(pedido.totalAmount)}</strong>
-            <small>{isAdmin ? 'Importe ilustrativo' : 'Total del pedido'}</small>
+            <small>{isAdmin ? 'Valor del pedido' : 'Total del pedido'}</small>
           </div>
         </div>
         <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
         <p><strong>👤 {isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
-        <p><strong>💳 {isAdmin ? 'Medio de prueba:' : 'Método de pago:'}</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
-        <p><strong>🧾 {isAdmin ? 'Estado del pago de prueba:' : 'Estado del pago:'}</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
+        <p><strong>💳 {isAdmin ? 'Método de pago:' : 'Método de pago:'}</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
+        <p><strong>🧾 {isAdmin ? 'Estado del pago:' : 'Estado del pago:'}</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
         <p><strong>🛍️ Producto Escogido: </strong> 
@@ -196,19 +196,19 @@ const ListadoPedidos = () => {
   return (
     <main className={`container evh-orders-page ${isAdmin ? 'is-admin' : 'is-customer'}`}>
       <header className="evh-orders-heading">
-        <span className="evh-eyebrow">{isAdmin ? 'CENTRO DE CONTROL · DEMOSTRACIÓN' : 'TU CUENTA ELECTROVIBE'}</span>
+        <span className="evh-eyebrow">{isAdmin ? 'ADMINISTRACIÓN · PEDIDOS' : 'TU CUENTA ELECTROVIBE'}</span>
         <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
         <p>{isAdmin
-          ? 'Consulta pedidos de prueba y revisa su estado para ensayar el flujo operativo. Los importes son ilustrativos y no representan ventas ni cobros reales.'
+          ? 'Consulta los pedidos registrados, verifica su estado y gestiona las etapas de preparación y entrega. Los pagos están habilitados únicamente en modo de pruebas.'
           : 'Consulta los pedidos asociados a tu cuenta, revisa los productos y sigue el estado de cada solicitud.'}</p>
       </header>
 
       {isAdmin && !loading && !error && (
-        <section className="evh-order-stats" aria-label="Resumen operativo de pedidos de prueba">
+        <section className="evh-order-stats" aria-label="Resumen operativo de pedidos">
           <article className="evh-order-stat">
             <span>Total de pedidos</span>
             <strong>{pedidos.length}</strong>
-            <small>Registros de demostración</small>
+            <small>Registros disponibles</small>
           </article>
           <article className="evh-order-stat is-processing">
             <span>En preparación</span>
@@ -223,12 +223,12 @@ const ListadoPedidos = () => {
           <article className="evh-order-stat is-delivered">
             <span>Entregados</span>
             <strong>{pedidos.filter(item => item.delivered || item.status === 'Entregado').length}</strong>
-            <small>Estado final de la prueba</small>
+            <small>Pedidos finalizados</small>
           </article>
         </section>
       )}
 
-      <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos de demostración' : 'Historial de mis pedidos'} aria-busy={loading}>
+      <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos registrados' : 'Historial de mis pedidos'} aria-busy={loading}>
         {loading ? (
           <div className="evh-loading-panel evh-orders-loading" role="status" aria-live="polite">
             <div className="evh-loading-mark" aria-hidden="true">EV</div>
@@ -251,9 +251,9 @@ const ListadoPedidos = () => {
         {emptyOrders ? (
           <div className="evh-orders-empty">
             <span aria-hidden="true">▤</span>
-            <h2>{isAdmin ? 'Aún no hay pedidos de prueba' : 'Aún no tienes pedidos'}</h2>
+            <h2>{isAdmin ? 'Aún no hay pedidos registrados' : 'Aún no tienes pedidos'}</h2>
             <p>{isAdmin
-              ? 'Cuando se registre un pedido ficticio en este entorno, aparecerá aquí para que puedas consultar su estado.'
+              ? 'Los nuevos pedidos aparecerán aquí para consultar su estado y gestionar su seguimiento.'
               : 'Explora el catálogo y prepara tu primer pedido. Podrás revisar los productos y los detalles antes de confirmarlo.'}</p>
             {!isAdmin && <Link className="evh-button evh-button-primary" to="/catalogo">Explorar catálogo <span aria-hidden="true">→</span></Link>}
           </div>

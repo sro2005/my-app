@@ -73,9 +73,9 @@ const AdminDashboard = () => {
   return (
     <main className="evh-admin">
       <header className="evh-admin-hero">
-        <span className="evh-admin-eyebrow">CENTRO DE CONTROL · ENTORNO DE DEMOSTRACIÓN</span>
+        <span className="evh-admin-eyebrow">PANEL DE ADMINISTRACIÓN · RESUMEN OPERATIVO</span>
         <h1>Tu tienda, bajo control.</h1>
-        <p>Consulta los movimientos ficticios de ElectroVibeHome. Ninguna cifra representa ventas o dinero recibido.</p>
+        <p>Supervisa pedidos, clientes y productos desde un solo lugar. Los pagos se procesan únicamente en modo de pruebas.</p>
         <div className="evh-admin-session" aria-label="Cuenta administrativa conectada">
           <span className="evh-admin-session-mark" aria-hidden="true">✓</span>
           <span className="evh-admin-session-copy"><small>SESIÓN DE ADMINISTRACIÓN</small><strong>{adminEmail}</strong></span>
@@ -97,16 +97,16 @@ const AdminDashboard = () => {
       {error && <p role="alert">{error}</p>}
       {!loading && !error && (
         <>
-          <section aria-label="Resumen de demostración" className="evh-admin-stats">
+          <section aria-label="Indicadores de operación" className="evh-admin-stats">
             {[
               ['Clientes registrados', summary.customers],
-              ['Pedidos de prueba', summary.orders],
-              ['Compras internas simuladas', summary.simulated],
-              ['Pedidos Wompi de prueba', summary.sandbox],
+              ['Total de pedidos', summary.orders],
+              ['Pedidos sin pago', summary.simulated],
+              ['Pedidos mediante Wompi Sandbox', summary.sandbox],
               ['Pedidos por gestionar', summary.pending],
               ['Productos del catálogo', summary.products],
               ['Productos con stock bajo (≤3)', summary.lowStock],
-              ['Valor ficticio de compras internas', money(summary.simulatedValue)]
+              ['Valor registrado en pedidos sin pago', money(summary.simulatedValue)]
             ].map(([label, value]) => (
               <article key={label} className="evh-admin-stat">
                 <span>{label}</span><strong>{value}</strong>
@@ -119,12 +119,12 @@ const AdminDashboard = () => {
               {recent.length === 0 ? <p>Todavía no hay pedidos registrados en este entorno.</p> : (
                 <div className="evh-admin-table-scroll">
                   <table>
-                    <thead><tr><th scope="col">Cliente</th><th scope="col">Importe ficticio</th><th scope="col">Pago</th><th scope="col">Pedido</th></tr></thead>
+                    <thead><tr><th scope="col">Cliente</th><th scope="col">Valor del pedido</th><th scope="col">Pago</th><th scope="col">Pedido</th></tr></thead>
                     <tbody>{recent.map(order => (
                       <tr key={order._id}>
                         <td>{order.firstName} {order.lastName}<small>{order.email}</small></td>
                         <td>{money(order.totalAmount)}</td>
-                        <td>{order.paymentStatus === 'SIMULATED' ? 'Simulado sin cobro' : order.paymentStatus || 'Pendiente'}</td>
+                        <td>{order.paymentStatus === 'SIMULATED' ? 'Sin pago' : order.paymentStatus || 'Pendiente'}</td>
                         <td>{order.status || 'Sin estado'}</td>
                       </tr>
                     ))}</tbody>
@@ -138,7 +138,7 @@ const AdminDashboard = () => {
               <div className="evh-admin-actions">
                 <Link to="/listado-clientes">Consultar clientes</Link>
                 <Link to="/admin-inventario">Gestionar inventario</Link>
-                <Link to="/producto-form">Agregar producto ficticio</Link>
+                <Link to="/producto-form">Agregar producto</Link>
                 <Link to="/listado-pedidos">Gestionar estados de pedidos</Link>
               </div>
               <p>Los permisos se verifican en el servidor, no solo en el menú.</p>
