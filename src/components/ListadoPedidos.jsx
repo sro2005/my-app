@@ -68,11 +68,11 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
           </div>
         </div>
         <p><strong>🆔 ID del Pedido:</strong> {pedido._id}</p>
-        <p><strong>{isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
+        <p><strong>👤 {isAdmin ? 'Cliente' : 'Titular del pedido'}:</strong> {pedido.firstName} {pedido.lastName}</p>
         <p><strong>🏠 Dirección del Domicilio:</strong> {pedido.address}</p>
         <p><strong>📞 Número de Contacto:</strong> {pedido.phone || 'No disponible'}</p>
-        <p><strong>{isAdmin ? 'Medio de prueba:' : 'Método de pago:'}</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
-        <p><strong>{isAdmin ? 'Estado del pago de prueba:' : 'Estado del pago:'}</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
+        <p><strong>💳 {isAdmin ? 'Medio de prueba:' : 'Método de pago:'}</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
+        <p><strong>🧾 {isAdmin ? 'Estado del pago de prueba:' : 'Estado del pago:'}</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
         <p><strong>📅 Fecha del Pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
         <p><strong>🚛 Fecha Estimada de Entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
         <p><strong>🛍️ Producto Escogido: </strong> 
