@@ -51,7 +51,6 @@ const RecoverPassword = () => {
         {loading ? 'Enviando…' : 'Enviar enlace seguro'}
       </button>
       {message && <p className="evh-form-feedback" role="status">{message}</p>}
-      {loading && <div className="evh-form-feedback" role="status">Preparando el enlace…</div>}
     </form>
     <p className="evh-form-alternate"><Link to="/login">Volver a iniciar sesión</Link></p>
     </FormPage>
