@@ -79,9 +79,9 @@ const AdminDashboard = () => {
         <div className="evh-admin-session" aria-label="Cuenta administrativa conectada">
           <span className="evh-admin-session-mark" aria-hidden="true">✓</span>
           <span className="evh-admin-session-copy"><small>SESIÓN DE ADMINISTRACIÓN</small><strong>{adminEmail}</strong></span>
-          <span className="evh-admin-session-role">ADMIN</span>
+          <span className="evh-admin-session-role">Administrador</span>
         </div>
-        <button type="button" onClick={reload} disabled={loading}>Actualizar datos</button>
+        <button type="button" onClick={reload} disabled={loading}>Actualizar resumen</button>
       </header>
       {loading && (
         <div className="evh-loading-panel evh-admin-loading" role="status" aria-live="polite">
