@@ -32,15 +32,15 @@ const renderCatalog = (user = null) => render(
 );
 
 describe('ListadoProductos', () => {
-  test('keeps the loading view minimal and removes the generic catalogue phrase', async () => {
+  test('shows the shared branded loading panel instead of a rotating wheel', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
     let finishRequest;
     axios.get.mockReturnValue(new Promise(resolve => { finishRequest = resolve; }));
 
     renderCatalog();
 
-    expect(screen.queryByText(/estamos preparando tu catálogo/i)).toBeNull();
-    expect(screen.getByText('Cargando catálogo').className).toContain('evh-sr-only');
+    expect(screen.getByRole('status').textContent).toMatch(/Preparando el catálogo/i);
+    expect(screen.queryByText(/Cargando catálogo/i)).toBeNull();
 
     finishRequest({ data: [] });
     expect(await screen.findByRole('heading', { name: /encuentra tu próximo favorito/i })).toBeTruthy();
@@ -51,7 +51,7 @@ describe('ListadoProductos', () => {
 
     renderCatalog();
 
-    expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
+    expect(await screen.findByText('Catálogo temporalmente sin conexión')).toBeTruthy();
     expect(screen.getByRole('heading', { name: demoProducts[0].name })).toBeTruthy();
     expect(screen.getByRole('heading', { name: demoProducts[1].name })).toBeTruthy();
     expect(axios.get).not.toHaveBeenCalled();
@@ -63,8 +63,8 @@ describe('ListadoProductos', () => {
 
     renderCatalog();
 
-    expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
-    expect(screen.getByRole('button', { name: /reintentar conexión/i })).toBeTruthy();
+    expect(await screen.findByText('Catálogo temporalmente sin conexión')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /actualizar/i })).toBeTruthy();
     expect(screen.getByRole('heading', { name: demoProducts[0].name })).toBeTruthy();
   });
 
@@ -165,7 +165,7 @@ describe('ListadoProductos', () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', '');
     renderCatalog({ _id: 'customer-1', role: 'user', preferences: [] });
 
-    expect(await screen.findByText('Catálogo de demostración')).toBeTruthy();
+    expect(await screen.findByText('Catálogo temporalmente sin conexión')).toBeTruthy();
     expect(screen.queryByRole('link', { name: /agregar a pedido/i })).toBeNull();
   });
 });
