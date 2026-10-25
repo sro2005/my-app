@@ -1,13 +1,17 @@
 import React from 'react';
 
 const Loading = () => (
-  <div className="loading-container">
-    <div className="custom-spinner">
-      <div className="dot dot1"></div>
-      <div className="dot dot2"></div>
-      <div className="dot dot3"></div>
+  <main className="evh-app-loading" role="status" aria-live="polite">
+    <div className="evh-app-loading-card">
+      <span className="evh-app-loading-mark" aria-hidden="true">⌂</span>
+      <div className="evh-app-loading-copy">
+        <span className="evh-loading-kicker">ELECTROVIBEHOME</span>
+        <h1>Preparando tu espacio</h1>
+        <p>Estamos organizando todo para que continúes con comodidad.</p>
+        <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
+      </div>
     </div>
-  </div>
+  </main>
 );
 
 export default Loading;
