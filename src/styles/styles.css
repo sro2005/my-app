@@ -4910,7 +4910,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-confirmation-dialog .evh-confirmation-facts > .is-wide {
     grid-column: auto;
   }
-  .evh-confirmation-dialog .evh-confirmation-dialog {
+  .evh-confirmation-dialog {
     padding: .8rem;
   }
   .evh-confirmation-dialog .evh-confirmation-total {
