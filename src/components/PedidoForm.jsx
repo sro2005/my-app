@@ -391,13 +391,17 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const paymentMethods = [
-    { value: 'Demostración', label: 'Pedido sin cobro' },
-    { value: 'Wompi', label: 'Wompi (entorno de pruebas)' },
+    { value: 'Demostración', label: 'Pedido sin pago' },
+    { value: 'Wompi', label: 'Wompi' },
   ];
 
   return (
-    <FormPage eyebrow="FINALIZA TU PEDIDO" title="Revisa tu pedido" description="Selecciona cómo quieres continuar y revisa los datos de entrega antes de confirmar. Ten presente la información del método elegido." className="evh-checkout-page">
+    <FormPage eyebrow="FINALIZA TU PEDIDO" title="Revisa tu pedido" description="Confirma tus datos, organiza los productos y revisa el total antes de continuar." className="evh-checkout-page">
       <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
+        <div className="evh-checkout-section-heading">
+          <h2>Datos de tu pedido</h2>
+          <p>Los datos de contacto provienen de tu cuenta. Revisa la dirección y la fecha de entrega antes de confirmar.</p>
+        </div>
         <div className="evh-form-grid">
         <div className="evh-form-field"><label htmlFor="checkout-first-name">Nombre</label><input id="checkout-first-name" type="text" autoComplete="given-name" value={customerData.firstName} onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })} required disabled className="disabled-input" /></div>
         <div className="evh-form-field"><label htmlFor="checkout-last-name">Apellidos</label><input id="checkout-last-name" type="text" autoComplete="family-name" value={customerData.lastName} onChange={(e) => setCustomerData({ ...customerData, lastName: e.target.value })} required disabled className="disabled-input" /></div>
@@ -407,10 +411,14 @@ const userId = user?._id;  // Usar userId desde el contexto
           <label htmlFor="checkout-address">Dirección de entrega</label>
           <input id="checkout-address" type="text" autoComplete="street-address" placeholder="Calle, número, barrio y ciudad" value={address} onChange={(e) => setAddress(e.target.value)} required />
         </div>
-        <div className="payment-method-container">
-          <label htmlFor="checkout-payment">Método de pago</label>
+        <div className="payment-method-container evh-form-field">
+          <label htmlFor="checkout-payment">Cómo quieres continuar</label>
           <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
-          <p>Puedes registrar el pedido sin cobro o continuar con Wompi en entorno de pruebas. Este sitio no procesa pagos reales.</p>
+          <p role="note">{!paymentMethod
+            ? 'Elige una opción. Revisarás los detalles antes de confirmar.'
+            : paymentMethod.value === 'Demostración'
+              ? 'El pedido se guardará en tu cuenta sin realizar ningún cobro ni programar una entrega.'
+              : 'Se abrirá Wompi para simular el paso de pago. No se hará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
         </div>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
@@ -420,8 +428,10 @@ const userId = user?._id;  // Usar userId desde el contexto
           <label htmlFor="checkout-product">Añade productos a tu pedido</label>
           <Select inputId="checkout-product" placeholder="Busca un producto disponible" options={availableProducts} onChange={handleProductChange} value={selectedProduct} isClearable isDisabled={availableProducts.length === 0} classNamePrefix="evh-select" />
           <div className="evh-cart-add-controls">
-            <label htmlFor="checkout-product-quantity">Unidades</label>
-            <input id="checkout-product-quantity" type="number" min="1" max={selectedProduct?.stock || 1} step="1" value={selectedQuantity} disabled={!selectedProduct} onChange={(e) => setSelectedQuantity(e.target.value)} />
+            <div className="evh-cart-quantity-field">
+              <label htmlFor="checkout-product-quantity">Unidades</label>
+              <input id="checkout-product-quantity" type="number" min="1" max={selectedProduct?.stock || 1} step="1" value={selectedQuantity} disabled={!selectedProduct} onChange={(e) => setSelectedQuantity(e.target.value)} />
+            </div>
             <button type="button" onClick={handleAddToCart} disabled={!selectedProduct || loading}>Agregar al pedido</button>
           </div>
           {selectedProduct && <p className="evh-form-feedback">Disponibles: {selectedProduct.stock} · Precio unitario: {formatPrice(selectedProduct.price)}</p>}
@@ -464,7 +474,7 @@ const userId = user?._id;  // Usar userId desde el contexto
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>Tu pedido quedó registrado en la cuenta. Este registro no genera un cobro ni coordina una entrega real.</p>
+            <p>La solicitud quedó registrada en tu cuenta. No se ha procesado ningún cobro ni programado una entrega.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
             <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Hacer otro pedido</button>
           </div>
@@ -516,8 +526,8 @@ const userId = user?._id;  // Usar userId desde el contexto
               <div>
                 <strong>Antes de confirmar</strong>
                 <p>{paymentMethod?.value === 'Demostración'
-                  ? 'El pedido quedará registrado en tu cuenta, pero no genera un cobro ni coordina una entrega real.'
-                  : 'Se abrirá Wompi en su entorno de pruebas. No se procesará un cobro real; no ingreses datos de una tarjeta real.'}</p>
+                  ? 'El pedido quedará registrado en tu cuenta sin realizar un cobro ni programar una entrega.'
+                  : 'Se abrirá Wompi para simular el paso de pago. No se hará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
               </div>
             </div>
 
@@ -547,7 +557,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>{paymentMethod?.value === 'Demostración' ? 'Pedido sin cobro' : 'Wompi · entorno de pruebas'}</dd>
+                    <dd>{paymentMethod?.value === 'Demostración' ? 'Pedido sin pago' : 'Wompi · sin cobro real'}</dd>
                   </div>
                 </dl>
               </section>
