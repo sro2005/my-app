@@ -26,7 +26,7 @@ describe('AdminInventory', () => {
     axios.put.mockResolvedValue({ data: { product: { ...item, quantity: 3 } } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
-    fireEvent.change(screen.getByLabelText('Existencias de prueba'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Existencias'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
     expect(axios.put).toHaveBeenCalledWith('https://api.example.test/api/products/p1',

@@ -6304,3 +6304,55 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-scene-platform { left: 6%; right: 6%; bottom: 60px; height: 13px; }
   .evh-smart-home-illustration .evh-art-label { left: 12px; right: 12px; bottom: 11px; padding: 9px 10px; }
 }
+
+
+/* Final front-end polish: directory controls, responsive order details, and focus. */
+.evh-admin-customers .filters-container button:focus-visible,
+.evh-admin-customers .search-input:focus-visible,
+.evh-admin-customers .evh-filter-reset:focus-visible,
+.evh-orders-page .pedido-details button:focus-visible {
+  outline: 3px solid var(--evh-focus);
+  outline-offset: 3px;
+}
+.evh-admin-customers .evh-filter-reset {
+  min-height: 43px;
+  padding: .65rem .9rem;
+  border: 1px solid #d7e2ef;
+  border-radius: 999px;
+  background: #f5f8fc;
+  color: #294f7d;
+  font: inherit;
+  font-size: .81rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+.evh-admin-customers .evh-filter-reset:hover { background: #e8f1ff; border-color: #9eb8d8; }
+.evh-admin-customers .evh-customers-empty { width: 100%; }
+.evh-admin-customers .evh-customers-empty button { min-height: 43px; }
+.evh-admin-customers .dashboard-card,
+.evh-admin-customers .cliente-item,
+.evh-orders-page .pedido-item { min-width: 0; box-sizing: border-box; }
+.evh-admin-customers .cliente-details > p:last-child { border-bottom: 0; }
+.evh-admin-customers .client-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.evh-orders-page .pedido-details p strong { flex: 0 0 190px; line-height: 1.5; }
+.evh-orders-page .pedido-details p { min-width: 0; overflow-wrap: anywhere; }
+.evh-orders-page .pedido-details button { white-space: normal; line-height: 1.4; }
+.order-status-feedback.is-success { border-color: #bce5cf; background: #effaf3; color: #176b45; }
+.order-status-feedback.is-error { border-color: #f0d1cf; background: #fff5f4; color: #9b2c27; }
+@media (max-width: 900px) {
+  .evh-admin-customers .client-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .evh-admin-customers .client-stats { grid-template-columns: minmax(0, 1fr); }
+  .evh-admin-customers .evh-customers-toolbar { align-items: stretch; }
+  .evh-admin-customers .search-container { flex-basis: 100%; width: 100%; }
+  .evh-admin-customers .filters-container { display: flex; flex-wrap: wrap; gap: .45rem; }
+  .evh-admin-customers .filters-container button { flex: 1 1 90px; }
+  .evh-admin-customers .evh-customers-list-heading { flex-wrap: wrap; }
+  .evh-orders-page .pedido-info { grid-template-columns: minmax(0, 1fr); gap: .65rem; }
+  .evh-orders-page .pedido-image { width: 54px; height: 54px; border-radius: 14px; }
+  .evh-orders-page .pedido-image img { width: 38px; height: 38px; }
+  .evh-orders-page .pedido-details p { display: grid; grid-template-columns: minmax(0, 1fr); gap: .2rem; }
+  .evh-orders-page .pedido-details p strong { flex: initial; }
+  .evh-orders-page .pedido-details button { width: 100%; margin: .65rem 0 0; }
+}

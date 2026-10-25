@@ -31,7 +31,7 @@ describe('Admin dashboard', () => {
       .mockResolvedValueOnce({ data: [{ quantity: 2 }] });
     render(<AdminDashboard />);
     expect(await screen.findByText('Cliente Demo')).toBeTruthy();
-    expect(screen.getByText('Simulado sin cobro')).toBeTruthy();
+    expect(screen.getByText('Sin pago')).toBeTruthy();
     expect(axios.get).toHaveBeenCalledTimes(3);
     expect(axios.get).toHaveBeenCalledWith('https://api.example.test/api/orders/all', {
       headers: { Authorization: 'Bearer test-admin-token' }
