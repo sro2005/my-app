@@ -55,7 +55,7 @@ const LandingPage = () => (
       <div className="evh-guide-promo-copy">
         <span className="evh-eyebrow">DESCUBRE CON INTENCIÓN</span>
         <h2 id="evh-guide-promo-title">No elijas a ciegas. Encuentra lo que de verdad necesitas.</h2>
-        <p>Cuéntale a la Guía ElectroVibe qué quieres resolver en casa y recibe sugerencias basadas en el catálogo. Según la configuración, puede orientarte con reglas locales o con asistencia generativa.</p>
+        <p>Cuéntale a la Guía ElectroVibe qué necesitas en casa y descubre sugerencias del catálogo para explorar distintas opciones.</p>
       </div>
       <Link className="evh-button evh-button-primary" to="/catalogo">Probar la Guía ElectroVibe <span aria-hidden="true">→</span></Link>
     </section>
