@@ -4704,3 +4704,220 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   }
 }
 
+/* Confirmation modal alignment fix: isolate global header styles and normalize spacing */
+/* The site has a global `header` rule; explicitly neutralize it inside this dialog. */
+.evh-confirmation-dialog > .evh-confirmation-header {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 38px;
+  align-items: start;
+  gap: 1rem;
+  margin: 0 0 1.2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #172c46;
+  box-shadow: none;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-title-wrap {
+  min-width: 0;
+  padding: .05rem 0 0;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-title-wrap > .evh-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 .55rem;
+  padding: .34rem .7rem;
+  border: 1px solid #c7dbf4;
+  border-radius: 999px;
+  background: #eaf2ff;
+  color: #204f8a;
+  font-size: .66rem;
+  font-weight: 850;
+  letter-spacing: .085em;
+  line-height: 1.4;
+  text-align: left;
+  text-shadow: none;
+}
+.evh-confirmation-dialog .evh-confirmation-title-wrap > h2 {
+  margin: 0 0 .45rem;
+  color: #162f50;
+  font-size: clamp(1.4rem, 2.7vw, 1.85rem);
+  line-height: 1.22;
+  text-align: left;
+  text-shadow: none;
+}
+.evh-confirmation-dialog .evh-confirmation-title-wrap > p {
+  max-width: 58ch;
+  margin: 0;
+  color: #536980;
+  font-size: .88rem;
+  line-height: 1.6;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-details {
+  min-width: 0;
+  padding: clamp(.85rem, 2vw, 1.15rem);
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-details > h3,
+.evh-confirmation-dialog .evh-confirmation-summary-heading > h3 {
+  margin: 0;
+  color: #193858;
+  font-size: .96rem;
+  font-weight: 800;
+  line-height: 1.4;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: .65rem;
+  margin: .9rem 0 0;
+  padding: 0;
+}
+.evh-confirmation-dialog .evh-confirmation-facts > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: .75rem .8rem;
+  border: 1px solid #e0e9f4;
+  border-radius: 11px;
+  background: #f8fafd;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-facts > .is-wide {
+  grid-column: 1 / -1;
+}
+.evh-confirmation-dialog .evh-confirmation-facts dt {
+  margin: 0 0 .32rem;
+  color: #61758c;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+  line-height: 1.4;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-facts dd {
+  min-width: 0;
+  margin: 0;
+  color: #223b58;
+  font-size: .84rem;
+  font-weight: 650;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-notice {
+  box-sizing: border-box;
+  align-items: flex-start;
+  gap: .7rem;
+  padding: .9rem 1rem;
+}
+.evh-confirmation-dialog .evh-confirmation-notice > div {
+  min-width: 0;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-notice strong {
+  margin: 0;
+  line-height: 1.45;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-notice p {
+  margin: .25rem 0 0;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-summary {
+  min-width: 0;
+  box-sizing: border-box;
+  padding: clamp(.85rem, 2vw, 1.15rem);
+}
+.evh-confirmation-dialog .evh-confirmation-summary-heading {
+  align-items: center;
+  flex-wrap: wrap;
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-summary-heading > span {
+  box-sizing: border-box;
+  white-space: normal;
+  text-align: center;
+}
+.evh-confirmation-dialog .evh-confirmation-total {
+  align-items: center;
+}
+.evh-confirmation-dialog .evh-confirmation-total strong {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+.evh-confirmation-dialog .evh-confirmation-total-note {
+  text-align: left;
+}
+.evh-confirmation-dialog .evh-confirmation-close {
+  justify-self: end;
+  align-self: start;
+  margin: 0;
+}
+@media (max-width: 720px) {
+  .evh-confirmation-dialog > .evh-confirmation-header {
+    grid-template-columns: 40px minmax(0, 1fr) 34px;
+    align-items: start;
+    gap: .65rem;
+    margin-bottom: .95rem;
+    padding: 0;
+  }
+  .evh-confirmation-dialog .evh-confirmation-title-wrap > .evh-eyebrow {
+    margin-bottom: .45rem;
+    font-size: .62rem;
+    letter-spacing: .06em;
+  }
+  .evh-confirmation-dialog .evh-confirmation-title-wrap > h2 {
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+    overflow-wrap: anywhere;
+  }
+  .evh-confirmation-dialog .evh-confirmation-title-wrap > p {
+    font-size: .82rem;
+    line-height: 1.55;
+  }
+  .evh-confirmation-dialog .evh-confirmation-details,
+  .evh-confirmation-dialog .evh-confirmation-summary {
+    padding: .8rem;
+  }
+  .evh-confirmation-dialog .evh-confirmation-facts {
+    gap: .55rem;
+    margin-top: .75rem;
+  }
+  .evh-confirmation-dialog .evh-confirmation-facts > div {
+    padding: .68rem;
+  }
+}
+@media (max-width: 480px) {
+  .evh-confirmation-dialog .evh-confirmation-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .evh-confirmation-dialog .evh-confirmation-facts > .is-wide {
+    grid-column: auto;
+  }
+  .evh-confirmation-dialog .evh-confirmation-dialog {
+    padding: .8rem;
+  }
+  .evh-confirmation-dialog .evh-confirmation-total {
+    align-items: flex-start;
+  }
+  .evh-confirmation-dialog .evh-confirmation-total strong {
+    font-size: 1.25rem;
+  }
+}
+
