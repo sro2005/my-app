@@ -258,10 +258,10 @@ async function main() {
           );
           await page.getByRole('button', { name: /enviar pregunta/i }).click();
           const localReply = page.locator('.evh-assistant-message.is-assistant').filter({
-            hasText: /modo de demostración local/i
+            hasText: /Según lo que describes/i
           }).last();
           await localReply.waitFor({ timeout: 15000 });
-          assert.match(await localReply.innerText(), /\bprecio ilustrativo\b/i,
+          assert.match(await localReply.innerText(), /precio de referencia/i,
             'The local guide should provide a grounded catalogue suggestion with illustrative price context.');
           assert.deepEqual(assistantChatRequests, [],
             'Local guide mode must not send a chat request to the backend.');
