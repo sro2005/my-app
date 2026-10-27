@@ -1,17 +1,19 @@
 # ElectroVibeHome — lista de verificación de la versión estable
 
-**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome sigue siendo una demostración. En las pruebas automatizadas de esta revisión no se crearon pedidos, no se modificó inventario ni se realizaron pagos reales en la base de datos viva. La comprobación manual de recuperación/restablecimiento de contraseña realizada con una cuenta cliente está registrada más abajo.
+**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome mantiene el modo de compra simulado; no se procesan pagos reales. En las pruebas automatizadas de esta revisión no se crearon pedidos, no se modificó inventario ni se realizaron pagos en la base de datos viva. La comprobación manual de recuperación/restablecimiento de contraseña realizada con una cuenta cliente está registrada más abajo.
 
-## Validación más reciente
+## Validación de actualización de dependencias — 27 de octubre de 2026
 
-- Ejecución de GitHub Actions: [CI final — 40590623401](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401).
-- Commit validado por la ejecución: `3e8dd07087f0fb34eb24c6d5e7bea7ebb84d362e`.
-- Resultado: **5/5 trabajos correctos**: backend, frontend, backend E2E, comprobación del sitio/API publicados y pruebas de navegador.
-- La ejecución incluyó auditorías de dependencias, comprobación de sintaxis, pruebas unitarias, compilación frontend, flujos HTTP contra MongoDB desechable, comprobación del catálogo/API publicados y Playwright en escritorio, tableta y móvil.
-- Capturas de esta ejecución: [artefacto de screenshots](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401/artifacts/12774216283).
-- Estado de despliegue comprobado después de la actualización documental: frontend y API terminaron en estado `live` desde el commit documental `7790190641bef175efe25cffb3cb41a745562af0` (frontend: `dep-dbghvnh5efls73dkh680`; API: `dep-dbghvnh5efls73dkh6bg`).
-- El despliegue anterior se inició porque el mensaje de ese commit documental no llevaba `[skip render]`; ese commit no cambió lógica de ejecución, variables ni datos. La validación automatizada final **40590623401** sigue siendo la evidencia de CI de la lógica de aplicación y los tests en `3e8dd07`; el smoke test publicado pasó antes del despliegue documental. Ambos servicios terminaron `live`, pero no se ejecutó un segundo smoke test después de ese build específico.
-- El follow-up de documentación registrado en esta lista no cambia el código de ejecución y usa `[skip render]` para evitar otro despliegue innecesario.
+- Ejecución de GitHub Actions: [CI #516 — actualización de dependencias](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695).
+- Commit validado: `76b5dfeb3f8025c6ccb9181afa9a905ea41c27ae`.
+- Resultado: **5/5 trabajos correctos**: frontend, backend, backend E2E, smoke del sitio/API publicados y navegador responsive.
+- Se refrescaron únicamente `package-lock.json` y `backend/package-lock.json` con las versiones más recientes permitidas por los rangos actuales; no se modificaron los manifiestos `package.json` ni la lógica funcional.
+- Dependencias directas actualizadas: Axios `1.20.0 → 1.21.0`, React Router / react-router-dom `7.18.4 → 7.18.5`, Mongoose `8.24.6 → 8.24.7` y Nodemailer `10.2.0 → 10.2.1`. También se actualizaron dependencias transitivas compatibles.
+- Las auditorías `npm audit --audit-level=high` pasaron en frontend y backend; ambos informes reportaron **cero vulnerabilidades conocidas** en los árboles instalados.
+- Validación automatizada: pruebas frontend, build frontend, sintaxis JavaScript backend, pruebas unitarias backend y E2E HTTP contra MongoDB desechable pasaron. El smoke del sitio/API comprobó salud de la API, conexión MongoDB, CORS, rutas protegidas y catálogo publicado; Playwright pasó en escritorio, tableta y móvil.
+- Capturas responsive: [artefacto de screenshots del CI #516](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12776021447). Informes de auditoría: [frontend](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12775678570) y [backend](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12775777492).
+- Tras superar CI, los lockfiles actualizados se desplegaron en Render desde el commit `76b5dfeb`: frontend `dep-dbgie2p42hec73f688m0` y API `dep-dbgidv4s728c73e6ndl0`. Ambos despliegues terminaron en estado `live`.
+- `main` permanece intacta. Las actualizaciones mayores no se incorporaron automáticamente; requieren una evaluación de compatibilidad y sus propias pruebas antes de adoptarse.
 
 ## Validaciones automatizadas completadas
 

@@ -8,6 +8,24 @@ on:
     paths:
       - '.github/workflows/ci.yml'
       - '.github/workflows/dependency-refresh.yml'
+      - '.github/dependabot.yml'
+      - 'src/**'
+      - 'public/**'
+      - 'backend/**'
+      - 'data/**'
+      - 'docs/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.*'
+      - 'index.html'
+  # Los PR, incluidos los de Dependabot, ejecutan pruebas y auditorías antes de fusionar.
+  pull_request:
+    branches:
+      - electrovibehome-stable
+    paths:
+      - '.github/workflows/ci.yml'
+      - '.github/dependabot.yml'
       - 'src/**'
       - 'public/**'
       - 'backend/**'
