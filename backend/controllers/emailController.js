@@ -193,7 +193,7 @@ const buildPasswordResetEmail = resetUrl => {
             <td style="padding:24px 28px;background:#101d31;border-radius:20px 20px 0 0;">
               <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td valign="middle" align="center" width="44" height="44" style="width:44px;height:44px;border-radius:13px;background:#f28c28;color:#101d31;font-size:25px;font-weight:bold;line-height:44px;">⚡</td>
+                  <td valign="middle" align="center" width="44" height="44" style="width:44px;height:44px;padding:0;border-radius:13px;background:#f28c28;line-height:0;font-size:0;vertical-align:middle;"><img src="https://fonts.gstatic.com/s/e/notoemoji/17.0/26a1/32.png" alt="ElectroVibeHome" width="24" height="24" style="display:block;width:24px;height:24px;margin:0 auto;border:0;outline:none;text-decoration:none;"></td>
                   <td style="padding-left:13px;color:#ffffff;font-size:16px;font-weight:800;letter-spacing:1.1px;">ELECTROVIBEHOME
                     <div style="padding-top:4px;color:#aebbd0;font-size:10px;font-weight:700;letter-spacing:2px;">CUENTA Y SEGURIDAD</div>
                   </td>
