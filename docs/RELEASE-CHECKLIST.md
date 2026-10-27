@@ -57,10 +57,19 @@ Las capturas de las pruebas responsive y de los módulos están disponibles en e
 
 Estas pruebas no se han presentado como completadas porque requieren un entorno/cuenta de prueba separado o evidencia que no se obtiene de un test unitario:
 
-- [ ] Hacer una pasada autenticada sobre el servicio desplegado con una cuenta de prueba dedicada, verificando sesión, edición de perfil, historial y cierre de sesión sin utilizar cuentas personales o administrativas reales ni dejar pedidos de prueba.
+- [x] Prueba autenticada real del backend publicado (27-oct-2026): API saludable y MongoDB conectado; registro HTTP 201; inicio de sesión HTTP 200; perfil HTTP 200; historial propio HTTP 200; intentos de acceder a directorios de administración bloqueados con HTTP 403. No se crearon pedidos ni se llamaron pasarelas de pago. Se eliminó la cuenta sintética y su registro de inicio de sesión de MongoDB, y se comprobó que ya no existen.
 - [ ] Validar manualmente el panel de administración con una cuenta y datos descartables (gestión real de productos/clientes/pedidos), evitando modificar inventario o registros reales.
-- [ ] Revisar mediante escaneo específico que no haya secretos publicados en el historial de Git. No basta con revisar los archivos actuales; si se encuentra una clave real, revocarla/rotarla.
+- [!] Escaneo Gitleaks de todo el historial (582 commits, ~2,79 MB) ejecutado el 27-oct-2026: encontró dos detecciones `private-key` para los archivos de certificado HTTPS local `localhost-key.pem` y `backend/localhost-key.pem`, ambos desde el commit `e4cf25e02f6777881770e8a98643ccf013028f1a`. La tarea queda en fallo hasta decidir una remediación del historial; `main` no se modificó para preservar la versión original.
 - [ ] Conservar evidencia manual de aceptación visual final. La automatización comprobó responsividad y las capturas principales se revisaron, pero no constituye una auditoría pixel a pixel de todos los estados de todas las pantallas.
+
+## Verificación adicional — 27 de octubre de 2026
+
+- [x] La aceptación autenticada se ejecutó contra el backend publicado en el run [40578235519](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519): salud HTTP 200; registro HTTP 201; login y perfil HTTP 200; `/api/customers/all` y `/api/orders/all` rechazaron el token de cliente con HTTP 403; historial de pedidos propio HTTP 200 y vacío.
+- [x] La respuesta de login y perfil no expuso contraseña ni campos de restablecimiento. No se creó ningún pedido ni se inició ningún pago.
+- [x] Se eliminaron y verificaron ausentes tanto la cuenta sintética de aceptación como su registro en `loginlogs`.
+- [!] El escaneo de historial [falló por dos claves privadas PEM](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519). Son archivos con nombres de certificado de `localhost` y el backend los carga para HTTPS fuera de producción; no son las credenciales de MongoDB, Brevo ni Wompi. Aun así, son claves privadas publicadas en el historial y no se deben reutilizar ni confiar como certificados de desarrollo.
+- [ ] Remediar las claves históricas. Los dos archivos permanecen en la rama histórica `main` para respetar el requisito de conservar la versión original intacta. La limpieza completa requiere decidir si se autoriza quitar esos certificados de `main` y reescribir el historial; no se realizó esa operación ni se forzó ninguna rama.
+- [ ] La prueba cubrió los endpoints de autenticación y autorización reales; no equivale a validar toda la interfaz frontend con una sesión real ni incluye edición de perfil, logout por UI o una aceptación autenticada real del panel administrador.
 
 ## Pagos — en pausa
 
@@ -86,5 +95,7 @@ Solo si se decide reactivar una pasarela:
 - [Frontend publicado](https://electrovibehome.onrender.com/)
 - [API publicada](https://electrovibehome-v2-api.onrender.com)
 - [CI #500 — intento 2](https://github.com/sro2005/ElectroVibeHome/actions/runs/40570994624)
+- [CI de verificación de seguridad — autenticación real y escaneo Gitleaks](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519)
+- [Workflow de escaneo de historial](../.github/workflows/secret-history-scan.yml)
 - [Despliegue frontend en Render](https://dashboard.render.com/static/srv-dbg1n0psrm7s73c8gom0)
 - [Variables de ejemplo del backend](../backend/.env.example)
