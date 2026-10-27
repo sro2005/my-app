@@ -1,4 +1,67 @@
+const crypto = require('node:crypto');
+const mongoose = require('mongoose');
+
 const WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMIT_COLLECTION = 'request_rate_limits';
+let ttlIndexPromise;
+
+// Shared MongoDB counters keep limits consistent across processes/restarts.
+// Only a SHA-256 digest of the bucket key is persisted; raw IPs/emails are not stored.
+const createMongoRequestRateLimiter = ({
+  windowMs = WINDOW_MS,
+  maxRequests = 10,
+  keyGenerator = getClientAddress,
+  message = 'Demasiadas solicitudes. Intenta nuevamente más tarde.'
+} = {}) => {
+  return async (req, res, next) => {
+    const key = keyGenerator(req);
+    if (typeof key !== 'string' || !key) return next();
+
+    if (mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
+      return res.status(503).json({ message: 'Servicio temporalmente no disponible. Intenta nuevamente más tarde.' });
+    }
+
+    try {
+      const collection = mongoose.connection.db.collection(RATE_LIMIT_COLLECTION);
+      if (!ttlIndexPromise) {
+        ttlIndexPromise = collection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0, name: 'request_rate_limits_expiry' })
+          .catch(error => { ttlIndexPromise = undefined; throw error; });
+      }
+      await ttlIndexPromise;
+
+      const currentTime = Date.now();
+      const windowStart = Math.floor(currentTime / windowMs) * windowMs;
+      const resetAt = windowStart + windowMs;
+      const bucketId = crypto.createHash('sha256').update(key).digest('hex') + ':' + windowStart;
+      let result;
+      try {
+        result = await collection.findOneAndUpdate(
+          { _id: bucketId },
+          { $inc: { count: 1 }, $setOnInsert: { expiresAt: new Date(resetAt) } },
+          { upsert: true, returnDocument: 'after', includeResultMetadata: false }
+        );
+      } catch (error) {
+        if (error?.code !== 11000) throw error;
+        result = await collection.findOneAndUpdate(
+          { _id: bucketId },
+          { $inc: { count: 1 } },
+          { returnDocument: 'after', includeResultMetadata: false }
+        );
+      }
+
+      const entry = result?.value || result;
+      if (!entry || !Number.isFinite(entry.count)) throw new Error('Rate-limit counter unavailable');
+      if (entry.count > maxRequests) {
+        res.set('Retry-After', String(Math.max(1, Math.ceil((resetAt - currentTime) / 1000))));
+        return res.status(429).json({ message });
+      }
+      return next();
+    } catch (error) {
+      console.error('No fue posible comprobar el límite de solicitudes:', error.message);
+      return res.status(503).json({ message: 'Servicio temporalmente no disponible. Intenta nuevamente más tarde.' });
+    }
+  };
+};
 
 const getClientAddress = (req) => {
   // In production, Express derives req.ip from the X-Forwarded-For chain after
@@ -54,17 +117,17 @@ const createRequestRateLimiter = ({
   };
 };
 
-const limitRegistrationByIp = createRequestRateLimiter({
+const limitRegistrationByIp = createMongoRequestRateLimiter({
   maxRequests: 10,
   message: 'Demasiados intentos de registro desde esta conexión. Intenta más tarde.'
 });
 
-const limitLoginByIp = createRequestRateLimiter({
+const limitLoginByIp = createMongoRequestRateLimiter({
   maxRequests: 30,
   message: 'Demasiados intentos de inicio de sesión desde esta conexión. Intenta más tarde.'
 });
 
-const limitLoginByAccount = createRequestRateLimiter({
+const limitLoginByAccount = createMongoRequestRateLimiter({
   maxRequests: 8,
   keyGenerator: req => {
     const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase().slice(0, 254) : '';
@@ -73,17 +136,17 @@ const limitLoginByAccount = createRequestRateLimiter({
   message: 'Demasiados intentos para esta cuenta desde esta conexión. Intenta más tarde.'
 });
 
-const limitPasswordRecovery = createRequestRateLimiter({
+const limitPasswordRecovery = createMongoRequestRateLimiter({
   maxRequests: 5,
   message: 'Se alcanzó el límite de solicitudes de recuperación. Intenta más tarde.'
 });
 
-const limitPasswordReset = createRequestRateLimiter({
+const limitPasswordReset = createMongoRequestRateLimiter({
   maxRequests: 10,
   message: 'Demasiados intentos para restablecer la contraseña. Intenta más tarde.'
 });
 
-const limitPasswordChange = createRequestRateLimiter({
+const limitPasswordChange = createMongoRequestRateLimiter({
   maxRequests: 10,
   message: 'Demasiados intentos para cambiar la contraseña. Intenta más tarde.'
 });
@@ -91,6 +154,7 @@ const limitPasswordChange = createRequestRateLimiter({
 module.exports = {
   getClientAddress,
   createRequestRateLimiter,
+  createMongoRequestRateLimiter,
   limitRegistrationByIp,
   limitLoginByIp,
   limitLoginByAccount,
