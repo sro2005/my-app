@@ -70,21 +70,25 @@ jobs:
           echo "Tags to rewrite:"
           git tag --list
 
-      - name: Install git-filter-repo
+      - name: Install pinned git-filter-repo release with sensitive-data reporting
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install --yes git-filter-repo
+          curl -fsSL https://raw.githubusercontent.com/newren/git-filter-repo/v2.47.0/git-filter-repo -o "$RUNNER_TEMP/git-filter-repo"
+          sudo install -m 0755 "$RUNNER_TEMP/git-filter-repo" /usr/local/bin/git-filter-repo
+          git filter-repo --version
 
       - name: Remove legacy localhost certificates from every reachable commit
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
           git remote remove origin 2>/dev/null || true
           git remote remove purge-origin 2>/dev/null || true
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 
-          git filter-repo --force \
+          git filter-repo --sensitive-data-removal --force \
             --path localhost-key.pem \
             --path localhost.pem \
             --path backend/localhost-key.pem \
@@ -99,6 +103,15 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          echo "First rewritten commit(s):"
+          if [ -f .git/filter-repo/first-changed-commits ]; then
+            cat .git/filter-repo/first-changed-commits
+          fi
+          echo "Changed references (review refs/pull entries for possible GitHub Support follow-up):"
+          if [ -f .git/filter-repo/changed-refs ]; then
+            cat .git/filter-repo/changed-refs
+          fi
 
       - name: Prevent these files from returning on main
         shell: bash
