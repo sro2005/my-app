@@ -100,7 +100,7 @@ jobs:
               "- Se eliminan del historial de la rama estable `localhost-key.pem`, `localhost.pem`, `backend/localhost-key.pem` y `backend/localhost.pem`.\n"
               "- Como esos ficheros existían en un antepasado compartido, los SHA históricos de la rama estable cambian y su historial deja de tener un antepasado común con `main`. El árbol de archivos actual de la aplicación estable se conserva. Esto puede afectar comparaciones o futuras PR entre ambas ramas.\n"
               "- La verificación Gitleaks se limita al historial alcanzable de `electrovibehome-stable`; el historial de `main` permanece deliberadamente sin cambios.\n"
-              "- [ ] Volver a habilitar el ruleset de GitHub y el auto-deploy de Render después de verificar los resultados.\n"
+              "- [ ] Restaurar el selector de rama predeterminada en el ruleset de GitHub para que vuelva a proteger tanto `main` como `electrovibehome-stable`, y reactivar el auto-deploy de Render para el frontend/API estables después de verificar los resultados.\n"
           )
           path.write_text(content, encoding="utf-8")
           PY
