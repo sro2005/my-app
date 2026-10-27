@@ -1,9 +1,10 @@
 name: ElectroVibeHome CI
 
 on:
-  # Ejecutar CI automáticamente en la rama de vista previa; main y el sitio publicado permanecen separados.
+  # Ejecutar CI en la rama principal y conservar cobertura durante la transición del nombre anterior.
   push:
     branches:
+      - principal
       - preview/electrovibehome-v2
     paths:
       - '.github/workflows/ci.yml'
