@@ -143,7 +143,9 @@ app.get('/', (req, res) => {
     .shell { width: min(1100px, calc(100% - 40px)); margin: 0 auto; }
     .topbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 28px 0; }
     .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 800; letter-spacing: -.035em; }
-    .brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid rgba(101, 226, 232, .38); border-radius: 14px; color: #071326; background: linear-gradient(135deg, #77ecf0, #4ca5ff); box-shadow: 0 0 28px rgba(76, 165, 255, .22); font-size: 24px; }
+    .brand-mark { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; border: 1px solid rgba(255, 166, 76, .48); border-radius: 14px; color: #ffad4d; background: linear-gradient(145deg, rgba(255, 163, 64, .18), rgba(255, 111, 24, .055)); box-shadow: 0 7px 24px rgba(255, 132, 31, .13), inset 0 1px 0 rgba(255, 255, 255, .06); transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+    .brand-mark svg { display: block; width: 24px; height: 24px; overflow: visible; filter: drop-shadow(0 0 5px rgba(255, 154, 56, .28)); }
+    .brand:hover .brand-mark { transform: translateY(-1px); border-color: rgba(255, 180, 95, .8); box-shadow: 0 9px 28px rgba(255, 132, 31, .2), inset 0 1px 0 rgba(255, 255, 255, .09); }
     .brand span { display: block; }
     .brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .19em; text-transform: uppercase; }
     .status { display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line); border-radius: 999px; padding: 10px 14px; color: #c9d7ee; background: rgba(255,255,255,.035); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
@@ -179,7 +181,12 @@ app.get('/', (req, res) => {
   <div class="shell">
     <header class="topbar">
       <a class="brand" href="https://electrovibehome.onrender.com" aria-label="ElectroVibeHome, abrir tienda">
-        <span class="brand-mark" aria-hidden="true">⚡</span>
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <path d="M13.55 1.75 4.7 13.05h5.75l-.95 9.2 9.8-13.05h-5.85l1.1-7.45Z" fill="url(#evhBoltGradient)" stroke="#FFD08A" stroke-width=".65" stroke-linejoin="round"/>
+            <defs><linearGradient id="evhBoltGradient" x1="5" y1="2" x2="20" y2="21" gradientUnits="userSpaceOnUse"><stop stop-color="#FFE2A2"/><stop offset=".48" stop-color="#FFAD45"/><stop offset="1" stop-color="#FF741F"/></linearGradient></defs>
+          </svg>
+        </span>
         <span>ELECTROVIBEHOME<small>Digital platform</small></span>
       </a>
       <div class="status"><span class="status-dot" aria-hidden="true"></span> Punto de acceso API</div>
