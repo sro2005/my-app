@@ -22,7 +22,7 @@
     "react-phone-number-input": "^3.4.11",
     "react-router-dom": "^7.18.4",
     "react-select": "^5.9.0",
-    "react-spinners": "^0.15.0"
+    "react-spinners": "^0.17.1"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.3",
