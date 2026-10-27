@@ -9,8 +9,9 @@
 - Resultado: **5/5 trabajos correctos**: backend, frontend, backend E2E, comprobación del sitio/API publicados y pruebas de navegador.
 - La ejecución incluyó auditorías de dependencias, comprobación de sintaxis, pruebas unitarias, compilación frontend, flujos HTTP contra MongoDB desechable, comprobación del catálogo/API publicados y Playwright en escritorio, tableta y móvil.
 - Capturas de esta ejecución: [artefacto de screenshots](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401/artifacts/12774216283).
-- Estado de despliegue: el frontend Render sigue en estado `live` desde el despliegue `dep-dbgg24m7bikc73bfr6fg` (commit `b969b4d1003c4bd675ef31c09fa4123d6b89c63a`); la API sigue en estado `live` desde el despliegue `dep-dbgfdoc9v7es73aa61tg` (commit `0205d6b859b516c1c3242df3a259cc0b0ffa1417`). El smoke test de la ejecución más reciente confirmó que el frontend/API publicados respondían correctamente y que MongoDB estaba listo.
-- Los commits más recientes `d4d18d2` y `3e8dd07` modifican pruebas, workflow y documentación, no la lógica de ejecución de la aplicación. Render los registró como `commit_ignored` por `[skip render]`; no se solicitó un nuevo despliegue de aplicación en esta tanda.
+- Estado de despliegue comprobado después de la actualización documental: frontend y API terminaron en estado `live` desde el commit documental `7790190641bef175efe25cffb3cb41a745562af0` (frontend: `dep-dbghvnh5efls73dkh680`; API: `dep-dbghvnh5efls73dkh6bg`).
+- El despliegue anterior se inició porque el mensaje de ese commit documental no llevaba `[skip render]`; ese commit no cambió lógica de ejecución, variables ni datos. La validación automatizada final **40590623401** sigue siendo la evidencia de CI de la lógica de aplicación y los tests en `3e8dd07`; el smoke test publicado pasó antes del despliegue documental. Ambos servicios terminaron `live`, pero no se ejecutó un segundo smoke test después de ese build específico.
+- El follow-up de documentación registrado en esta lista no cambia el código de ejecución y usa `[skip render]` para evitar otro despliegue innecesario.
 
 ## Validaciones automatizadas completadas
 
