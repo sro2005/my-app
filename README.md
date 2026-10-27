@@ -1,13 +1,23 @@
 # ElectroVibeHome
 
-Tienda web de electrodomésticos construida con React, Vite, Node.js, Express y MongoDB.
+Tienda web de electrodomésticos construida con React, Vite, Node.js, Express y MongoDB. Este repositorio corresponde a un proyecto personal de demostración; no está habilitado para ventas ni pagos reales.
+
+## Ramas y despliegue
+
+- `electrovibehome-stable`: rama predeterminada y versión renovada que se mantiene y valida.
+- `main`: versión original conservada por separado; no modificarla al trabajar en la versión estable.
+- Frontend publicado: https://electrovibehome.onrender.com/
+- API de la versión estable: https://electrovibehome-v2-api.onrender.com
+- El frontend y la API de la versión estable se despliegan desde `electrovibehome-stable`.
+- Ambas ramas tienen reglas contra eliminación y pushes forzados. Estas reglas no impiden los pushes normales ni exigen pull requests.
+
+Los nombres heredados que puedan permanecer en URLs de servicios o en código no implican la existencia de una tercera rama o una versión distinta.
 
 ## Requisitos
 
-- Node.js 24.x
-- npm compatible con Node 24
-- Una base de datos MongoDB para ejecutar el backend
-- Variables de entorno configuradas; nunca publiques credenciales reales en Git
+- Node.js 24.x y npm compatible.
+- MongoDB configurado para el backend.
+- Variables de entorno locales o del proveedor de alojamiento; no publicar credenciales en Git.
 
 ## Frontend
 
@@ -19,7 +29,7 @@ cp .env.example .env.development
 npm run dev
 ```
 
-Vite inicia el frontend en `http://localhost:3000`. Configura `REACT_APP_API_BASE_URL` en el archivo de entorno con la URL base del backend (sin añadir `/api` al final).
+Vite inicia el frontend en `http://localhost:3000`. Configura `REACT_APP_API_BASE_URL` con la URL base del backend, sin añadir `/api` al final.
 
 Comandos de validación:
 
@@ -39,44 +49,36 @@ npm ci
 npm start
 ```
 
-Configura las variables indicadas en [backend/.env.example](backend/.env.example) en el entorno local o en el panel de tu proveedor de hosting. En producción se deben usar variables del proveedor, no archivos con secretos dentro del repositorio.
+Consulta [backend/.env.example](backend/.env.example) como referencia de variables y contrasta los valores de ejemplo con las URLs actuales indicadas arriba antes de utilizarlos. Configura los secretos exclusivamente en el entorno autorizado. La API expone `/health` para comprobar su estado y la conexión a MongoDB.
 
-El backend expone `/health` para comprobar si la API está funcionando y si MongoDB está conectado.
+### Acceso de administración
 
-### Cuenta administradora de demostración
+El registro público crea cuentas de cliente, no administradores. El script interno `backend/scripts/provisionAdmin.js` está destinado únicamente al aprovisionamiento controlado de una cuenta administradora cuando no exista; **no debe ejecutarse como parte de las verificaciones normales ni para restablecer una cuenta existente**.
 
-El registro público crea únicamente cuentas de cliente. No se debe exponer una ruta pública para crear administradores. Si no existe una cuenta de administración para la v2, se puede aprovisionar una vez mediante el script interno `backend/scripts/provisionAdmin.js`.
+Antes de cualquier aprovisionamiento, comprueba la base de datos y el servicio de destino de la versión estable, manteniéndolos separados de `main`. Consulta el código y las instrucciones del script, utiliza secretos temporales fuera de Git y retíralos al terminar. El script no se ejecuta automáticamente durante el despliegue.
 
-Antes de ejecutarlo, confirma que el servicio y su `MONGO_URI` apuntan a la base de datos de demostración de **electrovibehome-v2**, nunca a la base de la versión original. Ejecuta el script solo desde el contexto operativo autorizado de ese servicio, no desde el backend que despliega `main`.
+### Recuperación de contraseña
 
-Para autorizar la operación se requieren temporalmente estas variables de entorno:
-- `ADMIN_BOOTSTRAP_EMAIL`: correo exclusivo para la cuenta administradora.
-- `ADMIN_BOOTSTRAP_PASSWORD`: contraseña fuerte de al menos 16 caracteres, con mayúsculas, minúsculas, números y símbolos.
-- `ADMIN_BOOTSTRAP_CONFIRM=CREATE_ADMIN_ACCOUNT`: confirmación explícita.
-- `ALLOW_ADMIN_PROVISIONING=true`: solo cuando `NODE_ENV=production`, durante el aprovisionamiento.
-
-Desde la raíz del repositorio, en el entorno autorizado del backend, ejecuta `node backend/scripts/provisionAdmin.js`. El script solo crea una cuenta nueva; si el correo ya existe, se detiene y no modifica roles ni contraseñas. Después de ejecutarlo, elimina todas las variables `ADMIN_BOOTSTRAP_*` y `ALLOW_ADMIN_PROVISIONING` del entorno. No escribas la contraseña en comandos guardados, Git, tickets ni registros compartidos.
-
-El script no se ejecuta automáticamente durante el despliegue y no se ha ejecutado desde este cambio: crear la cuenta modifica la base de datos, por lo que primero debes comprobar el destino correcto del servicio v2.
+La recuperación utiliza correo transaccional mediante Brevo en el backend. El flujo de solicitud, recepción del correo y cambio de contraseña fue probado satisfactoriamente con una cuenta de cliente y un buzón accesible (confirmación manual del 27 de octubre de 2026). Las pruebas de caducidad, uso único y otras condiciones negativas del enlace deben registrarse de forma independiente; no se consideran cubiertas por esa comprobación manual.
 
 ## Guía ElectroVibe (opcional)
 
-El catálogo incluye una guía conversacional que usa productos disponibles para orientar la elección. No crea pedidos, no procesa pagos ni consulta datos de cuenta.
+El catálogo dispone de una guía conversacional para orientar sobre productos. No crea pedidos ni gestiona pagos o información privada de cuentas.
 
-Para habilitarla, configura `OPENAI_API_KEY` en el entorno del backend y, opcionalmente, `OPENAI_MODEL` (por defecto `gpt-4.1-mini`). Nunca pongas la clave en variables del frontend ni en Git. Sin una clave, la interfaz informa que la guía todavía no está configurada.
+Para habilitarla se requiere `OPENAI_API_KEY` en el backend y opcionalmente `OPENAI_MODEL`. Su uso de API puede generar costos independientes de ChatGPT. Sin una clave, la guía no queda operativa. Nunca coloques claves en variables públicas del frontend o en el repositorio.
 
-La integración limita el tamaño de la conversación y la respuesta, envía hasta 20 productos disponibles y establece `store: false` en la solicitud. Los mensajes se mantienen solo en el estado de la página y no se guardan en ElectroVibeHome. Las llamadas a la API tienen facturación independiente de una suscripción de ChatGPT; revisa el [precio actual de la API](https://developers.openai.com/api/docs/pricing) y configura el presupuesto de uso de tu proyecto antes de habilitarla.
+## Pedidos y pagos
 
-## Pagos
+ElectroVibeHome es una demostración. La integración con Wompi existe en el código, pero **su activación está en pausa**: no hay credenciales de Sandbox listas en el entorno revisado, y no se autorizan pagos reales. Mercado Pago se ha considerado como alternativa, pero no está implementado ni validado como nuevo proveedor.
 
-El checkout se integra con Wompi. Para pruebas utiliza únicamente credenciales y configuración de **Sandbox**. La página de redirección no confirma un pago; el estado definitivo debe proceder del webhook validado por el backend.
-
-Los flujos de devolución de inventario usan transacciones MongoDB. El entorno de base de datos debe admitir transacciones, como MongoDB Atlas configurado como replica set.
+No interpretar una redirección del navegador como confirmación de pago. Antes de reactivar cualquier proveedor deben verificarse las credenciales de pruebas, la firma o autenticidad de las notificaciones, los estados de pedidos y la devolución segura de inventario. Las operaciones transaccionales de inventario requieren MongoDB con soporte de transacciones.
 
 ## CI y validación
 
-El workflow [ElectroVibeHome CI](.github/workflows/ci.yml) valida los cambios de `preview/electrovibehome-v2`. Incluye pruebas unitarias del frontend y backend, compilación del frontend, comprobación de sintaxis, prueba HTTP integral con una instancia desechable de MongoDB, revisión de salud/CORS/catálogo en la vista previa y comprobación visual en varios tamaños de pantalla. Los informes de `npm audit` se adjuntan a cada ejecución para revisar las vulnerabilidades conocidas de las dependencias.
+[ElectroVibeHome CI](.github/workflows/ci.yml) se ejecuta para los cambios relevantes de `electrovibehome-stable` y admite ejecución manual. Comprueba, según el trabajo, pruebas unitarias, compilación, auditoría de dependencias, sintaxis backend, pruebas HTTP aisladas con MongoDB temporal, salud de API/CORS/catálogo publicado y navegación responsive mediante Chromium.
 
-La vista previa de Render se despliega desde `preview/electrovibehome-v2`. Estos cambios permanecen separados de `main` y no se integran en la versión original automáticamente.
+La [ejecución 493](https://github.com/sro2005/ElectroVibeHome/actions/runs/40566521064) del 27 de octubre de 2026 terminó correctamente con cinco trabajos. Esto no equivale a una validación manual completa de todos los flujos de compra y administración.
 
-Repositorio: https://github.com/sro2005/my-app
+Consulta [la lista de validación pendiente](docs/RELEASE-CHECKLIST.md) para las comprobaciones que todavía requieren evidencia.
+
+Repositorio: https://github.com/sro2005/ElectroVibeHome
