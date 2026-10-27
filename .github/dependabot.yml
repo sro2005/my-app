@@ -7,6 +7,15 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+      # 0.x minor releases can contain breaking changes and this one crosses the
+      # currently declared ^0.5.47 range; review it as a deliberate migration.
+      - dependency-name: "moment-timezone"
+        update-types:
+          - "version-update:semver-minor"
     groups:
       frontend-minor-and-patch:
         update-types:
@@ -20,6 +29,13 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "moment-timezone"
+        update-types:
+          - "version-update:semver-minor"
     groups:
       backend-minor-and-patch:
         update-types:
@@ -33,3 +49,7 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
