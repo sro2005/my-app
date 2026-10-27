@@ -1,14 +1,16 @@
 # ElectroVibeHome — lista de verificación de la versión estable
 
-**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome sigue siendo una demostración: no se realizaron pedidos, cambios de inventario, cambios de contraseñas ni pagos en la base de datos viva.
+**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome sigue siendo una demostración. En las pruebas automatizadas de esta revisión no se crearon pedidos, no se modificó inventario ni se realizaron pagos reales en la base de datos viva. La comprobación manual de recuperación/restablecimiento de contraseña realizada con una cuenta cliente está registrada más abajo.
 
 ## Validación más reciente
 
-- Ejecución de GitHub Actions: [CI #500, intento 2](https://github.com/sro2005/ElectroVibeHome/actions/runs/40570994624).
-- Commit validado: `b969b4d1003c4bd675ef31c09fa4123d6b89c63a`.
-- Resultado: **5/5 trabajos correctos** (frontend, backend, backend E2E, comprobación live y navegador).
-- Frontend Render actualizado: despliegue `dep-dbgg24m7bikc73bfr6fg`, estado `live`, desde `electrovibehome-stable`.
-- Backend Render: sigue activo. En esta tanda no cambió el código de ejecución del backend; las modificaciones allí fueron de documentación/configuración de ejemplo. La comprobación live confirmó que la API y MongoDB estaban listos.
+- Ejecución de GitHub Actions: [CI final — 40590623401](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401).
+- Commit validado por la ejecución: `3e8dd07087f0fb34eb24c6d5e7bea7ebb84d362e`.
+- Resultado: **5/5 trabajos correctos**: backend, frontend, backend E2E, comprobación del sitio/API publicados y pruebas de navegador.
+- La ejecución incluyó auditorías de dependencias, comprobación de sintaxis, pruebas unitarias, compilación frontend, flujos HTTP contra MongoDB desechable, comprobación del catálogo/API publicados y Playwright en escritorio, tableta y móvil.
+- Capturas de esta ejecución: [artefacto de screenshots](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401/artifacts/12774216283).
+- Estado de despliegue: el frontend Render sigue en estado `live` desde el despliegue `dep-dbgg24m7bikc73bfr6fg` (commit `b969b4d1003c4bd675ef31c09fa4123d6b89c63a`); la API sigue en estado `live` desde el despliegue `dep-dbgfdoc9v7es73aa61tg` (commit `0205d6b859b516c1c3242df3a259cc0b0ffa1417`). El smoke test de la ejecución más reciente confirmó que el frontend/API publicados respondían correctamente y que MongoDB estaba listo.
+- Los commits más recientes `d4d18d2` y `3e8dd07` modifican pruebas, workflow y documentación, no la lógica de ejecución de la aplicación. Render los registró como `commit_ignored` por `[skip render]`; no se solicitó un nuevo despliegue de aplicación en esta tanda.
 
 ## Validaciones automatizadas completadas
 
@@ -47,15 +49,15 @@
 - [x] No se detectaron errores JavaScript durante las pruebas de navegador.
 - [x] Las llamadas de los módulos autenticados se interceptaron con fixtures locales de Playwright: esas pruebas validan la UI y las interacciones, no modifican cuentas, productos ni pedidos de la base viva.
 
-Las capturas de las pruebas responsive y de los módulos están disponibles en el [artefacto de screenshots de CI](https://github.com/sro2005/ElectroVibeHome/actions/runs/40570994624/artifacts/12766436535).
+Las capturas de las pruebas responsive y de los módulos están disponibles en el [artefacto de screenshots de la ejecución más reciente](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401/artifacts/12774216283).
 
 ### Comprobaciones manuales confirmadas
 
 - [x] El usuario confirmó que probó solicitud de recuperación, recepción de correo y cambio de contraseña con una cuenta cliente y su buzón (27 de octubre de 2026).
 
-## Pendiente antes de declarar la aceptación funcional completa
+## Verificaciones complementarias realizadas y límites de alcance
 
-Estas pruebas no se han presentado como completadas porque requieren un entorno/cuenta de prueba separado o evidencia que no se obtiene de un test unitario:
+Los puntos marcados con `[x]` se completaron en los entornos indicados. Estos controles no son fallos de CI, pero sí delimitan el alcance: la UI autenticada se probó con fixtures, los endpoints administrativos con una base desechable y los pagos reales permanecen deshabilitados.
 
 - [x] Prueba autenticada real del backend publicado (27-oct-2026): API saludable y MongoDB conectado; registro HTTP 201; inicio de sesión HTTP 200; perfil HTTP 200; historial propio HTTP 200; intentos de acceder a directorios de administración bloqueados con HTTP 403. No se crearon pedidos ni se llamaron pasarelas de pago. Se eliminó la cuenta sintética y su registro de inicio de sesión de MongoDB, y se comprobó que ya no existen.
 - [x] Aceptación funcional del panel administrativo en CI con datos descartables (run [40590252750](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590252750)): un administrador sintético pudo consultar clientes/pedidos, crear/editar/eliminar un producto sin referencias y cambiar un pedido simulado de Procesando a Enviado y Entregado. Los datos vivieron solo en MongoDB desechable de CI.
@@ -94,7 +96,8 @@ Solo si se decide reactivar una pasarela:
 - [Repositorio ElectroVibeHome](https://github.com/sro2005/ElectroVibeHome)
 - [Frontend publicado](https://electrovibehome.onrender.com/)
 - [API publicada](https://electrovibehome-v2-api.onrender.com)
-- [CI #500 — intento 2](https://github.com/sro2005/ElectroVibeHome/actions/runs/40570994624)
+- [CI final — 40590623401 (5/5 trabajos correctos)](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401)
+- [Capturas responsive y módulos — ejecución final](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401/artifacts/12774216283)
 - [CI de autenticación real y escaneo histórico único](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519)
 - [Despliegue frontend en Render](https://dashboard.render.com/static/srv-dbg1n0psrm7s73c8gom0)
 - [Variables de ejemplo del backend](../backend/.env.example)
