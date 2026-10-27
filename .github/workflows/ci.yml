@@ -197,7 +197,7 @@ jobs:
       - name: Verify published frontend, API CORS, and demo catalog
         env:
           API_URL: https://electrovibehome-v2-api.onrender.com
-          FRONTEND_URL: https://electrovibehome-v2-preview.onrender.com
+          FRONTEND_URL: https://electrovibehome.onrender.com
         shell: bash
         run: |
           set -euo pipefail
@@ -310,7 +310,7 @@ jobs:
         run: npx playwright install chromium
       - name: Check live preview at desktop, tablet and mobile widths
         env:
-          FRONTEND_URL: https://electrovibehome-v2-preview.onrender.com
+          FRONTEND_URL: https://electrovibehome.onrender.com
         run: node scripts/frontend-browser-smoke.cjs
       - name: Upload responsive screenshots
         if: always()
