@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: "Type PURGE_STABLE_HISTORY only after pausing Render auto-deploy and temporarily disabling the GitHub non-fast-forward rule."
+        description: "Type PURGE_STABLE_HISTORY only after pausing auto-deploy for the stable Render frontend/API and temporarily limiting the branch ruleset to main only."
         required: true
         type: string
 
@@ -160,6 +160,6 @@ jobs:
             echo "- Only `electrovibehome-stable` was force-pushed."
             echo "- `main` was verified unchanged; tags were not rewritten."
             echo "- Stable commit IDs changed and the two branches no longer share a common historical ancestor."
-            echo "- Re-enable the GitHub ruleset `Protección de Ramas` manually."
+            echo "- Restore the GitHub ruleset `Protección de Ramas` to cover both main and the default branch."
             echo "- Re-enable auto-deploy for the stable Render frontend and API after confirming no deployment started."
           } >> "$GITHUB_STEP_SUMMARY"
