@@ -1,0 +1,205 @@
+name: Purge legacy localhost TLS files from Git history
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: "Type PURGE_ALL_HISTORY only after pausing Render auto-deploy and temporarily disabling the repository's non-fast-forward branch rule."
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  administration: read
+
+concurrency:
+  group: purge-legacy-localhost-tls-history
+  cancel-in-progress: false
+
+jobs:
+  purge:
+    if: ${{ inputs.confirmation == 'PURGE_ALL_HISTORY' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out stable branch
+        uses: actions/checkout@v7
+        with:
+          ref: electrovibehome-stable
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify branch rules permit a history rewrite
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ids="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/rulesets" --jq '.[].id')"
+          while IFS= read -r id; do
+            [ -z "$id" ] && continue
+            ruleset="$(gh api "repos/${GITHUB_REPOSITORY}/rulesets/$id")"
+            if jq -e '.enforcement == "active" and any(.rules[]?; .type == "non_fast_forward")' <<< "$ruleset" >/dev/null; then
+              echo "::error::A branch ruleset still blocks non-fast-forward updates. Temporarily disable that rule in GitHub, then rerun this workflow."
+              exit 1
+            fi
+          done <<< "$ids"
+          echo "No active non-fast-forward ruleset was found."
+
+      - name: Fetch every branch and tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/branches" --jq '.[].name' > "$RUNNER_TEMP/branches.txt"
+          grep -Fxq "main" "$RUNNER_TEMP/branches.txt"
+          grep -Fxq "electrovibehome-stable" "$RUNNER_TEMP/branches.txt"
+
+          git remote add purge-origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git fetch purge-origin --prune --tags '+refs/heads/*:refs/remotes/purge-origin/*'
+          git switch --detach "$(git rev-parse HEAD)"
+          while IFS= read -r branch; do
+            [ -z "$branch" ] && continue
+            git show-ref --verify --quiet "refs/remotes/purge-origin/$branch"
+            git branch --force "$branch" "refs/remotes/purge-origin/$branch"
+          done < "$RUNNER_TEMP/branches.txt"
+
+          echo "Branches to rewrite:"
+          cat "$RUNNER_TEMP/branches.txt"
+          echo "Tags to rewrite:"
+          git tag --list
+
+      - name: Install git-filter-repo
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes git-filter-repo
+
+      - name: Remove legacy localhost certificates from every reachable commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote remove origin 2>/dev/null || true
+          git remote remove purge-origin 2>/dev/null || true
+
+          git filter-repo --force \
+            --path localhost-key.pem \
+            --path localhost.pem \
+            --path backend/localhost-key.pem \
+            --path backend/localhost.pem \
+            --invert-paths
+
+          # Remove remote-tracking refs so the post-cleanup scan cannot accidentally
+          # inspect the old, unrewritten remote pointers.
+          while IFS= read -r ref; do
+            [ -z "$ref" ] || git update-ref -d "$ref"
+          done < <(git for-each-ref --format='%(refname)' refs/remotes)
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Prevent these files from returning on main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git switch main
+          grep -Fxq '*.pem' .gitignore || printf '\n# Local TLS certificates and private keys must not be committed\n*.pem\n' >> .gitignore
+          grep -Fxq '*.key' .gitignore || printf '*.key\n' >> .gitignore
+          git add .gitignore
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: ignore local TLS material [skip render]"
+          fi
+
+      - name: Update release checklist
+        shell: bash
+        run: |
+          set -euo pipefail
+          git switch electrovibehome-stable
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path("docs/RELEASE-CHECKLIST.md")
+          text = path.read_text(encoding="utf-8")
+          lines = []
+          for line in text.splitlines():
+              if line.startswith("**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación."):
+                  line = "**Alcance:** rama `electrovibehome-stable`. Se saneó el historial de las ramas retirando certificados TLS locales; se conserva el código funcional de la versión original."
+              elif line.startswith("- [!] Escaneo Gitleaks de todo el historial"):
+                  line = "- [x] Se ejecutó un nuevo escaneo Gitleaks sobre todas las ramas y etiquetas alcanzables después de la limpieza; el workflow aborta antes del push si encuentra alguna detección."
+              elif line.startswith("- [!] El escaneo de historial [falló por dos detecciones"):
+                  line = "- [x] Los cuatro archivos de certificados TLS locales (`localhost-key.pem`, `localhost.pem` y sus copias en `backend/`) se eliminaron de todos los commits alcanzables mediante reescritura del historial."
+              elif line.startswith("- [ ] Remediar las claves históricas."):
+                  line = "- [x] Se reescribió el historial de todas las ramas y etiquetas alcanzables. Todos los SHA de los commits cambiaron; se conservó el código funcional y se añadieron reglas para no volver a versionar archivos PEM/KEY."
+              elif line.startswith("- [x] `main` permanece en su commit original y protegida."):
+                  line = "- [x] La lógica funcional de `main` se conserva; sus SHA históricos se reescribieron y se retiraron los certificados TLS locales."
+              elif line.startswith("- [x] `electrovibehome-stable` está protegida contra eliminación y `force push`."):
+                  line = "- [ ] Rehabilitar la regla de protección de ramas tras verificar el resultado de esta limpieza."
+              lines.append(line)
+
+          text = "\n".join(lines).rstrip() + "\n"
+          text += (
+              "\n## Saneamiento del historial — 27 de octubre de 2026\n\n"
+              "- Se retiraron `localhost-key.pem`, `localhost.pem`, `backend/localhost-key.pem` y `backend/localhost.pem` de todas las ramas y etiquetas alcanzables.\n"
+              "- La revisión del código había confirmado que eran certificados de HTTPS local; producción usa el proxy HTTPS y el servidor contempla el caso en que no existan los certificados locales.\n"
+              "- Se reescribieron los SHA históricos. El flujo ejecuta un escaneo Gitleaks posterior y no publica los refs si quedan detecciones.\n"
+              "- [ ] Rehabilitar la regla `Protección de Ramas` en GitHub después de que termine el workflow. Verificar también que Render no inició un despliegue.\n"
+          )
+          path.write_text(text, encoding="utf-8")
+          PY
+          git add docs/RELEASE-CHECKLIST.md
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: record legacy TLS history cleanup [skip render]"
+          fi
+          git commit --allow-empty -m "chore: purge legacy localhost TLS material from history [skip render]"
+
+      - name: Verify no old commit still contains the certificate paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git log --all --format= --name-only -- localhost-key.pem localhost.pem backend/localhost-key.pem backend/localhost.pem | grep -E '(^|/)(localhost-key\.pem|localhost\.pem)$'; then
+            echo "::error::At least one reachable commit still references a legacy certificate path."
+            exit 1
+          fi
+          for branch in main electrovibehome-stable; do
+            if git ls-tree -r --name-only "$branch" | grep -E '(^|/)(localhost-key\.pem|localhost\.pem)$'; then
+              echo "::error::A branch tip still contains a legacy certificate file."
+              exit 1
+            fi
+          done
+
+      - name: Run Gitleaks across all rewritten branches and tags
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/repo" \
+            ghcr.io/gitleaks/gitleaks:v8.29.1@sha256:aa036a2f4bdfe3cc3c55fa4326308efabb4a6be498c883c864fd1d0d5585438a \
+            detect --source /repo --log-opts="--all" --redact
+
+      - name: Push rewritten branch and tag history
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin '+refs/heads/*:refs/heads/*'
+          if [ -n "$(git for-each-ref --format='%(refname)' refs/tags)" ]; then
+            git push --force origin '+refs/tags/*:refs/tags/*'
+          fi
+
+      - name: Summarize follow-up actions
+        if: success()
+        shell: bash
+        run: |
+          {
+            echo "## Historical TLS cleanup completed"
+            echo
+            echo "- Certificate/key paths were removed from all reachable branches and tags."
+            echo "- Gitleaks passed before refs were pushed."
+            echo "- All branch and tag commit IDs may have changed; collaborators should re-clone."
+            echo "- **Re-enable the repository ruleset `Protección de Ramas` manually.**"
+            echo "- Verify Render did not start a deployment; the new stable head carries `[skip render]`."
+          } >> "$GITHUB_STEP_SUMMARY"
