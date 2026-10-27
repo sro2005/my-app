@@ -4,15 +4,15 @@
 
 ## Validación de actualización de dependencias — 27 de octubre de 2026
 
-- Ejecución de GitHub Actions: [CI #516 — actualización de dependencias](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695).
-- Commit validado: `76b5dfeb3f8025c6ccb9181afa9a905ea41c27ae`.
-- Resultado: **5/5 trabajos correctos**: frontend, backend, backend E2E, smoke del sitio/API publicados y navegador responsive.
+- Ejecución de GitHub Actions posterior al despliegue y a la política de mantenimiento: [CI #528](https://github.com/sro2005/ElectroVibeHome/actions/runs/40597676584), **5/5 trabajos correctos**.
+- Commit del refresco de dependencias: `76b5dfeb3f8025c6ccb9181afa9a905ea41c27ae`. Las pruebas se repitieron después en `82f88cf2e6e92f541f839b292bf44472e9641a57`, ya con frontend y API desplegados desde el commit de actualización de dependencias.
 - Se refrescaron únicamente `package-lock.json` y `backend/package-lock.json` con las versiones más recientes permitidas por los rangos actuales; no se modificaron los manifiestos `package.json` ni la lógica funcional.
 - Dependencias directas actualizadas: Axios `1.20.0 → 1.21.0`, React Router / react-router-dom `7.18.4 → 7.18.5`, Mongoose `8.24.6 → 8.24.7` y Nodemailer `10.2.0 → 10.2.1`. También se actualizaron dependencias transitivas compatibles.
 - Las auditorías `npm audit --audit-level=high` pasaron en frontend y backend; ambos informes reportaron **cero vulnerabilidades conocidas** en los árboles instalados.
 - Validación automatizada: pruebas frontend, build frontend, sintaxis JavaScript backend, pruebas unitarias backend y E2E HTTP contra MongoDB desechable pasaron. El smoke del sitio/API comprobó salud de la API, conexión MongoDB, CORS, rutas protegidas y catálogo publicado; Playwright pasó en escritorio, tableta y móvil.
-- Capturas responsive: [artefacto de screenshots del CI #516](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12776021447). Informes de auditoría: [frontend](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12775678570) y [backend](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12775777492).
-- Tras superar CI, los lockfiles actualizados se desplegaron en Render desde el commit `76b5dfeb`: frontend `dep-dbgie2p42hec73f688m0` y API `dep-dbgidv4s728c73e6ndl0`. Ambos despliegues terminaron en estado `live`.
+- Capturas responsive: [artefacto de screenshots](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12776021447). Informes de auditoría: [frontend](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12775678570) y [backend](https://github.com/sro2005/ElectroVibeHome/actions/runs/40595370695/artifacts/12775777492).
+- Tras superar CI, los lockfiles actualizados se desplegaron en Render desde el commit `76b5dfeb`: frontend `dep-dbgie2p42hec73f688m0` y API `dep-dbgidv4s728c73e6ndl0`. Ambos despliegues terminaron en estado `live`; el CI #528 volvió a comprobar el sitio/API y el navegador después de ese despliegue.
+- Se cerraron los PR de Dependabot `#4–#14` que proponían saltos fuera del rango actual o migraciones mayores sin aprobar. Los casos con fallos de CI (MUI 9 y Mongoose 9) no se fusionaron. La configuración ahora ignora actualizaciones mayores y los saltos menores 0.x pendientes de revisión para moment-timezone y react-spinners.
 - `main` permanece intacta. Las actualizaciones mayores no se incorporaron automáticamente; requieren una evaluación de compatibilidad y sus propias pruebas antes de adoptarse.
 
 ## Validaciones automatizadas completadas
@@ -90,6 +90,7 @@ Solo si se decide reactivar una pasarela:
 
 - [x] `main` permanece en su commit original y protegida.
 - [x] `electrovibehome-stable` está protegida contra eliminación y `force push`.
+- [ ] **Pendiente de configuración manual en GitHub:** hacer que la regla de la rama estable requiera los checks de CI antes de permitir una fusión. El ruleset activo protege contra eliminación y `force push`, pero actualmente no exige que CI esté en verde.
 - [x] Frontend Render está publicado desde el commit validado de la rama estable.
 - [x] No se modificaron secretos, variables reales de Render, datos de la base viva ni configuración del backend.
 - [x] Wompi/Mercado Pago siguen en pausa; no se realizaron pagos reales.

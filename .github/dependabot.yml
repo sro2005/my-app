@@ -16,6 +16,9 @@ updates:
       - dependency-name: "moment-timezone"
         update-types:
           - "version-update:semver-minor"
+      - dependency-name: "react-spinners"
+        update-types:
+          - "version-update:semver-minor"
     groups:
       frontend-minor-and-patch:
         update-types:
