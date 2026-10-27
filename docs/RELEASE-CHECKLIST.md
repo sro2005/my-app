@@ -1,52 +1,90 @@
 # ElectroVibeHome — lista de verificación de la versión estable
 
-**Alcance:** `electrovibehome-stable`; conservar `main` intacta. Proyecto demostrativo sin ventas ni pagos reales.
+**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome sigue siendo una demostración: no se realizaron pedidos, cambios de inventario, cambios de contraseñas ni pagos en la base de datos viva.
 
-## Comprobaciones ya respaldadas
+## Validación más reciente
 
-- [x] CI: ejecución 493 del 27 de octubre de 2026 finalizada con cinco trabajos correctos (backend, frontend, backend E2E aislado, smoke publicado, navegador responsive).
-- [x] Frontend y backend de la rama estable desplegados con estado `live` en Render para el commit `0205d6b859b516c1c3242df3a259cc0b0ffa1417` (verificado el 27 de octubre de 2026).
-- [x] API y MongoDB listos en la comprobación automatizada de salud.
-- [x] CORS, rechazo de rutas protegidas sin autenticación y revisión del catálogo de demostración comprobados por el smoke test.
-- [x] Reglas de GitHub activas contra la eliminación y los pushes forzados en `main` y `electrovibehome-stable`.
-- [x] Solicitud, recepción del mensaje y cambio de contraseña probados manualmente con una cuenta de cliente y acceso al buzón (confirmación del usuario, 27 de octubre de 2026).
+- Ejecución de GitHub Actions: [CI #500, intento 2](https://github.com/sro2005/ElectroVibeHome/actions/runs/40570994624).
+- Commit validado: `b969b4d1003c4bd675ef31c09fa4123d6b89c63a`.
+- Resultado: **5/5 trabajos correctos** (frontend, backend, backend E2E, comprobación live y navegador).
+- Frontend Render actualizado: despliegue `dep-dbgg24m7bikc73bfr6fg`, estado `live`, desde `electrovibehome-stable`.
+- Backend Render: sigue activo. En esta tanda no cambió el código de ejecución del backend; las modificaciones allí fueron de documentación/configuración de ejemplo. La comprobación live confirmó que la API y MongoDB estaban listos.
 
-Los resultados anteriores reflejan las pruebas mencionadas: **no certifican todos los flujos funcionales ni todas las condiciones de seguridad**.
+## Validaciones automatizadas completadas
 
-## Validación funcional pendiente
+### Backend y datos — MongoDB de prueba aislado
 
-- [ ] Cliente: registro, inicio/cierre de sesión, perfil, carrito, formulario de pedido, validación de campos e historial.
-- [ ] Administración: permisos y restricciones de roles, gestión de productos, inventario, clientes y pedidos.
-- [ ] Casos negativos: datos incorrectos, acceso a pedidos de otros usuarios, intentos sin sesión, controles de validación y mensajes de error.
-- [ ] Recuperación: verificar explícitamente la caducidad, el uso único del enlace y el rechazo de tokens inválidos.
-- [ ] Confirmar que los datos sensibles (hashes de contraseña, tokens de recuperación) no aparecen en respuestas de API.
-- [ ] Revisar la experiencia visual en móvil/tableta/escritorio: encabezado, favicon, formularios, botones, modales, navegación y mensajes de confirmación.
-- [ ] Confirmar configuración HTTPS, orígenes permitidos y manejo seguro de secretos sin publicar valores.
-- [ ] Revisar que las cuentas administradoras no puedan realizar acciones de compra propias de clientes, de acuerdo con los requisitos de la demostración.
+- [x] Registro y login de cliente; el registro público no concede rol de administrador.
+- [x] Perfil y actualización de campos permitidos; se rechazan cambios no autorizados de perfil, rol o contraseña.
+- [x] Las respuestas de perfil/login no exponen hashes de contraseña ni campos de recuperación.
+- [x] Cálculo del total del pedido a partir de precios del servidor.
+- [x] El inventario disminuye una sola vez al crear una orden; no se crea una segunda orden ante stock insuficiente.
+- [x] Reintentos idempotentes y solicitudes concurrentes no duplican pedidos ni permiten sobreventa.
+- [x] El historial de un cliente no muestra pedidos de otro usuario.
+- [x] El ciclo de recuperación de contraseña acepta un token válido, rechaza su reutilización y rechaza un token vencido; estas pruebas usan fixtures y una base desechable.
+- [x] La suite E2E prueba notificaciones de pago simuladas: firma inválida no cambia estado; aprobación y rechazo funcionan en los fixtures; eventos repetidos no duplican movimientos de inventario.
+- [x] El modo de compra demostrativo crea una orden marcada como simulada con datos de la base desechable, sin requerir credenciales de una pasarela.
 
-## Pagos: en pausa, no bloquean la validación del resto del proyecto
+### Backend en el servicio publicado — solo lectura
 
-- [ ] Decidir si se conserva Wompi Sandbox, se investiga Mercado Pago o se presenta únicamente una simulación sin transacciones reales.
-- [ ] Si se reactiva un proveedor, utilizar exclusivamente credenciales y notificaciones de entorno de pruebas.
-- [ ] Validar con casos aislados los estados aprobado, rechazado, pendiente, duplicados y fallos de webhook; comprobar pedido, importe, referencia e inventario.
-- [ ] Confirmar que ningún retorno del navegador marca unilateralmente un pedido como pagado.
-- [ ] Definir reconciliación de pedidos pendientes abandonados sin liberar inventario hasta verificar con seguridad el estado del pago.
-- [ ] Probar que un usuario no puede leer ni pagar pedidos de otra cuenta.
-- [ ] Validar que notificaciones duplicadas no duplican movimientos de inventario y que no se alteran pedidos con pagos activos o finalizados.
+- [x] `/health` responde correctamente y reporta MongoDB conectado.
+- [x] El frontend público cargado y el bundle compilado apuntan a la URL actual de la API.
+- [x] CORS permite el dominio frontend publicado y no concede permiso a un origen no aprobado.
+- [x] Las rutas protegidas comprobadas rechazan solicitudes sin token o con token inválido; los payloads incompletos de registro/login son rechazados.
+- [x] Está presente la cabecera de seguridad `X-Content-Type-Options: nosniff`.
+- [x] La API publica 66 fichas de muestra en 22 categorías; el smoke test verificó que están marcadas como datos de demostración, con precio e inventario positivos y sin nombres duplicados por categoría.
 
-**No configurar claves de producción ni realizar pagos reales para completar esta demostración.** Los valores Wompi presentes como ejemplo en archivos de entorno no indican que el proveedor esté habilitado.
+### Frontend publicado — Playwright/Chromium
 
-## Antes de declarar terminada la revisión
+- [x] Portada responsive en 1440, 1024, 768, 390 y 320 px sin desbordamiento horizontal detectado.
+- [x] Catálogo con 66 productos, filtro por categoría, búsqueda, estado vacío y recuperación mediante «Limpiar filtros».
+- [x] Rutas públicas de registro, login, recuperación, restablecimiento, catálogo, acerca de, privacidad y términos responden correctamente y pasan la comprobación de ancho móvil.
+- [x] Validación de formularios bloquea registro vacío, email mal formado, recuperación sin email y contraseña de restablecimiento débil; el test confirma que no se enviaron solicitudes mutativas.
+- [x] La guía ElectroVibe apareció disponible y su interacción local de ejemplo no llamó al endpoint de chat de pago.
+- [x] Pantallas principales de administración y cliente recorridas en escritorio y móvil: panel, inventario, alta de producto, clientes, pedidos, seguridad, home, catálogo, formulario de pedido, historial, perfil y resultado informativo de pago.
+- [x] Se verificaron filtros, edición simulada de inventario, cancelación del diálogo de eliminación, validación de producto vacío, estado logístico de pedido en fixtures, validación de perfil/contraseña y redirección de un rol cliente fuera de una ruta administrativa.
+- [x] El formulario de pedido se llevó hasta la confirmación y se volvió a editar/cancelar; el test comprobó que no se envió ningún POST para crear una orden en el backend publicado.
+- [x] No se detectaron errores JavaScript durante las pruebas de navegador.
+- [x] Las llamadas de los módulos autenticados se interceptaron con fixtures locales de Playwright: esas pruebas validan la UI y las interacciones, no modifican cuentas, productos ni pedidos de la base viva.
 
-- [ ] Resolver problemas detectados y volver a ejecutar el CI sobre `electrovibehome-stable`.
-- [ ] Confirmar que los servicios Render siguen saludables y usan la rama esperada.
-- [ ] Documentar evidencia y resultado de cada validación funcional.
-- [ ] Mantener `main` sin modificaciones y evitar cambios de configuración o despliegues innecesarios.
+Las capturas de las pruebas responsive y de los módulos están disponibles en el [artefacto de screenshots de CI](https://github.com/sro2005/ElectroVibeHome/actions/runs/40570994624/artifacts/12766436535).
 
-## Referencias
+### Comprobaciones manuales confirmadas
 
-- [Repositorio](https://github.com/sro2005/ElectroVibeHome)
-- [Frontend estable](https://electrovibehome.onrender.com/)
-- [API estable](https://electrovibehome-v2-api.onrender.com)
-- [GitHub Actions — ejecución 493](https://github.com/sro2005/ElectroVibeHome/actions/runs/40566521064)
-- [Variables de ejemplo del backend](../backend/.env.example) — verificar las direcciones heredadas antes de copiarlas.
+- [x] El usuario confirmó que probó solicitud de recuperación, recepción de correo y cambio de contraseña con una cuenta cliente y su buzón (27 de octubre de 2026).
+
+## Pendiente antes de declarar la aceptación funcional completa
+
+Estas pruebas no se han presentado como completadas porque requieren un entorno/cuenta de prueba separado o evidencia que no se obtiene de un test unitario:
+
+- [ ] Hacer una pasada autenticada sobre el servicio desplegado con una cuenta de prueba dedicada, verificando sesión, edición de perfil, historial y cierre de sesión sin utilizar cuentas personales o administrativas reales ni dejar pedidos de prueba.
+- [ ] Validar manualmente el panel de administración con una cuenta y datos descartables (gestión real de productos/clientes/pedidos), evitando modificar inventario o registros reales.
+- [ ] Revisar mediante escaneo específico que no haya secretos publicados en el historial de Git. No basta con revisar los archivos actuales; si se encuentra una clave real, revocarla/rotarla.
+- [ ] Conservar evidencia manual de aceptación visual final. La automatización comprobó responsividad y las capturas principales se revisaron, pero no constituye una auditoría pixel a pixel de todos los estados de todas las pantallas.
+
+## Pagos — en pausa
+
+No se habilitaron pagos reales. La suite prueba lógica y firmas de Wompi con secretos y datos de prueba dentro de un entorno aislado; **eso no equivale a haber probado una transacción real en la cuenta Sandbox del proveedor**.
+
+Solo si se decide reactivar una pasarela:
+- [ ] Elegir proveedor (Wompi Sandbox, investigar Mercado Pago o conservar la simulación).
+- [ ] Configurar únicamente credenciales Sandbox, webhook de pruebas y URLs correctas.
+- [ ] Probar aprobado, rechazado, pendiente, eventos duplicados y tardíos desde el proveedor de pruebas; verificar pedido, importe, referencia, moneda y reserva/restauración de inventario.
+- [ ] No considerar una redirección del navegador como confirmación definitiva del pago.
+
+## Estado de ramas y despliegues
+
+- [x] `main` permanece en su commit original y protegida.
+- [x] `electrovibehome-stable` está protegida contra eliminación y `force push`.
+- [x] Frontend Render está publicado desde el commit validado de la rama estable.
+- [x] No se modificaron secretos, variables reales de Render, datos de la base viva ni configuración del backend.
+- [x] Wompi/Mercado Pago siguen en pausa; no se realizaron pagos reales.
+
+## Enlaces
+
+- [Repositorio ElectroVibeHome](https://github.com/sro2005/ElectroVibeHome)
+- [Frontend publicado](https://electrovibehome.onrender.com/)
+- [API publicada](https://electrovibehome-v2-api.onrender.com)
+- [CI #500 — intento 2](https://github.com/sro2005/ElectroVibeHome/actions/runs/40570994624)
+- [Despliegue frontend en Render](https://dashboard.render.com/static/srv-dbg1n0psrm7s73c8gom0)
+- [Variables de ejemplo del backend](../backend/.env.example)
