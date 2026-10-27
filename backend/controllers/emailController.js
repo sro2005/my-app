@@ -229,7 +229,7 @@ const buildPasswordResetEmail = resetUrl => {
                   <td style="color:#475569;font-size:12px;line-height:1.7;"><strong style="color:#27364a;">Por tu seguridad</strong><br>Este enlace vence en <strong>30 minutos</strong> y solo se puede usar una vez.</td>
                 </tr>
                 <tr>
-                  <td valign="top" width="25" style="width:25px;padding:12px 8px 0 0;color:#64748b;font-size:16px;">ⓘ</td>
+                  <td valign="top" width="25" style="width:25px;padding:12px 8px 0 0;"><span aria-hidden="true" style="display:inline-block;box-sizing:border-box;width:16px;height:16px;border:1.5px solid #64748b;border-radius:50%;color:#64748b;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:bold;line-height:13px;text-align:center;vertical-align:top;">i</span></td>
                   <td style="padding-top:12px;color:#64748b;font-size:12px;line-height:1.7;">Si no solicitaste este cambio, ignora el correo. Tu contraseña actual seguirá igual.</td>
                 </tr>
               </table>
