@@ -613,9 +613,6 @@ async function main() {
     }));
     assert.deepEqual(authAfterLogout, { token: null, user: null, userId: null },
       'Confirmed logout must clear every authentication storage key.');
-    assert.deepEqual(mockApiWrites.filter(call => /\/api\/(?:auth|customers|orders|products)\//.test(call)),
-      mockApiWrites.filter(call => /\/api\/(?:auth|customers|orders|products)\//.test(call)),
-      'Logout check is local-only and uses mocked API traffic.');
     console.log('Authenticated browser coverage passed. Admin/customer UI, role guards, safe form handling, and logout all ran with local fixtures; no live data was changed.');
 
     assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));
