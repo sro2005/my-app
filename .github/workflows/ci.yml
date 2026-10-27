@@ -1,10 +1,10 @@
 name: ElectroVibeHome CI
 
 on:
-  # Ejecutar CI en la rama principal de ElectroVibeHome y conservar cobertura durante la transición.
+  # Ejecutar CI en la rama estable y conservar cobertura durante el renombrado.
   push:
     branches:
-      - electrovibehome-principal
+      - electrovibehome-stable
       - preview/electrovibehome-v2
     paths:
       - '.github/workflows/ci.yml'
@@ -167,7 +167,7 @@ jobs:
         run: docker rm --force evh-e2e-mongodb || true
 
   smoke-preview:
-    if: github.ref == 'refs/heads/preview/electrovibehome-v2'
+    if: github.ref == 'refs/heads/preview/electrovibehome-v2' || github.ref == 'refs/heads/electrovibehome-stable'
     needs: [frontend, backend, backend-e2e]
     runs-on: ubuntu-latest
     steps:
@@ -293,7 +293,7 @@ jobs:
           NODE
 
   frontend-browser:
-    if: github.ref == 'refs/heads/preview/electrovibehome-v2'
+    if: github.ref == 'refs/heads/preview/electrovibehome-v2' || github.ref == 'refs/heads/electrovibehome-stable'
     needs: [smoke-preview]
     runs-on: ubuntu-latest
     steps:
