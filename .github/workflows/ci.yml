@@ -1,10 +1,10 @@
 name: ElectroVibeHome CI
 
 on:
-  # Ejecutar CI en la rama estable y conservar cobertura durante la transición del nombre anterior.
+  # Ejecutar CI en la rama principal de ElectroVibeHome y conservar cobertura durante la transición.
   push:
     branches:
-      - stable
+      - electrovibehome-principal
       - preview/electrovibehome-v2
     paths:
       - '.github/workflows/ci.yml'
