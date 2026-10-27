@@ -1,0 +1,41 @@
+.evh-site-header .evh-site-brand-mark {
+  display: inline-flex;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px solid rgba(243, 148, 53, .42);
+  border-radius: 13px;
+  color: #ff9d3b;
+  background: linear-gradient(145deg, rgba(243, 148, 53, .2), rgba(243, 148, 53, .055));
+  box-shadow: 0 7px 20px rgba(243, 148, 53, .12), inset 0 1px 0 rgba(255, 255, 255, .06);
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.evh-site-header .evh-site-brand-mark svg {
+  display: block;
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  margin: 0;
+}
+
+.evh-site-header .evh-site-brand:hover .evh-site-brand-mark {
+  transform: translateY(-1px);
+  border-color: rgba(243, 148, 53, .72);
+  box-shadow: 0 9px 24px rgba(243, 148, 53, .2), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+@media (max-width: 480px) {
+  .evh-site-header .evh-site-brand-mark {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    font-size: 1.15rem;
+  }
+}
