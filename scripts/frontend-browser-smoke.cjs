@@ -605,7 +605,7 @@ async function main() {
     await page.getByRole('dialog', { name: /Quieres cerrar sesión/i }).waitFor();
     await page.locator('.evh-logout-confirm').click();
     await page.waitForFunction(() => window.location.pathname === '/', null, { timeout: 15000 });
-    await page.getByRole('link', { name: /Iniciar Sesión/i }).waitFor({ timeout: 15000 });
+    await page.getByRole('navigation', { name: 'Navegación principal' }).getByRole('link', { name: /Iniciar Sesión/i }).waitFor({ timeout: 15000 });
     const authAfterLogout = await page.evaluate(() => ({
       token: localStorage.getItem('authToken'),
       user: localStorage.getItem('userData'),
