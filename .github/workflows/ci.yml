@@ -108,7 +108,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          docker run --detach --name evh-e2e-mongodb -p 27017:27017 mongo:8.0 mongod --replSet rs0 --bind_ip_all
+          docker run --detach --name evh-e2e-mongodb -p 27017:27017 mongo:7.0.45 mongod --replSet rs0 --bind_ip_all
 
           ready=false
           for attempt in $(seq 1 30); do

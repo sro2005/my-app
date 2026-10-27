@@ -5,6 +5,7 @@ const Product = require('../models/Product');
 const Order = require('../models/Order');
 const Customer = require('../models/Customer');
 const { calculateEventChecksum } = require('../utils/wompiSecurity');
+const bcrypt = require('bcrypt');
 
 const wompiSignedProperties = [
   'transaction.id',
@@ -410,6 +411,115 @@ async function main() {
   expectStatus(otherOrderHistory, 200, 'Second customer order history');
   assert.deepEqual(otherOrderHistory.body, [], 'One customer must not see another customer orders');
 
+  // Admin acceptance uses a synthetic administrator and disposable products/orders
+  // in the local CI replica set. No production account or database is involved.
+  const adminEmail = 'ci-e2e-admin-' + fixtureTag + '@example.com';
+  const adminPassword = 'AdminFixturePass123!';
+  await Customer.create({
+    firstName: 'CI E2E',
+    lastName: 'Admin',
+    email: adminEmail,
+    password: await bcrypt.hash(adminPassword, 12),
+    role: 'admin'
+  });
+  const adminLogin = await request('/api/auth/login', {
+    method: 'POST',
+    body: { email: adminEmail, password: adminPassword, role: 'admin' }
+  });
+  expectStatus(adminLogin, 200, 'Synthetic administrator login');
+  assert.equal(adminLogin.body.user.role, 'admin');
+  assert.equal(typeof adminLogin.body.token, 'string');
+  const adminToken = adminLogin.body.token;
+
+  const customersDenied = await request('/api/customers/all', { token });
+  expectStatus(customersDenied, 403, 'Customer cannot access admin customer directory');
+  const customersForAdmin = await request('/api/customers/all', { token: adminToken });
+  expectStatus(customersForAdmin, 200, 'Admin customer directory');
+  assert.ok(Array.isArray(customersForAdmin.body));
+  assert.ok(customersForAdmin.body.some(customer => customer.email === email));
+  assert.ok(customersForAdmin.body.some(customer => customer.email === adminEmail));
+  assert.doesNotMatch(JSON.stringify(customersForAdmin.body), /password|resetPasswordToken|resetPasswordExpires/i,
+    'Admin customer listing must not reveal password or password-reset fields');
+
+  const ordersForAdmin = await request('/api/orders/all', { token: adminToken });
+  expectStatus(ordersForAdmin, 200, 'Admin orders directory');
+  assert.ok(Array.isArray(ordersForAdmin.body));
+  assert.ok(ordersForAdmin.body.some(order => order._id === firstOrderId),
+    'Admin order list should include the order created in the isolated E2E database');
+  assert.ok(ordersForAdmin.body.some(order => order.products?.some(item => item.productId?.name === purchasableProduct.name)),
+    'Admin order list should populate product details for order review');
+
+  const productPayload = {
+    name: 'CI E2E Admin Panel Product ' + fixtureTag,
+    description: 'Disposable product for admin route acceptance',
+    category: 'CI E2E Admin',
+    price: 23456,
+    quantity: 8,
+    imageUrl: '',
+    demo: true,
+    demoIcon: 'test',
+    catalogVersion: 'e2e-admin'
+  };
+  const productCountBeforeDeniedCreate = await Product.countDocuments();
+  const customerCreateProductDenied = await request('/api/products/agregar', {
+    method: 'POST',
+    token,
+    body: productPayload
+  });
+  expectStatus(customerCreateProductDenied, 403, 'Customer cannot create an admin product');
+  assert.equal(await Product.countDocuments(), productCountBeforeDeniedCreate,
+    'Denied customer product creation must not write a product');
+
+  const adminCreatedProduct = await request('/api/products/agregar', {
+    method: 'POST',
+    token: adminToken,
+    body: productPayload
+  });
+  expectStatus(adminCreatedProduct, 201, 'Admin product creation');
+  assert.equal(adminCreatedProduct.body.product.name, productPayload.name);
+  assert.equal(adminCreatedProduct.body.product.demo, true);
+  assert.equal(adminCreatedProduct.body.product.catalogVersion, 'e2e-admin');
+  const adminProductId = adminCreatedProduct.body.product._id;
+
+  const adminUpdatedProduct = await request('/api/products/' + adminProductId, {
+    method: 'PUT',
+    token: adminToken,
+    body: { ...productPayload, quantity: 7 }
+  });
+  expectStatus(adminUpdatedProduct, 200, 'Admin product update');
+  assert.equal(adminUpdatedProduct.body.product.quantity, 7);
+  assert.equal(adminUpdatedProduct.body.product.demo, true);
+  assert.equal(adminUpdatedProduct.body.product.demoIcon, 'test');
+  const adminDeletedProduct = await request('/api/products/' + adminProductId, {
+    method: 'DELETE',
+    token: adminToken
+  });
+  expectStatus(adminDeletedProduct, 200, 'Admin product deletion');
+  assert.equal(await Product.findById(adminProductId), null,
+    'Admin product deletion should remove only the disposable product with no order references');
+
+  const adminPackedOrder = await request('/api/orders/' + firstOrderId + '/status', {
+    method: 'PUT',
+    token: adminToken,
+    body: { packed: true }
+  });
+  expectStatus(adminPackedOrder, 200, 'Admin mark order prepared and shipped');
+  assert.equal(adminPackedOrder.body.order.status, 'Enviado');
+  assert.equal(adminPackedOrder.body.order.packed, true);
+  const adminDeliveredOrder = await request('/api/orders/' + firstOrderId + '/status', {
+    method: 'PUT',
+    token: adminToken,
+    body: { delivered: true }
+  });
+  expectStatus(adminDeliveredOrder, 200, 'Admin mark order delivered');
+  assert.equal(adminDeliveredOrder.body.order.status, 'Entregado');
+  assert.equal(adminDeliveredOrder.body.order.delivered, true);
+
+  const adminOwnProfile = await request('/api/customers/profile', { token: adminToken });
+  expectStatus(adminOwnProfile, 200, 'Admin profile response');
+  assert.equal(adminOwnProfile.body.role, 'admin');
+  assert.doesNotMatch(JSON.stringify(adminOwnProfile.body), /password|resetPasswordToken|resetPasswordExpires/i,
+    'Admin profile must not reveal secret fields');
 
   // Test the real HTTP password-reset flow with a known token stored only as a hash.
   const recoveryToken = crypto.randomBytes(32).toString('hex');
@@ -506,7 +616,7 @@ async function main() {
     }
   }
 
-  console.log('HTTP E2E passed: registration/login/profile persistence, authorization, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, concurrent idempotency and stock-race protection, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, inventory restoration, in-app demo purchase without Wompi credentials, checkout isolation, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
+  console.log('HTTP E2E passed: registration/login/profile persistence, customer/admin authorization, admin customer/order reads, admin product create/edit/delete and order delivery transitions using disposable fixtures, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, concurrent idempotency and stock-race protection, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, inventory restoration, in-app demo purchase without Wompi credentials, checkout isolation, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
 }
 
 main()

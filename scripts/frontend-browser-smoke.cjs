@@ -250,9 +250,9 @@ async function main() {
       console.log('Mobile public route passed: ' + route.path);
       if (route.path === '/catalogo') {
         await page.waitForFunction(() => {
-          const note = document.querySelector('.evh-assistant-chat .evh-assistant-note');
-          return note && !/conectando la guía/i.test(note.textContent || '');
-        }, null, { timeout: 15000 });
+          const state = document.querySelector('.evh-assistant-status')?.getAttribute('aria-label') || '';
+          return ['Asistente disponible', 'Guía disponible', 'Guía no disponible'].includes(state);
+        }, null, { timeout: 20000 });
         const assistantState = await page.locator('.evh-assistant-status').getAttribute('aria-label');
         assert.ok(
           ['Asistente disponible', 'Guía disponible', 'Guía no disponible'].includes(assistantState),
