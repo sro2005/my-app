@@ -42,6 +42,8 @@ jobs:
           path: npm-audit-frontend.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Enforce frontend dependency audit (high and critical)
+        run: npm audit --audit-level=high
       - run: CI=true npm test
       - run: npm run build
 
@@ -69,6 +71,8 @@ jobs:
           path: backend/npm-audit-backend.json
           if-no-files-found: warn
           retention-days: 14
+      - name: Enforce backend dependency audit (high and critical)
+        run: npm audit --audit-level=high
       - name: Check JavaScript syntax
         run: |
           find . -path './node_modules' -prune -o -name '*.js' -type f -print0 | xargs -0 -n1 node --check
