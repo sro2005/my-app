@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createRequestRateLimiter, getClientAddress, limitRegistrationByIp } = require('./requestRateLimit');
+const { createRequestRateLimiter, getClientAddress } = require('./requestRateLimit');
 
 const createResponse = () => ({
   headers: {},
@@ -73,12 +73,16 @@ test('throttles public registration attempts by client IP', () => {
   let nextCalls = 0;
   const req = request('192.0.2.150');
 
+  const limiter = createRequestRateLimiter({
+    maxRequests: 10,
+    message: 'Demasiados intentos de registro desde esta conexión. Intenta más tarde.'
+  });
   for (let attempt = 0; attempt < 10; attempt += 1) {
-    limitRegistrationByIp(req, createResponse(), () => { nextCalls += 1; });
+    limiter(req, createResponse(), () => { nextCalls += 1; });
   }
 
   const blocked = createResponse();
-  limitRegistrationByIp(req, blocked, () => { nextCalls += 1; });
+  limiter(req, blocked, () => { nextCalls += 1; });
 
   assert.equal(nextCalls, 10);
   assert.equal(blocked.statusCode, 429);
