@@ -1,6 +1,9 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBolt } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../contexts/AuthContext';
+import './Footer.css';
 
 const scrollToTopImmediately = () => {
   const root = document.documentElement;
@@ -22,8 +25,10 @@ const Footer = () => {
   <footer className="footer evh-site-footer">
     <div className="evh-footer-inner">
       <div className="evh-footer-brand">
-        <Link className="evh-footer-logo" to="/" onClick={scrollToTopImmediately} aria-label="ElectroVibeHome, ir al inicio"><span aria-hidden="true">⚡</span> ELECTROVIBEHOME</Link>
-        <p>El futuro se siente en casa.</p>
+        <Link className="evh-footer-logo" to="/" onClick={scrollToTopImmediately} aria-label="ElectroVibeHome, ir al inicio">
+          <span className="evh-footer-logo-mark" aria-hidden="true"><FontAwesomeIcon icon={faBolt} /></span>
+          <span className="evh-footer-logo-name">ELECTROVIBEHOME</span>
+        </Link>
       </div>
 
       <div className="evh-footer-section evh-footer-contact">

@@ -1,0 +1,79 @@
+/* Footer brand mark — visually aligned with the ElectroVibeHome header icon. */
+.evh-site-footer .evh-footer-brand {
+  gap: 0;
+}
+
+.evh-site-footer .evh-footer-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .7rem;
+  min-height: 42px;
+  max-width: 100%;
+  white-space: nowrap;
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.evh-site-footer .evh-footer-logo:hover {
+  opacity: .96;
+  transform: translateY(-1px);
+}
+
+.evh-site-footer .evh-footer-logo .evh-footer-logo-mark {
+  display: inline-flex;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  box-sizing: border-box;
+  border: 1px solid rgba(243, 148, 53, .48);
+  border-radius: 13px;
+  color: #ff9d3b;
+  background: linear-gradient(145deg, rgba(243, 148, 53, .2), rgba(243, 148, 53, .055));
+  box-shadow: 0 7px 20px rgba(243, 148, 53, .12), inset 0 1px 0 rgba(255, 255, 255, .06);
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.evh-site-footer .evh-footer-logo .evh-footer-logo-mark svg {
+  display: block;
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  margin: 0;
+}
+
+.evh-site-footer .evh-footer-logo:hover .evh-footer-logo-mark {
+  transform: translateY(-1px);
+  border-color: rgba(243, 148, 53, .78);
+  box-shadow: 0 9px 24px rgba(243, 148, 53, .2), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+.evh-site-footer .evh-footer-logo .evh-footer-logo-name {
+  display: inline-block;
+  color: #fff;
+  font-size: .86rem;
+  font-weight: 900;
+  letter-spacing: .06em;
+}
+
+@media (max-width: 480px) {
+  .evh-site-footer .evh-footer-logo {
+    gap: .55rem;
+  }
+
+  .evh-site-footer .evh-footer-logo .evh-footer-logo-mark {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    font-size: 1.1rem;
+  }
+
+  .evh-site-footer .evh-footer-logo .evh-footer-logo-name {
+    font-size: .78rem;
+    letter-spacing: .04em;
+  }
+}
