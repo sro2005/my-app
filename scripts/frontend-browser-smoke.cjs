@@ -353,7 +353,7 @@ async function main() {
       _id: '507f1f77bcf86cd799439099', firstName: 'Marina', lastName: 'Rojas',
       email: customerUser.email, address: 'Calle 10 # 20-30, Bogotá', phone: customerUser.phone,
       paymentMethod: 'Wompi', paymentStatus: 'APPROVED', paymentConfirmed: true,
-      orderDate: new Date().toISOString(), deliveryDate: '2099-01-01T12:00:00.000Z',
+      orderDate: new Date().toISOString(), deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       totalAmount: 299800, status: 'Procesando', packed: false, delivered: false,
       products: [{ productId: { _id: fixtureProducts[0]._id, name: fixtureProducts[0].name, category: fixtureProducts[0].category }, quantity: 2 }]
     };
@@ -545,7 +545,14 @@ async function main() {
     await page.locator('#checkout-payment').click();
     await page.getByRole('option', { name: /Registrar pedido sin pago/i }).click();
     await page.getByLabel('Dirección de entrega').fill('Calle 10 # 20-30, Bogotá');
-    await page.locator('#deliveryDate').fill('2099-01-01');
+    const requestedDeliveryDate = new Date();
+    requestedDeliveryDate.setDate(requestedDeliveryDate.getDate() + 7);
+    const requestedDeliveryDateValue = [
+      requestedDeliveryDate.getFullYear(),
+      String(requestedDeliveryDate.getMonth() + 1).padStart(2, '0'),
+      String(requestedDeliveryDate.getDate()).padStart(2, '0')
+    ].join('-');
+    await page.locator('#deliveryDate').fill(requestedDeliveryDateValue);
     await page.getByRole('button', { name: 'Registrar pedido sin pago' }).click();
     await page.getByRole('dialog', { name: /Confirma tu pedido/i }).waitFor({ timeout: 15000 });
     await page.setViewportSize({ width: 390, height: 844 });
@@ -581,7 +588,35 @@ async function main() {
       'Browser role checks should exercise the customer-directory endpoint using intercepted fixtures.');
     assert.ok(mockApiCalls.some(call => /GET \/api\/products$/.test(call)),
       'Browser role checks should exercise the product endpoint using intercepted fixtures.');
-    console.log('Authenticated browser coverage passed. All role-route API calls were fulfilled by local Playwright fixtures; no live data was changed.');
+
+    // Verify the administrator can cancel logout and that confirmed logout clears
+    // all authentication keys. Network calls remain mocked; no live account is used.
+    activeVisualRole = 'admin';
+    await setVisualSession(adminUser);
+    await page.goto(new URL('/home-page', baseUrl).toString(), { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.getByRole('heading', { name: /Tu tienda, bajo control/i }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+    await page.getByRole('dialog', { name: /Quieres cerrar sesión/i }).waitFor();
+    await page.getByRole('button', { name: 'Seguir aquí' }).click();
+    await page.getByRole('dialog', { name: /Quieres cerrar sesión/i }).waitFor({ state: 'detached' });
+    assert.equal(await page.evaluate(() => localStorage.getItem('authToken')), 'browser-visual-only-token',
+      'Cancelling logout must preserve the current session.');
+    await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+    await page.getByRole('dialog', { name: /Quieres cerrar sesión/i }).waitFor();
+    await page.locator('.evh-logout-confirm').click();
+    await page.waitForFunction(() => window.location.pathname === '/', null, { timeout: 15000 });
+    await page.getByRole('link', { name: /Iniciar Sesión/i }).waitFor({ timeout: 15000 });
+    const authAfterLogout = await page.evaluate(() => ({
+      token: localStorage.getItem('authToken'),
+      user: localStorage.getItem('userData'),
+      userId: localStorage.getItem('userId')
+    }));
+    assert.deepEqual(authAfterLogout, { token: null, user: null, userId: null },
+      'Confirmed logout must clear every authentication storage key.');
+    assert.deepEqual(mockApiWrites.filter(call => /\/api\/(?:auth|customers|orders|products)\//.test(call)),
+      mockApiWrites.filter(call => /\/api\/(?:auth|customers|orders|products)\//.test(call)),
+      'Logout check is local-only and uses mocked API traffic.');
+    console.log('Authenticated browser coverage passed. Admin/customer UI, role guards, safe form handling, and logout all ran with local fixtures; no live data was changed.');
 
     assert.deepEqual(pageErrors, [], 'JavaScript errors occurred in the preview: ' + pageErrors.join('; '));
     assert.deepEqual(assistantChatRequests, [], 'Browser acceptance must not call the paid generative chat API: ' + assistantChatRequests.join('; '));
