@@ -11,11 +11,9 @@ import {
   faClipboardList,
   faUserPlus,
   faDoorOpen,
-  faLock,
-  faBolt
+  faLock
 } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../contexts/AuthContext';
-import './Header.css';
 
 const navLink = (to, icon, label) => (
   <li key={to}>
@@ -53,7 +51,7 @@ const Header = () => {
     <header className="evh-site-header">
       <div className="evh-header-inner">
         <Link className="evh-site-brand" to={user ? '/home-page' : '/'} aria-label="ElectroVibeHome, ir al inicio">
-          <span className="evh-site-brand-mark" aria-hidden="true"><FontAwesomeIcon icon={faBolt} /></span>
+          <span className="evh-site-brand-mark" aria-hidden="true">⚡</span>
           <span className="evh-site-brand-copy">
             <strong>ELECTROVIBEHOME</strong>
             <small>TECNOLOGÍA PARA EL HOGAR</small>
