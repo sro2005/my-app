@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirmation:
-        description: "Type PURGE_ALL_HISTORY only after pausing Render auto-deploy and temporarily disabling the repository's non-fast-forward branch rule."
+        description: "Type PURGE_ALL_HISTORY only after pausing Render auto-deploy and setting the GitHub ruleset 'Protección de Ramas' to Disabled."
         required: true
         type: string
 
