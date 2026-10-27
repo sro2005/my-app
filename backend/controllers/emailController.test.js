@@ -108,7 +108,10 @@ test('forgotPassword stores only a hash and emails a short-lived reset link thro
   assert.ok(customer.resetPasswordExpires.getTime() <= Date.now() + 30 * 60 * 1000 + 1000);
   assert.equal(capturedMail.length, 1);
   assert.equal(capturedMail[0].to, 'demo@example.com');
-  assert.match(capturedMail[0].text, /reset-password\/[a-f0-9]{64}/);
+  assert.match(capturedMail[0].text, /\/#\/reset-password\/[a-f0-9]{64}/);
+  assert.match(capturedMail[0].html, /href="https:\/\/preview\.example\.test\/#\/reset-password\/[a-f0-9]{64}"/);
+  assert.match(capturedMail[0].html, /Crear nueva contraseña/i);
+  assert.match(capturedMail[0].html, /30 minutos/i);
   const tokenMatch = capturedMail[0].text.match(/reset-password\/([a-f0-9]{64})/);
   assert.ok(tokenMatch);
   assert.equal(

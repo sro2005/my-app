@@ -108,13 +108,27 @@ const AppContent = () => {
 
 const Router = process.env.REACT_APP_ROUTER_MODE === 'hash' ? HashRouter : BrowserRouter;
 
-const App = () => (
-  <Router>
-    <ScrollToTop />
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  </Router>
-);
+const App = () => {
+  // Older recovery emails used a pathname URL. Convert it to the hash route
+  // expected by the static frontend, provided the host serves the SPA shell.
+  if (process.env.REACT_APP_ROUTER_MODE === 'hash' &&
+      typeof window !== 'undefined' &&
+      !window.location.hash) {
+    const legacyResetPath = /^\/reset-password\/([a-f0-9]{64})\/?$/i.exec(window.location.pathname);
+    if (legacyResetPath) {
+      window.location.replace(`${window.location.origin}/#/reset-password/${legacyResetPath[1]}`);
+      return null;
+    }
+  }
+
+  return (
+    <Router>
+      <ScrollToTop />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
+  );
+};
 
 export default App;

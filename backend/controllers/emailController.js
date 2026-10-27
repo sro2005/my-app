@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'production') {
   );
 }
 
-const sendTransactionalEmail = async ({ to, subject, text, senderEmail, replyTo }) => {
+const sendTransactionalEmail = async ({ to, subject, text, html, senderEmail, replyTo }) => {
   const emailConfig = getEmailProviderConfig();
   const fromEmail = String(senderEmail || emailConfig.senderEmail || '').trim();
 
@@ -72,6 +72,7 @@ const sendTransactionalEmail = async ({ to, subject, text, senderEmail, replyTo 
       subject,
       textContent: text
     };
+    if (html) payload.htmlContent = html;
     const replyToEmail = String(replyTo || emailConfig.replyTo || '').trim();
     if (replyToEmail) {
       payload.replyTo = { email: replyToEmail };
@@ -122,7 +123,8 @@ const sendTransactionalEmail = async ({ to, subject, text, senderEmail, replyTo 
     to,
     from: fromEmail,
     subject,
-    text
+    text,
+    ...(html ? { html } : {})
   });
 };
 
@@ -147,6 +149,105 @@ exports.sendGeneralEmail = async (to, subject, text) => {
     };
     console.error('No fue posible enviar el correo de notificación. Diagnóstico seguro:', JSON.stringify(diagnostics));
   }
+};
+
+const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;'
+}[character]));
+
+const buildPasswordResetEmail = resetUrl => {
+  const safeResetUrl = escapeHtml(resetUrl);
+  const text = [
+    'Hola,',
+    '',
+    'Recibimos una solicitud para restablecer la contraseña de tu cuenta de ElectroVibeHome.',
+    'Pulsa el enlace seguro para crear una nueva contraseña:',
+    '',
+    resetUrl,
+    '',
+    'Este enlace es de un solo uso y vence en 30 minutos.',
+    'Si no solicitaste este cambio, puedes ignorar este correo; tu contraseña no cambiará.',
+    '',
+    'ElectroVibeHome · Seguridad de la cuenta'
+  ].join('\n');
+
+  const html = `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Restablecer contraseña | ElectroVibeHome</title>
+</head>
+<body style="margin:0;padding:0;background:#f2f5fa;font-family:Arial,Helvetica,sans-serif;color:#18263a;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">Un enlace seguro para recuperar el acceso a tu cuenta de ElectroVibeHome.</div>
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;background:#f2f5fa;">
+    <tr>
+      <td align="center" style="padding:32px 14px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="width:100%;max-width:600px;border-collapse:separate;border-spacing:0;">
+          <tr>
+            <td style="padding:24px 28px;background:#101d31;border-radius:20px 20px 0 0;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td valign="middle" align="center" width="44" height="44" style="width:44px;height:44px;border-radius:13px;background:#f28c28;color:#101d31;font-size:25px;font-weight:bold;line-height:44px;">⚡</td>
+                  <td style="padding-left:13px;color:#ffffff;font-size:16px;font-weight:800;letter-spacing:1.1px;">ELECTROVIBEHOME
+                    <div style="padding-top:4px;color:#aebbd0;font-size:10px;font-weight:700;letter-spacing:2px;">CUENTA Y SEGURIDAD</div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:34px 32px 30px;background:#ffffff;border:1px solid #e1e7f0;border-top:0;">
+              <div style="display:inline-block;padding:7px 11px;border-radius:999px;background:#fff2e4;color:#9b4a08;font-size:10px;font-weight:800;letter-spacing:1.1px;">RESTABLECIMIENTO DE CONTRASEÑA</div>
+              <h1 style="margin:18px 0 12px;color:#142238;font-size:28px;line-height:1.2;letter-spacing:-.6px;">Volvamos a conectarte.</h1>
+              <p style="margin:0 0 14px;color:#475569;font-size:15px;line-height:1.75;">Hola, recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
+              <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.75;">Usa el siguiente botón para crear una nueva contraseña y volver a acceder de forma segura.</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
+                <tr>
+                  <td align="center" bgcolor="#f28c28" style="border-radius:12px;">
+                    <a href="${safeResetUrl}" target="_blank" style="display:inline-block;padding:15px 23px;border:1px solid #f28c28;border-radius:12px;background:#f28c28;color:#111c2d;font-size:14px;font-weight:800;text-decoration:none;">Crear nueva contraseña&nbsp; →</a>
+                  </td>
+                </tr>
+              </table>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;margin:0 0 22px;">
+                <tr>
+                  <td style="padding:15px 16px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;">
+                    <p style="margin:0 0 7px;color:#334155;font-size:12px;font-weight:800;">¿El botón no funciona?</p>
+                    <p style="margin:0 0 8px;color:#64748b;font-size:12px;line-height:1.6;">Copia y pega este enlace en la barra de direcciones de tu navegador:</p>
+                    <a href="${safeResetUrl}" style="color:#1769aa;font-size:12px;line-height:1.6;overflow-wrap:anywhere;word-break:break-all;text-decoration:underline;">${safeResetUrl}</a>
+                  </td>
+                </tr>
+              </table>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;border-collapse:collapse;">
+                <tr>
+                  <td valign="top" width="25" style="width:25px;padding:2px 8px 0 0;color:#d97706;font-size:17px;">⏱</td>
+                  <td style="color:#475569;font-size:12px;line-height:1.7;"><strong style="color:#27364a;">Por tu seguridad</strong><br>Este enlace vence en <strong>30 minutos</strong> y solo se puede usar una vez.</td>
+                </tr>
+                <tr>
+                  <td valign="top" width="25" style="width:25px;padding:12px 8px 0 0;color:#64748b;font-size:16px;">ⓘ</td>
+                  <td style="padding-top:12px;color:#64748b;font-size:12px;line-height:1.7;">Si no solicitaste este cambio, ignora el correo. Tu contraseña actual seguirá igual.</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:20px 22px 26px;background:#e9eef5;border-radius:0 0 20px 20px;color:#718096;font-size:11px;line-height:1.7;">
+              Este es un mensaje automático de seguridad.<br>
+              <strong style="color:#42516a;">ElectroVibeHome</strong> · Energía digital para tu hogar
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  return { text, html };
 };
 
 // Nunca revelar si una dirección está registrada.
@@ -196,16 +297,19 @@ exports.forgotPassword = async (req, res) => {
       customer.resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
       customer.resetPasswordExpires = new Date(Date.now() + 30 * 60 * 1000);
       await customer.save();
-      const resetUrl = frontendUrl.replace(/\/$/, '') + '/reset-password/' + token;
+      // The deployed frontend uses HashRouter on Render static hosting.
+      // Keep the route in the fragment so the SPA opens the reset form directly.
+      const resetUrl = `${frontendUrl.replace(/\/+$/, '')}/#/reset-password/${token}`;
+      const resetEmail = buildPasswordResetEmail(resetUrl);
 
       try {
         await sendTransactionalEmail({
           to: customer.email,
           senderEmail: emailConfig.senderEmail,
           replyTo: emailConfig.replyTo,
-          subject: 'Restablecer contraseña de ElectroVibeHome',
-          text: 'Solicitaste restablecer tu contraseña. Abre este enlace (válido durante 30 minutos):\n\n' +
-            resetUrl + '\n\nSi no lo solicitaste, ignora este mensaje.'
+          subject: 'Un enlace seguro para restablecer tu contraseña | ElectroVibeHome',
+          text: resetEmail.text,
+          html: resetEmail.html
         });
       } catch (mailError) {
         customer.resetPasswordToken = undefined;
