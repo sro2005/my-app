@@ -401,3 +401,14 @@
   .evh-orders-page.is-admin .pedido-item,
   .evh-orders-page.is-admin .evh-order-actions button { transition: none; }
 }
+
+/* Align the outer admin wrapper with Gestión de clientes: layout only, not a panel. */
+.evh-orders-page.is-admin {
+  width: min(calc(100% - 2rem), 1220px) !important;
+  max-width: 1220px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
