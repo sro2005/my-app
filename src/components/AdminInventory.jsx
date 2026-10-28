@@ -119,7 +119,7 @@ const AdminInventory = () => {
         <p>Consulta existencias, actualiza precios y administra las fichas de producto. El historial de pedidos se conserva.</p>
         <Link className="evh-admin-hero-link" to="/producto-form">Agregar producto</Link>
       </header>
-      <div className="evh-admin-inventory-tools">
+      <div className="evh-admin-inventory-tools" role="search" aria-label="Buscar en el inventario">
         <label htmlFor="inventory-search">Buscar producto o categoría</label>
         <input id="inventory-search" type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder="Ej. cafeteras, televisores…" />
         <button type="button" disabled={loading || busy} onClick={refresh}>Actualizar listado</button>
@@ -140,45 +140,57 @@ const AdminInventory = () => {
       {message && <p role="status">{message}</p>}
       {!loading && !error && products.length === 0 && <p>No hay productos registrados.</p>}
       {!loading && products.length > 0 && <div className="evh-admin-inventory-list">
-        {filtered.map(product => <article className="evh-admin-product" key={product._id}>
-          <div>
-            <span className="evh-admin-product-category">{product.category} {product.demo && '· DEMO'}</span>
-            <h2>{product.name}</h2>
-            <p>{money(product.price)} · {product.quantity} unidades disponibles</p>
-          </div>
-          <div className="evh-admin-product-actions">
-            <button type="button" disabled={busy} onClick={() => beginEdit(product)}>Editar</button>
-            <button type="button" disabled={busy} onClick={() => { setPendingDelete(product); setActive(null); setDraft(null); setMessage(''); }}>Eliminar</button>
-          </div>
-        </article>)}
+        {filtered.map(product => (
+          <React.Fragment key={product._id}>
+            <article className={`evh-admin-product ${active?._id === product._id ? 'is-editing' : ''} ${pendingDelete?._id === product._id ? 'is-pending-delete' : ''}`}>
+              <div>
+                <span className="evh-admin-product-category">{product.category} {product.demo && '· DEMO'}</span>
+                <h2>{product.name}</h2>
+                <p>{money(product.price)} · {product.quantity} unidades disponibles</p>
+              </div>
+              <div className="evh-admin-product-actions">
+                <button type="button" disabled={busy} aria-expanded={active?._id === product._id} onClick={() => beginEdit(product)}>Editar</button>
+                <button type="button" disabled={busy} aria-expanded={pendingDelete?._id === product._id} onClick={() => { setPendingDelete(product); setActive(null); setDraft(null); setError(''); setMessage(''); }}>Eliminar</button>
+              </div>
+            </article>
+            {active?._id === product._id && draft && (
+              <section className="evh-admin-editor evh-admin-editor-inline" aria-label="Editar producto">
+                <div className="evh-admin-editor-heading">
+                  <h2>Editar: {active.name}</h2>
+                  <span>Los cambios se guardarán en este producto.</span>
+                </div>
+                <form onSubmit={save}>
+                  {[
+                    ['name', 'Nombre', 'text'], ['category', 'Categoría', 'text'],
+                    ['price', 'Precio (COP)', 'number'], ['quantity', 'Existencias', 'number'],
+                    ['imageUrl', 'URL de imagen (opcional)', 'text']
+                  ].map(([field, label, type]) => <label key={field}>{label}
+                    <input value={draft[field]} type={type} required={field !== 'imageUrl'} min={type === 'number' ? (field === 'price' ? '0.01' : '0') : undefined} step={type === 'number' ? (field === 'price' ? '0.01' : '1') : undefined}
+                      onChange={event => setDraft(current => ({ ...current, [field]: event.target.value }))} />
+                  </label>)}
+                  <label>Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}/></label>
+                  <div className="evh-admin-product-actions">
+                    <button type="submit" disabled={busy}>Guardar cambios</button>
+                    <button type="button" disabled={busy} onClick={() => { setActive(null); setDraft(null); }}>Cancelar</button>
+                  </div>
+                </form>
+              </section>
+            )}
+            {pendingDelete?._id === product._id && (
+              <section className="evh-admin-editor evh-admin-delete-inline" role="alertdialog" aria-label="Confirmar eliminación" aria-describedby="inventory-delete-description">
+                <h2>¿Eliminar este producto?</h2>
+                <p id="inventory-delete-description">¿Eliminar «{pendingDelete.name}»? No se eliminarán productos que ya estén asociados a pedidos. Esta acción actualiza el inventario.</p>
+                <div className="evh-admin-product-actions">
+                  <button type="button" disabled={busy} onClick={remove}>Confirmar eliminación</button>
+                  <button type="button" disabled={busy} onClick={() => setPendingDelete(null)}>Conservar producto</button>
+                </div>
+              </section>
+            )}
+          </React.Fragment>
+        ))}
         {filtered.length === 0 && products.length > 0 && <p>No encontramos productos con ese filtro.</p>}
       </div>}
-      {active && draft && <section className="evh-admin-editor" aria-label="Editar producto">
-        <h2>Editar: {active.name}</h2>
-        <form onSubmit={save}>
-          {[
-            ['name', 'Nombre', 'text'], ['category', 'Categoría', 'text'],
-            ['price', 'Precio (COP)', 'number'], ['quantity', 'Existencias', 'number'],
-            ['imageUrl', 'URL de imagen (opcional)', 'text']
-          ].map(([field, label, type]) => <label key={field}>{label}
-            <input value={draft[field]} type={type} required={field !== 'imageUrl'} min={type === 'number' ? (field === 'price' ? '0.01' : '0') : undefined} step={type === 'number' ? (field === 'price' ? '0.01' : '1') : undefined}
-              onChange={event => setDraft(current => ({ ...current, [field]: event.target.value }))} />
-          </label>)}
-          <label>Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}/></label>
-          <div className="evh-admin-product-actions">
-            <button type="submit" disabled={busy}>Guardar cambios</button>
-            <button type="button" disabled={busy} onClick={() => { setActive(null); setDraft(null); }}>Cancelar</button>
-          </div>
-        </form>
-      </section>}
-      {pendingDelete && <section className="evh-admin-editor" role="alertdialog" aria-modal="true" aria-label="Confirmar eliminación" aria-describedby="inventory-delete-description">
-        <h2>Confirmar eliminación</h2>
-        <p id="inventory-delete-description">¿Eliminar «{pendingDelete.name}»? No se eliminarán productos que ya estén asociados a pedidos. Esta acción actualiza el inventario.</p>
-        <div className="evh-admin-product-actions">
-          <button type="button" disabled={busy} onClick={remove}>Confirmar eliminación</button>
-          <button type="button" disabled={busy} onClick={() => setPendingDelete(null)}>Conservar producto</button>
-        </div>
-      </section>}
+
     </main>
   );
 };
