@@ -19,6 +19,12 @@ const initialize = () => {
 };
 
 describe('AdminInventory', () => {
+  test('keeps the inventory label, search input and refresh control available together', async () => {
+    initialize();
+    expect(await screen.findByLabelText('Buscar producto o categoría')).toBeTruthy();
+    expect(screen.getByRole('search', { name: 'Buscar en el inventario' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Actualizar listado' })).toBeTruthy();
+  });
   test('preserves demonstration metadata when editing', () => {
     expect(editableProduct(item)).toMatchObject({ demo: true, demoIcon: '☕', catalogVersion: 'v2' });
   });
@@ -26,6 +32,9 @@ describe('AdminInventory', () => {
     axios.put.mockResolvedValue({ data: { product: { ...item, quantity: 3 } } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
+    const editor = screen.getByRole('region', { name: 'Editar producto' });
+    expect(editor.previousElementSibling).toHaveClass('evh-admin-product');
+    expect(editor.previousElementSibling).toContainElement(screen.getByRole('button', { name: 'Editar' }));
     fireEvent.change(screen.getByLabelText('Existencias'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
@@ -37,6 +46,8 @@ describe('AdminInventory', () => {
     axios.delete.mockResolvedValue({ data: { message: 'Eliminado' } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Eliminar' }));
+    const dialog = screen.getByRole('alertdialog', { name: 'Confirmar eliminación' });
+    expect(dialog.previousElementSibling).toHaveClass('evh-admin-product');
     expect(axios.delete).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Conservar producto' }));
     expect(axios.delete).not.toHaveBeenCalled();
