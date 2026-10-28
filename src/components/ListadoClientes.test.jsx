@@ -63,13 +63,16 @@ describe('Admin customer history', () => {
     });
   });
 
-  test('filters customers by name in addition to email and id', async () => {
+  test('filters customers by name and searches identification without punctuation', async () => {
     renderClients();
     await screen.findByText('buyer@example.test');
     const search = screen.getByPlaceholderText(/nombre, correo, teléfono o identificación/i);
     fireEvent.change(search, { target: { value: 'Demo' } });
     expect(screen.getAllByText(/Demo Buyer/)).toHaveLength(2);
+    fireEvent.change(search, { target: { value: '1234567' } });
+    expect(screen.getByText('buyer@example.test')).toBeTruthy();
     fireEvent.change(search, { target: { value: 'missing' } });
     expect(screen.queryByText('buyer@example.test')).toBeNull();
+    expect(screen.getByText('Total de clientes').parentElement.querySelector('p').textContent).toBe('1');
   });
 });

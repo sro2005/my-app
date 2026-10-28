@@ -2,6 +2,12 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import moment from 'moment-timezone';
 
+const normalizeSearchValue = value => String(value ?? '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLocaleLowerCase('es-CO')
+  .replace(/[^\p{L}\p{N}]/gu, '');
+
 // Función para formatear fechas
 const formatDate = (dateString) => {
   if (!dateString) return 'No disponible';
@@ -145,16 +151,22 @@ const ListadoClientes = () => {
 
   // Filtrar clientes según el texto de búsqueda y el filtro activo
   const clientesFiltrados = useMemo(() => {
-    const searchLower = search.toLowerCase();
+    const searchNormalized = normalizeSearchValue(search);
     return clientes
       .filter(cliente => [
         cliente._id,
         cliente.email,
         cliente.firstName,
         cliente.lastName,
-        cliente.phone
-      ].some(value => String(value || '').toLowerCase().includes(searchLower)))
-      .filter(cliente => filtroActivo === null || calcularEstado(cliente.lastActivityDate) === filtroActivo);
+        [cliente.firstName, cliente.lastName].filter(Boolean).join(' '),
+        cliente.phone,
+        cliente.identificationNumber
+      ].some(value => normalizeSearchValue(value).includes(searchNormalized)))
+      .filter(cliente => filtroActivo === null || calcularEstado(cliente.lastActivityDate) === filtroActivo)
+      .sort((a, b) =>
+        String(a.lastName || '').localeCompare(String(b.lastName || ''), 'es', { sensitivity: 'base' }) ||
+        String(a.firstName || '').localeCompare(String(b.firstName || ''), 'es', { sensitivity: 'base' })
+      );
   }, [clientes, search, filtroActivo]);
 
   // Calcular estadísticas basadas en los clientes filtrados
@@ -180,7 +192,7 @@ const ListadoClientes = () => {
         : null;
     
     // Determinar el último pedido de todos los clientes filtrados
-    const ordersArray = clientesFiltrados.flatMap(cliente => cliente.orders || []);
+    const ordersArray = clientes.flatMap(cliente => Array.isArray(cliente.orders) ? cliente.orders : []);
     let ultimoPedidoFormatted = "No hay pedidos disponibles";
     if (ordersArray.length > 0) {
       ordersArray.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
@@ -194,12 +206,12 @@ const ListadoClientes = () => {
       clienteMasPedidos: clienteMasPedidosResult,
       ultimoPedido: ultimoPedidoFormatted
     };
-  }, [clientesFiltrados]);
+  }, [clientes]);
 
   const topClientOrderCount = clienteMasPedidos?.orders?.length || 0;
 
   return (
-    <main className="container evh-admin-customers" aria-busy={loading}>
+    <main className="evh-admin-customers" aria-busy={loading}>
       <header className="evh-admin-customers-heading">
         <span className="evh-eyebrow">ADMINISTRACIÓN · CLIENTES</span>
         <h1>Gestión de clientes</h1>
@@ -245,7 +257,7 @@ const ListadoClientes = () => {
           <div className="client-stats">
             <div className="stat-item">
               <h3>Total de clientes</h3>
-              <p>{clientesFiltrados.length}</p>
+              <p>{clientes.length}</p>
             </div>
             <div className="stat-item active">
               <h3>Clientes activos</h3>
