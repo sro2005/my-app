@@ -33,8 +33,8 @@ describe('AdminInventory', () => {
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
     const editor = screen.getByRole('region', { name: 'Editar producto' });
-    expect(editor.previousElementSibling).toHaveClass('evh-admin-product');
-    expect(editor.previousElementSibling).toContainElement(screen.getByRole('button', { name: 'Editar' }));
+    expect(editor.previousElementSibling.classList.contains('evh-admin-product')).toBe(true);
+    expect(editor.previousElementSibling.contains(screen.getByRole('button', { name: 'Editar' }))).toBe(true);
     fireEvent.change(screen.getByLabelText('Existencias'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
@@ -47,7 +47,7 @@ describe('AdminInventory', () => {
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Eliminar' }));
     const dialog = screen.getByRole('alertdialog', { name: 'Confirmar eliminación' });
-    expect(dialog.previousElementSibling).toHaveClass('evh-admin-product');
+    expect(dialog.previousElementSibling.classList.contains('evh-admin-product')).toBe(true);
     expect(axios.delete).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Conservar producto' }));
     expect(axios.delete).not.toHaveBeenCalled();
