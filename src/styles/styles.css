@@ -6733,3 +6733,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-orders-page.is-admin .pedido-item:hover {
   background: transparent !important;
 }
+
+/* The admin workspace must not paint a white panel behind the order cards. */
+.evh-orders-page.is-admin {
+  background: transparent !important;
+}
