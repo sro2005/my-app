@@ -83,8 +83,11 @@ describe('ListadoProductos', () => {
     expect(screen.getByRole('heading', { name: 'Tostadora Test' })).toBeTruthy();
     expect(axios.get).toHaveBeenCalledWith('https://api.example.test/api/products');
 
-    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'tostadora' } });
+    const searchbox = screen.getByRole('searchbox');
+    expect(searchbox.closest('.evh-catalog-search').querySelector('svg.evh-catalog-search-icon')).toBeTruthy();
+    fireEvent.change(searchbox, { target: { value: 'tostadora' } });
 
+    expect(screen.getByRole('button', { name: /restablecer/i })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Tostadora Test' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Licuadora Test' })).toBeNull();
   });
