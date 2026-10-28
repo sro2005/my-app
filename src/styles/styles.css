@@ -6728,3 +6728,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-admin-customers .cliente-historial-pedidos > ul > li { padding: .7rem; }
   .evh-admin-customers .evh-customers-list-heading { align-items: flex-start; }
 }
+/* Final admin-only override: order cards stay transparent, including hover. */
+.evh-orders-page.is-admin .pedido-item,
+.evh-orders-page.is-admin .pedido-item:hover {
+  background: transparent !important;
+}
