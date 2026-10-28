@@ -2,7 +2,7 @@ import React from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import ShoppingAssistant from './ShoppingAssistant';
+import ShoppingAssistant, { buildLocalRecommendation } from './ShoppingAssistant';
 
 vi.mock('axios', () => ({
   default: { get: vi.fn(), post: vi.fn() }
@@ -15,6 +15,38 @@ afterEach(() => {
 });
 
 describe('ShoppingAssistant', () => {
+  test('asks a clarifying question for a broad comfort request instead of returning an irrelevant fallback', () => {
+    const products = [
+      { id: 'fan-1', name: 'Ventilador Breeze', category: 'Ventiladores', description: 'Ventilador para refrescar un ambiente.', price: 120000, quantity: 2 },
+      { id: 'vacuum-1', name: 'Aspiradora Clean', category: 'Aspiradoras', description: 'Aspiradora para facilitar la limpieza.', price: 250000, quantity: 3 },
+      { id: 'coffee-1', name: 'Cafetera Simple', category: 'Cafeteras', description: 'Cafetera para preparar bebidas.', price: 90000, quantity: 1 }
+    ];
+    const reply = buildLocalRecommendation('Quiero hacer mi casa más cómoda y no sé por dónde empezar.', products);
+    expect(reply).toMatch(/¿qué te gustaría resolver primero/i);
+    expect(reply).toMatch(/temperatura agradable/i);
+    expect(reply).toMatch(/tiempo de limpieza/i);
+    expect(reply).toMatch(/agilizar la cocina/i);
+    expect(buildLocalRecommendation('Necesito una aspiradora para limpiar más rápido.', products)).toContain('Aspiradora Clean');
+  });
+
+  test('the Más comodidad shortcut prepares a focused prompt and produces useful local guidance', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
+    axios.get.mockResolvedValue({ data: { enabled: false } });
+    const products = [
+      { id: 'fan-1', name: 'Ventilador Breeze', category: 'Ventiladores', description: 'Ventilador para refrescar un ambiente.', price: 120000, quantity: 2 },
+      { id: 'vacuum-1', name: 'Aspiradora Clean', category: 'Aspiradoras', description: 'Aspiradora para facilitar la limpieza.', price: 250000, quantity: 3 },
+      { id: 'coffee-1', name: 'Cafetera Simple', category: 'Cafeteras', description: 'Cafetera para preparar bebidas.', price: 90000, quantity: 1 }
+    ];
+    render(<ShoppingAssistant products={products} />);
+    const shortcut = await screen.findByRole('button', { name: /más comodidad/i });
+    fireEvent.click(shortcut);
+    const input = screen.getByRole('textbox', { name: /escribe qué necesitas/i });
+    expect(input.value).toBe('Quiero hacer mi casa más cómoda y no sé por dónde empezar.');
+    fireEvent.click(screen.getByRole('button', { name: /enviar pregunta/i }));
+    expect(await screen.findByText(/¿qué te gustaría resolver primero/i)).toBeTruthy();
+    expect(axios.post).not.toHaveBeenCalled();
+  });
+
   test('provides local catalogue guidance when generative AI is not configured', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
     axios.get.mockResolvedValue({ data: { enabled: false } });

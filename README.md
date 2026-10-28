@@ -65,7 +65,7 @@ La recuperación utiliza correo transaccional mediante Brevo en el backend. El f
 
 El catálogo dispone de una guía conversacional para orientar sobre productos. No crea pedidos ni gestiona pagos o información privada de cuentas.
 
-Para habilitarla se requiere `OPENAI_API_KEY` en el backend y opcionalmente `OPENAI_MODEL`. Su uso de API puede generar costos independientes de ChatGPT. Sin una clave, la guía no queda operativa. Nunca coloques claves en variables públicas del frontend o en el repositorio.
+La guía funciona en dos modos: sin `OPENAI_API_KEY`, usa orientación local basada en palabras clave y datos del catálogo; con una clave válida en el backend, genera respuestas mediante la API de OpenAI. La clave no debe exponerse en el frontend ni subirse al repositorio. La integración usa `gpt-6-luna` de forma predeterminada (se puede cambiar mediante `OPENAI_MODEL`) y el uso de API se factura por separado de ChatGPT; el costo depende de los tokens de entrada y salida.
 
 ## Pedidos y pagos
 

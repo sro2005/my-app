@@ -251,7 +251,7 @@ const ListadoProductos = () => {
 
       <section className="evh-catalog-toolbar" aria-label="Buscar y filtrar productos">
         <label className="evh-catalog-search">
-          <span aria-hidden="true">⌕</span>
+          <svg className="evh-catalog-search-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.6" /><path d="m15.7 15.7 4.2 4.2" /></svg>
           <span className="evh-sr-only">Buscar productos</span>
           <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar por nombre, categoría…" />
         </label>

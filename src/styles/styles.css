@@ -6384,3 +6384,62 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     width: 100%;
   }
 }
+
+
+/* Final alignment pass: consistent catalog control heights and a crisp search icon. */
+.evh-catalog-search {
+  align-items: center;
+  gap: .7rem;
+}
+.evh-catalog-search .evh-catalog-search-icon {
+  display: block;
+  flex: 0 0 19px;
+  width: 19px;
+  height: 19px;
+  overflow: visible;
+  color: #627b96;
+}
+.evh-catalog-search .evh-catalog-search-icon circle,
+.evh-catalog-search .evh-catalog-search-icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.evh-catalog-search:focus-within .evh-catalog-search-icon {
+  color: #2868a8;
+}
+.evh-catalog-search input[type="search"] {
+  display: block;
+  align-self: center;
+  flex: 1 1 auto;
+  height: 46px;
+  min-height: 46px;
+  padding: 0;
+  line-height: 1.4;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.evh-catalog-reset {
+  align-self: flex-end;
+  height: 48px;
+  min-height: 48px;
+  margin: 0;
+  padding: .65rem 1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translateY(2px);
+}
+@media (max-width: 1000px) {
+  .evh-catalog-reset {
+    align-self: stretch;
+    transform: none;
+  }
+}
+@media (max-width: 760px) {
+  .evh-catalog-reset {
+    height: 48px;
+    min-height: 48px;
+  }
+}
