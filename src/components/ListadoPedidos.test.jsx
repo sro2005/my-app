@@ -91,7 +91,7 @@ describe('ListadoPedidos', () => {
 
     expect(await screen.findByRole('button', { name: /marcar como entregado/i })).toBeTruthy();
     expect(screen.getByText(/Estado del pedido actualizado/i)).toBeTruthy();
-    expect(screen.getByText('Enviado').className).toContain('is-shipped');
+    expect(screen.getByText('Enviado', { selector: '.evh-order-status' }).className).toContain('is-shipped');
   });
 
   test('does not expose admin logistics actions to a customer', async () => {
@@ -167,12 +167,12 @@ describe('Admin order management filters and layout', () => {
 
     const filter = await screen.findByRole('combobox', { name: /estado del pedido/i });
     fireEvent.change(filter, { target: { value: 'Enviado' } });
-    expect(screen.getAllByText('Enviado').length).toBeGreaterThan(0);
-    expect(screen.queryByText('Procesando')).toBeNull();
+    expect(screen.getByText('Enviado', { selector: '.evh-order-status' })).toBeTruthy();
+    expect(screen.queryByText('Procesando', { selector: '.evh-order-status' })).toBeNull();
 
     fireEvent.click(screen.getByRole('button', { name: /limpiar filtros/i }));
-    expect(screen.getByText('Procesando')).toBeTruthy();
-    expect(screen.getByText('Enviado')).toBeTruthy();
+    expect(screen.getByText('Procesando', { selector: '.evh-order-status' })).toBeTruthy();
+    expect(screen.getAllByText('Enviado', { selector: '.evh-order-status' }).length).toBe(1);
   });
 
   test('keeps an order-specific status confirmation inside its card', async () => {

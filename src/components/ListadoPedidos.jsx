@@ -332,20 +332,30 @@ const ListadoPedidos = () => {
             <strong>{pedidos.length}</strong>
             <small>Registros disponibles</small>
           </article>
+          <article className="evh-order-stat is-pending">
+            <span>Pendientes</span>
+            <strong>{pedidos.filter(item => getOrderDisplayStatus(item) === 'Pendiente').length}</strong>
+            <small>Por revisar o confirmar</small>
+          </article>
           <article className="evh-order-stat is-processing">
             <span>En preparación</span>
-            <strong>{pedidos.filter(item => item.status === 'Procesando').length}</strong>
+            <strong>{pedidos.filter(item => getOrderDisplayStatus(item) === 'Procesando').length}</strong>
             <small>Pendientes del siguiente paso</small>
           </article>
           <article className="evh-order-stat is-shipped">
             <span>En camino</span>
-            <strong>{pedidos.filter(item => item.status === 'Enviado' && !item.delivered).length}</strong>
+            <strong>{pedidos.filter(item => getOrderDisplayStatus(item) === 'Enviado').length}</strong>
             <small>Marcados como enviados</small>
           </article>
           <article className="evh-order-stat is-delivered">
             <span>Entregados</span>
-            <strong>{pedidos.filter(item => item.delivered || item.status === 'Entregado').length}</strong>
+            <strong>{pedidos.filter(item => getOrderDisplayStatus(item) === 'Entregado').length}</strong>
             <small>Pedidos finalizados</small>
+          </article>
+          <article className="evh-order-stat is-cancelled">
+            <span>Cancelados</span>
+            <strong>{pedidos.filter(item => getOrderDisplayStatus(item) === 'Cancelado').length}</strong>
+            <small>No siguen en preparación</small>
           </article>
         </section>
       )}
@@ -414,34 +424,32 @@ const ListadoPedidos = () => {
               : 'Explora el catálogo y prepara tu primer pedido. Podrás revisar los productos y los detalles antes de confirmarlo.'}</p>
             {!isAdmin && <Link className="evh-button evh-button-primary" to="/catalogo">Explorar catálogo <span aria-hidden="true">→</span></Link>}
           </div>
+        ) : isAdmin && displayedOrders.length === 0 ? (
+          <div className="evh-orders-empty evh-admin-orders-empty">
+            <span aria-hidden="true">⌕</span>
+            <h2>No hay pedidos que coincidan</h2>
+            <p>Prueba con otro término de búsqueda o selecciona un estado diferente.</p>
+            {hasOrderFilters && (
+              <button type="button" className="evh-button evh-button-primary"
+                onClick={() => { setOrderSearch(''); setStatusFilter('Todos'); }}>
+                Restablecer filtros
+              </button>
+            )}
+          </div>
         ) : (
-          {isAdmin && !emptyOrders && displayedOrders.length === 0 ? (
-            <div className="evh-orders-empty evh-admin-orders-empty">
-              <span aria-hidden="true">⌕</span>
-              <h2>No hay pedidos que coincidan</h2>
-              <p>Prueba con otro término de búsqueda o selecciona un estado diferente.</p>
-              {hasOrderFilters && (
-                <button type="button" className="evh-button evh-button-primary"
-                  onClick={() => { setOrderSearch(''); setStatusFilter('Todos'); }}>
-                  Restablecer filtros
-                </button>
-              )}
-            </div>
-          ) : (
-            <ul className="pedidos-list">
-              {displayedOrders.map(pedido => (
-                <PedidoItem
-                  key={pedido._id}
-                  pedido={pedido}
-                  isAdmin={isAdmin}
-                  updating={updatingOrderId === pedido._id}
-                  onStatusUpdate={handleStatusUpdate}
-                  statusMessage={statusMessageOrderId === pedido._id ? statusMessage : ''}
-                  statusMessageType={statusMessageType}
-                />
-              ))}
-            </ul>
-          )}
+          <ul className="pedidos-list">
+            {displayedOrders.map(pedido => (
+              <PedidoItem
+                key={pedido._id}
+                pedido={pedido}
+                isAdmin={isAdmin}
+                updating={updatingOrderId === pedido._id}
+                onStatusUpdate={handleStatusUpdate}
+                statusMessage={statusMessageOrderId === pedido._id ? statusMessage : ''}
+                statusMessageType={statusMessageType}
+              />
+            ))}
+          </ul>
         )}
           </>
         )}
