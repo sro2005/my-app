@@ -286,99 +286,42 @@
 .evh-orders-page.is-admin .evh-order-status.is-delivered { border-color: #c8e9d5; background: #f3fbf6; color: #176b45; }
 .evh-orders-page.is-admin .evh-order-status.is-cancelled { border-color: #f0d4d1; background: #fff5f4; color: #9b2c27; }
 
-/* Product and customer details form a two-column definition grid. */
-.evh-orders-page.is-admin .evh-order-metadata {
+/* Order information follows the same clean label/value rows as customer management. */
+.evh-orders-page.is-admin .evh-order-admin-details {
+  min-width: 0;
+  width: 100%;
+}
+.evh-orders-page.is-admin .evh-order-admin-details > p {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 1.2rem;
+  grid-template-columns: minmax(150px, .48fr) minmax(0, 1fr);
+  align-items: start;
+  gap: .35rem .7rem;
   min-width: 0;
   margin: 0;
-  padding: 0;
-}
-.evh-orders-page.is-admin .evh-order-field {
-  display: grid;
-  grid-template-columns: minmax(115px, .62fr) minmax(0, 1fr);
-  align-items: start;
-  gap: .5rem;
-  min-width: 0;
-  padding: .65rem 0;
+  padding: .6rem 0;
   border-bottom: 1px solid #edf1f6;
+  color: #53657d;
+  font-size: .84rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  text-align: left;
 }
-.evh-orders-page.is-admin .evh-order-field.is-wide { grid-column: 1 / -1; }
-.evh-orders-page.is-admin .evh-order-field dt {
+.evh-orders-page.is-admin .evh-order-admin-details > p strong {
+  min-width: 0;
+  color: #283d59;
+  font-size: .8rem;
+  font-weight: 800;
+}
+.evh-orders-page.is-admin .evh-order-admin-details > p span {
   min-width: 0;
   color: #53657d;
-  font-size: .78rem;
-  font-weight: 800;
-  line-height: 1.55;
-}
-.evh-orders-page.is-admin .evh-order-field dd {
-  min-width: 0;
-  margin: 0;
-  color: #283d59;
-  font-size: .82rem;
+  font-size: .84rem;
   line-height: 1.55;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
-.evh-orders-page.is-admin .evh-order-id { font-size: .76rem !important; }
-
-/* Products become separate rows instead of a long comma-separated paragraph. */
-.evh-orders-page.is-admin .evh-order-products-section {
-  min-width: 0;
-  margin: 1rem 0 0;
-  padding: .95rem;
-  border: 1px solid #e2e9f2;
-  border-radius: 14px;
-  background: #f8fbff;
-}
-.evh-orders-page.is-admin .evh-order-products-section h3 {
-  display: flex;
-  align-items: center;
-  gap: .6rem;
-  margin: 0 0 .7rem;
-  color: #1a3558;
-  font-size: .87rem;
-  font-weight: 850;
-  line-height: 1.4;
-}
-.evh-orders-page.is-admin .evh-order-products-section h3 span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 1.5rem;
-  min-height: 1.5rem;
-  padding: .1rem .35rem;
-  border: 1px solid #d7e5f7;
-  border-radius: 999px;
-  background: #edf4ff;
-  color: #294f7d;
-  font-size: .7rem;
-}
-.evh-orders-page.is-admin .evh-order-products {
-  display: grid;
-  gap: .5rem;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.evh-orders-page.is-admin .evh-order-products > li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: .25rem .9rem;
-  min-width: 0;
-  margin: 0;
-  padding: .7rem .75rem;
-  border: 1px solid #e2e9f2;
-  border-radius: 10px;
-  background: #fff;
-}
-.evh-orders-page.is-admin .evh-order-product-name { min-width: 0; color: #283d59; font-size: .81rem; font-weight: 750; overflow-wrap: anywhere; }
-.evh-orders-page.is-admin .evh-order-product-meta { min-width: 0; color: #617187; font-size: .75rem; line-height: 1.5; overflow-wrap: anywhere; }
-.evh-orders-page.is-admin .evh-order-no-products { margin: 0; color: #617187; font-size: .82rem; line-height: 1.55; }
+.evh-orders-page.is-admin .evh-order-admin-details > p:last-child { border-bottom: 0; }
+.evh-orders-page.is-admin .evh-order-admin-details .evh-order-full-id { font-size: .76rem; } 
 .evh-orders-page.is-admin .evh-order-actions {
   display: flex;
   flex-wrap: wrap;
@@ -444,18 +387,13 @@
   .evh-orders-page.is-admin .evh-order-card-heading { gap: .7rem; }
   .evh-orders-page.is-admin .evh-order-card-state { justify-items: start; text-align: left; }
   .evh-orders-page.is-admin .evh-order-card-state > strong { font-size: 1.05rem; }
-  .evh-orders-page.is-admin .evh-order-metadata { grid-template-columns: minmax(0, 1fr); }
-  .evh-orders-page.is-admin .evh-order-field,
-  .evh-orders-page.is-admin .evh-order-field.is-wide {
-    grid-column: auto;
+  .evh-orders-page.is-admin .evh-order-admin-details > p {
     grid-template-columns: minmax(0, 1fr);
     gap: .2rem;
     padding: .58rem 0;
   }
-  .evh-orders-page.is-admin .evh-order-field dt { font-size: .74rem; }
-  .evh-orders-page.is-admin .evh-order-field dd { font-size: .8rem; }
-  .evh-orders-page.is-admin .evh-order-products-section { padding: .75rem; }
-  .evh-orders-page.is-admin .evh-order-products > li { display: grid; grid-template-columns: minmax(0, 1fr); gap: .25rem; padding: .65rem; }
+  .evh-orders-page.is-admin .evh-order-admin-details > p strong { font-size: .75rem; }
+  .evh-orders-page.is-admin .evh-order-admin-details > p span { font-size: .8rem; }
   .evh-orders-page.is-admin .evh-order-actions { flex-direction: column; }
   .evh-orders-page.is-admin .evh-order-actions button { width: 100%; }
 }
