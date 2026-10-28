@@ -251,15 +251,15 @@ async function main() {
       if (route.path === '/catalogo') {
         await page.waitForFunction(() => {
           const state = document.querySelector('.evh-assistant-status')?.getAttribute('aria-label') || '';
-          return ['Asistente disponible', 'Guía disponible', 'Guía no disponible'].includes(state);
+          return ['Orientación local disponible', 'Guía no disponible'].includes(state);
         }, null, { timeout: 20000 });
         const assistantState = await page.locator('.evh-assistant-status').getAttribute('aria-label');
         assert.ok(
-          ['Asistente disponible', 'Guía disponible', 'Guía no disponible'].includes(assistantState),
+          ['Orientación local disponible', 'Guía no disponible'].includes(assistantState),
           'Unexpected ElectroVibe Guide state: ' + assistantState
         );
-        console.log('ElectroVibe Guide live status: ' + assistantState + '. No prompt was sent.');
-        if (assistantState === 'Guía disponible') {
+        console.log('ElectroVibe Guide local status: ' + assistantState + '. No paid API is configured.');
+        if (assistantState === 'Orientación local disponible') {
           await page.getByRole('button', { name: /cocina pequeña/i }).click();
           const assistantInput = page.locator('#evh-assistant-input');
           assert.equal(
@@ -276,7 +276,7 @@ async function main() {
             'The local guide should provide a grounded catalogue suggestion with illustrative price context.');
           assert.deepEqual(assistantChatRequests, [],
             'Local guide mode must not send a chat request to the backend.');
-          console.log('Local ElectroVibe Guide interaction passed without an OpenAI request.');
+          console.log('Local ElectroVibe Guide interaction passed without any external AI request.');
         }
       }
       if (route.screenshot) {
