@@ -189,4 +189,22 @@ describe('Admin order management filters and layout', () => {
     expect(feedback.textContent).toContain('Estado del pedido actualizado.');
     expect(feedback.closest('.pedido-item')).toBeTruthy();
   });
+
+  test('shows admin order information in simple aligned rows without extra product cards', async () => {
+    setApiEnvironment();
+    axios.get.mockResolvedValue({ data: [order()] });
+
+    renderOrders();
+
+    const details = (await screen.findByText('Cliente Demo')).closest('.evh-order-admin-details');
+    expect(details).toBeTruthy();
+    expect(details.querySelectorAll(':scope > p')).toHaveLength(8);
+    expect(details.querySelector('.evh-order-admin-products')).toBeTruthy();
+    expect(details.querySelector('.evh-order-products-section')).toBeNull();
+    expect(details.querySelector('p:nth-child(2) strong').textContent).toBe('Cliente:');
+    expect(details.querySelector('p:nth-child(3) strong').textContent).toBe('Dirección de entrega:');
+    expect(details.querySelector('p:nth-child(8) strong').textContent).toBe('Productos:');
+    expect(screen.queryByText('Correo electrónico:')).toBeNull();
+  });
+
 });

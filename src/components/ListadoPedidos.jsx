@@ -127,64 +127,26 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             </div>
           </div>
 
-          <dl className="evh-order-metadata">
-            <div className="evh-order-field is-wide">
-              <dt>ID del pedido</dt>
-              <dd className="evh-order-id">{pedido._id || 'No disponible'}</dd>
-            </div>
-            <div className="evh-order-field">
-              <dt>{isAdmin ? 'Cliente' : 'Titular del pedido'}</dt>
-              <dd>{[pedido.firstName, pedido.lastName].filter(Boolean).join(' ') || 'No disponible'}</dd>
-            </div>
-            {isAdmin && (
-              <div className="evh-order-field">
-                <dt>Correo electrónico</dt>
-                <dd>{pedido.email || 'No disponible'}</dd>
-              </div>
-            )}
-            <div className="evh-order-field">
-              <dt>Teléfono de contacto</dt>
-              <dd>{pedido.phone || 'No disponible'}</dd>
-            </div>
-            <div className="evh-order-field is-wide">
-              <dt>Dirección de entrega</dt>
-              <dd>{pedido.address || 'No disponible'}</dd>
-            </div>
-            <div className="evh-order-field">
-              <dt>Método de pago</dt>
-              <dd>{formatPaymentMethod(pedido, isAdmin)}</dd>
-            </div>
-            <div className="evh-order-field">
-              <dt>Estado del pago</dt>
-              <dd>{formatPaymentStatus(pedido.paymentStatus, isAdmin)}</dd>
-            </div>
-            <div className="evh-order-field">
-              <dt>Fecha del pedido</dt>
-              <dd>{formatOrderDate(pedido.orderDate)}</dd>
-            </div>
-            <div className="evh-order-field">
-              <dt>Entrega estimada</dt>
-              <dd>{formatDeliveryDate(pedido.deliveryDate)}</dd>
-            </div>
-          </dl>
-
-          <section className="evh-order-products-section" aria-label="Productos del pedido">
-            <h3>Productos del pedido <span>{orderProducts.length}</span></h3>
-            {orderProducts.length > 0 ? (
-              <ul className="evh-order-products">
-                {orderProducts.map((item, index) => (
-                  <li key={item._id || item.productId?._id || index}>
-                    <span className="evh-order-product-name">{item.productId?.name || 'Producto desconocido'}</span>
-                    <span className="evh-order-product-meta">
-                      {item.productId?.category || 'Sin categoría'} · Cantidad: {item.quantity || 1}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="evh-order-no-products">No hay productos en este pedido.</p>
-            )}
-          </section>
+          <div className="evh-order-admin-details">
+            <p><strong>ID del pedido:</strong><span className="evh-order-full-id">{pedido._id || 'No disponible'}</span></p>
+            <p><strong>Cliente:</strong><span>{[pedido.firstName, pedido.lastName].filter(Boolean).join(' ') || 'No disponible'}</span></p>
+            <p><strong>Dirección de entrega:</strong><span>{pedido.address || 'No disponible'}</span></p>
+            <p><strong>Teléfono de contacto:</strong><span>{pedido.phone || 'No disponible'}</span></p>
+            <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido, true)}</span></p>
+            <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true)}</span></p>
+            <p><strong>Entrega estimada:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
+            <p className="evh-order-admin-products">
+              <strong>Productos:</strong>
+              <span>
+                {orderProducts.length > 0 ? orderProducts.map((item, index) => (
+                  <React.Fragment key={item._id || item.productId?._id || index}>
+                    {item.productId?.name || 'Producto desconocido'} · {item.productId?.category || 'Sin categoría'} · Cantidad: {item.quantity || 1}
+                    {index < orderProducts.length - 1 ? ', ' : ''}
+                  </React.Fragment>
+                )) : 'No hay productos en este pedido.'}
+              </span>
+            </p>
+          </div>
 
           {isAdmin && (
             (pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed) ||
