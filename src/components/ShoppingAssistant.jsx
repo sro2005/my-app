@@ -171,7 +171,10 @@ const ShoppingAssistant = ({ products = [] }) => {
             <p className="evh-assistant-note">Guía gratuita sin API de IA: usa los nombres, categorías, descripciones y precios del catálogo para orientar la búsqueda. Tus mensajes se procesan en este navegador y no se envían a servicios externos.</p>
           </>
         ) : (
-          <p className="evh-assistant-note">La guía estará disponible cuando el catálogo tenga productos para recomendar.</p>
+          <>
+            <p className="evh-assistant-note">La guía estará disponible cuando el catálogo tenga productos para recomendar.</p>
+            <p className="evh-assistant-note">Guía gratuita sin API de IA: no envía mensajes a servicios externos ni genera cargos de IA.</p>
+          </>
         )}
       </div>
     </section>
