@@ -38,6 +38,7 @@ describe('AdminInventory', () => {
     fireEvent.change(screen.getByLabelText('Existencias'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Editar producto' })).toBeTruthy();
     expect(axios.put).toHaveBeenCalledWith('https://api.example.test/api/products/p1',
       expect.objectContaining({ quantity: 3, demo: true, demoIcon: '☕', catalogVersion: 'v2' }),
       { headers: { Authorization: 'Bearer demo-admin' } });

@@ -52,11 +52,15 @@ const AdminInventory = () => {
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  const filtered = useMemo(() => products.filter(product =>
-    [product.name, product.category].some(value =>
-      String(value || '').toLocaleLowerCase('es').includes(search.toLocaleLowerCase('es'))
+  const filtered = useMemo(() => products
+    .filter(product =>
+      [product.name, product.category].some(value =>
+        String(value || '').toLocaleLowerCase('es').includes(search.toLocaleLowerCase('es'))
+      )
     )
-  ), [products, search]);
+    .sort((a, b) => String(a.category || '').localeCompare(String(b.category || ''), 'es')
+      || String(a.name || '').localeCompare(String(b.name || ''), 'es')),
+  [products, search]);
 
   const beginEdit = product => {
     setActive(product);
@@ -83,8 +87,8 @@ const AdminInventory = () => {
       const response = await axios.put(`${baseUrl()}/api/products/${active._id}`, payload, config());
       if (!response.data?.product) throw new Error('Respuesta de actualización incompleta');
       setProducts(current => current.map(item => item._id === active._id ? response.data.product : item));
-      setActive(null);
-      setDraft(null);
+      setActive(response.data.product);
+      setDraft(editableProduct(response.data.product));
       setMessage('Producto actualizado. Los cambios ya están guardados.');
     } catch (requestError) {
       setError(requestError.response?.data?.message || 'No fue posible guardar el producto.');
@@ -117,7 +121,7 @@ const AdminInventory = () => {
         <span className="evh-admin-eyebrow">ADMINISTRACIÓN · INVENTARIO</span>
         <h1>Gestiona cada producto.</h1>
         <p>Consulta existencias, actualiza precios y administra las fichas de producto. El historial de pedidos se conserva.</p>
-        <Link className="evh-admin-hero-link" to="/producto-form">Agregar producto</Link>
+        <Link className="evh-admin-hero-link" to="/producto-form">Agregar</Link>
       </header>
       <div className="evh-admin-inventory-tools" role="search" aria-label="Buscar en el inventario">
         <label htmlFor="inventory-search">Buscar producto o categoría</label>
@@ -137,7 +141,7 @@ const AdminInventory = () => {
       )}
       {error && <p role="alert" className="evh-admin-inventory-error">{error}</p>}
       {!loading && error && <button type="button" disabled={busy} onClick={refresh}>Reintentar carga de inventario</button>}
-      {message && <p role="status">{message}</p>}
+      {message && !active && <p role="status" className="evh-admin-inventory-success">{message}</p>}
       {!loading && !error && products.length === 0 && <p>No hay productos registrados.</p>}
       {!loading && products.length > 0 && <div className="evh-admin-inventory-list">
         {filtered.map(product => (
@@ -159,6 +163,7 @@ const AdminInventory = () => {
                   <h2>Editar: {active.name}</h2>
                   <span>Los cambios se guardarán en este producto.</span>
                 </div>
+                {message && <p role="status" className="evh-admin-inventory-success">{message}</p>}
                 <form onSubmit={save}>
                   {[
                     ['name', 'Nombre', 'text'], ['category', 'Categoría', 'text'],

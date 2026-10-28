@@ -6443,3 +6443,288 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     min-height: 48px;
   }
 }
+
+
+/* Gestión de clientes: corrección de márgenes, desbordamientos y jerarquía responsive. */
+.evh-admin-customers {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  width: min(calc(100% - 2rem), 1220px);
+  min-width: 0;
+  margin: clamp(1.25rem, 3.5vw, 3rem) auto;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: left;
+}
+.evh-admin-customers *,
+.evh-admin-customers *::before,
+.evh-admin-customers *::after { box-sizing: border-box; }
+.evh-admin-customers h1,
+.evh-admin-customers h2,
+.evh-admin-customers h3,
+.evh-admin-customers p { overflow-wrap: anywhere; }
+.evh-admin-customers-heading {
+  min-width: 0;
+  margin: 0;
+  padding: clamp(1.25rem, 3.8vw, 2.6rem);
+  border-radius: 22px;
+}
+.evh-admin-customers-heading > p { max-width: 70ch; }
+.evh-admin-customers .evh-customers-toolbar {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, auto);
+  align-items: end;
+  gap: 1rem;
+  min-width: 0;
+  margin: 0;
+  padding: 1.1rem;
+  border: 1px solid var(--evh-workspace-line, #dce5ef);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(20, 44, 75, .035);
+}
+.evh-admin-customers .search-container {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  justify-content: stretch;
+}
+.evh-admin-customers .search-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+  padding: .7rem .9rem;
+  border-radius: 12px;
+  box-shadow: none;
+}
+.evh-admin-customers .filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .45rem;
+  min-width: 0;
+  margin: 0;
+}
+.evh-admin-customers .filters-container button {
+  min-width: 0;
+  min-height: 42px;
+  padding: .6rem .85rem;
+  white-space: normal;
+  line-height: 1.3;
+}
+.evh-admin-customers .dashboard-container {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.evh-admin-customers .dashboard-card {
+  min-width: 0;
+  width: 100%;
+  padding: clamp(1rem, 2.8vw, 1.5rem);
+  border: 1px solid var(--evh-workspace-line, #dce5ef);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(20, 44, 75, .045);
+}
+.evh-admin-customers .dashboard-card > h2 {
+  margin: 0 0 1rem;
+  font-size: 1.12rem;
+  line-height: 1.4;
+}
+.evh-admin-customers .client-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .8rem;
+  min-width: 0;
+}
+.evh-admin-customers .stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: .5rem;
+  min-width: 0;
+  min-height: 106px;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid #e2e9f2;
+  border-radius: 15px;
+  box-shadow: none;
+  text-align: left;
+}
+.evh-admin-customers .stat-item h3 {
+  margin: 0;
+  font-size: .74rem;
+  line-height: 1.5;
+}
+.evh-admin-customers .stat-item p {
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.evh-admin-customers .evh-customers-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .7rem 1rem;
+  margin: 1.5rem 0 .9rem;
+}
+.evh-admin-customers .evh-customers-list-heading h2 {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+  line-height: 1.35;
+}
+.evh-admin-customers .clientes-list {
+  display: grid;
+  gap: .85rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.evh-admin-customers .cliente-item {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: clamp(.9rem, 2vw, 1.3rem);
+  border: 1px solid var(--evh-workspace-line, #dce5ef);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(20, 44, 75, .04);
+}
+.evh-admin-customers .cliente-info {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  min-width: 0;
+  width: 100%;
+}
+.evh-admin-customers .cliente-avatar {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #d7e5f7;
+  border-radius: 16px;
+  background: #edf4ff;
+}
+.evh-admin-customers .cliente-avatar img {
+  display: block;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+.evh-admin-customers .cliente-details { min-width: 0; width: 100%; }
+.evh-admin-customers .cliente-details > p {
+  display: grid;
+  grid-template-columns: minmax(150px, .48fr) minmax(0, 1fr);
+  align-items: start;
+  gap: .35rem .7rem;
+  min-width: 0;
+  margin: 0;
+  padding: .6rem 0;
+  border-bottom: 1px solid #edf1f6;
+  color: #53657d;
+  font-size: .84rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: left;
+}
+.evh-admin-customers .cliente-details > p strong {
+  min-width: 0;
+  color: #283d59;
+  font-size: .8rem;
+  font-weight: 800;
+}
+.evh-admin-customers .cliente-details > p:last-child { border-bottom: 0; }
+.evh-admin-customers .cliente-historial-pedidos {
+  min-width: 0;
+  margin: .8rem 0;
+  padding: .9rem;
+  border: 1px solid #dbe6f3;
+  border-radius: 13px;
+  background: #f8fbff;
+}
+.evh-admin-customers .cliente-historial-pedidos summary {
+  color: #294f7d;
+  font-size: .84rem;
+  font-weight: 800;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.evh-admin-customers .cliente-historial-pedidos > ul {
+  display: grid;
+  gap: .75rem;
+  margin: .8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.evh-admin-customers .cliente-historial-pedidos > ul > li {
+  display: grid;
+  gap: .35rem;
+  min-width: 0;
+  margin: 0;
+  padding: .85rem;
+  border: 1px solid #e2e9f2;
+  border-radius: 11px;
+  background: #fff;
+  color: #53657d;
+  font-size: .8rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+.evh-admin-customers .cliente-historial-pedidos ul ul {
+  display: grid;
+  gap: .3rem;
+  margin: .35rem 0 0;
+  padding-left: 1.1rem;
+}
+.evh-admin-customers .evh-customers-empty { width: 100%; }
+.evh-admin-customers button:focus-visible,
+.evh-admin-customers input:focus-visible,
+.evh-admin-customers summary:focus-visible {
+  outline: 3px solid rgba(41, 79, 125, .28);
+  outline-offset: 3px;
+}
+@media (max-width: 960px) {
+  .evh-admin-customers .evh-customers-toolbar { grid-template-columns: minmax(0, 1fr); }
+  .evh-admin-customers .client-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .evh-admin-customers .filters-container { justify-content: flex-start; }
+}
+@media (max-width: 620px) {
+  .evh-admin-customers { width: calc(100% - 1rem); gap: .8rem; margin: 1rem auto 2rem; }
+  .evh-admin-customers-heading { padding: 1.2rem; border-radius: 17px; }
+  .evh-admin-customers-heading h1 { font-size: clamp(1.65rem, 7vw, 2.1rem); }
+  .evh-admin-customers-heading > p { font-size: .88rem; line-height: 1.65; }
+  .evh-admin-customers .evh-customers-toolbar,
+  .evh-admin-customers .dashboard-card { padding: .85rem; border-radius: 15px; }
+  .evh-admin-customers .filters-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .evh-admin-customers .filters-container button { width: 100%; min-width: 0; padding: .6rem .55rem; }
+  .evh-admin-customers .client-stats { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
+  .evh-admin-customers .stat-item { min-height: 0; padding: .85rem; }
+  .evh-admin-customers .cliente-item { padding: .9rem; border-radius: 15px; }
+  .evh-admin-customers .cliente-info { grid-template-columns: 42px minmax(0, 1fr); gap: .65rem; }
+  .evh-admin-customers .cliente-avatar { width: 42px; height: 42px; border-radius: 12px; }
+  .evh-admin-customers .cliente-avatar img { width: 30px; height: 30px; }
+  .evh-admin-customers .cliente-details > p { grid-template-columns: minmax(0, 1fr); gap: .2rem; padding: .58rem 0; }
+  .evh-admin-customers .cliente-details > p strong { font-size: .75rem; }
+  .evh-admin-customers .cliente-historial-pedidos { padding: .75rem; }
+  .evh-admin-customers .cliente-historial-pedidos > ul > li { padding: .7rem; }
+  .evh-admin-customers .evh-customers-list-heading { align-items: flex-start; }
+}
