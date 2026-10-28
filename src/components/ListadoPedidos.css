@@ -192,7 +192,7 @@
   padding: clamp(1rem, 2.5vw, 1.4rem);
   border: 1px solid var(--evh-order-line);
   border-radius: 20px;
-  background: #fff;
+  background: transparent;
   box-shadow: 0 10px 28px rgba(20, 44, 75, .045);
   transition: border-color .18s ease, box-shadow .18s ease;
 }
