@@ -32,7 +32,7 @@ const categorySignals = [
   },
   {
     terms: ['frio', 'calor', 'temperatura', 'ventilar', 'ventilador', 'clima'],
-    categories: ['Aires Acondicionados', 'Ventiladores', 'Refrigeradores']
+    categories: ['Aires Acondicionados', 'Ventiladores']
   },
   {
     terms: ['estudiar', 'trabajar', 'oficina', 'computador', 'portatil', 'computadora', 'productividad', 'impresora', 'tablet'],
@@ -74,6 +74,13 @@ const buildLocalRecommendation = (query, products) => {
       signal.categories.forEach(category => matchedCategories.add(normalize(category)));
     }
   });
+
+  // A broad request about comfort should clarify the user's priority instead of
+  // returning arbitrary products just because the query has no specific category.
+  const generalComfortIntent = /\b(comodidad|comodo|comoda|confort|bienestar)\b/.test(normalizedQuery);
+  if (generalComfortIntent && matchedCategories.size === 0) {
+    return '¡Claro! Para recomendarte algo que de verdad mejore tu comodidad, ¿qué te gustaría resolver primero: mantener una temperatura agradable (aires acondicionados o ventiladores), reducir el tiempo de limpieza (aspiradoras), agilizar la cocina (cafeteras, licuadoras o microondas) o mejorar el entretenimiento (televisores o parlantes)? Dime cuál te importa más y revisaré las opciones disponibles en el catálogo.';
+  }
 
   const queryWords = normalizedQuery.split(/\s+/)
     .filter(word => word.length >= 4 && !stopWords.has(word));
@@ -175,7 +182,7 @@ const ShoppingAssistant = ({ products = [] }) => {
   const useSuggestion = (suggestion) => setDraft(suggestion);
 
   const assistantState = enabled
-    ? 'Asistente disponible'
+    ? 'IA generativa configurada'
     : !statusLoaded
       ? 'Comprobando disponibilidad'
       : localMode
@@ -191,14 +198,14 @@ const ShoppingAssistant = ({ products = [] }) => {
         <div className="evh-assistant-prompts" aria-label="Ideas para empezar">
           <button type="button" disabled={!canUseGuide} onClick={() => useSuggestion('Busco algo práctico para una cocina pequeña.')}>Cocina pequeña</button>
           <button type="button" disabled={!canUseGuide} onClick={() => useSuggestion('Quiero ahorrar tiempo en el cuidado de la ropa.')}>Cuidar la ropa</button>
-          <button type="button" disabled={!canUseGuide} onClick={() => useSuggestion('¿Qué opciones hay para mejorar la comodidad en casa?')}>Más comodidad</button>
+          <button type="button" disabled={!canUseGuide} onClick={() => useSuggestion('Quiero hacer mi casa más cómoda y no sé por dónde empezar.')}>Más comodidad</button>
         </div>
       </div>
 
       <div className="evh-assistant-chat">
         <div className="evh-assistant-heading">
           <span className="evh-assistant-mark" aria-hidden="true">✦</span>
-          <div><strong>Guía ElectroVibe</strong><span>{localMode ? 'Orientación local de catálogo' : 'Recomendaciones con intención'}</span></div>
+          <div><strong>Guía ElectroVibe</strong><span>{enabled ? 'Asistente con IA generativa' : 'Orientación local de catálogo'}</span></div>
           <span className={`evh-assistant-status ${enabled ? 'is-ready' : ''}`} aria-label={assistantState} />
         </div>
 
@@ -220,7 +227,7 @@ const ShoppingAssistant = ({ products = [] }) => {
               <button type="submit" disabled={loading || !draft.trim()} aria-label="Enviar pregunta">Enviar</button>
             </form>
             {enabled ? (
-              <p className="evh-assistant-note">Tus mensajes se procesan mediante un servicio de IA para generar recomendaciones. Evita incluir datos personales o información sensible.</p>
+              <p className="evh-assistant-note">La guía utiliza IA generativa por API cuando está configurada; su uso puede generar cargos según el consumo de tokens. No incluyas datos personales ni información sensible.</p>
             ) : (
               <p className="evh-assistant-note">Tus mensajes se procesan en este navegador con el catálogo disponible; no se guardan ni se envían a servicios externos.</p>
             )}
