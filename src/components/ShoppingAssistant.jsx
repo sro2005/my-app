@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 
-const getApiUrl = () => process.env.REACT_APP_API_BASE_URL;
 const starterMessage = {
   role: 'assistant',
   content: 'Cuéntame qué quieres mejorar en casa y te ayudo a encontrar una opción que encaje contigo.'
@@ -116,78 +114,26 @@ const buildLocalRecommendation = (query, products) => {
 };
 
 const ShoppingAssistant = ({ products = [] }) => {
-  const [enabled, setEnabled] = useState(false);
-  const [statusLoaded, setStatusLoaded] = useState(false);
   const [messages, setMessages] = useState([starterMessage]);
   const [draft, setDraft] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const canUseGuide = Array.isArray(products) && products.length > 0;
 
-  useEffect(() => {
-    let active = true;
-    const apiUrl = getApiUrl();
-    if (!apiUrl) {
-      setStatusLoaded(true);
-      return () => { active = false; };
-    }
-
-    axios.get(`${apiUrl}/api/assistant/status`)
-      .then(({ data }) => {
-        if (active) setEnabled(data.enabled === true);
-      })
-      .catch(() => {
-        if (active) setEnabled(false);
-      })
-      .finally(() => {
-        if (active) setStatusLoaded(true);
-      });
-
-    return () => { active = false; };
-  }, []);
-
-  const localMode = statusLoaded && !enabled && products.length > 0;
-  const canUseGuide = statusLoaded && (enabled || localMode);
-
-  const sendMessage = async (event) => {
+  const sendMessage = event => {
     event.preventDefault();
     const content = draft.trim();
-    const apiUrl = getApiUrl();
-    if (!content || !canUseGuide || loading) return;
+    if (!content || !canUseGuide) return;
 
-    const nextMessages = [...messages, { role: 'user', content }].slice(-8);
-    setMessages(nextMessages);
+    const reply = buildLocalRecommendation(content, products);
+    setMessages(current => [
+      ...current,
+      { role: 'user', content },
+      { role: 'assistant', content: reply }
+    ].slice(-8));
     setDraft('');
-    setError('');
-    setLoading(true);
-
-    if (!enabled) {
-      setMessages(current => [
-        ...current,
-        { role: 'assistant', content: buildLocalRecommendation(content, products) }
-      ].slice(-8));
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const { data } = await axios.post(`${apiUrl}/api/assistant/chat`, { messages: nextMessages });
-      setMessages(current => [...current, { role: 'assistant', content: data.reply }].slice(-8));
-    } catch (requestError) {
-      setError(requestError.response?.data?.message || 'No pude responder ahora. Prueba de nuevo en un momento.');
-    } finally {
-      setLoading(false);
-    }
   };
 
-  const useSuggestion = (suggestion) => setDraft(suggestion);
-
-  const assistantState = enabled
-    ? 'IA generativa configurada'
-    : !statusLoaded
-      ? 'Comprobando disponibilidad'
-      : localMode
-        ? 'Guía disponible'
-        : 'Guía no disponible';
+  const useSuggestion = suggestion => setDraft(suggestion);
+  const assistantState = canUseGuide ? 'Orientación local disponible' : 'Guía no disponible';
 
   return (
     <section className="evh-assistant" aria-labelledby="evh-assistant-title">
@@ -205,35 +151,27 @@ const ShoppingAssistant = ({ products = [] }) => {
       <div className="evh-assistant-chat">
         <div className="evh-assistant-heading">
           <span className="evh-assistant-mark" aria-hidden="true">✦</span>
-          <div><strong>Guía ElectroVibe</strong><span>{enabled ? 'Asistente con IA generativa' : 'Orientación local de catálogo'}</span></div>
-          <span className={`evh-assistant-status ${enabled ? 'is-ready' : ''}`} aria-label={assistantState} />
+          <div><strong>Guía ElectroVibe</strong><span>Orientación local de catálogo</span></div>
+          <span className={`evh-assistant-status ${canUseGuide ? 'is-ready' : ''}`} aria-label={assistantState} />
         </div>
 
         <div className="evh-assistant-messages" aria-live="polite" aria-relevant="additions text">
           {messages.map((message, index) => (
             <p className={`evh-assistant-message is-${message.role}`} key={`${message.role}-${index}`}>{message.content}</p>
           ))}
-          {loading && <p className="evh-assistant-message is-assistant" role="status">Estoy revisando las opciones del catálogo…</p>}
         </div>
 
-        {!statusLoaded ? (
-          <p className="evh-assistant-note">Preparando recomendaciones…</p>
-        ) : canUseGuide ? (
+        {canUseGuide ? (
           <>
-            {error && <p className="evh-assistant-error" role="alert">{error}</p>}
             <form className="evh-assistant-form" onSubmit={sendMessage}>
               <label className="evh-sr-only" htmlFor="evh-assistant-input">Escribe qué necesitas para tu hogar</label>
-              <input id="evh-assistant-input" value={draft} onChange={event => setDraft(event.target.value)} maxLength={500} placeholder="¿Qué estás buscando para tu hogar?" disabled={loading} />
-              <button type="submit" disabled={loading || !draft.trim()} aria-label="Enviar pregunta">Enviar</button>
+              <input id="evh-assistant-input" value={draft} onChange={event => setDraft(event.target.value)} maxLength={500} placeholder="¿Qué estás buscando para tu hogar?" />
+              <button type="submit" disabled={!draft.trim()} aria-label="Enviar pregunta">Enviar</button>
             </form>
-            {enabled ? (
-              <p className="evh-assistant-note">La guía utiliza IA generativa por API cuando está configurada; su uso puede generar cargos según el consumo de tokens. No incluyas datos personales ni información sensible.</p>
-            ) : (
-              <p className="evh-assistant-note">Tus mensajes se procesan en este navegador con el catálogo disponible; no se guardan ni se envían a servicios externos.</p>
-            )}
+            <p className="evh-assistant-note">Guía gratuita sin API de IA: usa los nombres, categorías, descripciones y precios del catálogo para orientar la búsqueda. Tus mensajes se procesan en este navegador y no se envían a servicios externos.</p>
           </>
         ) : (
-          <p className="evh-assistant-note">La guía no tiene productos disponibles en este momento. Vuelve a intentarlo cuando el catálogo se actualice.</p>
+          <p className="evh-assistant-note">La guía estará disponible cuando el catálogo tenga productos para recomendar.</p>
         )}
       </div>
     </section>
