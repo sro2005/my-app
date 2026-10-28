@@ -61,6 +61,7 @@ const chat = async (req, res) => {
       },
       body: JSON.stringify({
         model: process.env.OPENAI_MODEL || 'gpt-6-luna',
+        reasoning: { effort: 'none' },
         instructions,
         input: value.messages,
         max_output_tokens: 280,
