@@ -128,3 +128,65 @@ describe('ListadoPedidos', () => {
     expect(await screen.findByText(/Aún no tienes pedidos/i)).toBeTruthy();
   });
 });
+
+
+describe('Admin order management filters and layout', () => {
+  test('searches orders by customer, email, product, and identifier', async () => {
+    setApiEnvironment();
+    axios.get.mockResolvedValue({ data: [order(), order({
+      _id: '507f1f77bcf86cd799439022',
+      firstName: 'María',
+      lastName: 'Pérez',
+      email: 'maria@example.test',
+      status: 'Enviado',
+      packed: true,
+      products: [{ productId: { name: 'Televisor Demo', category: 'Televisores' }, quantity: 2 }]
+    })] });
+
+    renderOrders();
+
+    expect(await screen.findByText(/Cliente Demo/)).toBeTruthy();
+    const search = screen.getByRole('searchbox', { name: /identificador, cliente, contacto o producto/i });
+    fireEvent.change(search, { target: { value: 'maria example test' } });
+    expect(screen.getByText(/María Pérez/)).toBeTruthy();
+    expect(screen.queryByText(/Cliente Demo/)).toBeNull();
+
+    fireEvent.change(search, { target: { value: 'televisor' } });
+    expect(screen.getByText(/Televisor Demo/)).toBeTruthy();
+    expect(screen.queryByText(/María Pérez/)).toBeTruthy();
+  });
+
+  test('filters by order status and restores the full directory', async () => {
+    setApiEnvironment();
+    axios.get.mockResolvedValue({ data: [
+      order(),
+      order({ _id: '507f1f77bcf86cd799439022', status: 'Enviado', packed: true })
+    ] });
+
+    renderOrders();
+
+    const filter = await screen.findByRole('combobox', { name: /estado del pedido/i });
+    fireEvent.change(filter, { target: { value: 'Enviado' } });
+    expect(screen.getAllByText('Enviado').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Procesando')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: /limpiar filtros/i }));
+    expect(screen.getByText('Procesando')).toBeTruthy();
+    expect(screen.getByText('Enviado')).toBeTruthy();
+  });
+
+  test('keeps an order-specific status confirmation inside its card', async () => {
+    setApiEnvironment();
+    axios.get.mockResolvedValue({ data: [order()] });
+    axios.put.mockResolvedValue({
+      data: { message: 'Estado del pedido actualizado.', order: { ...order(), status: 'Enviado', packed: true } }
+    });
+
+    renderOrders();
+
+    fireEvent.click(await screen.findByRole('button', { name: /marcar preparado y enviado/i }));
+    const feedback = await screen.findByRole('status');
+    expect(feedback.textContent).toContain('Estado del pedido actualizado.');
+    expect(feedback.closest('.pedido-item')).toBeTruthy();
+  });
+});

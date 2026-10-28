@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
 import moment from 'moment-timezone';
 import { Link } from 'react-router-dom';
+import './ListadoPedidos.css';
 
 // Función para formatear el precio en formato local (COP)
 const formatPrice = (price) => {
@@ -20,6 +21,16 @@ const formatDeliveryDate = (deliveryDate) => {
   if (!deliveryDate || !moment(deliveryDate).isValid()) return 'No definida';
   return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY');
 };
+
+const normalizeOrderSearch = value => String(value ?? '')
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLocaleLowerCase('es-CO')
+  .replace(/[^\p{L}\p{N}]/gu, '');
+
+const getOrderDisplayStatus = pedido => pedido.delivered || pedido.status === 'Entregado'
+  ? 'Entregado'
+  : pedido.status || 'Sin estado';
 
 const formatPaymentMethod = (pedido, isAdmin) => {
   if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Sin pago' : 'Pedido sin cobro';
@@ -49,54 +60,119 @@ const formatPaymentStatus = (status, isAdmin) => {
   return (isAdmin ? adminLabels : customerLabels)[status] || status || 'No disponible';
 };
 
-const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate }) => (
-  <li className="pedido-item">
-    <div className="pedido-info">
-      <div className="pedido-image">
-        <img src="/icono-order.jpg" alt="" />
-      </div>
-      <div className="pedido-details">
-        <div className="evh-order-card-heading">
-          <div className="evh-order-card-title">
-            <span>PEDIDO</span>
-            <h2>#{String(pedido._id || '').slice(-8).toUpperCase()}</h2>
-          </div>
-          <div className="evh-order-card-state">
-            <span className={`evh-order-status ${pedido.delivered || pedido.status === 'Entregado' ? 'is-delivered' : pedido.status === 'Enviado' ? 'is-shipped' : pedido.status === 'Procesando' ? 'is-processing' : 'is-neutral'}`}>{pedido.status || 'Sin estado'}</span>
-            <strong>{formatPrice(pedido.totalAmount)}</strong>
-            <small>{isAdmin ? 'Valor del pedido' : 'Total del pedido'}</small>
-          </div>
+const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, statusMessageType }) => {
+  const orderStatus = getOrderDisplayStatus(pedido);
+  const orderProducts = Array.isArray(pedido.products) ? pedido.products : [];
+
+  return (
+    <li className="pedido-item">
+      <div className="pedido-info">
+        <div className="pedido-image" aria-hidden="true">
+          <img src="/icono-order.jpg" alt="" />
         </div>
-        <p><strong>ID del pedido:</strong> {pedido._id || 'No disponible'}</p>
-        <p><strong>{isAdmin ? 'Cliente:' : 'Titular del pedido:'}</strong> {pedido.firstName || ''} {pedido.lastName || ''}</p>
-        <p><strong>Dirección de entrega:</strong> {pedido.address || 'No disponible'}</p>
-        <p><strong>Teléfono de contacto:</strong> {pedido.phone || 'No disponible'}</p>
-        <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido, isAdmin)}</p>
-        <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, isAdmin)}</p>
-        <p><strong>Fecha del pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
-        <p><strong>Entrega estimada:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
-        <p><strong>Productos:</strong>  
-          {Array.isArray(pedido.products) && pedido.products.length > 0 ? pedido.products.map((item, index) => (
-            <span key={item._id || item.productId?._id || index}>
-              {item.productId?.name || "Producto desconocido"} · {item.productId?.category || "Sin categoría"} · Cantidad: {item.quantity || 1}
-              {index < pedido.products.length - 1 ? ', ' : ''}
-            </span>
-          )) : " No hay productos en este pedido."}
-        </p>
-        {isAdmin && pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed && (
-          <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'packed')}>
-            {updating ? 'Actualizando…' : 'Marcar preparado y enviado'}
-          </button>
-        )}
-        {isAdmin && pedido.status === 'Enviado' && pedido.packed && !pedido.delivered && (
-          <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'delivered')}>
-            {updating ? 'Actualizando…' : 'Marcar como entregado'}
-          </button>
-        )}
+        <div className="pedido-details">
+          <div className="evh-order-card-heading">
+            <div className="evh-order-card-title">
+              <span>PEDIDO</span>
+              <h2>#{String(pedido._id || '').slice(-8).toUpperCase() || 'N/D'}</h2>
+              <small>{formatOrderDate(pedido.orderDate)}</small>
+            </div>
+            <div className="evh-order-card-state">
+              <span className={`evh-order-status ${orderStatus === 'Entregado' ? 'is-delivered' : orderStatus === 'Enviado' ? 'is-shipped' : orderStatus === 'Procesando' ? 'is-processing' : orderStatus === 'Cancelado' ? 'is-cancelled' : 'is-neutral'}`}>
+                {orderStatus}
+              </span>
+              <strong>{formatPrice(pedido.totalAmount)}</strong>
+              <small>{isAdmin ? 'Valor del pedido' : 'Total del pedido'}</small>
+            </div>
+          </div>
+
+          <dl className="evh-order-metadata">
+            <div className="evh-order-field is-wide">
+              <dt>ID del pedido</dt>
+              <dd className="evh-order-id">{pedido._id || 'No disponible'}</dd>
+            </div>
+            <div className="evh-order-field">
+              <dt>{isAdmin ? 'Cliente' : 'Titular del pedido'}</dt>
+              <dd>{[pedido.firstName, pedido.lastName].filter(Boolean).join(' ') || 'No disponible'}</dd>
+            </div>
+            {isAdmin && (
+              <div className="evh-order-field">
+                <dt>Correo electrónico</dt>
+                <dd>{pedido.email || 'No disponible'}</dd>
+              </div>
+            )}
+            <div className="evh-order-field">
+              <dt>Teléfono de contacto</dt>
+              <dd>{pedido.phone || 'No disponible'}</dd>
+            </div>
+            <div className="evh-order-field is-wide">
+              <dt>Dirección de entrega</dt>
+              <dd>{pedido.address || 'No disponible'}</dd>
+            </div>
+            <div className="evh-order-field">
+              <dt>Método de pago</dt>
+              <dd>{formatPaymentMethod(pedido, isAdmin)}</dd>
+            </div>
+            <div className="evh-order-field">
+              <dt>Estado del pago</dt>
+              <dd>{formatPaymentStatus(pedido.paymentStatus, isAdmin)}</dd>
+            </div>
+            <div className="evh-order-field">
+              <dt>Fecha del pedido</dt>
+              <dd>{formatOrderDate(pedido.orderDate)}</dd>
+            </div>
+            <div className="evh-order-field">
+              <dt>Entrega estimada</dt>
+              <dd>{formatDeliveryDate(pedido.deliveryDate)}</dd>
+            </div>
+          </dl>
+
+          <section className="evh-order-products-section" aria-label="Productos del pedido">
+            <h3>Productos del pedido <span>{orderProducts.length}</span></h3>
+            {orderProducts.length > 0 ? (
+              <ul className="evh-order-products">
+                {orderProducts.map((item, index) => (
+                  <li key={item._id || item.productId?._id || index}>
+                    <span className="evh-order-product-name">{item.productId?.name || 'Producto desconocido'}</span>
+                    <span className="evh-order-product-meta">
+                      {item.productId?.category || 'Sin categoría'} · Cantidad: {item.quantity || 1}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="evh-order-no-products">No hay productos en este pedido.</p>
+            )}
+          </section>
+
+          {isAdmin && (
+            (pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed) ||
+            (pedido.status === 'Enviado' && pedido.packed && !pedido.delivered)
+          ) && (
+            <div className="evh-order-actions">
+              {pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed && (
+                <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'packed')}>
+                  {updating ? 'Actualizando…' : 'Marcar preparado y enviado'}
+                </button>
+              )}
+              {pedido.status === 'Enviado' && pedido.packed && !pedido.delivered && (
+                <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'delivered')}>
+                  {updating ? 'Actualizando…' : 'Marcar como entregado'}
+                </button>
+              )}
+            </div>
+          )}
+          {statusMessage && (
+            <p role={statusMessageType === 'error' ? 'alert' : 'status'}
+              className={`order-status-feedback is-${statusMessageType}`}>
+              {statusMessage}
+            </p>
+          )}
+        </div>
       </div>
-    </div>
-  </li>
-);
+    </li>
+  );
+};
 
 const ListadoPedidos = () => {
   const { user } = useContext(AuthContext);  // Usar el contexto para obtener el usuario
@@ -108,6 +184,9 @@ const ListadoPedidos = () => {
   const [statusMessage, setStatusMessage] = useState('');
   const [statusMessageType, setStatusMessageType] = useState('success');
   const [retryCount, setRetryCount] = useState(0);
+  const [orderSearch, setOrderSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('Todos');
+  const [statusMessageOrderId, setStatusMessageOrderId] = useState(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -116,6 +195,7 @@ const ListadoPedidos = () => {
       const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
       setError(null);
       setStatusMessage('');
+      setStatusMessageOrderId(null);
       setLoading(true);
   
       if (!token || !userId || !API_URL) {
@@ -161,6 +241,7 @@ const ListadoPedidos = () => {
   }, [user, retryCount]);  // Recarga cuando cambia el usuario o se solicita un reintento.
 
   const handleStatusUpdate = async (orderId, field) => {
+    setStatusMessageOrderId(orderId);
     const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken');
     if (!API_URL || !token) {
@@ -200,9 +281,42 @@ const ListadoPedidos = () => {
   
 
   const isAdmin = user?.role === 'admin';
+  const sortedOrders = useMemo(() => [...pedidos].sort((a, b) => {
+    const first = new Date(a.orderDate || 0).getTime();
+    const second = new Date(b.orderDate || 0).getTime();
+    return (Number.isFinite(second) ? second : 0) - (Number.isFinite(first) ? first : 0);
+  }), [pedidos]);
+  const displayedOrders = useMemo(() => {
+    if (!isAdmin) return sortedOrders;
+    const query = normalizeOrderSearch(orderSearch);
+    return sortedOrders.filter(order => {
+      const productValues = Array.isArray(order.products) ? order.products.flatMap(item => [
+        item.productId?.name,
+        item.productId?.category
+      ]) : [];
+      const matchesSearch = !query || [
+        order._id,
+        String(order._id || '').slice(-8),
+        order.firstName,
+        order.lastName,
+        [order.firstName, order.lastName].filter(Boolean).join(' '),
+        order.email,
+        order.phone,
+        order.address,
+        order.status,
+        order.paymentStatus,
+        formatPaymentMethod(order, true),
+        formatPaymentStatus(order.paymentStatus, true),
+        ...productValues
+      ].some(value => normalizeOrderSearch(value).includes(query));
+      const matchesStatus = statusFilter === 'Todos' || getOrderDisplayStatus(order) === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [isAdmin, sortedOrders, orderSearch, statusFilter]);
+  const hasOrderFilters = Boolean(orderSearch.trim()) || statusFilter !== 'Todos';
 
   return (
-    <main className={`container evh-orders-page ${isAdmin ? 'is-admin' : 'is-customer'}`}>
+    <main className={`evh-orders-page ${isAdmin ? 'is-admin' : 'is-customer'} ${isAdmin ? '' : 'container'}`}>
       <header className="evh-orders-heading">
         <span className="evh-eyebrow">{isAdmin ? 'ADMINISTRACIÓN · PEDIDOS' : 'TU CUENTA ELECTROVIBE'}</span>
         <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
@@ -236,6 +350,40 @@ const ListadoPedidos = () => {
         </section>
       )}
 
+      {isAdmin && !loading && !error && (
+        <section className="evh-admin-order-toolbar" role="search" aria-label="Buscar y filtrar pedidos">
+          <label className="evh-admin-order-search">
+            <span>Buscar pedido</span>
+            <input
+              type="search"
+              aria-label="Buscar pedidos por identificador, cliente, contacto o producto"
+              placeholder="ID, cliente, correo, teléfono o producto…"
+              value={orderSearch}
+              onChange={event => setOrderSearch(event.target.value)}
+            />
+          </label>
+          <label className="evh-admin-order-filter">
+            <span>Estado del pedido</span>
+            <select aria-label="Filtrar por estado del pedido" value={statusFilter}
+              onChange={event => setStatusFilter(event.target.value)}>
+              {['Todos', 'Pendiente', 'Procesando', 'Enviado', 'Entregado', 'Cancelado'].map(status => (
+                <option key={status} value={status}>{status === 'Todos' ? 'Todos los estados' : status}</option>
+              ))}
+            </select>
+          </label>
+          <div className="evh-admin-order-results" aria-live="polite">
+            <strong>{displayedOrders.length}</strong>
+            <span>{displayedOrders.length === 1 ? 'pedido encontrado' : 'pedidos encontrados'}</span>
+          </div>
+          {hasOrderFilters && (
+            <button type="button" className="evh-admin-order-clear"
+              onClick={() => { setOrderSearch(''); setStatusFilter('Todos'); }}>
+              Limpiar filtros
+            </button>
+          )}
+        </section>
+      )}
+
       <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos registrados' : 'Historial de mis pedidos'} aria-busy={loading}>
         {loading ? (
           <div className="evh-loading-panel evh-orders-loading" role="status" aria-live="polite">
@@ -256,7 +404,7 @@ const ListadoPedidos = () => {
           </div>
         ) : (
           <>
-        {statusMessage && <p role={statusMessageType === 'error' ? 'alert' : 'status'} className={`order-status-feedback is-${statusMessageType}`}>{statusMessage}</p>}
+        {statusMessage && !statusMessageOrderId && <p role={statusMessageType === 'error' ? 'alert' : 'status'} className={`order-status-feedback is-${statusMessageType}`}>{statusMessage}</p>}
         {emptyOrders ? (
           <div className="evh-orders-empty">
             <span aria-hidden="true">▤</span>
@@ -267,21 +415,33 @@ const ListadoPedidos = () => {
             {!isAdmin && <Link className="evh-button evh-button-primary" to="/catalogo">Explorar catálogo <span aria-hidden="true">→</span></Link>}
           </div>
         ) : (
-          <ul className="pedidos-list">
-            {pedidos.length > 0 ? (
-              pedidos.map((pedido) => (
+          {isAdmin && !emptyOrders && displayedOrders.length === 0 ? (
+            <div className="evh-orders-empty evh-admin-orders-empty">
+              <span aria-hidden="true">⌕</span>
+              <h2>No hay pedidos que coincidan</h2>
+              <p>Prueba con otro término de búsqueda o selecciona un estado diferente.</p>
+              {hasOrderFilters && (
+                <button type="button" className="evh-button evh-button-primary"
+                  onClick={() => { setOrderSearch(''); setStatusFilter('Todos'); }}>
+                  Restablecer filtros
+                </button>
+              )}
+            </div>
+          ) : (
+            <ul className="pedidos-list">
+              {displayedOrders.map(pedido => (
                 <PedidoItem
                   key={pedido._id}
                   pedido={pedido}
                   isAdmin={isAdmin}
                   updating={updatingOrderId === pedido._id}
                   onStatusUpdate={handleStatusUpdate}
+                  statusMessage={statusMessageOrderId === pedido._id ? statusMessage : ''}
+                  statusMessageType={statusMessageType}
                 />
-              ))
-            ) : (
-              <li className="evh-list-no-results">No hay pedidos disponibles.</li>
-            )}
-          </ul>
+              ))}
+            </ul>
+          )}
         )}
           </>
         )}
