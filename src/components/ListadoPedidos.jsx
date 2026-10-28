@@ -64,6 +64,47 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
   const orderStatus = getOrderDisplayStatus(pedido);
   const orderProducts = Array.isArray(pedido.products) ? pedido.products : [];
 
+  // Preserve the existing customer-facing order card; the redesign applies only to administrators.
+  if (!isAdmin) {
+    return (
+      <li className="pedido-item">
+        <div className="pedido-info">
+          <div className="pedido-image"><img src="/icono-order.jpg" alt="" /></div>
+          <div className="pedido-details">
+            <div className="evh-order-card-heading">
+              <div className="evh-order-card-title">
+                <span>PEDIDO</span>
+                <h2>#{String(pedido._id || '').slice(-8).toUpperCase()}</h2>
+              </div>
+              <div className="evh-order-card-state">
+                <span className={`evh-order-status ${pedido.delivered || pedido.status === 'Entregado' ? 'is-delivered' : pedido.status === 'Enviado' ? 'is-shipped' : pedido.status === 'Procesando' ? 'is-processing' : 'is-neutral'}`}>
+                  {pedido.status || 'Sin estado'}
+                </span>
+                <strong>{formatPrice(pedido.totalAmount)}</strong>
+                <small>Total del pedido</small>
+              </div>
+            </div>
+            <p><strong>Titular del pedido:</strong> {pedido.firstName || ''} {pedido.lastName || ''}</p>
+            <p><strong>Dirección de entrega:</strong> {pedido.address || 'No disponible'}</p>
+            <p><strong>Teléfono de contacto:</strong> {pedido.phone || 'No disponible'}</p>
+            <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido, false)}</p>
+            <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, false)}</p>
+            <p><strong>Fecha del pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
+            <p><strong>Entrega estimada:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
+            <p><strong>Productos:</strong>{' '}
+              {orderProducts.length > 0 ? orderProducts.map((item, index) => (
+                <span key={item._id || item.productId?._id || index}>
+                  {item.productId?.name || 'Producto desconocido'} · {item.productId?.category || 'Sin categoría'} · Cantidad: {item.quantity || 1}
+                  {index < orderProducts.length - 1 ? ', ' : ''}
+                </span>
+              )) : ' No hay productos en este pedido.'}
+            </p>
+          </div>
+        </div>
+      </li>
+    );
+  }
+
   return (
     <li className="pedido-item">
       <div className="pedido-info">
