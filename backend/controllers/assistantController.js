@@ -60,7 +60,7 @@ const chat = async (req, res) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || 'gpt-4.1-mini',
+        model: process.env.OPENAI_MODEL || 'gpt-6-luna',
         instructions,
         input: value.messages,
         max_output_tokens: 280,
