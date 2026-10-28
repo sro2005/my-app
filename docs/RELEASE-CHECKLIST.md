@@ -100,7 +100,7 @@ Solo si se decide reactivar una pasarela:
 - [Repositorio ElectroVibeHome](https://github.com/sro2005/ElectroVibeHome)
 - [Frontend publicado](https://electrovibehome.onrender.com/)
 - [API publicada](https://electrovibehome-v2-api.onrender.com)
-- [CI final — 40590623401 (5/5 trabajos correctos)](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401)
+- [CI final — 40598236705 (#530, 5/5 trabajos correctos)](https://github.com/sro2005/ElectroVibeHome/actions/runs/40598236705)
 - [Capturas responsive y módulos — ejecución final](https://github.com/sro2005/ElectroVibeHome/actions/runs/40590623401/artifacts/12774216283)
 - [CI de autenticación real y escaneo histórico único](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519)
 - [Despliegue frontend en Render](https://dashboard.render.com/static/srv-dbg1n0psrm7s73c8gom0)
