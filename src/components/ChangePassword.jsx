@@ -98,7 +98,7 @@ const ChangePassword = () => {
           />
         </div>
         <button className="evh-form-submit" type="submit" disabled={loading}>
-          {loading ? 'Actualizando…' : 'Actualizar contraseña'}
+          {loading ? 'Actualizando…' : 'Actualizar Contraseña'}
         </button>
         {feedback && (
           <p className={`evh-form-feedback is-${feedback.type}`} role={feedback.type === 'error' ? 'alert' : 'status'}>
