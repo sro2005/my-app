@@ -568,9 +568,8 @@ form select {
   margin-right: 15px;
 }
 
-.cliente-avatar img,
-.producto-image img,
-.pedido-image img {
+.producto-image img {
+
   max-width: 100px; /* Ajusta el tamaño según sea necesario */
   max-height: 100px;
   object-fit: cover; /* Asegura que la imagen se ajuste sin distorsión */
@@ -915,49 +914,6 @@ form select {
 
 .update-button:hover {
   background-color: #45a049;
-}
-
-/* Contenedor general de los testimonios */
-.testimonials-wrapper {
-  display: flex;
-  flex-wrap: wrap;         /* En pantallas pequeñas, se pueden ajustar a varias filas */
-  justify-content: space-between; /* Distribuye el espacio horizontal */
-  gap: 20px;               /* Espacio entre cada testimonial */
-  margin: 20px 0;          /* Separación vertical respecto a otros contenidos */
-}
-
-/* Cada tarjeta testimonial */
-.testimonial {
-  flex: 1 1 30%;           /* Cada testimonial ocupará alrededor del 30% del ancho (ajusta según convenga) */
-  background: #f9f9f9;      /* Fondo opcional para destacar la tarjeta */
-  border: 1px solid #ccc;  /* Borde opcional */
-  border-radius: 4px;
-  padding: 15px;
-  box-sizing: border-box;
-  text-align: center;      /* Centra el contenido interno (opcional) */
-}
-
-/* Contenedor de la imagen */
-.image-container {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.testimonial-image {
-  max-width: 100%;
-  height: auto;
-  display: inline-block;
-}
-
-/* Estilos para el blockquote y el párrafo */
-.testimonial blockquote {
-  font-style: italic;
-  margin: 0 0 10px;
-}
-
-.testimonial p {
-  margin: 0;
-  font-weight: bold;
 }
 
 /* Estilos para los inputs deshabilitados */
@@ -3110,14 +3066,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-radius: 19px;
   background: linear-gradient(145deg, #f0f6ff, #e1ebf8);
 }
-
-.evh-orders-page .pedido-image img {
-  display: block;
-  width: 58px;
-  height: 58px;
-  object-fit: contain;
-}
-
 .evh-orders-page .pedido-details { min-width: 0; }
 .evh-orders-page .pedido-details p {
   display: flex;
@@ -3455,12 +3403,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-radius: 17px;
   background: #edf4ff;
 }
-.evh-admin-customers .cliente-avatar img {
-  display: block;
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-}
 .evh-admin-customers .cliente-details { min-width: 0; }
 .evh-admin-customers .cliente-details > p {
   display: flex;
@@ -3680,8 +3622,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-admin-customers-heading .evh-eyebrow { max-width: 100%; font-size: .61rem; letter-spacing: .055em; }
   .evh-orders-page .pedido-info { grid-template-columns: 1fr; gap: .7rem; }
   .evh-orders-page .pedido-image { width: 58px; height: 58px; border-radius: 14px; }
-  .evh-orders-page .pedido-image img { width: 42px; height: 42px; }
-  .evh-orders-page .pedido-details p { display: block; padding: .6rem 0; }
+.evh-orders-page .pedido-details p { display: block; padding: .6rem 0; }
   .evh-orders-page .pedido-details p strong { display: block; margin-bottom: .1rem; }
   .evh-loading-panel { grid-template-columns: 42px minmax(0, 1fr); gap: .8rem; padding: 1rem; }
   .evh-loading-mark { width: 42px; height: 42px; border-radius: 13px; font-size: .86rem; }
@@ -6351,8 +6292,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-admin-customers .evh-customers-list-heading { flex-wrap: wrap; }
   .evh-orders-page .pedido-info { grid-template-columns: minmax(0, 1fr); gap: .65rem; }
   .evh-orders-page .pedido-image { width: 54px; height: 54px; border-radius: 14px; }
-  .evh-orders-page .pedido-image img { width: 38px; height: 38px; }
-  .evh-orders-page .pedido-details p { display: grid; grid-template-columns: minmax(0, 1fr); gap: .2rem; }
+.evh-orders-page .pedido-details p { display: grid; grid-template-columns: minmax(0, 1fr); gap: .2rem; }
   .evh-orders-page .pedido-details p strong { flex: initial; }
   .evh-orders-page .pedido-details button { width: 100%; margin: .65rem 0 0; }
 }
@@ -6623,12 +6563,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-radius: 16px;
   background: #edf4ff;
 }
-.evh-admin-customers .cliente-avatar img {
-  display: block;
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-}
 .evh-admin-customers .cliente-details { min-width: 0; width: 100%; }
 .evh-admin-customers .cliente-details > p {
   display: grid;
@@ -6721,8 +6655,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-admin-customers .cliente-item { padding: .9rem; border-radius: 15px; }
   .evh-admin-customers .cliente-info { grid-template-columns: 42px minmax(0, 1fr); gap: .65rem; }
   .evh-admin-customers .cliente-avatar { width: 42px; height: 42px; border-radius: 12px; }
-  .evh-admin-customers .cliente-avatar img { width: 30px; height: 30px; }
-  .evh-admin-customers .cliente-details > p { grid-template-columns: minmax(0, 1fr); gap: .2rem; padding: .58rem 0; }
+.evh-admin-customers .cliente-details > p { grid-template-columns: minmax(0, 1fr); gap: .2rem; padding: .58rem 0; }
   .evh-admin-customers .cliente-details > p strong { font-size: .75rem; }
   .evh-admin-customers .cliente-historial-pedidos { padding: .75rem; }
   .evh-admin-customers .cliente-historial-pedidos > ul > li { padding: .7rem; }
