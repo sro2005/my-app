@@ -9,6 +9,7 @@ const orderSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   address: { type: String, required: true },
   paymentMethod: { type: String, required: true },
+  paymentPreference: { type: String, enum: ['Tarjeta', 'PSE', 'Billetera digital', 'Por definir'] },
   deliveryDate: { type: Date, required: true, validate: { validator: function(value) { return moment(value).tz("America/Bogota").startOf('day').isSameOrAfter(moment.tz("America/Bogota").startOf('day')); }, message: '"deliveryDate" must be today or in the future (Colombian time)' } },
   totalAmount: { type: Number, required: true, min: 0 },
   products: [{ productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true }, quantity: { type: Number, required: true } }],
