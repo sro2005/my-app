@@ -504,7 +504,7 @@ async function main() {
     assert.ok(!mockApiWrites.some(call => /^POST \/api\/products\/agregar$/.test(call)),
       'An empty product form must not call the create-product API.');
 
-    await captureAuthenticatedRoute('/listado-clientes', /Gestión de clientes/i, 'admin-customers', '.cliente-item');
+    await captureAuthenticatedRoute('/listado-clientes', /Gestión de Clientes/i, 'admin-customers', '.cliente-item');
     await page.locator('input[aria-label*="Buscar clientes"]').fill('Marina');
     assert.ok(await page.locator('.clientes-list .cliente-item').count() >= 1,
       'Customer search should return matching records.');
@@ -515,7 +515,7 @@ async function main() {
     assert.ok(await page.getByText('Daniel Pardo').count() >= 1,
       'The inactive customer should be visible after filtering.');
 
-    await captureAuthenticatedRoute('/listado-pedidos', /Gestión de pedidos/i, 'admin-orders', '.pedido-item');
+    await captureAuthenticatedRoute('/listado-pedidos', /Gestión de Pedidos/i, 'admin-orders', '.pedido-item');
     await page.getByRole('button', { name: /Marcar preparado y enviado/i }).click();
     await page.getByRole('button', { name: /Marcar como entregado/i }).waitFor({ timeout: 15000 });
     assert.ok(mockApiWrites.some(call => /^PUT \/api\/orders\/.+\/status$/.test(call)),
@@ -540,7 +540,7 @@ async function main() {
     await captureAuthenticatedRoute('/pedido-form', /Tu compra, a tu manera/i, 'customer-order-form', '#checkout-product');
     await page.locator('#checkout-product').click();
     await page.getByRole('option', { name: /Cafetera Boreal 12 tazas/i }).click();
-    await page.getByRole('button', { name: 'Agregar al pedido' }).click();
+    await page.getByRole('button', { name: 'Agregar al Pedido' }).click();
     await page.getByText('Cafetera Boreal 12 tazas').first().waitFor();
     await page.getByRole('heading', { name: 'ElectroVibe Pay' }).waitFor();
     assert.equal(await page.getByRole('radio', { name: /Tarjeta/i }).count(), 0,
@@ -566,7 +566,7 @@ async function main() {
     await captureAuthenticatedRoute('/listado-pedidos', /Mis pedidos/i, 'customer-orders', '.pedido-item');
     assert.equal(await page.getByRole('button', { name: /Marcar preparado y enviado/i }).count(), 0,
       'Customer views must not expose admin shipping actions.');
-    await captureAuthenticatedRoute('/perfil-cliente', /Mi perfil/i, 'customer-profile', '.evh-profile-card');
+    await captureAuthenticatedRoute('/perfil-cliente', /Mi Perfil/i, 'customer-profile', '.evh-profile-card');
     await page.getByRole('button', { name: 'Editar Perfil' }).click();
     await page.getByRole('heading', { name: 'Editar tus datos' }).waitFor();
     await page.getByRole('button', { name: 'Cancelar' }).click();
