@@ -1161,7 +1161,7 @@ h2 {
 .evh-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
 .evh-button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; padding: 0 22px; border-radius: 999px; text-decoration: none; font-weight: 800; transition: transform .2s ease, box-shadow .2s ease; }
 .evh-button:hover { transform: translateY(-2px); }
-.evh-button-primary { background: #f18120; color: #fff; box-shadow: 0 10px 24px rgba(225, 113, 21, .22); }
+.evh-button-primary { background: var(--evh-accent); color: var(--evh-ink-strong); box-shadow: 0 10px 24px rgba(233, 120, 22, .2); }
 .evh-button-secondary { color: #202a3d; border: 1px solid #d9deea; background: #fff; }
 .evh-trust-row { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 28px; color: #626c7e; font-size: .86rem; }
 .evh-trust-row strong { color: #18815b; margin-right: 5px; }
@@ -2509,15 +2509,15 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 :root {
   --evh-ink: #1c2b40;
   --evh-ink-strong: #14243a;
-  --evh-blue: #294b70;
-  --evh-blue-soft: #eaf0f6;
-  --evh-accent: #f28c28;
+  --evh-blue: #294f7d;
+  --evh-blue-soft: #edf4ff;
+  --evh-accent: #e97816;
   --evh-accent-hover: #d96f12;
-  --evh-accent-ink: #84430c;
+  --evh-accent-ink: #14243a;
   --evh-accent-soft: #fff3e5;
   --evh-canvas: #f5f7fa;
   --evh-surface: #ffffff;
-  --evh-border: #e0e6ed;
+  --evh-border: #dce5ef;
   --evh-muted: #617084;
   --evh-success: #18734d;
   --evh-success-soft: #eaf7ef;
@@ -2878,7 +2878,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   color: var(--evh-ink-strong);
   box-shadow: 0 6px 16px rgba(242,140,40,.16);
 }
-.evh-confirmation-primary:hover:not(:disabled) { border-color: var(--evh-accent-hover); background: var(--evh-accent-hover); color: #fff; transform: translateY(-1px); }
+.evh-confirmation-primary:hover:not(:disabled) { border-color: var(--evh-accent-hover); background: var(--evh-accent-hover); color: var(--evh-ink-strong); transform: translateY(-1px); }
 .evh-confirmation-actions button:disabled { cursor: wait; opacity: .68; transform: none; }
 @media (max-width: 720px) {
   .evh-confirmation-backdrop { align-items: flex-end; padding: .5rem; }
@@ -5625,6 +5625,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .evh-hero-actions .evh-button-primary {
   background: #285887;
+  color: #fff;
   box-shadow: 0 8px 22px rgba(40, 88, 135, .2);
 }
 .evh-hero-actions .evh-button-primary:hover {
@@ -5759,13 +5760,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   letter-spacing: .1em;
 }
 .evh-customer-actions .evh-button-primary {
-  background: #f0a04a;
-  color: #172c46;
+  background: var(--evh-accent);
+  color: var(--evh-ink-strong);
   box-shadow: 0 8px 22px rgba(0, 0, 0, .13);
 }
 .evh-customer-actions .evh-button-primary:hover {
-  background: #f6b66d;
-  color: #172c46;
+  background: var(--evh-accent-hover);
+  color: var(--evh-ink-strong);
 }
 .evh-customer-hero .evh-button-secondary {
   background: rgba(255,255,255,.05);
@@ -6764,21 +6765,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
 
 
-/* Identidad visual consistente para avatares, pedidos y módulos de cuenta. */
-:root {
-  --evh-blue: #294f7d;
-  --evh-blue-soft: #edf4ff;
-  --evh-accent: #e97816;
-  --evh-accent-hover: #d96f12;
-  --evh-accent-soft: #fff3e5;
-  --evh-ink: #1c2b40;
-  --evh-ink-strong: #14243a;
-  --evh-muted: #617084;
-  --evh-border: #dce5ef;
-  --evh-canvas: #f5f7fa;
-  --evh-surface: #fff;
-}
-
+/* Avatares y módulos operativos comparten los tokens definidos arriba. */
 /* Los avatares utilizan el género indicado voluntariamente en el perfil. */
 .evh-gender-icon {
   display: block;
