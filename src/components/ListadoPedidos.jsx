@@ -39,7 +39,13 @@ const formatPaymentMethod = (pedido, isAdmin) => {
   return pedido.paymentMethod || 'No especificado';
 };
 
-const formatPaymentStatus = (status, isAdmin) => {
+const formatPaymentStatus = (status, isAdmin, pedido) => {
+  if (pedido?.paymentMethod === 'Pago pendiente de coordinación') {
+    const manualLabels = isAdmin
+      ? { PENDING: 'Pendiente de revisión', APPROVED: 'Verificado manualmente', DECLINED: 'Rechazado en revisión' }
+      : { PENDING: 'Pendiente de revisión', APPROVED: 'Pago confirmado', DECLINED: 'Pago no aprobado' };
+    if (manualLabels[status]) return manualLabels[status];
+  }
   const adminLabels = {
     SIMULATED: 'Sin pago',
     APPROVED: 'Aprobado (Sandbox)',
@@ -61,10 +67,25 @@ const formatPaymentStatus = (status, isAdmin) => {
   return (isAdmin ? adminLabels : customerLabels)[status] || status || 'No disponible';
 };
 
-const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, statusMessageType }) => {
+const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview, statusMessage, statusMessageType }) => {
   const isCoordinatedPayment = pedido.paymentMethod === 'Pago pendiente de coordinación';
   const orderStatus = getOrderDisplayStatus(pedido);
   const orderProducts = Array.isArray(pedido.products) ? pedido.products : [];
+  const [reviewReference, setReviewReference] = useState('');
+  const [reviewNote, setReviewNote] = useState('');
+  const [confirmRejectPayment, setConfirmRejectPayment] = useState(false);
+  const canReviewPayment = isAdmin && isCoordinatedPayment && pedido.paymentStatus === 'PENDING'
+    && !pedido.paymentConfirmed && !pedido.packed && !pedido.delivered
+    && ['Pendiente', 'Procesando'].includes(pedido.status);
+
+  const submitPaymentReview = async decision => {
+    const saved = await onPaymentReview(pedido._id, decision, reviewReference.trim(), reviewNote.trim());
+    if (saved) {
+      setConfirmRejectPayment(false);
+      setReviewReference('');
+      setReviewNote('');
+    }
+  };
 
   // Preserve the existing customer-facing order card; the redesign applies only to administrators.
   if (!isAdmin) {
@@ -91,7 +112,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             <p><strong>Teléfono de contacto:</strong> {pedido.phone || 'No disponible'}</p>
             <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido, false)}</p>
             {pedido.paymentPreference && <p><strong>Detalle del método:</strong> {pedido.paymentPreference}</p>}
-            <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, false)}</p>
+            <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, false, pedido)}</p>
             <p><strong>Fecha del pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
             <p><strong>Fecha solicitada de entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
             <p><strong>Productos:</strong>{' '}
@@ -137,7 +158,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             <p><strong>Teléfono de contacto:</strong><span>{pedido.phone || 'No disponible'}</span></p>
             <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido, true)}</span></p>
             {pedido.paymentPreference && <p><strong>Detalle del método:</strong><span>{pedido.paymentPreference}</span></p>}
-            <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true)}</span></p>
+            <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true, pedido)}</span></p>
             <p><strong>Fecha solicitada de entrega:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
             <p className="evh-order-admin-products">
               <strong>Productos:</strong>
@@ -152,18 +173,79 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             </p>
           </div>
 
+          {canReviewPayment && (
+            <section className="evh-payment-review" aria-labelledby={`payment-review-title-${pedido._id}`}>
+              <div className="evh-payment-review-heading">
+                <span aria-hidden="true">✓</span>
+                <div>
+                  <h3 id={`payment-review-title-${pedido._id}`}>Revisión del pago</h3>
+                  <p>Comprueba la operación en el canal receptor antes de registrar una decisión.</p>
+                </div>
+              </div>
+              <label htmlFor={`payment-review-reference-${pedido._id}`}>Referencia de la operación</label>
+              <input
+                id={`payment-review-reference-${pedido._id}`}
+                type="text"
+                autoComplete="off"
+                maxLength={120}
+                value={reviewReference}
+                onChange={event => setReviewReference(event.target.value)}
+                placeholder="Referencia bancaria o del comprobante"
+                disabled={updating}
+              />
+              <small>Para aprobar, la referencia debe coincidir con una operación que hayas verificado fuera de la tienda.</small>
+              <label htmlFor={`payment-review-note-${pedido._id}`}>Observaciones de revisión</label>
+              <textarea
+                id={`payment-review-note-${pedido._id}`}
+                rows={2}
+                minLength={5}
+                maxLength={500}
+                value={reviewNote}
+                onChange={event => setReviewNote(event.target.value)}
+                placeholder="Indica qué comprobaste o el motivo del rechazo"
+                disabled={updating}
+              />
+              {!confirmRejectPayment ? (
+                <div className="evh-payment-review-actions">
+                  <button type="button" className="is-approve"
+                    disabled={updating || reviewReference.trim().length < 5 || reviewNote.trim().length < 5}
+                    onClick={() => submitPaymentReview('approve')}>
+                    {updating ? 'Guardando…' : 'Confirmar pago verificado'}
+                  </button>
+                  <button type="button" className="is-reject"
+                    disabled={updating || reviewNote.trim().length < 5}
+                    onClick={() => setConfirmRejectPayment(true)}>
+                    Rechazar pago
+                  </button>
+                </div>
+              ) : (
+                <div className="evh-payment-review-confirm" role="alert">
+                  <p>Al confirmar el rechazo, el pedido se cancelará y las unidades reservadas volverán al inventario. Esta decisión no se puede deshacer.</p>
+                  <div className="evh-payment-review-actions">
+                    <button type="button" className="is-reject" disabled={updating}
+                      onClick={() => submitPaymentReview('reject')}>Confirmar rechazo y cancelar pedido</button>
+                    <button type="button" className="is-secondary" disabled={updating}
+                      onClick={() => setConfirmRejectPayment(false)}>Volver</button>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+          {isAdmin && pedido.paymentReviewedAt && (
+            <section className="evh-payment-review-audit" aria-label="Registro de revisión de pago">
+              <strong>Decisión registrada</strong>
+              <p>Fecha: {formatOrderDate(pedido.paymentReviewedAt)}</p>
+              {pedido.paymentReviewedBy && <p>Administrador: {pedido.paymentReviewedBy}</p>}
+              {pedido.manualPaymentReference && <p>Referencia: <span className="evh-order-full-id">{pedido.manualPaymentReference}</span></p>}
+              {pedido.paymentReviewNote && <p>Observación: {pedido.paymentReviewNote}</p>}
+            </section>
+          )}
           {isAdmin && (
-            (pedido.status === 'Pendiente' && isCoordinatedPayment && !pedido.packed) ||
-            (pedido.status === 'Procesando' && (pedido.paymentConfirmed || isCoordinatedPayment) && !pedido.packed) ||
-            (pedido.status === 'Enviado' && pedido.packed && !pedido.delivered)
+            ((pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed) ||
+              (pedido.status === 'Enviado' && pedido.packed && !pedido.delivered))
           ) && (
             <div className="evh-order-actions">
-              {pedido.status === 'Pendiente' && isCoordinatedPayment && !pedido.packed && (
-                <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'prepare')}>
-                  {updating ? 'Actualizando…' : 'Iniciar preparación'}
-                </button>
-              )}
-              {pedido.status === 'Procesando' && (pedido.paymentConfirmed || isCoordinatedPayment) && !pedido.packed && (
+              {pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed && (
                 <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'packed')}>
                   {updating ? 'Actualizando…' : 'Marcar preparado y enviado'}
                 </button>
@@ -253,6 +335,51 @@ const ListadoPedidos = () => {
   
   }, [user, retryCount]);  // Recarga cuando cambia el usuario o se solicita un reintento.
 
+  const handlePaymentReview = async (orderId, decision, reference, note) => {
+    setStatusMessageOrderId(orderId);
+    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
+    const token = localStorage.getItem('authToken');
+    if (!API_URL || !token) {
+      setStatusMessageType('error');
+      setStatusMessage('No se pudo verificar la conexión o la sesión de administración.');
+      return false;
+    }
+
+    setUpdatingOrderId(orderId);
+    setStatusMessage('');
+    setStatusMessageType('success');
+    try {
+      const response = await axios.put(
+        `${API_URL}/api/orders/${orderId}/payment-review`,
+        { decision, reference, note },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      const updated = response.data?.order;
+      if (updated) {
+        setPedidos(current => current.map(item => item._id === orderId ? {
+          ...item,
+          status: updated.status,
+          paymentStatus: updated.paymentStatus,
+          paymentConfirmed: updated.paymentConfirmed,
+          paymentReviewedAt: updated.paymentReviewedAt,
+          paymentReviewedBy: updated.paymentReviewedBy,
+          manualPaymentReference: updated.manualPaymentReference,
+          paymentReviewNote: updated.paymentReviewNote,
+          packed: updated.packed,
+          delivered: updated.delivered
+        } : item));
+      }
+      setStatusMessage(response.data?.message || 'La revisión del pago quedó registrada.');
+      return true;
+    } catch (requestError) {
+      setStatusMessageType('error');
+      setStatusMessage(requestError.response?.data?.message || 'No se pudo registrar la revisión del pago. Vuelve a intentarlo.');
+      return false;
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
   const handleStatusUpdate = async (orderId, field) => {
     setStatusMessageOrderId(orderId);
     const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
@@ -319,7 +446,8 @@ const ListadoPedidos = () => {
         order.status,
         order.paymentStatus,
         formatPaymentMethod(order, true),
-        formatPaymentStatus(order.paymentStatus, true),
+        formatPaymentStatus(order.paymentStatus, true, order),
+        order.manualPaymentReference,
         ...productValues
       ].some(value => normalizeOrderSearch(value).includes(query));
       const matchesStatus = statusFilter === 'Todos' || getOrderDisplayStatus(order) === statusFilter;
@@ -458,6 +586,7 @@ const ListadoPedidos = () => {
                 isAdmin={isAdmin}
                 updating={updatingOrderId === pedido._id}
                 onStatusUpdate={handleStatusUpdate}
+                onPaymentReview={handlePaymentReview}
                 statusMessage={statusMessageOrderId === pedido._id ? statusMessage : ''}
                 statusMessageType={statusMessageType}
               />

@@ -6785,3 +6785,35 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-pay-terms{border-top:1px solid #e5edf8;padding:.8rem 1.25rem .95rem;margin:0;color:#435d7c;font-size:.78rem;line-height:1.55;background:rgba(255,255,255,.52)}
 .evh-pay-terms strong{color:#143967}
 @media(max-width:610px){.evh-pay-section-head{flex-wrap:wrap;padding:1rem}.evh-pay-tag{margin-left:auto}.evh-pay-track{padding:.7rem .8rem}.evh-pay-track span{flex-direction:column;align-items:center;text-align:center;white-space:normal;font-size:.63rem}.evh-pay-info{padding:.95rem 1rem}.evh-pay-terms{padding:.8rem 1rem}}
+
+/* Administrator-only manual payment review */
+.evh-orders-page.is-admin .evh-payment-review,
+.evh-orders-page.is-admin .evh-payment-review-audit{
+  min-width:0;margin:1rem 0 0;padding:1rem;border:1px solid #cdddf2;border-radius:15px;background:linear-gradient(145deg,#f7faff,#eff5ff);color:#17365f;
+}
+.evh-orders-page.is-admin .evh-payment-review-heading{display:flex;align-items:flex-start;gap:.75rem;margin-bottom:.9rem}
+.evh-orders-page.is-admin .evh-payment-review-heading>span{display:grid;place-items:center;flex:0 0 2.3rem;width:2.3rem;height:2.3rem;border-radius:11px;background:#dceaff;color:#1554a5;font-weight:850;font-size:1.1rem}
+.evh-orders-page.is-admin .evh-payment-review-heading h3{margin:0 0 .25rem;font-size:1rem;font-weight:850;color:#17365f}
+.evh-orders-page.is-admin .evh-payment-review-heading p{margin:0;color:#57708f;font-size:.8rem;line-height:1.5}
+.evh-orders-page.is-admin .evh-payment-review>label{display:block;margin:.75rem 0 .35rem;font-size:.8rem;font-weight:750;color:#2b4364}
+.evh-orders-page.is-admin .evh-payment-review>input,
+.evh-orders-page.is-admin .evh-payment-review>textarea{display:block;width:100%;min-width:0;box-sizing:border-box;border:1px solid #c9d6e8;border-radius:10px;background:#fff;color:#183353;padding:.7rem .8rem;font:inherit;font-size:.85rem;line-height:1.5}
+.evh-orders-page.is-admin .evh-payment-review>input{min-height:42px}
+.evh-orders-page.is-admin .evh-payment-review>textarea{resize:vertical;min-height:70px}
+.evh-orders-page.is-admin .evh-payment-review>input:focus,
+.evh-orders-page.is-admin .evh-payment-review>textarea:focus{outline:3px solid rgba(37,99,235,.16);border-color:#3978cc}
+.evh-orders-page.is-admin .evh-payment-review>small{display:block;margin-top:.35rem;color:#637995;font-size:.72rem;line-height:1.45}
+.evh-orders-page.is-admin .evh-payment-review-actions{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:.85rem}
+.evh-orders-page.is-admin .evh-payment-review-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;max-width:100%;padding:.65rem .85rem;border:1px solid transparent;border-radius:10px;font:inherit;font-size:.78rem;font-weight:800;line-height:1.4;white-space:normal;cursor:pointer}
+.evh-orders-page.is-admin .evh-payment-review-actions button:disabled{opacity:.5;cursor:not-allowed}
+.evh-orders-page.is-admin .evh-payment-review-actions .is-approve{background:#1658ab;color:white;border-color:#1658ab}
+.evh-orders-page.is-admin .evh-payment-review-actions .is-approve:hover:not(:disabled){background:#104486}
+.evh-orders-page.is-admin .evh-payment-review-actions .is-reject{background:#fff;color:#a63333;border-color:#d9a8a8}
+.evh-orders-page.is-admin .evh-payment-review-actions .is-reject:hover:not(:disabled){background:#fff3f3}
+.evh-orders-page.is-admin .evh-payment-review-actions .is-secondary{background:#fff;color:#39516f;border-color:#cdd8e6}
+.evh-orders-page.is-admin .evh-payment-review-confirm{margin-top:.85rem;padding:.8rem;border:1px solid #edcece;border-radius:12px;background:#fff8f8}
+.evh-orders-page.is-admin .evh-payment-review-confirm p{margin:0;color:#763636;font-size:.8rem;line-height:1.55}
+.evh-orders-page.is-admin .evh-payment-review-audit{background:#f7faf8;border-color:#cbe5d5}
+.evh-orders-page.is-admin .evh-payment-review-audit>strong{display:block;font-size:.86rem;color:#195d40;margin-bottom:.35rem}
+.evh-orders-page.is-admin .evh-payment-review-audit p{margin:.3rem 0 0;color:#3e5f50;font-size:.78rem;line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:560px){.evh-orders-page.is-admin .evh-payment-review{padding:.8rem}.evh-orders-page.is-admin .evh-payment-review-actions{flex-direction:column}.evh-orders-page.is-admin .evh-payment-review-actions button{width:100%}}

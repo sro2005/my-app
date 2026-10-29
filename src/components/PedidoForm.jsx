@@ -436,7 +436,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             <div><strong>Todo en un mismo lugar</strong><span>Revisa tus productos y confirma tu pedido sin salir de ElectroVibeHome.</span></div>
             <span className="evh-pay-symbol" aria-hidden="true">↗</span>
           </div>
-          <p className="evh-pay-terms">Al confirmar se registrará el pedido, no un pago. <strong>No se realizará ningún cobro</strong> ni se solicitarán datos bancarios.</p>
+          <p className="evh-pay-terms">El estado del pago se actualizará después de la revisión correspondiente.</p>
         </section>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
@@ -492,7 +492,7 @@ const userId = user?._id;  // Usar userId desde el contexto
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>Tu pedido se registró mediante <strong>{confirmedPreference}</strong>. Puedes seguir su avance en Mis pedidos. El pago permanece pendiente y no se ha realizado ningún cobro.</p>
+            <p>Tu pedido se registró mediante <strong>{confirmedPreference}</strong>. Puedes seguir su avance en Mis pedidos. El equipo de ElectroVibeHome revisará el pago y podrás consultar el resultado en Mis pedidos.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
             <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Preparar otro pedido</button>
           </div>
@@ -544,7 +544,7 @@ const userId = user?._id;  // Usar userId desde el contexto
               <div>
                 <strong>Confirmación del pedido</strong>
                 <p>{isLocalOrderMethod(paymentMethod?.value)
-                  ? 'Al confirmar se registrará el pedido. El pago permanecerá pendiente: no se realizará ningún cobro ni se enviarán datos a entidades financieras.'
+                  ? 'El pedido quedará registrado y el estado del pago se actualizará después de la revisión correspondiente.'
                   : 'La forma de pago quedará pendiente de coordinación antes de procesar el pedido.'}</p>
               </div>
             </div>

@@ -20,6 +20,11 @@ const orderSchema = new mongoose.Schema({
   paymentReference: { type: String, unique: true, sparse: true },
   idempotencyKey: { type: String, unique: true, sparse: true, select: false, immutable: true, match: /^[A-Za-z0-9_-]{16,128}$/ },
   paymentTransactionId: { type: String },
+  // Revisión manual auditada por un administrador; no sustituye la verificación en el canal receptor.
+  manualPaymentReference: { type: String, trim: true, maxlength: 120 },
+  paymentReviewedAt: { type: Date },
+  paymentReviewedBy: { type: String, trim: true, maxlength: 254 },
+  paymentReviewNote: { type: String, trim: true, maxlength: 500 },
   // Última vez que se emitió el checkout: permite expirar sesiones abandonadas sin cortar una sesión recién abierta.
   checkoutStartedAt: { type: Date },
   packed: { type: Boolean, default: false },
