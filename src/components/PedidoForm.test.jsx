@@ -120,9 +120,9 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByText('Antes de confirmar')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
-    expect(confirmation.textContent).toMatch(/sin realizar un cobro/i);
-    expect(confirmation.textContent).toMatch(/solo simulación/i);
-    fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
+    expect(confirmation.textContent).toMatch(/no se envía dinero/i);
+    expect(confirmation.textContent).toMatch(/bre-b/i);
+    fireEvent.click(screen.getByRole('button', { name: /confirmar simulación/i }));
 
     await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
