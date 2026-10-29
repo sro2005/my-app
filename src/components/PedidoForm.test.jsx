@@ -122,7 +122,7 @@ describe('PedidoForm catalog loading', () => {
     expect(confirmation.textContent).toContain('Cafetera ficticia');
     expect(confirmation.textContent).toMatch(/no se realizará ningún cobro/i);
     expect(confirmation.textContent).toMatch(/pago pendiente de coordinación/i);
-    fireEvent.click(screen.getByRole('button', { name: /confirmar simulación/i }));
+    fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
     await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
