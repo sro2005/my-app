@@ -6829,3 +6829,68 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: none !important;
 }
 
+
+
+/* Identidad visual consistente para avatares, pedidos y módulos de cuenta. */
+:root {
+  --evh-blue: #294f7d;
+  --evh-blue-soft: #edf4ff;
+  --evh-accent: #e97816;
+  --evh-accent-hover: #d96f12;
+  --evh-accent-soft: #fff3e5;
+  --evh-ink: #1c2b40;
+  --evh-ink-strong: #14243a;
+  --evh-muted: #617084;
+  --evh-border: #dce5ef;
+  --evh-canvas: #f5f7fa;
+  --evh-surface: #fff;
+}
+
+/* Los avatares utilizan el género indicado voluntariamente en el perfil. */
+.evh-gender-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: #456a91;
+  overflow: visible;
+}
+.evh-gender-icon-face { fill: #fff; }
+.evh-gender-icon--female { color: #c13d82; --evh-avatar-detail: #fff; }
+.evh-gender-icon--male { color: #245fb8; --evh-avatar-detail: #fff; }
+.evh-gender-icon--non_binary,
+.evh-gender-icon--unspecified { color: #456a91; --evh-avatar-detail: #fff; }
+.evh-admin-customers .cliente-avatar { box-sizing: border-box; }
+.evh-admin-customers .cliente-avatar .evh-gender-icon { padding: 11%; box-sizing: border-box; }
+.evh-admin-customers .cliente-avatar--female { border-color: #f0c6dc; background: #fff0f7; }
+.evh-admin-customers .cliente-avatar--male { border-color: #c9dcf7; background: #edf4ff; }
+.evh-admin-customers .cliente-avatar--non_binary,
+.evh-admin-customers .cliente-avatar--unspecified { border-color: #d6dfea; background: #f2f6fb; }
+.evh-profile-avatar { overflow: hidden; }
+.evh-profile-avatar .evh-gender-icon { width: 100%; height: 100%; padding: 10%; box-sizing: border-box; }
+.evh-profile-avatar--female { border-color: #f0c6dc; background: linear-gradient(135deg, #fff0f7, #f9d8e9); color: #c13d82; }
+.evh-profile-avatar--male { border-color: #c9dcf7; background: linear-gradient(135deg, #edf4ff, #d8e7fc); color: #245fb8; }
+.evh-profile-avatar--non_binary,
+.evh-profile-avatar--unspecified { border-color: #d6dfea; background: linear-gradient(135deg, #f2f6fb, #e2ebf5); color: #456a91; }
+.evh-orders-page .pedido-image .evh-order-icon { display: block; width: 76%; height: 76%; }
+.evh-orders-page .pedido-image { border-color: #cbdcf2; background: linear-gradient(145deg, #f3f8ff, #e3edfb); }
+.evh-profile-field select,
+.evh-register-form .evh-form-field select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  box-sizing: border-box;
+  padding: .7rem .85rem;
+  border: 1px solid var(--evh-border);
+  border-radius: 12px;
+  background: var(--evh-surface);
+  color: var(--evh-ink);
+  font: inherit;
+}
+.evh-profile-field select:focus-visible,
+.evh-register-form .evh-form-field select:focus-visible {
+  outline: 3px solid rgba(41, 79, 125, .22);
+  outline-offset: 2px;
+  border-color: var(--evh-blue);
+}
+.evh-profile-details .evh-profile-detail strong { overflow-wrap: anywhere; }
