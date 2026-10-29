@@ -250,12 +250,6 @@ const PerfilCliente = () => {
   }
 
   const fullName = [customer.firstName, customer.lastName].filter(Boolean).join(' ') || 'Cliente ElectroVibe';
-  const initials = [customer.firstName, customer.lastName]
-    .filter(Boolean)
-    .map((name) => name.trim().charAt(0).toUpperCase())
-    .join('')
-    .slice(0, 2) || 'EV';
-
   return (
     <main className="evh-profile-page">
       <header className="evh-profile-heading">
