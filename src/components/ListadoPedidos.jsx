@@ -158,10 +158,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
             <p><strong>Teléfono de contacto:</strong><span>{pedido.phone || 'No disponible'}</span></p>
             <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido, true)}</span></p>
             {pedido.paymentPreference && <p><strong>Detalle del método:</strong><span>{pedido.paymentPreference}</span></p>}
-            {pedido.paymentReviewedAt && <p><strong>Revisión registrada:</strong><span>{formatOrderDate(pedido.paymentReviewedAt)}</span></p>}
-            {pedido.paymentReviewedBy && <p><strong>Revisado por:</strong><span>{pedido.paymentReviewedBy}</span></p>}
-            {pedido.manualPaymentReference && <p><strong>Referencia verificada:</strong><span className="evh-order-full-id">{pedido.manualPaymentReference}</span></p>}
-            {pedido.paymentReviewNote && <p><strong>Nota de revisión:</strong><span>{pedido.paymentReviewNote}</span></p>}
+}
             <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true, pedido)}</span></p>
             <p><strong>Fecha solicitada de entrega:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
             <p className="evh-order-admin-products">
@@ -341,7 +338,7 @@ const ListadoPedidos = () => {
 
   const handlePaymentReview = async (orderId, decision, reference, note) => {
     setStatusMessageOrderId(orderId);
-    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\\/$/, '');
+    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken');
     if (!API_URL || !token) {
       setStatusMessageType('error');
@@ -451,6 +448,7 @@ const ListadoPedidos = () => {
         order.paymentStatus,
         formatPaymentMethod(order, true),
         formatPaymentStatus(order.paymentStatus, true, order),
+        order.manualPaymentReference,
         ...productValues
       ].some(value => normalizeOrderSearch(value).includes(query));
       const matchesStatus = statusFilter === 'Todos' || getOrderDisplayStatus(order) === statusFilter;
