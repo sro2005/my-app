@@ -32,6 +32,7 @@ exports.orderSchema = Joi.object({
   phone: Joi.string().trim().min(7).max(30).required(),
   address: Joi.string().trim().min(1).max(300).required(),
   paymentMethod: Joi.string().valid('Wompi', 'Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación').required(),
+  paymentPreference: Joi.string().valid('Tarjeta', 'PSE', 'Billetera digital', 'Por definir').optional(),
   deliveryDate: deliveryDateSchema,
   // El total del navegador se acepta por compatibilidad, pero el controlador lo ignora
   // y calcula el importe con los precios almacenados en el servidor.
