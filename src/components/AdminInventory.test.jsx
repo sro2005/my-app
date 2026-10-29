@@ -39,7 +39,7 @@ describe('AdminInventory', () => {
     expect(editor.previousElementSibling.classList.contains('evh-admin-product')).toBe(true);
     expect(editor.previousElementSibling.contains(screen.getByRole('button', { name: 'Editar' }))).toBe(true);
     fireEvent.change(screen.getByLabelText('Existencias'), { target: { value: '3' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar Cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
     expect(screen.getByRole('region', { name: 'Editar producto' })).toBeTruthy();
     expect(axios.put).toHaveBeenCalledWith('https://api.example.test/api/products/p1',
