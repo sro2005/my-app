@@ -176,7 +176,7 @@ const AdminInventory = () => {
                     <input value={draft[field]} type={type} required={field !== 'imageUrl'} min={type === 'number' ? (field === 'price' ? '0.01' : '0') : undefined} step={type === 'number' ? (field === 'price' ? '0.01' : '1') : undefined}
                       onChange={event => setDraft(current => ({ ...current, [field]: event.target.value }))} />
                   </label>)}
-                  <label className="evh-admin-field evh-admin-field-description">Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, [field]: event.target.value }))}/></label>
+                  <label className="evh-admin-field evh-admin-field-description">Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}/></label>
                   <div className="evh-admin-product-actions">
                     <button type="submit" disabled={busy}>Guardar cambios</button>
                     <button type="button" disabled={busy} onClick={() => { setActive(null); setDraft(null); }}>Cancelar</button>
