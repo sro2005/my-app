@@ -2523,7 +2523,7 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
   --evh-success-soft: #eaf7ef;
   --evh-danger: #b42318;
   --evh-danger-soft: #fff1f0;
-  --evh-focus: rgba(242, 140, 40, .28);
+  --evh-focus: rgba(233, 120, 22, .24);
 }
 
 html { scroll-behavior: smooth; }
@@ -2546,15 +2546,15 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-header-links a, .evh-header-links .evh-site-logout { color: #f8d2a8; }
 .evh-header-links a:hover, .evh-header-links .evh-site-logout:hover {
   color: #fff;
-  background: rgba(242,140,40,.14);
-  border-color: rgba(242,140,40,.35);
+  background: rgba(233,120,22,.14);
+  border-color: rgba(233,120,22,.35);
 }
 .evh-site-footer a:hover { color: #ffd8ad; }
 
 .evh-form-page {
   --evh-ink: #1c2b40;
   --evh-muted: #617084;
-  --evh-orange: #f28c28;
+  --evh-orange: var(--evh-accent);
   background: var(--evh-canvas);
 }
 .evh-form-layout {
