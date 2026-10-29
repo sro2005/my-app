@@ -111,7 +111,7 @@ const AdminDashboard = () => {
           <section aria-label="Indicadores de operación" className="evh-admin-stats">
             {[
               ['Clientes registrados', summary.customers],
-              ['Total de pedidos', summary.orders],
+              ['Total de Pedidos', summary.orders],
               ['Pedidos pendientes de pago', summary.pendingPayment],
               ['Pedidos por gestionar', summary.pending],
               ['Productos del catálogo', summary.products],

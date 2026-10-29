@@ -433,7 +433,7 @@ const ListadoPedidos = () => {
       {isAdmin && !loading && !error && (
         <section className="evh-order-stats" aria-label="Resumen operativo de pedidos">
           <article className="evh-order-stat">
-            <span>Total de pedidos</span>
+            <span>Total de Pedidos</span>
             <strong>{pedidos.length}</strong>
             <small>Registros disponibles</small>
           </article>
@@ -443,12 +443,12 @@ const ListadoPedidos = () => {
             <small>Por revisar o confirmar</small>
           </article>
           <article className="evh-order-stat is-processing">
-            <span>En preparación</span>
+            <span>En Preparación</span>
             <strong>{pedidos.filter(item => getOrderDisplayStatus(item) === 'Procesando').length}</strong>
             <small>Pendientes del siguiente paso</small>
           </article>
           <article className="evh-order-stat is-shipped">
-            <span>En camino</span>
+            <span>En Camino</span>
             <strong>{pedidos.filter(item => getOrderDisplayStatus(item) === 'Enviado').length}</strong>
             <small>Marcados como enviados</small>
           </article>
@@ -488,7 +488,7 @@ const ListadoPedidos = () => {
           </label>
           <div className="evh-admin-order-results" aria-live="polite">
             <strong>{displayedOrders.length}</strong>
-            <span>{displayedOrders.length === 1 ? 'pedido encontrado' : 'pedidos encontrados'}</span>
+            <span>{displayedOrders.length === 1 ? 'Pedido Encontrado' : 'Pedidos Encontrados'}</span>
           </div>
           {hasOrderFilters && (
             <button type="button" className="evh-admin-order-clear"
