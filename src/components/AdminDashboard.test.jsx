@@ -10,13 +10,12 @@ vi.mock('react-router-dom', () => ({ Link: ({ to, children }) => <a href={to}>{c
 afterEach(() => { cleanup(); localStorage.clear(); vi.clearAllMocks(); vi.unstubAllEnvs(); });
 
 describe('Admin dashboard', () => {
-  test('aggregates only fictitious internal totals, separate from Wompi', () => {
+  test('aggregates only simulated totals', () => {
     const result = summarizeDemoOperations([
       { paymentStatus: 'SIMULATED', totalAmount: 120000, status: 'Procesando' },
       { paymentStatus: 'APPROVED', paymentMethod: 'Wompi', totalAmount: 900000, status: 'Entregado' }
     ], [{ role: 'user' }, { role: 'admin' }], [{ quantity: 1 }, { quantity: 12 }]);
     expect(result.simulatedValue).toBe(120000);
-    expect(result.sandbox).toBe(1);
     expect(result.customers).toBe(1);
     expect(result.lowStock).toBe(1);
   });
@@ -37,9 +36,9 @@ describe('Admin dashboard', () => {
       .mockResolvedValueOnce({ data: [{ quantity: 2 }] });
     render(<AdminDashboard />);
     expect(await screen.findByText('Cliente Demo')).toBeTruthy();
-    expect(screen.getByText(/checkout de Wompi Sandbox requiere credenciales de prueba válidas/i)).toBeTruthy();
-    expect(screen.getByText('Sin pago')).toBeTruthy();
-    expect(screen.getByText('Aprobado (Sandbox)')).toBeTruthy();
+    expect(screen.getByText(/opciones de pago de esta versión son ilustrativas/i)).toBeTruthy();
+    expect(screen.getByText('Simulado')).toBeTruthy();
+    expect(screen.getByText('Aprobado')).toBeTruthy();
     expect(screen.queryByText('APPROVED')).toBeNull();
     expect(axios.get).toHaveBeenCalledTimes(3);
     expect(axios.get).toHaveBeenCalledWith('https://api.example.test/api/orders/all', {

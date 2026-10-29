@@ -47,6 +47,7 @@ exports.createOrder = async (req, res) => {
     }
 
     const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = payload;
+    const isSimulatedPaymentMethod = ['Demostración', 'Bre-B (simulado)'].includes(paymentMethod);
 
     // Si la petición anterior llegó al servidor pero la respuesta se perdió, devuelve
     // el mismo pedido en lugar de volver a descontar existencias.
@@ -112,9 +113,9 @@ exports.createOrder = async (req, res) => {
         products,
         orderDate: new Date(),
         userId,
-        paymentStatus: paymentMethod === 'Demostración' ? 'SIMULATED' : 'PENDING',
-        paymentConfirmed: paymentMethod === 'Demostración',
-        status: paymentMethod === 'Demostración' ? 'Procesando' : 'Pendiente',
+        paymentStatus: isSimulatedPaymentMethod ? 'SIMULATED' : 'PENDING',
+        paymentConfirmed: isSimulatedPaymentMethod,
+        status: isSimulatedPaymentMethod ? 'Procesando' : 'Pendiente',
         ...(idempotencyKey ? { idempotencyKey } : {})
       });
       await createdOrder.save({ session });

@@ -34,6 +34,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState(null); // Cambiado a objeto para React-Select
+  const isSimulatedPaymentMethod = value => ['Demostración', 'Bre-B (simulado)'].includes(value);
   const [deliveryDate, setDeliveryDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState('1');
@@ -315,8 +316,8 @@ const userId = user?._id;  // Usar userId desde el contexto
 
       // La API confirmó qué pedido corresponde a esta solicitud.
       setOrderRequestKey(null);
-      if (order?.paymentMethod === 'Demostración') {
-        // El pedido se guarda como SIMULATED en el servidor; nunca se abre Wompi.
+      if (isSimulatedPaymentMethod(order?.paymentMethod)) {
+        // El pedido se guarda como SIMULATED en el servidor; nunca se abre un proveedor externo.
         setPendingCheckoutOrderId(null);
         setCompletedDemoOrderId(createdOrderId);
         setSelectedProduct(null);
@@ -330,7 +331,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         return;
       }
 
-      // Solo el método Wompi Sandbox inicia un checkout externo.
+      // Compatibilidad con pedidos heredados que aún necesiten reintentar un checkout Wompi.
       setPendingCheckoutOrderId(createdOrderId);
       const checkout = await axios.post(`${API_URL}/api/orders/${createdOrderId}/wompi-checkout`, {}, {
         headers: { Authorization: `Bearer ${token}` }
@@ -404,8 +405,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const paymentMethods = [
-    { value: 'Demostración', label: 'Registrar pedido sin pago' },
-    { value: 'Wompi', label: 'Wompi Sandbox' },
+    { value: 'Bre-B (simulado)', label: 'Transferencia inmediata simulada · Bre-B' },
   ];
 
   return (
@@ -429,12 +429,12 @@ const userId = user?._id;  // Usar userId desde el contexto
           <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
           <p role="note">{!paymentMethod
             ? 'Elige una opción. Revisarás los detalles antes de confirmar.'
-            : paymentMethod.value === 'Demostración'
-              ? 'El pedido se guardará como demostración sin realizar un cobro real. La fecha y los estados del pedido son ilustrativos; no se coordina una entrega real.'
-              : 'El checkout de Wompi Sandbox requiere credenciales de prueba válidas en el backend. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
+            : isSimulatedPaymentMethod(paymentMethod.value)
+              ? 'Experiencia ilustrativa inspirada en las transferencias inmediatas Bre-B. No se envía dinero ni se verifica una transferencia real; el pedido y sus estados son demostrativos.'
+              : 'Esta experiencia es una simulación local: no se conecta con bancos, no solicita datos financieros y no realiza cobros.'}</p>
         </div>
         <div className="evh-form-field">
-          <label htmlFor="deliveryDate">{paymentMethod?.value === 'Demostración' ? 'Fecha de referencia (solo simulación)' : 'Fecha deseada de entrega'}</label>
+          <label htmlFor="deliveryDate">{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Fecha de referencia (solo simulación)' : 'Fecha deseada de entrega'}</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
         </div>
         <div className="evh-form-field evh-form-field-wide">
@@ -482,7 +482,7 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentMethod ? 'Selecciona cómo continuar' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : paymentMethod.value === 'Demostración' ? 'Registrar pedido sin pago' : 'Continuar a Wompi Sandbox'}</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentMethod ? 'Selecciona cómo continuar' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con pago simulado'}</button>
         {completedDemoOrderId && (
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
@@ -538,9 +538,9 @@ const userId = user?._id;  // Usar userId desde el contexto
               <span className="evh-confirmation-notice-icon" aria-hidden="true">i</span>
               <div>
                 <strong>Antes de confirmar</strong>
-                <p>{paymentMethod?.value === 'Demostración'
-                  ? 'El pedido quedará registrado como demostración, sin realizar un cobro real. La fecha y los estados logísticos son ilustrativos; no se coordina un envío real.'
-                  : 'El checkout de Wompi Sandbox requiere credenciales de prueba válidas en el backend. No se realizará un cobro real; no introduzcas datos de una tarjeta real.'}</p>
+                <p>{isSimulatedPaymentMethod(paymentMethod?.value)
+                  ? 'Experiencia ilustrativa inspirada en Bre-B. No se envía dinero ni se verifica una transferencia real; la fecha y los estados logísticos son demostrativos.'
+                  : 'Esta experiencia es una simulación local: no se conecta con bancos, no solicita datos financieros y no realiza cobros.'}</p>
               </div>
             </div>
 
@@ -565,12 +565,12 @@ const userId = user?._id;  // Usar userId desde el contexto
                     <dd>{address}</dd>
                   </div>
                   <div>
-                    <dt>{paymentMethod?.value === 'Demostración' ? 'Fecha (solo simulación)' : 'Fecha deseada'}</dt>
+                    <dt>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Fecha (solo simulación)' : 'Fecha deseada'}</dt>
                     <dd>{deliveryDate}</dd>
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>{paymentMethod?.value === 'Demostración' ? 'Pedido sin pago' : 'Wompi · sin cobro real'}</dd>
+                    <dd>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Bre-B · simulación' : 'Pago simulado'}</dd>
                   </div>
                 </dl>
               </section>
@@ -602,7 +602,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             {loading && (
               <div className="evh-confirmation-processing" role="status">
                 <span className="evh-confirmation-processing-mark" aria-hidden="true">EV</span>
-                <span>{paymentMethod?.value === 'Demostración' ? 'Registrando tu pedido…' : 'Abriendo el checkout de Wompi…'}</span>
+                <span>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Registrando tu pedido…' : 'Abriendo el checkout de Wompi…'}</span>
               </div>
             )}
 
@@ -619,9 +619,9 @@ const userId = user?._id;  // Usar userId desde el contexto
               >
                 {loading
                   ? 'Procesando…'
-                  : paymentMethod?.value === 'Demostración'
-                    ? 'Confirmar pedido'
-                    : 'Continuar a Wompi'}
+                  : isSimulatedPaymentMethod(paymentMethod?.value)
+                    ? 'Confirmar simulación'
+                    : 'Confirmar simulación'}
               </button>
             </footer>
           </section>

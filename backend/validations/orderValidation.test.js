@@ -45,9 +45,11 @@ test('rechaza pedido sin productos o con cantidad no válida', () => {
   }
 });
 
-test('acepta el método de pago de demostración sin proveedor externo', () => {
-  const { error } = orderSchema.validate({ ...validOrder, paymentMethod: 'Demostración' });
-  assert.equal(error, undefined);
+test('acepta los métodos de pago simulados sin proveedor externo', () => {
+  for (const paymentMethod of ['Demostración', 'Bre-B (simulado)']) {
+    const { error } = orderSchema.validate({ ...validOrder, paymentMethod });
+    assert.equal(error, undefined, paymentMethod);
+  }
 });
 
 test('rechaza método de pago diferente al permitido', () => {
