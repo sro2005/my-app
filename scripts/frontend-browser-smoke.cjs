@@ -542,8 +542,7 @@ async function main() {
     await page.getByRole('option', { name: /Cafetera Boreal 12 tazas/i }).click();
     await page.getByRole('button', { name: 'Agregar al pedido' }).click();
     await page.getByText('Cafetera Boreal 12 tazas').first().waitFor();
-    await page.locator('#checkout-payment').click();
-    await page.getByRole('option', { name: /Pago pendiente de coordinación/i }).click();
+    await page.getByRole('radio', { name: /Tarjeta/i }).check();
     await page.getByLabel('Dirección de entrega').fill('Calle 10 # 20-30, Bogotá');
     const requestedDeliveryDate = new Date();
     requestedDeliveryDate.setDate(requestedDeliveryDate.getDate() + 7);
