@@ -436,7 +436,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             <div><strong>Todo en un mismo lugar</strong><span>Revisa tus productos y confirma tu pedido sin salir de ElectroVibeHome.</span></div>
             <span className="evh-pay-symbol" aria-hidden="true">↗</span>
           </div>
-          <p className="evh-pay-terms">Al confirmar se registrará el pedido, no un pago. <strong>No se realizará ningún cobro</strong> ni se solicitarán datos bancarios.</p>
+          <p className="evh-pay-terms">El estado del pago se actualizará después de la revisión correspondiente.</p>
         </section>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
