@@ -36,7 +36,7 @@ describe('Customer home', () => {
 
   test('keeps customer guidance clear without internal demo language', () => {
     renderHome({ _id: 'u3', firstName: 'Demo', role: 'user', preferences: [] });
-    expect(screen.getByRole('heading', { name: /revisa antes de confirmar/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /ElectroVibe Pay/i })).toBeTruthy();
     expect(screen.getByRole('link', { name: /preparar mi pedido/i })).toBeTruthy();
     expect(screen.queryByText(/modo de demostración/i)).toBeNull();
   });
