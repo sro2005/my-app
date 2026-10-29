@@ -405,7 +405,7 @@ const userId = user?._id;  // Usar userId desde el contexto
     <FormPage eyebrow="EXPERIENCIA ELECTROVIBE PAY" title="Tu compra, a tu manera" description="Revisa tu selección, completa tus datos y confirma tu pedido en un solo lugar." className="evh-checkout-page">
       <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
         <div className="evh-checkout-section-heading">
-          <h2>Datos de tu pedido</h2>
+          <h2>Datos de tu Pedido</h2>
           <p>Los datos de contacto provienen de tu cuenta. Revisa la dirección y la fecha de entrega antes de confirmar.</p>
         </div>
         <div className="evh-form-grid">
@@ -450,7 +450,7 @@ const userId = user?._id;  // Usar userId desde el contexto
               <label htmlFor="checkout-product-quantity">Unidades</label>
               <input id="checkout-product-quantity" type="number" min="1" max={selectedProduct?.stock || 1} step="1" value={selectedQuantity} disabled={!selectedProduct} onChange={(e) => setSelectedQuantity(e.target.value)} />
             </div>
-            <button type="button" onClick={handleAddToCart} disabled={!selectedProduct || loading}>Agregar al pedido</button>
+            <button type="button" onClick={handleAddToCart} disabled={!selectedProduct || loading}>Agregar al Pedido</button>
           </div>
           {selectedProduct && <p className="evh-form-feedback">Disponibles: {selectedProduct.stock} · Precio unitario: {formatPrice(selectedProduct.price)}</p>}
           {productLoadNotice && <p className="evh-form-feedback" role="status">{productLoadNotice}</p>}
@@ -460,7 +460,7 @@ const userId = user?._id;  // Usar userId desde el contexto
 
         {cartItems.length > 0 && (
           <section className="evh-cart" aria-label="Resumen de productos del pedido">
-            <div className="evh-cart-heading"><h3>Tu pedido</h3><span>{cartItems.length} {cartItems.length === 1 ? 'producto' : 'productos distintos'}</span></div>
+            <div className="evh-cart-heading"><h3>Tu Pedido</h3><span>{cartItems.length} {cartItems.length === 1 ? 'producto' : 'productos distintos'}</span></div>
             <ul className="evh-cart-items">
               {cartItems.map(item => (
                 <li key={item.value} className="evh-cart-item">
@@ -493,7 +493,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
             <p>Tu pedido se registró mediante <strong>{confirmedPreference}</strong>. Puedes seguir su avance en Mis pedidos. El equipo de ElectroVibeHome revisará el pago y podrás consultar el resultado en Mis pedidos.</p>
-            <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
+            <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver Mis Pedidos</Link></p>
             <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Preparar otro pedido</button>
           </div>
         )}
