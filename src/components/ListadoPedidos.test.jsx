@@ -78,8 +78,8 @@ describe('ListadoPedidos', () => {
 
     renderOrders();
 
-    expect(screen.getByRole('img', { name: 'Icono de pedido' })).toBeTruthy();
     const prepareButton = await screen.findByRole('button', { name: /marcar preparado y enviado/i });
+    expect(screen.getByRole('img', { name: 'Icono de pedido' })).toBeTruthy();
     fireEvent.click(prepareButton);
 
     await waitFor(() => {
