@@ -172,7 +172,9 @@ exports.getOrdersByUserId = async (req, res) => {
   try {
     const userId = req.user._id;  // Identificador del usuario autenticado
     // Filtrar solo los pedidos que tengan el userId del usuario autenticado
-    const orders = await Order.find({ userId: userId }).populate('products.productId');
+    const orders = await Order.find({ userId: userId })
+      .select('-manualPaymentReference -paymentReviewedBy -paymentReviewNote')
+      .populate('products.productId');
     // Devolver el arreglo (vacío si no hay pedidos)
     res.status(200).json(orders);
   } catch (error) {
@@ -307,6 +309,112 @@ exports.deleteOrder = async (req, res) => {
   }
 };
 
+ 
+// La revisión de ElectroVibe Pay la ejecuta un administrador después de comprobar
+// la operación en el canal receptor. Aprobar aquí no inicia ni mueve dinero.
+exports.reviewManualPayment = async (req, res) => {
+  let session;
+  try {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ message: 'Solo el administrador puede revisar el pago.' });
+    }
+
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(400).json({ message: 'Identificador de pedido inválido.' });
+    }
+
+    const reviewSchema = Joi.object({
+      decision: Joi.string().valid('approve', 'reject').required(),
+      reference: Joi.when('decision', {
+        is: 'approve',
+        then: Joi.string().trim().min(5).max(120).required(),
+        otherwise: Joi.string().trim().max(120).allow('').optional()
+      }),
+      note: Joi.string().trim().min(5).max(500).required()
+    }).unknown(false);
+    const { error, value } = reviewSchema.validate(req.body || {}, { abortEarly: false });
+    if (error) {
+      return res.status(400).json({
+        message: value?.decision === 'approve'
+          ? 'Para aprobar, indica una referencia verificable y una nota de revisión.'
+          : 'Indica si apruebas o rechazas la revisión y registra una nota.',
+        errors: error.details.map(item => item.message)
+      });
+    }
+
+    session = await mongoose.startSession();
+    let outcome = 'not-found';
+    let reviewedOrder = null;
+
+    await session.withTransaction(async () => {
+      outcome = 'not-found';
+      reviewedOrder = null;
+      const order = await Order.findById(id).session(session);
+      if (!order) return;
+
+      if (order.paymentMethod !== 'Pago pendiente de coordinación') {
+        outcome = 'unsupported-method';
+        return;
+      }
+      if (order.paymentStatus !== 'PENDING' || order.paymentConfirmed) {
+        outcome = 'already-reviewed';
+        return;
+      }
+      if (!['Pendiente', 'Procesando'].includes(order.status) || order.packed || order.delivered) {
+        outcome = 'logistics-started';
+        return;
+      }
+
+      const reviewedAt = new Date();
+      const reviewedBy = String(req.user.email || req.user._id || req.user.id || 'Administrador');
+      order.paymentReviewedAt = reviewedAt;
+      order.paymentReviewedBy = reviewedBy;
+      order.paymentReviewNote = value.note;
+      order.manualPaymentReference = value.reference || undefined;
+
+      if (value.decision === 'approve') {
+        order.paymentStatus = 'APPROVED';
+        order.paymentConfirmed = true;
+        if (order.status === 'Pendiente') order.status = 'Procesando';
+      } else {
+        // Rechazar el abono cancela el pedido pendiente y libera las unidades reservadas.
+        await restoreInventory(order.products, { session });
+        order.paymentStatus = 'DECLINED';
+        order.paymentConfirmed = false;
+        order.status = 'Cancelado';
+      }
+
+      await order.save({ session });
+      reviewedOrder = order;
+      outcome = 'updated';
+    });
+
+    if (outcome === 'not-found') return res.status(404).json({ message: 'Pedido no encontrado.' });
+    if (outcome === 'unsupported-method') {
+      return res.status(409).json({ message: 'Este pedido no utiliza la revisión manual de ElectroVibe Pay.' });
+    }
+    if (outcome === 'already-reviewed') {
+      return res.status(409).json({ message: 'Este pago ya tiene una decisión registrada y no se puede revisar de nuevo.' });
+    }
+    if (outcome === 'logistics-started') {
+      return res.status(409).json({ message: 'No se puede revisar el pago después de iniciar el envío o la entrega.' });
+    }
+
+    return res.status(200).json({
+      message: value.decision === 'approve'
+        ? 'Pago verificado. El pedido pasó a preparación.'
+        : 'Pago rechazado. El pedido se canceló y el inventario se liberó.',
+      order: reviewedOrder
+    });
+  } catch (error) {
+    console.error('Error en la revisión manual del pago:', error.message);
+    return res.status(500).json({ message: 'No fue posible registrar la revisión del pago.' });
+  } finally {
+    if (session) await session.endSession();
+  }
+};
+
 // Actualizar el estado del pedido automáticamente
 exports.updateOrderStatusAutomatically = async (req, res) => {
   try {
@@ -338,13 +446,13 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
 
       const coordinated = order.paymentMethod === 'Pago pendiente de coordinación' && order.paymentStatus === 'PENDING' && !order.paymentConfirmed;
       if (value.prepare === true) {
-        if (!coordinated || order.status !== 'Pendiente' || order.packed) {
-          return res.status(409).json({ message: 'Solo se puede iniciar preparación para un pedido pendiente con pago por coordinar.' });
+        if (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus) || order.status !== 'Pendiente' || order.packed) {
+          return res.status(409).json({ message: 'Solo se puede iniciar preparación con un pago aprobado.' });
         }
         order.status = 'Procesando';
       } else if (value.packed === true) {
-        if ((!coordinated && (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus))) || order.status !== 'Procesando') {
-          return res.status(409).json({ message: 'El pedido debe estar en preparación con pago confirmado o modalidad de pago por coordinar.' });
+        if (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus) || order.status !== 'Procesando') {
+          return res.status(409).json({ message: 'El pedido debe tener pago aprobado antes de preparar el envío.' });
         }
         order.packed = true;
         order.status = 'Enviado';
