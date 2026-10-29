@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
-import moment from 'moment-timezone';
+import { formatBogotaDate, formatBogotaDateTime } from '../utils/dateFormatting';
 import { Link } from 'react-router-dom';
 import OrderIcon from './OrderIcon';
 import './ListadoPedidos.css';
@@ -11,17 +11,9 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(price) || 0);
 };
 
-// Función para formatear la fecha en formato 12 horas con AM/PM
-const formatOrderDate = (dateString) => {
-  if (!dateString || !moment(dateString).isValid()) return 'No disponible';
-  return moment(dateString).tz('America/Bogota').format('DD/MM/YYYY · HH:mm');
-};
-
-// Función para formatear la fecha estimada de entrega
-const formatDeliveryDate = (deliveryDate) => {
-  if (!deliveryDate || !moment(deliveryDate).isValid()) return 'No definida';
-  return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY');
-};
+// Mostrar la fecha local de Bogotá sin cargar datos de zonas horarias externos.
+const formatOrderDate = (dateString) => formatBogotaDateTime(dateString);
+const formatDeliveryDate = (deliveryDate) => formatBogotaDate(deliveryDate);
 
 const normalizeOrderSearch = value => String(value ?? '')
   .normalize('NFD')
