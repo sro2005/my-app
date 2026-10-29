@@ -17,7 +17,7 @@ const LandingPage = () => (
         <p>Explora electrodomésticos y tecnología para el hogar, compara categorías y descubre opciones según el espacio y las tareas de tu rutina.</p>
         <div className="evh-hero-actions">
           <Link className="evh-button evh-button-primary" to="/catalogo">Explorar productos <span aria-hidden="true">→</span></Link>
-          <Link className="evh-button evh-button-secondary" to="/register">Crear mi cuenta</Link>
+          <Link className="evh-button evh-button-secondary" to="/register">Crear Mi Cuenta</Link>
         </div>
         <div className="evh-trust-row">
           <span><strong aria-hidden="true">✓</strong> Categorías fáciles de explorar</span>
