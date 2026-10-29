@@ -76,9 +76,10 @@ describe('ListadoPedidos', () => {
       }
     });
 
-    renderOrders();
+    const view = renderOrders();
 
     const prepareButton = await screen.findByRole('button', { name: /marcar preparado y enviado/i });
+    expect(view.container.querySelector('svg.evh-order-icon')).toBeTruthy();
     fireEvent.click(prepareButton);
 
     await waitFor(() => {
@@ -92,6 +93,21 @@ describe('ListadoPedidos', () => {
     expect(await screen.findByRole('button', { name: /marcar como entregado/i })).toBeTruthy();
     expect(screen.getByText(/Estado del pedido actualizado/i)).toBeTruthy();
     expect(screen.getByText('Enviado', { selector: '.evh-order-status' }).className).toContain('is-shipped');
+  });
+
+  test('explains historical test payments without implying a real customer charge', async () => {
+    setApiEnvironment();
+    axios.get.mockResolvedValue({ data: [order()] });
+
+    const admin = renderOrders();
+    expect(await screen.findByText('Wompi (histórico)')).toBeTruthy();
+    expect(screen.getByText('Aprobado en prueba (sin cobro real)')).toBeTruthy();
+    admin.unmount();
+
+    renderOrders({ _id: 'customer-1', role: 'user' });
+    expect(await screen.findByText('Método histórico')).toBeTruthy();
+    expect(screen.getByText('Resultado recibido · sin cobro real')).toBeTruthy();
+    expect(screen.queryByText(/Wompi|Sandbox/i)).toBeNull();
   });
 
   test('shows the same coordinated payment method and pending status to both roles', async () => {

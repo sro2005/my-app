@@ -73,7 +73,7 @@ const HomePage = () => {
             : 'Guarda tus intereses en el perfil para filtrar con más facilidad. Siempre podrás consultar el catálogo completo.'}</p>
           {preferences.length > 0 && <div className="evh-customer-chips">{preferences.map(preference => <span key={preference}>{preference}</span>)}</div>}
         </div>
-        <Link className="evh-button evh-button-secondary" to="/perfil-cliente">Revisar mi perfil</Link>
+        <Link className="evh-button evh-button-secondary" to="/perfil-cliente">Revisar Mi Perfil</Link>
       </section>
     </main>
   );

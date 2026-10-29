@@ -1,30 +1,32 @@
-import React, { useContext, useEffect } from 'react';
+import React, { lazy, Suspense, useContext, useEffect } from 'react';
 import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import Loading from './components/Loading';
-import LandingPage from './components/LandingPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import HomePage from './components/HomePage';
-import AdminDashboard from './components/AdminDashboard';
-import AdminInventory from './components/AdminInventory';
-import ProductoForm from './components/ProductoForm';
-import PedidoForm from './components/PedidoForm';
-import ListadoClientes from './components/ListadoClientes';
-import ListadoProductos from './components/ListadoProductos';
-import ListadoPedidos from './components/ListadoPedidos';
-import PerfilCliente from './components/PerfilCliente';
-import ChangePassword from './components/ChangePassword';
-import RegistroCliente from './components/RegistroCliente';
-import LoginCliente from './components/LoginCliente';
-import RecoverPassword from './components/RecoverPassword';
-import ResetPassword from './components/ResetPassword';
-import PaymentResult from './components/PaymentResult';
-import AboutPage from './components/AboutPage';
-import PrivacyPage from './components/PrivacyPage';
-import TermsPage from './components/TermsPage';
 import RoleGuard from './components/RoleGuard';
 import AuthProvider from './contexts/AuthContext';
+
+// Load each screen only when its route is opened to keep the initial bundle small.
+const LandingPage = lazy(() => import('./components/LandingPage'));
+const HomePage = lazy(() => import('./components/HomePage'));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
+const AdminInventory = lazy(() => import('./components/AdminInventory'));
+const ProductoForm = lazy(() => import('./components/ProductoForm'));
+const PedidoForm = lazy(() => import('./components/PedidoForm'));
+const ListadoClientes = lazy(() => import('./components/ListadoClientes'));
+const ListadoProductos = lazy(() => import('./components/ListadoProductos'));
+const ListadoPedidos = lazy(() => import('./components/ListadoPedidos'));
+const PerfilCliente = lazy(() => import('./components/PerfilCliente'));
+const ChangePassword = lazy(() => import('./components/ChangePassword'));
+const RegistroCliente = lazy(() => import('./components/RegistroCliente'));
+const LoginCliente = lazy(() => import('./components/LoginCliente'));
+const RecoverPassword = lazy(() => import('./components/RecoverPassword'));
+const ResetPassword = lazy(() => import('./components/ResetPassword'));
+const PaymentResult = lazy(() => import('./components/PaymentResult'));
+const AboutPage = lazy(() => import('./components/AboutPage'));
+const PrivacyPage = lazy(() => import('./components/PrivacyPage'));
+const TermsPage = lazy(() => import('./components/TermsPage'));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -51,6 +53,7 @@ const AppContent = () => {
   return (
     <>
       <Header isAuthenticated={!!user} user={user} />
+      <Suspense fallback={<Loading />}>
       <Routes>
         <Route path="/recover-password" element={isAdmin ? <Navigate to="/home-page" replace /> : <RecoverPassword />} />
         <Route path="/reset-password/:token" element={isAdmin ? <Navigate to="/home-page" replace /> : <ResetPassword />} />
@@ -101,6 +104,7 @@ const AppContent = () => {
         )}
         <Route path="*" element={<Navigate to={user ? '/home-page' : '/'} replace />} />
       </Routes>
+      </Suspense>
       <Footer />
     </>
   );

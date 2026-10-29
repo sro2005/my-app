@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
-import moment from 'moment-timezone';
+import { formatBogotaDate, formatBogotaDateTime } from '../utils/dateFormatting';
 import { Link } from 'react-router-dom';
+import OrderIcon from './OrderIcon';
 import './ListadoPedidos.css';
 
 // Función para formatear el precio en formato local (COP)
@@ -10,17 +11,9 @@ const formatPrice = (price) => {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(price) || 0);
 };
 
-// Función para formatear la fecha en formato 12 horas con AM/PM
-const formatOrderDate = (dateString) => {
-  if (!dateString || !moment(dateString).isValid()) return 'No disponible';
-  return moment(dateString).tz('America/Bogota').format('DD/MM/YYYY · HH:mm');
-};
-
-// Función para formatear la fecha estimada de entrega
-const formatDeliveryDate = (deliveryDate) => {
-  if (!deliveryDate || !moment(deliveryDate).isValid()) return 'No definida';
-  return moment(deliveryDate).tz('America/Bogota').format('DD/MM/YYYY');
-};
+// Mostrar la fecha local de Bogotá sin cargar datos de zonas horarias externos.
+const formatOrderDate = (dateString) => formatBogotaDateTime(dateString);
+const formatDeliveryDate = (deliveryDate) => formatBogotaDate(deliveryDate);
 
 const normalizeOrderSearch = value => String(value ?? '')
   .normalize('NFD')
@@ -35,7 +28,7 @@ const getOrderDisplayStatus = pedido => pedido.delivered || pedido.status === 'E
 const formatPaymentMethod = (pedido, isAdmin) => {
   if (pedido.paymentMethod === 'Pago pendiente de coordinación') return 'ElectroVibe Pay';
   if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Registro de prueba (sin pago)' : 'Pedido sin cobro';
-  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Wompi';
+  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Método histórico';
   return pedido.paymentMethod || 'No especificado';
 };
 
@@ -48,12 +41,12 @@ const formatPaymentStatus = (status, isAdmin, pedido) => {
   }
   const adminLabels = {
     SIMULATED: 'Sin pago',
-    APPROVED: 'Aprobado (Sandbox)',
+    APPROVED: 'Aprobado en prueba (sin cobro real)',
     PENDING: 'Pendiente de pago',
-    DECLINED: 'Rechazado (Sandbox)',
-    ERROR: 'Error de pago (Sandbox)',
-    EXPIRED: 'Checkout vencido · pedido cancelado y stock liberado',
-    VOIDED: 'Anulado (Sandbox)'
+    DECLINED: 'Rechazado en prueba',
+    ERROR: 'Error registrado en prueba',
+    EXPIRED: 'Checkout de prueba vencido · pedido cancelado y stock liberado',
+    VOIDED: 'Anulado en prueba'
   };
   const customerLabels = {
     SIMULATED: 'Sin cobro',
@@ -86,7 +79,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
     return (
       <li className="pedido-item">
         <div className="pedido-info">
-          <div className="pedido-image"><img src="/icono-order.jpg" alt="" /></div>
+          <div className="pedido-image"><OrderIcon /></div>
           <div className="pedido-details">
             <div className="evh-order-card-heading">
               <div className="evh-order-card-title">
@@ -127,7 +120,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
     <li className="pedido-item">
       <div className="pedido-info">
         <div className="pedido-image" aria-hidden="true">
-          <img src="/icono-order.jpg" alt="" />
+          <OrderIcon />
         </div>
         <div className="pedido-details">
           <div className="evh-order-card-heading">
@@ -431,7 +424,7 @@ const ListadoPedidos = () => {
     <main className={`evh-orders-page ${isAdmin ? 'is-admin' : 'is-customer'} ${isAdmin ? '' : 'container'}`}>
       <header className="evh-orders-heading">
         <span className="evh-eyebrow">{isAdmin ? 'ADMINISTRACIÓN · PEDIDOS' : 'TU CUENTA ELECTROVIBE'}</span>
-        <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
+        <h1>{isAdmin ? 'Gestión de Pedidos' : 'Mis Pedidos'}</h1>
         <p>{isAdmin
           ? 'Consulta los pedidos, revisa el estado de pago y gestiona las etapas de preparación y entrega.'
           : 'Consulta los pedidos asociados a tu cuenta, revisa los productos y sigue el estado de cada solicitud.'}</p>
@@ -500,7 +493,7 @@ const ListadoPedidos = () => {
           {hasOrderFilters && (
             <button type="button" className="evh-admin-order-clear"
               onClick={() => { setOrderSearch(''); setStatusFilter('Todos'); }}>
-              Limpiar filtros
+              Limpiar Filtros
             </button>
           )}
         </section>

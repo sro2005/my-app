@@ -11,7 +11,7 @@ const PrivacyPage = () => (
     sections={[
       {
         title: 'Información de tu cuenta',
-        body: 'El formulario solicita nombre, apellidos, correo electrónico, identificación, fecha de nacimiento, celular y preferencias de productos. Estos datos permiten crear tu cuenta, iniciar sesión, mostrar tu perfil y ajustar la exploración del catálogo.'
+        body: 'El formulario solicita nombre, apellidos, correo electrónico, identificación, fecha de nacimiento, celular y preferencias de productos. El género es opcional y solo se utiliza si decides indicarlo: permite adaptar el icono visual de tu perfil. Estos datos permiten crear tu cuenta, iniciar sesión, mostrar tu perfil y ajustar la exploración del catálogo.'
       },
       {
         title: 'Uso del correo y recuperación del acceso',
@@ -19,7 +19,7 @@ const PrivacyPage = () => (
       },
       {
         title: 'Información de pedidos',
-        body: 'Al registrar un pedido se guardan los datos de contacto y entrega, los productos y cantidades, el importe mostrado, la fecha y el estado. Actualmente, registrar un pedido no genera un cobro ni coordina una entrega. La opción de Wompi no procesa cargos ni transferencias reales.'
+        body: 'Al registrar un pedido se guardan los datos de contacto y entrega, los productos y cantidades, el importe mostrado, la fecha y el estado. Actualmente, registrar un pedido no genera un cobro ni coordina una entrega. La aplicación no procesa cargos ni transferencias reales.'
       },
       {
         title: 'Sesión y seguridad',
@@ -27,7 +27,7 @@ const PrivacyPage = () => (
       },
       {
         title: 'Servicios que participan',
-        body: 'Render aloja los servicios de la aplicación y MongoDB almacena los registros de cuentas, productos y pedidos. Cuando la Guía ElectroVibe utiliza asistencia generativa, el mensaje que escribes se envía al servidor y a OpenAI para generar la respuesta. Si no está configurada, la guía puede funcionar con reglas locales. La opción de Wompi no procesa pagos reales.'
+        body: 'Render aloja los servicios de la aplicación y MongoDB almacena los registros de cuentas, productos y pedidos. Actualmente, la Guía ElectroVibe funciona con reglas locales: compara información del catálogo y no envía tus mensajes a OpenAI ni a otros servicios externos de IA. Las opciones de pago disponibles en esta versión no procesan cobros ni transferencias reales.'
       },
       {
         title: 'Consultas sobre tu información',

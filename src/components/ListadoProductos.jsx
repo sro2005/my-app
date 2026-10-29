@@ -215,7 +215,7 @@ const ListadoProductos = () => {
           <span className="evh-loading-mark" aria-hidden="true">EV</span>
           <div className="evh-loading-copy">
             <span className="evh-loading-kicker">DESCUBRE TU PRÓXIMO FAVORITO</span>
-            <h2>Preparando el catálogo</h2>
+            <h2>Preparando el Catálogo</h2>
             <p>Estamos organizando los productos y sus categorías.</p>
             <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
           </div>
@@ -229,7 +229,7 @@ const ListadoProductos = () => {
       <section className="evh-catalog-heading">
         <div>
           <span className="evh-eyebrow">{user?.role === 'admin' ? 'ESPACIO DE INVENTARIO' : 'DESCUBRE ALGO PARA TU HOGAR'}</span>
-          <h1>{user?.role === 'admin' ? 'Catálogo e inventario' : 'Encuentra tu próximo favorito'}</h1>
+          <h1>{user?.role === 'admin' ? 'Catálogo e Inventario' : 'Encuentra tu próximo favorito'}</h1>
           <p>Explora tecnología y electrodomésticos por categoría, busca algo específico o descubre opciones según tus preferencias.</p>
         </div>
         <div className="evh-catalog-count" aria-live="polite">
@@ -279,7 +279,7 @@ const ListadoProductos = () => {
             aria-pressed={showPreferencesOnly}
             onClick={() => setShowPreferencesOnly((value) => !value)}
           >
-            {showPreferencesOnly ? '✓ Solo mis preferencias' : 'Filtrar por mis preferencias'}
+            {showPreferencesOnly ? '✓ Solo Mis Preferencias' : 'Filtrar por Mis Preferencias'}
           </button>
         )}
         {(hasActiveFilters || sortBy !== 'featured') && (
@@ -299,7 +299,7 @@ const ListadoProductos = () => {
         <div className="evh-preference-summary">
           <span>Preferencias:</span>
           {preferenceValues.map((value) => <span className="evh-preference-chip" key={value}>{value}</span>)}
-          <button type="button" onClick={() => setShowPreferencesOnly(false)}>Ver todo el catálogo</button>
+          <button type="button" onClick={() => setShowPreferencesOnly(false)}>Ver Todo el Catálogo</button>
         </div>
       )}
 
@@ -319,7 +319,7 @@ const ListadoProductos = () => {
           <span aria-hidden="true">⌕</span>
           <h2>No encontramos productos con esos filtros</h2>
           <p>Prueba otra búsqueda o amplía las categorías para ver más opciones.</p>
-          <button type="button" className="evh-button evh-button-secondary" onClick={resetCatalogControls}>Limpiar filtros</button>
+          <button type="button" className="evh-button evh-button-secondary" onClick={resetCatalogControls}>Limpiar Filtros</button>
         </section>
       )}
 

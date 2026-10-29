@@ -40,7 +40,7 @@ describe('ChangePassword', () => {
     const next = ['New', 'Mock', 'Pass', '2!'].join('');
     const other = ['Other', 'Mock', 'Pass', '3!'].join('');
     fillPasswordFields(current, next, other);
-    fireEvent.click(screen.getByRole('button', { name: 'Actualizar contraseña' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Actualizar Contraseña' }));
 
     expect((await screen.findByRole('alert')).textContent).toMatch(/confirmación no coincide/i);
     expect(axios.put).not.toHaveBeenCalled();
@@ -52,7 +52,7 @@ describe('ChangePassword', () => {
     const current = ['Old', 'Test', 'Pass', '1!'].join('');
     const next = ['New', 'Mock', 'Pass', '2!'].join('');
     fillPasswordFields(current, next);
-    fireEvent.click(screen.getByRole('button', { name: 'Actualizar contraseña' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Actualizar Contraseña' }));
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith(

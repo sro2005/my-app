@@ -3,6 +3,7 @@ import axios from 'axios';
 import Select from 'react-select';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import GenderAvatar, { getGenderLabel } from './GenderAvatar';
 
 const preferencesOptions = [
   { value: 'Aires Acondicionados', label: 'Aires acondicionados' },
@@ -69,6 +70,7 @@ const formFromCustomer = (customer) => ({
   birthDate: formatDateInput(customer?.birthDate),
   identificationNumber: customer?.identificationNumber || '',
   phone: customer?.phone || '',
+  gender: customer?.gender || 'unspecified',
   preferences: getSelectedPreferences(customer?.preferences)
 });
 
@@ -187,6 +189,7 @@ const PerfilCliente = () => {
       birthDate: formData.birthDate,
       identificationNumber: formatIdentificationNumber(formData.identificationNumber),
       phone: formData.phone.trim(),
+      gender: formData.gender || 'unspecified',
       preferences: asPreferenceValues(formData.preferences)
     };
 
@@ -247,21 +250,15 @@ const PerfilCliente = () => {
   }
 
   const fullName = [customer.firstName, customer.lastName].filter(Boolean).join(' ') || 'Cliente ElectroVibe';
-  const initials = [customer.firstName, customer.lastName]
-    .filter(Boolean)
-    .map((name) => name.trim().charAt(0).toUpperCase())
-    .join('')
-    .slice(0, 2) || 'EV';
-
   return (
     <main className="evh-profile-page">
       <header className="evh-profile-heading">
         <div>
           <span className="evh-eyebrow">TU ESPACIO PERSONAL</span>
-          <h1>Mi perfil</h1>
+          <h1>Mi Perfil</h1>
           <p>Administra tus datos y las preferencias que usamos para mostrarte productos relevantes.</p>
         </div>
-        <div className="evh-profile-avatar" aria-label={'Iniciales de ' + fullName}>{initials}</div>
+        <div className={`evh-profile-avatar evh-profile-avatar--${customer.gender || 'unspecified'}`} aria-label={'Perfil de ' + fullName}><GenderAvatar gender={customer.gender} size="profile" /></div>
       </header>
 
       {loadError && (
@@ -281,7 +278,7 @@ const PerfilCliente = () => {
           </div>
           {!isEditing && (
             <button type="button" className="evh-button evh-button-secondary" onClick={() => { setFormData(formFromCustomer(customer)); setFeedback(null); setIsEditing(true); }} disabled={localFallback}>
-              Editar perfil
+              Editar Perfil
             </button>
           )}
         </div>
@@ -295,6 +292,7 @@ const PerfilCliente = () => {
             <div className="evh-profile-detail"><span>Fecha de nacimiento</span><strong>{formatDate(customer.birthDate)}</strong></div>
             <div className="evh-profile-detail"><span>Número de identificación</span><strong>{formatIdentificationNumber(customer.identificationNumber) || 'No disponible'}</strong></div>
             <div className="evh-profile-detail"><span>Celular</span><strong>{customer.phone || 'No disponible'}</strong></div>
+            <div className="evh-profile-detail"><span>Género</span><strong>{getGenderLabel(customer.gender)}</strong></div>
             <div className="evh-profile-detail evh-profile-detail-wide">
               <span>Tus preferencias</span>
               <div className="evh-profile-chips">
@@ -331,6 +329,15 @@ const PerfilCliente = () => {
                 <label htmlFor="profile-phone">Celular</label>
                 <input id="profile-phone" name="phone" value={formData.phone} onChange={handleInputChange} type="tel" autoComplete="tel" minLength={7} maxLength={30} required />
               </div>
+              <div className="evh-profile-field">
+                <label htmlFor="profile-gender">Género (opcional)</label>
+                <select id="profile-gender" name="gender" value={formData.gender || 'unspecified'} onChange={handleInputChange}>
+                  <option value="unspecified">Prefiero no decirlo</option>
+                  <option value="female">Femenino</option>
+                  <option value="male">Masculino</option>
+                  <option value="non_binary">No binario</option>
+                </select>
+              </div>
               <div className="evh-profile-field evh-profile-field-wide">
                 <label htmlFor="profile-preferences">¿Qué te interesa para tu hogar?</label>
                 <Select
@@ -352,7 +359,7 @@ const PerfilCliente = () => {
             <div className="evh-profile-actions">
               <button type="button" className="evh-button evh-button-secondary" onClick={handleCancel} disabled={saving}>Cancelar</button>
               <button type="submit" className="evh-button evh-button-primary" disabled={saving}>
-                {saving ? 'Guardando…' : 'Guardar cambios'}
+                {saving ? 'Guardando…' : 'Guardar Cambios'}
               </button>
             </div>
           </form>

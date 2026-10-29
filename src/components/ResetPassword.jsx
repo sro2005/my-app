@@ -59,7 +59,7 @@ const ResetPassword = () => {
             <label htmlFor="confirm-password">Confirmar contraseña</label>
             <input id="confirm-password" type="password" autoComplete="new-password" minLength={10} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{10,128}" title="Incluye mayúscula, minúscula, número y símbolo." value={confirmation} onChange={event => setConfirmation(event.target.value)} required />
             </div>
-            <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Guardando…' : 'Guardar contraseña'}</button>
+            <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Guardando…' : 'Guardar Contraseña'}</button>
           </>
         )}
         {message && <p className={`evh-form-feedback ${success ? 'is-success' : 'is-error'}`} role={success ? 'status' : 'alert'}>{message}</p>}

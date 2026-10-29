@@ -24,6 +24,7 @@ test('registration schema requires identity, contact, email and a strong passwor
     password: 'StrongPass1!'
   }, { abortEarly: false });
   assert.equal(result.error, undefined);
+  assert.equal(result.value.gender, 'unspecified');
 });
 
 test('registration schema rejects missing required customer fields and weak passwords', () => {
@@ -52,3 +53,22 @@ test('registration schema rejects passwords over the configured length limit', (
   assert.ok(result.error);
   assert.ok(result.error.details.some(detail => detail.type === 'string.max'));
 });
+
+test('registration accepts explicitly declared gender choices and rejects unknown values', () => {
+  const base = {
+    role: 'user',
+    firstName: 'Ana',
+    lastName: 'Pérez',
+    email: 'ana@example.com',
+    identificationNumber: '1.234.567',
+    birthDate: '2000-01-01',
+    phone: '3001234567',
+    preferences: [],
+    password: 'StrongPass1!'
+  };
+  for (const gender of ['female', 'male', 'non_binary', 'unspecified']) {
+    assert.equal(registerSchema.validate({ ...base, gender }).error, undefined);
+  }
+  assert.ok(registerSchema.validate({ ...base, gender: 'guess-from-name' }).error);
+});
+

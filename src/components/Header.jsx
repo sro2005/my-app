@@ -76,7 +76,7 @@ const Header = () => {
                 {navLink('/listado-pedidos', faClipboardList, 'Pedidos')}
                 {navLink('/seguridad', faLock, 'Seguridad')}
                 <li>
-                  <button className="evh-site-logout" type="button" onClick={() => setLogoutDialogOpen(true)} aria-label="Cerrar sesión">
+                  <button className="evh-site-logout" type="button" onClick={() => setLogoutDialogOpen(true)} aria-label="Cerrar Sesión">
                     <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
                     <span>Salir</span>
                   </button>
@@ -91,7 +91,7 @@ const Header = () => {
                 {navLink('/perfil-cliente', faUser, 'Mi Perfil')}
                 {navLink('/seguridad', faLock, 'Seguridad')}
                 <li>
-                  <button className="evh-site-logout" type="button" onClick={() => setLogoutDialogOpen(true)} aria-label="Cerrar sesión">
+                  <button className="evh-site-logout" type="button" onClick={() => setLogoutDialogOpen(true)} aria-label="Cerrar Sesión">
                     <FontAwesomeIcon icon={faSignOutAlt} aria-hidden="true" />
                     <span>Salir</span>
                   </button>
@@ -121,10 +121,10 @@ const Header = () => {
             <p id="evh-logout-description">Puedes volver a entrar cuando quieras. ¿Deseas salir de tu cuenta ahora?</p>
             <div className="evh-logout-actions">
               <button type="button" className="evh-logout-cancel" autoFocus onClick={() => setLogoutDialogOpen(false)}>
-                Seguir aquí
+                Seguir Aquí
               </button>
               <button type="button" className="evh-logout-confirm" onClick={confirmLogout}>
-                Cerrar sesión
+                Cerrar Sesión
               </button>
             </div>
           </section>

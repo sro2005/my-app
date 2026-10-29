@@ -46,6 +46,7 @@ const registerUser = async (req, res, role) => {
       newUserData.identificationNumber = value.identificationNumber.trim();
       newUserData.birthDate = toColombianCalendarDate(value.birthDate);
       newUserData.phone = formatPhoneNumber(value.phone);
+      newUserData.gender = value.gender || 'unspecified';
       newUserData.preferences = value.preferences || [];
     }
 

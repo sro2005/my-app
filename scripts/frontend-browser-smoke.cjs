@@ -476,7 +476,7 @@ async function main() {
     await captureAuthenticatedRoute('/home-page', /Tu tienda, bajo control/i, 'admin-dashboard', '.evh-admin-stat');
     assert.equal(await page.locator('.evh-admin-session-role').innerText(), 'Administrador');
     assert.equal(await page.locator('.evh-admin-session-copy strong').innerText(), adminUser.email);
-    await page.getByRole('button', { name: 'Actualizar resumen' }).click();
+    await page.getByRole('button', { name: 'Actualizar Resumen' }).click();
     await page.locator('.evh-admin-stat').first().waitFor({ timeout: 15000 });
     assert.ok(mockApiCalls.filter(call => /\/api\/orders\/all$/.test(call)).length >= 2,
       'The admin dashboard reload button should refresh the operational summary.');
@@ -487,13 +487,13 @@ async function main() {
     await page.locator('#inventory-search').fill('');
     await page.getByRole('button', { name: 'Editar' }).first().click();
     await page.getByLabel('Existencias', { exact: true }).fill('4');
-    await page.getByRole('button', { name: 'Guardar cambios' }).click();
+    await page.getByRole('button', { name: 'Guardar Cambios' }).click();
     await page.getByRole('status').filter({ hasText: /Producto actualizado|cambios ya están guardados/i }).waitFor({ timeout: 15000 });
     assert.ok(mockApiWrites.some(call => /^PUT \/api\/products\//.test(call)),
       'Editing inventory should issue only a mocked product update.');
     await page.getByRole('button', { name: 'Eliminar' }).first().click();
-    await page.getByRole('alertdialog', { name: 'Confirmar eliminación' }).waitFor();
-    await page.getByRole('button', { name: 'Conservar producto' }).click();
+    await page.getByRole('alertdialog', { name: 'Confirmar Eliminación' }).waitFor();
+    await page.getByRole('button', { name: 'Conservar Producto' }).click();
     assert.ok(!mockApiWrites.some(call => /^DELETE \/api\/products\//.test(call)),
       'Cancelling product deletion must not issue a delete request.');
 
@@ -504,18 +504,18 @@ async function main() {
     assert.ok(!mockApiWrites.some(call => /^POST \/api\/products\/agregar$/.test(call)),
       'An empty product form must not call the create-product API.');
 
-    await captureAuthenticatedRoute('/listado-clientes', /Gestión de clientes/i, 'admin-customers', '.cliente-item');
+    await captureAuthenticatedRoute('/listado-clientes', /Gestión de Clientes/i, 'admin-customers', '.cliente-item');
     await page.locator('input[aria-label*="Buscar clientes"]').fill('Marina');
     assert.ok(await page.locator('.clientes-list .cliente-item').count() >= 1,
       'Customer search should return matching records.');
-    await page.getByRole('button', { name: 'Limpiar filtros' }).click();
+    await page.getByRole('button', { name: 'Limpiar Filtros' }).click();
     await page.getByRole('button', { name: 'Inactivos' }).click();
     assert.equal(await page.locator('.clientes-list .cliente-item').count(), 1,
       'The Inactivos filter should show only customers with old activity.');
     assert.ok(await page.getByText('Daniel Pardo').count() >= 1,
       'The inactive customer should be visible after filtering.');
 
-    await captureAuthenticatedRoute('/listado-pedidos', /Gestión de pedidos/i, 'admin-orders', '.pedido-item');
+    await captureAuthenticatedRoute('/listado-pedidos', /Gestión de Pedidos/i, 'admin-orders', '.pedido-item');
     await page.getByRole('button', { name: /Marcar preparado y enviado/i }).click();
     await page.getByRole('button', { name: /Marcar como entregado/i }).waitFor({ timeout: 15000 });
     assert.ok(mockApiWrites.some(call => /^PUT \/api\/orders\/.+\/status$/.test(call)),
@@ -525,7 +525,7 @@ async function main() {
     await page.getByLabel('Contraseña actual').fill('CurrentPassword123!');
     await page.getByLabel('Nueva contraseña', { exact: true }).fill('NewSecurePass123!');
     await page.getByLabel('Confirma la nueva contraseña').fill('OtherSecurePass123!');
-    await page.getByRole('button', { name: 'Actualizar contraseña' }).click();
+    await page.getByRole('button', { name: 'Actualizar Contraseña' }).click();
     await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
     assert.ok(!mockApiWrites.some(call => /^PUT \/api\/auth\/change-password$/.test(call)),
       'Mismatched password confirmation must not send a change-password request.');
@@ -540,7 +540,7 @@ async function main() {
     await captureAuthenticatedRoute('/pedido-form', /Tu compra, a tu manera/i, 'customer-order-form', '#checkout-product');
     await page.locator('#checkout-product').click();
     await page.getByRole('option', { name: /Cafetera Boreal 12 tazas/i }).click();
-    await page.getByRole('button', { name: 'Agregar al pedido' }).click();
+    await page.getByRole('button', { name: 'Agregar al Pedido' }).click();
     await page.getByText('Cafetera Boreal 12 tazas').first().waitFor();
     await page.getByRole('heading', { name: 'ElectroVibe Pay' }).waitFor();
     assert.equal(await page.getByRole('radio', { name: /Tarjeta/i }).count(), 0,
@@ -566,15 +566,15 @@ async function main() {
     await captureAuthenticatedRoute('/listado-pedidos', /Mis pedidos/i, 'customer-orders', '.pedido-item');
     assert.equal(await page.getByRole('button', { name: /Marcar preparado y enviado/i }).count(), 0,
       'Customer views must not expose admin shipping actions.');
-    await captureAuthenticatedRoute('/perfil-cliente', /Mi perfil/i, 'customer-profile', '.evh-profile-card');
-    await page.getByRole('button', { name: 'Editar perfil' }).click();
+    await captureAuthenticatedRoute('/perfil-cliente', /Mi Perfil/i, 'customer-profile', '.evh-profile-card');
+    await page.getByRole('button', { name: 'Editar Perfil' }).click();
     await page.getByRole('heading', { name: 'Editar tus datos' }).waitFor();
     await page.getByRole('button', { name: 'Cancelar' }).click();
     await captureAuthenticatedRoute('/seguridad', /Cambia tu contraseña/i, 'customer-security');
     await page.getByLabel('Contraseña actual').fill('CurrentPassword123!');
     await page.getByLabel('Nueva contraseña', { exact: true }).fill('NewSecurePass123!');
     await page.getByLabel('Confirma la nueva contraseña').fill('OtherSecurePass123!');
-    await page.getByRole('button', { name: 'Actualizar contraseña' }).click();
+    await page.getByRole('button', { name: 'Actualizar Contraseña' }).click();
     await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
 
     await captureAuthenticatedRoute('/pago-resultado?reference=EVH-TEST-BROWSER&status=APPROVED',
@@ -596,13 +596,13 @@ async function main() {
     await setVisualSession(adminUser);
     await page.goto(new URL('/home-page', baseUrl).toString(), { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.getByRole('heading', { name: /Tu tienda, bajo control/i }).waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+    await page.getByRole('button', { name: 'Cerrar Sesión' }).click();
     await page.getByRole('dialog', { name: /Quieres cerrar sesión/i }).waitFor();
     await page.getByRole('button', { name: 'Seguir aquí' }).click();
     await page.getByRole('dialog', { name: /Quieres cerrar sesión/i }).waitFor({ state: 'detached' });
     assert.equal(await page.evaluate(() => localStorage.getItem('authToken')), 'browser-visual-only-token',
       'Cancelling logout must preserve the current session.');
-    await page.getByRole('button', { name: 'Cerrar sesión' }).click();
+    await page.getByRole('button', { name: 'Cerrar Sesión' }).click();
     await page.getByRole('dialog', { name: /Quieres cerrar sesión/i }).waitFor();
     await page.locator('.evh-logout-confirm').click();
     await page.waitForFunction(() => window.location.pathname === '/', null, { timeout: 15000 });

@@ -7,7 +7,7 @@ const TermsPage = () => (
     title="Términos de Servicio"
     lead="Estas condiciones explican cómo utilizar ElectroVibeHome, administrar tu cuenta, explorar el catálogo y revisar tus pedidos."
     noticeTitle="Información sobre pedidos y pagos"
-    notice="Actualmente, los pedidos registrados en el sitio no generan entregas ni cobros reales. Wompi no realizará ningún cobro en este sitio. No ingreses datos de una tarjeta real."
+    notice="Los pedidos registrados en el sitio son solicitudes ilustrativas: no generan entregas ni cobros reales. El pago queda sujeto a una revisión manual dentro de la aplicación; no se realiza ninguna transferencia bancaria. No ingreses datos de una tarjeta real."
     sections={[
       {
         title: 'Catálogo y disponibilidad',
@@ -19,7 +19,7 @@ const TermsPage = () => (
       },
       {
         title: 'Pedidos y checkout',
-        body: 'La función de pedidos permite registrar una solicitud y consultar su estado dentro de la cuenta. Registrar una solicitud no equivale a una compra comercial ni programa una entrega. Si eliges Wompi, el checkout de Sandbox solo podrá abrirse cuando el backend tenga credenciales de prueba válidas. Si faltan, el sistema bloqueará la solicitud; no se procesarán cobros reales.'
+        body: 'La función de pedidos permite registrar una solicitud y consultar su estado dentro de la cuenta. El administrador puede revisar manualmente el estado del pago registrado en la aplicación. Registrar una solicitud no equivale a una compra comercial ni programa una entrega: no se procesan pagos, cobros ni transferencias bancarias reales.'
       },
       {
         title: 'Recuperación de contraseña',

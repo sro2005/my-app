@@ -56,11 +56,12 @@ test('registerCustomer forces the public registration role to user and stores a 
   bcrypt.hash = async (password, rounds) => `hashed:${password}:${rounds}`;
 
   const response = createResponse();
-  await registerCustomer({ body: validRegistration({ role: 'admin' }) }, response);
+  await registerCustomer({ body: validRegistration({ role: 'admin', gender: 'female' }) }, response);
 
   assert.equal(response.statusCode, 201);
   assert.equal(lookup.email, 'demo@example.com');
   assert.equal(savedCustomer.role, 'user');
+  assert.equal(savedCustomer.gender, 'female');
   assert.equal(savedCustomer.email, 'demo@example.com');
   assert.equal(savedCustomer.password, 'hashed:StrongPass1!:12');
   assert.equal(savedCustomer.preferences[0], 'Televisores');

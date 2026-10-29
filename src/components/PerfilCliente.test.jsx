@@ -26,6 +26,7 @@ const customer = {
   birthDate: '1998-01-06T00:00:00.000Z',
   identificationNumber: '1.234.567',
   phone: '300 123 4567',
+  gender: 'female',
   preferences: ['Licuadoras', 'Refrigeradores']
 };
 
@@ -61,6 +62,7 @@ describe('PerfilCliente', () => {
     renderProfile(updateUser);
 
     expect(await screen.findByText('santy@example.test')).toBeTruthy();
+    expect(screen.getByText('Femenino')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: /editar perfil/i }));
     fireEvent.change(screen.getByLabelText('Nombre(s)'), { target: { value: 'Santyro' } });
     fireEvent.click(screen.getByRole('button', { name: /guardar cambios/i }));
@@ -68,7 +70,7 @@ describe('PerfilCliente', () => {
     expect(await screen.findByText('Tu perfil se actualizó correctamente.')).toBeTruthy();
     expect(axios.put).toHaveBeenCalledWith(
       'https://api.example.test/api/customers/' + customer._id,
-      expect.objectContaining({ firstName: 'Santyro', preferences: ['Licuadoras', 'Refrigeradores'] }),
+      expect.objectContaining({ firstName: 'Santyro', gender: 'female', preferences: ['Licuadoras', 'Refrigeradores'] }),
       { headers: { Authorization: 'Bearer test-token' } }
     );
     expect(updateUser).toHaveBeenCalledWith(expect.objectContaining({ firstName: 'Santyro' }));

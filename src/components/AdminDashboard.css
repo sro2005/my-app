@@ -8,7 +8,7 @@
 .evh-admin-hero {
   padding: clamp(1.25rem, 3vw, 2.5rem);
   border-radius: 24px;
-  background: linear-gradient(120deg, var(--evh-ink-strong, #14243a), var(--evh-blue, #294b70));
+  background: linear-gradient(120deg, var(--evh-ink-strong, #14243a), var(--evh-blue, var(--evh-blue)));
   color: #fff;
 }
 .evh-admin-eyebrow { color: #ffd5a9; font-size: .73rem; font-weight: 800; letter-spacing: .12em; }
@@ -24,7 +24,7 @@
   padding: .7rem 1rem;
   border: 1px solid transparent;
   border-radius: 11px;
-  background: var(--evh-accent, #f28c28);
+  background: var(--evh-accent, #e97816);
   color: var(--evh-ink-strong, #14243a);
   font-size: .85rem;
   font-weight: 800;
@@ -68,7 +68,7 @@
 .evh-admin th, .evh-admin td { padding: .8rem .6rem; border-bottom: 1px solid var(--evh-border, #e0e6ed); font-size: .83rem; vertical-align: top; }
 .evh-admin th { color: var(--evh-muted, #617084); font-weight: 750; white-space: nowrap; }
 .evh-admin td small { display: block; margin-top: .2rem; color: var(--evh-muted, #617084); overflow-wrap: anywhere; }
-.evh-admin-panel a { display: inline-block; margin-top: .8rem; color: var(--evh-blue, #294b70); font-size: .85rem; font-weight: 800; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.evh-admin-panel a { display: inline-block; margin-top: .8rem; color: var(--evh-blue, var(--evh-blue)); font-size: .85rem; font-weight: 800; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .evh-admin-panel a:hover { color: var(--evh-accent-ink, #84430c); }
 .evh-admin-actions { display: flex; flex-direction: column; align-items: stretch; gap: .55rem; }
 .evh-admin-actions a { display: block; margin: 0; padding: .75rem .85rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 11px; background: #fff; text-decoration: none; }
@@ -83,7 +83,7 @@
   border: 1px solid var(--evh-border, #e0e6ed);
   border-radius: 10px;
   background: #fff;
-  color: var(--evh-blue, #294b70);
+  color: var(--evh-blue, var(--evh-blue));
   font-size: .82rem;
   cursor: pointer;
 }
@@ -98,7 +98,7 @@
 .evh-admin-editor form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
 .evh-admin-editor label { display: flex; flex-direction: column; gap: .4rem; color: var(--evh-ink, #1c2b40); font-size: .85rem; font-weight: 750; }
 .evh-admin-editor input, .evh-admin-editor textarea { width: 100%; box-sizing: border-box; padding: .75rem; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; color: var(--evh-ink, #1c2b40); font: inherit; }
-.evh-admin-editor input:focus, .evh-admin-editor textarea:focus { border-color: var(--evh-accent, #f28c28); outline: 0; box-shadow: 0 0 0 4px var(--evh-focus, rgba(242,140,40,.28)); }
+.evh-admin-editor input:focus, .evh-admin-editor textarea:focus { border-color: var(--evh-accent, #e97816); outline: 0; box-shadow: 0 0 0 4px var(--evh-focus, rgba(233,120,22,.24)); }
 .evh-admin-editor textarea { min-height: 95px; }
 .evh-admin-editor form > .evh-admin-product-actions { align-self: end; }
 @media (max-width: 760px) {
@@ -121,7 +121,7 @@
 .evh-admin-editor form > .evh-admin-product-actions { grid-column: 1 / -1; justify-content: flex-end; margin-top: .25rem; }
 .evh-admin-inventory-error { color: #9b2b28; font-weight: 650; }
 .evh-admin button:focus-visible, .evh-admin a:focus-visible, .evh-admin input:focus-visible, .evh-admin textarea:focus-visible {
-  outline: 3px solid var(--evh-accent, #f28c28);
+  outline: 3px solid var(--evh-accent, #e97816);
   outline-offset: 3px;
 }
 @media (max-width: 600px) {
@@ -419,7 +419,7 @@
   background: #fffaf8;
 }
 .evh-admin-product-actions button[aria-expanded="true"] {
-  border-color: var(--evh-blue, #294b70);
+  border-color: var(--evh-blue, var(--evh-blue));
   background: #edf4ff;
   color: var(--evh-ink-strong, #14243a);
 }

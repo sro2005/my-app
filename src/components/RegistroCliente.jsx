@@ -87,6 +87,7 @@ const RegistroCliente = () => {
   const [birthDate, setBirthDate] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
+  const [gender, setGender] = useState('unspecified');
   const [preferences, setPreferences] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -131,6 +132,7 @@ const RegistroCliente = () => {
       birthDate,
       password,
       phone,
+      gender,
       preferences: preferences.map(pref => pref.value)
     })
     .then(() => {
@@ -208,6 +210,15 @@ const RegistroCliente = () => {
           </div>
         </div>
         <div className="evh-form-field">
+          <label htmlFor="register-gender">Género (opcional)</label>
+          <select id="register-gender" name="gender" value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="unspecified">Prefiero no decirlo</option>
+            <option value="female">Femenino</option>
+            <option value="male">Masculino</option>
+            <option value="non_binary">No binario</option>
+          </select>
+        </div>
+        <div className="evh-form-field">
           <label htmlFor="register-password">Contraseña</label>
           <input id="register-password" type="password" autoComplete="new-password" minLength={8} maxLength={128} pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,128}" title="Incluye mayúscula, minúscula, número y símbolo." value={password} onChange={(e) => setPassword(e.target.value)} required />
           <span className="evh-field-hint">8 caracteres, mayúscula, minúscula, número y símbolo.</span>
@@ -218,7 +229,7 @@ const RegistroCliente = () => {
         </div>
       </div>
       <button className="evh-form-submit" type="submit" disabled={loading}>
-        {loading ? 'Creando tu cuenta…' : 'Crear mi cuenta'}
+        {loading ? 'Creando tu cuenta…' : 'Crear Mi Cuenta'}
       </button>
       {error && <div className="evh-form-feedback is-error" role="alert">{error}</div>}
       {successMessage && <div className="evh-form-feedback is-success" role="status">{successMessage}</div>}

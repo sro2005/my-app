@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
-import moment from 'moment-timezone';
+import { formatBogotaDateTime } from '../utils/dateFormatting';
+import GenderAvatar from './GenderAvatar';
 
 const normalizeSearchValue = value => String(value ?? '')
   .normalize('NFD')
@@ -30,12 +31,12 @@ const formatDateTime = (dateString) => {
   return `${date.toLocaleDateString('es-CO', dateOptions)} · ${date.toLocaleTimeString('es-CO', timeOptions)}`;
 };
 
-// Función para formatear la fecha en formato 12 horas con AM/PM
-const formatOrderDate = (dateString) => {
-  if (!dateString) return 'Fecha no disponible';
-  const parsed = moment(dateString);
-  return parsed.isValid() ? parsed.tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss') : 'Fecha no disponible';
-};
+// Los pedidos se muestran con la hora local de Bogotá.
+const formatOrderDate = (dateString) => formatBogotaDateTime(dateString, {
+  fallback: 'Fecha no disponible',
+  includeSeconds: true,
+  separator: ' - '
+});
 
 const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
   style: 'currency', currency: 'COP', maximumFractionDigits: 0
@@ -66,8 +67,8 @@ const ClienteItem = ({ cliente }) => {
   return (
     <li className={`cliente-item ${estadoActivo === 'Inactivo' ? 'inactivo' : ''}`}>
       <div className="cliente-info">
-        <div className="cliente-avatar">
-          <img src="/icono-user.png" alt="" />
+        <div className={`cliente-avatar cliente-avatar--${cliente.gender || 'unspecified'}`}>
+          <GenderAvatar gender={cliente.gender} size="customer" />
         </div>
         <div className="cliente-details">
           <p><strong>Cliente:</strong> {cliente.firstName} {cliente.lastName || ''}</p>
@@ -214,7 +215,7 @@ const ListadoClientes = () => {
     <main className="evh-admin-customers" aria-busy={loading}>
       <header className="evh-admin-customers-heading">
         <span className="evh-eyebrow">ADMINISTRACIÓN · CLIENTES</span>
-        <h1>Gestión de clientes</h1>
+        <h1>Gestión de Clientes</h1>
         <p>Consulta clientes registrados, su actividad reciente y el historial de pedidos asociados.</p>
       </header>
 
@@ -247,7 +248,7 @@ const ListadoClientes = () => {
         <button type="button" aria-pressed={filtroActivo === null} onClick={() => setFiltroActivo(null)}>Todos</button>
         <button type="button" aria-pressed={filtroActivo === true} onClick={() => setFiltroActivo(true)}>Activos</button>
         <button type="button" aria-pressed={filtroActivo === false} onClick={() => setFiltroActivo(false)}>Inactivos</button>
-        {(search.trim() || filtroActivo !== null) && <button type="button" className="evh-filter-reset" onClick={() => { setSearch(''); setFiltroActivo(null); }}>Limpiar filtros</button>}
+        {(search.trim() || filtroActivo !== null) && <button type="button" className="evh-filter-reset" onClick={() => { setSearch(''); setFiltroActivo(null); }}>Limpiar Filtros</button>}
       </div>
       </div>
 
@@ -302,7 +303,7 @@ const ListadoClientes = () => {
         <span aria-hidden="true">⌕</span>
         <h2>{clientes.length === 0 ? 'Aún no hay clientes registrados' : 'No hay clientes que coincidan'}</h2>
         <p>{clientes.length === 0 ? 'Los clientes registrados aparecerán aquí.' : 'Intenta con otro término de búsqueda o cambia el filtro de actividad.'}</p>
-        {(search.trim() || filtroActivo !== null) && <button type="button" className="evh-button evh-button-primary" onClick={() => { setSearch(''); setFiltroActivo(null); }}>Restablecer filtros</button>}
+        {(search.trim() || filtroActivo !== null) && <button type="button" className="evh-button evh-button-primary" onClick={() => { setSearch(''); setFiltroActivo(null); }}>Restablecer Filtros</button>}
       </div>
    )}
         </>

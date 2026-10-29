@@ -119,14 +119,14 @@ const AdminInventory = () => {
     <main className="evh-admin">
       <header className="evh-admin-hero">
         <span className="evh-admin-eyebrow">ADMINISTRACIÓN · INVENTARIO</span>
-        <h1>Gestiona cada producto.</h1>
+        <h1>Gestiona Cada Producto</h1>
         <p>Consulta existencias, actualiza precios y administra las fichas de producto. El historial de pedidos se conserva.</p>
         <Link className="evh-admin-hero-link" to="/producto-form">Agregar</Link>
       </header>
       <div className="evh-admin-inventory-tools" role="search" aria-label="Buscar en el inventario">
         <label htmlFor="inventory-search">Buscar producto o categoría</label>
         <input id="inventory-search" type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder="Ej. cafeteras, televisores…" />
-        <button type="button" disabled={loading || busy} onClick={refresh}>Actualizar listado</button>
+        <button type="button" disabled={loading || busy} onClick={refresh}>Actualizar Listado</button>
       </div>
       {loading && (
         <div className="evh-loading-panel evh-admin-loading" role="status" aria-live="polite">
@@ -140,7 +140,7 @@ const AdminInventory = () => {
         </div>
       )}
       {error && <p role="alert" className="evh-admin-inventory-error">{error}</p>}
-      {!loading && error && <button type="button" disabled={busy} onClick={refresh}>Reintentar carga de inventario</button>}
+      {!loading && error && <button type="button" disabled={busy} onClick={refresh}>Reintentar Carga de Inventario</button>}
       {message && !active && <p role="status" className="evh-admin-inventory-success">{message}</p>}
       {!loading && !error && products.length === 0 && <p>No hay productos registrados.</p>}
       {!loading && products.length > 0 && <div className="evh-admin-inventory-list">
@@ -178,19 +178,19 @@ const AdminInventory = () => {
                   </label>)}
                   <label className="evh-admin-field evh-admin-field-description">Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}/></label>
                   <div className="evh-admin-product-actions">
-                    <button type="submit" disabled={busy}>Guardar cambios</button>
+                    <button type="submit" disabled={busy}>Guardar Cambios</button>
                     <button type="button" disabled={busy} onClick={() => { setActive(null); setDraft(null); }}>Cancelar</button>
                   </div>
                 </form>
               </section>
             )}
             {pendingDelete?._id === product._id && (
-              <section className="evh-admin-editor evh-admin-delete-inline" role="alertdialog" aria-label="Confirmar eliminación" aria-describedby="inventory-delete-description">
+              <section className="evh-admin-editor evh-admin-delete-inline" role="alertdialog" aria-label="Confirmar Eliminación" aria-describedby="inventory-delete-description">
                 <h2>¿Eliminar este producto?</h2>
                 <p id="inventory-delete-description">¿Eliminar «{pendingDelete.name}»? No se eliminarán productos que ya estén asociados a pedidos. Esta acción actualiza el inventario.</p>
                 <div className="evh-admin-product-actions">
-                  <button type="button" disabled={busy} onClick={remove}>Confirmar eliminación</button>
-                  <button type="button" disabled={busy} onClick={() => setPendingDelete(null)}>Conservar producto</button>
+                  <button type="button" disabled={busy} onClick={remove}>Confirmar Eliminación</button>
+                  <button type="button" disabled={busy} onClick={() => setPendingDelete(null)}>Conservar Producto</button>
                 </div>
               </section>
             )}

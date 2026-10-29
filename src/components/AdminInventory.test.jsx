@@ -23,7 +23,7 @@ describe('AdminInventory', () => {
     initialize();
     expect(await screen.findByLabelText('Buscar producto o categoría')).toBeTruthy();
     expect(screen.getByRole('search', { name: 'Buscar en el inventario' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Actualizar listado' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Actualizar Listado' })).toBeTruthy();
     const productMeta = screen.getByText('5 unidades disponibles').parentElement;
     expect(productMeta.className).toBe('evh-admin-product-meta');
     expect(productMeta.querySelector('.evh-admin-product-price')).toBeTruthy();
@@ -39,7 +39,7 @@ describe('AdminInventory', () => {
     expect(editor.previousElementSibling.classList.contains('evh-admin-product')).toBe(true);
     expect(editor.previousElementSibling.contains(screen.getByRole('button', { name: 'Editar' }))).toBe(true);
     fireEvent.change(screen.getByLabelText('Existencias'), { target: { value: '3' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Guardar cambios' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar Cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
     expect(screen.getByRole('region', { name: 'Editar producto' })).toBeTruthy();
     expect(axios.put).toHaveBeenCalledWith('https://api.example.test/api/products/p1',
@@ -50,13 +50,13 @@ describe('AdminInventory', () => {
     axios.delete.mockResolvedValue({ data: { message: 'Eliminado' } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Eliminar' }));
-    const dialog = screen.getByRole('alertdialog', { name: 'Confirmar eliminación' });
+    const dialog = screen.getByRole('alertdialog', { name: 'Confirmar Eliminación' });
     expect(dialog.previousElementSibling.classList.contains('evh-admin-product')).toBe(true);
     expect(axios.delete).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Conservar producto' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Conservar Producto' }));
     expect(axios.delete).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Eliminar' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmar eliminación' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar Eliminación' }));
     expect(await screen.findByRole('status')).toBeTruthy();
     expect(axios.delete).toHaveBeenCalledWith('https://api.example.test/api/products/p1',
       { headers: { Authorization: 'Bearer demo-admin' } });
@@ -65,7 +65,7 @@ describe('AdminInventory', () => {
     axios.delete.mockRejectedValue({ response: { status: 409, data: { message: 'Producto asociado a pedidos existentes.' } } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Eliminar' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmar eliminación' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar Eliminación' }));
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.getByText('Producto asociado a pedidos existentes.')).toBeTruthy();
   });

@@ -56,7 +56,7 @@ const RecoverPassword = () => {
           />
         </div>
         <button className="evh-form-submit" type="submit" disabled={loading}>
-          {loading ? 'Enviando…' : 'Enviar enlace seguro'}
+          {loading ? 'Enviando…' : 'Enviar Enlace Seguro'}
         </button>
         {message && <p className="evh-form-feedback" role="status">{message}</p>}
       </form>

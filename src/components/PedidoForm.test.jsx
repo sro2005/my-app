@@ -111,7 +111,7 @@ describe('PedidoForm catalog loading', () => {
 
     await screen.findByRole('option', { name: 'p-demo' });
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-demo' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Agregar al Pedido' }));
     expect(screen.getByText('ElectroVibe Pay')).toBeTruthy();
     expect(screen.queryByRole('radio', { name: /Tarjeta/i })).toBeNull();
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
@@ -131,7 +131,7 @@ describe('PedidoForm catalog loading', () => {
     expect(axios.post.mock.calls[0][1].products).toEqual([{ productId: 'p-demo', quantity: 1 }]);
     expect(axios.post.mock.calls[0][1].paymentMethod).toBe('Pago pendiente de coordinación');
     expect(axios.post.mock.calls[0][1].paymentPreference).toBeUndefined();
-    expect(screen.getByRole('link', { name: 'Ver mis pedidos' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Ver Mis Pedidos' })).toBeTruthy();
   });
   test('builds one fictional order with multiple products and quantities', async () => {
     axios.get.mockResolvedValueOnce({ data: [
@@ -144,11 +144,11 @@ describe('PedidoForm catalog loading', () => {
     await screen.findByRole('option', { name: 'p-1' });
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-1' } });
     fireEvent.change(screen.getByLabelText('Unidades'), { target: { value: '2' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Agregar al Pedido' }));
 
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-2' } });
     fireEvent.change(screen.getByLabelText('Unidades'), { target: { value: '1' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Agregar al Pedido' }));
     fireEvent.click(screen.getByRole('button', { name: 'Aumentar cantidad de Monitor Demo' }));
 
     expect(screen.getByText('Cafetera Demo')).toBeTruthy();
@@ -179,7 +179,7 @@ describe('PedidoForm catalog loading', () => {
 
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-stock' } });
     fireEvent.change(screen.getByLabelText('Unidades'), { target: { value: '3' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Agregar al Pedido' }));
 
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();

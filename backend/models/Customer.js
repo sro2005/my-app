@@ -6,6 +6,8 @@ const customerSchema = new mongoose.Schema({
   lastName: { type: String, required: function() { return this.role === 'user'; }, trim: true },
   identificationNumber: { type: String, required: function() { return this.role === 'user'; }, unique: function() { return this.role === 'user'; }, match: [/^\d{1,3}(\.\d{3})*$/, 'Número de identificación no válido'] },
   birthDate: { type: Date, required: function() { return this.role === 'user'; } },
+  // Dato opcional, declarado por la persona; nunca se infiere a partir del nombre.
+  gender: { type: String, enum: ['female', 'male', 'non_binary', 'unspecified'], default: 'unspecified' },
   phone: { type: String, required: function() { return this.role === 'user'; } },
   preferences: { type: [String], required: function() { return this.role === 'user'; } },
   // Campos obligatorios para todos los usuarios
