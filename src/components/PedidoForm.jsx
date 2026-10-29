@@ -327,7 +327,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         setSelectedProduct(null);
         setSelectedQuantity('1');
         setCartItems([]);
-        // Mantener la preferencia para mostrarla en la confirmación de registro.
+        // Conservar la preferencia para mostrarla en la confirmación del pedido.
         setAddress('');
         setDeliveryDate('');
         setOrder(null);
@@ -577,7 +577,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>{paymentPreference} · pago pendiente</dd>
+                    <dd>{paymentPreference || 'Por definir'} · pago pendiente</dd>
                   </div>
                 </dl>
               </section>
