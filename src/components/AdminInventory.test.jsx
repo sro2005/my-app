@@ -24,6 +24,9 @@ describe('AdminInventory', () => {
     expect(await screen.findByLabelText('Buscar producto o categoría')).toBeTruthy();
     expect(screen.getByRole('search', { name: 'Buscar en el inventario' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Actualizar listado' })).toBeTruthy();
+    const productMeta = screen.getByText('5 unidades disponibles').parentElement;
+    expect(productMeta.className).toBe('evh-admin-product-meta');
+    expect(productMeta.querySelector('.evh-admin-product-price')).toBeTruthy();
   });
   test('preserves demonstration metadata when editing', () => {
     expect(editableProduct(item)).toMatchObject({ demo: true, demoIcon: '☕', catalogVersion: 'v2' });
