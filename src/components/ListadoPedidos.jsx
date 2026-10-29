@@ -3,6 +3,7 @@ import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
 import moment from 'moment-timezone';
 import { Link } from 'react-router-dom';
+import OrderIcon from './OrderIcon';
 import './ListadoPedidos.css';
 
 // Función para formatear el precio en formato local (COP)
@@ -86,7 +87,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
     return (
       <li className="pedido-item">
         <div className="pedido-info">
-          <div className="pedido-image"><img src="/icono-order.jpg" alt="" /></div>
+          <div className="pedido-image"><OrderIcon /></div>
           <div className="pedido-details">
             <div className="evh-order-card-heading">
               <div className="evh-order-card-title">
@@ -127,7 +128,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
     <li className="pedido-item">
       <div className="pedido-info">
         <div className="pedido-image" aria-hidden="true">
-          <img src="/icono-order.jpg" alt="" />
+          <OrderIcon />
         </div>
         <div className="pedido-details">
           <div className="evh-order-card-heading">
@@ -431,7 +432,7 @@ const ListadoPedidos = () => {
     <main className={`evh-orders-page ${isAdmin ? 'is-admin' : 'is-customer'} ${isAdmin ? '' : 'container'}`}>
       <header className="evh-orders-heading">
         <span className="evh-eyebrow">{isAdmin ? 'ADMINISTRACIÓN · PEDIDOS' : 'TU CUENTA ELECTROVIBE'}</span>
-        <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
+        <h1>{isAdmin ? 'Gestión de Pedidos' : 'Mis Pedidos'}</h1>
         <p>{isAdmin
           ? 'Consulta los pedidos, revisa el estado de pago y gestiona las etapas de preparación y entrega.'
           : 'Consulta los pedidos asociados a tu cuenta, revisa los productos y sigue el estado de cada solicitud.'}</p>
