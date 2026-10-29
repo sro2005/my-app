@@ -9,7 +9,7 @@ const money = value => new Intl.NumberFormat('es-CO', {
 }).format(Number(value) || 0);
 
 const formatPaymentStatus = status => ({
-  SIMULATED: 'Simulado',
+  SIMULATED: 'Sin cobro',
   APPROVED: 'Aprobado',
   PENDING: 'Pendiente',
   DECLINED: 'Rechazado',
@@ -20,14 +20,17 @@ const formatPaymentStatus = status => ({
 
 export const summarizeDemoOperations = (orders, customers, products) => {
   const simulated = orders.filter(order => order.paymentStatus === 'SIMULATED');
+  const pendingPayment = orders.filter(order => order.paymentStatus === 'PENDING');
   return {
     customers: customers.filter(customer => customer.role === 'user').length,
     products: products.length,
     lowStock: products.filter(product => Number(product.quantity) <= 3).length,
     orders: orders.length,
     simulated: simulated.length,
+    pendingPayment: pendingPayment.length,
     pending: orders.filter(order => ['Pendiente', 'Procesando'].includes(order.status)).length,
-    simulatedValue: simulated.reduce((total, order) => total + (Number(order.totalAmount) || 0), 0)
+    simulatedValue: simulated.reduce((total, order) => total + (Number(order.totalAmount) || 0), 0),
+    pendingValue: pendingPayment.reduce((total, order) => total + (Number(order.totalAmount) || 0), 0)
   };
 };
 
@@ -83,7 +86,7 @@ const AdminDashboard = () => {
       <header className="evh-admin-hero">
         <span className="evh-admin-eyebrow">PANEL DE ADMINISTRACIÓN · RESUMEN OPERATIVO</span>
         <h1>Tu tienda, bajo control.</h1>
-        <p>Supervisa pedidos, clientes y productos desde un solo lugar. Las opciones de pago de esta versión son ilustrativas: no se conectan con bancos ni procesan cobros reales.</p>
+        <p>Supervisa pedidos, clientes y productos desde un solo lugar. Los pedidos y sus pagos se consultan por separado. Los pedidos sin pago confirmado no representan ingresos recibidos.</p>
         <div className="evh-admin-session" aria-label="Cuenta administrativa conectada">
           <span className="evh-admin-session-mark" aria-hidden="true">✓</span>
           <span className="evh-admin-session-copy"><small>SESIÓN DE ADMINISTRACIÓN</small><strong>{adminEmail}</strong></span>
@@ -109,11 +112,11 @@ const AdminDashboard = () => {
             {[
               ['Clientes registrados', summary.customers],
               ['Total de pedidos', summary.orders],
-              ['Pedidos simulados', summary.simulated],
+              ['Pedidos pendientes de pago', summary.pendingPayment],
               ['Pedidos por gestionar', summary.pending],
               ['Productos del catálogo', summary.products],
               ['Productos con stock bajo (≤3)', summary.lowStock],
-              ['Valor de referencia en pedidos simulados', money(summary.simulatedValue)]
+              ['Valor de pedidos pendientes de pago', money(summary.pendingValue)]
             ].map(([label, value]) => (
               <article key={label} className="evh-admin-stat">
                 <span>{label}</span><strong>{value}</strong>
