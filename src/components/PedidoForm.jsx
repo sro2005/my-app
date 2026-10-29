@@ -33,15 +33,9 @@ const requestedProductId = searchParams.get('productId');
 const userId = user?._id;  // Usar userId desde el contexto 
   
   const [address, setAddress] = useState("");
-  const paymentMethod = { value: "Pago pendiente de coordinación" };
-  const [paymentPreference, setPaymentPreference] = useState("");
-  const preferences = [
-    { value: "Tarjeta", icon: "▣", title: "Tarjeta", description: "Crédito o débito" },
-    { value: "PSE", icon: "⇄", title: "PSE", description: "Desde tu banco" },
-    { value: "Billetera digital", icon: "◈", title: "Billetera digital", description: "Desde tu celular" },
-    { value: "Por definir", icon: "◎", title: "Decidir después", description: "Sin elegir todavía" }
-  ];
-  const isSimulatedPaymentMethod = value => ['Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación'].includes(value);
+  const paymentMethod = { value: 'Pago pendiente de coordinación' };
+  const isLocalOrderMethod = value => ['Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación'].includes(value);
+  const [confirmedPreference, setConfirmedPreference] = useState('ElectroVibe Pay');
   const [deliveryDate, setDeliveryDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState('1');
@@ -269,7 +263,7 @@ const userId = user?._id;  // Usar userId desde el contexto
     // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
 
     // Validación antes de enviar el pedido
-    if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentPreference || !deliveryDate || cartItems.length === 0 || totalAmount <= 0) {
+    if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !deliveryDate || cartItems.length === 0 || totalAmount <= 0) {
      setFormError('Revisa los datos del pedido y selecciona un producto disponible.');
      return;
     }
@@ -282,7 +276,6 @@ const userId = user?._id;  // Usar userId desde el contexto
       phone: customerData.phone,
       address,
       paymentMethod: paymentMethod.value,
-      paymentPreference,
       deliveryDate,
       products: cartItems.map(item => ({ productId: item.value, quantity: item.quantity })),
       totalAmount,
@@ -320,14 +313,14 @@ const userId = user?._id;  // Usar userId desde el contexto
 
       // La API confirmó qué pedido corresponde a esta solicitud.
       setOrderRequestKey(null);
-      if (isSimulatedPaymentMethod(order?.paymentMethod)) {
+      if (isLocalOrderMethod(order?.paymentMethod)) {
         // El pedido se guarda como SIMULATED en el servidor; nunca se abre un proveedor externo.
         setPendingCheckoutOrderId(null);
         setCompletedDemoOrderId(createdOrderId);
         setSelectedProduct(null);
         setSelectedQuantity('1');
         setCartItems([]);
-        // Conservar la preferencia para mostrarla en la confirmación del pedido.
+        setConfirmedPreference("ElectroVibe Pay");
         setAddress('');
         setDeliveryDate('');
         setOrder(null);
@@ -409,7 +402,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   return (
-    <FormPage eyebrow="FINALIZA TU PEDIDO" title="Revisa tu pedido" description="Confirma tus datos, organiza los productos y revisa el total antes de continuar." className="evh-checkout-page">
+    <FormPage eyebrow="EXPERIENCIA ELECTROVIBE PAY" title="Tu compra, a tu manera" description="Revisa tu selección, completa tus datos y confirma tu pedido en un solo lugar." className="evh-checkout-page">
       <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
         <div className="evh-checkout-section-heading">
           <h2>Datos de tu pedido</h2>
@@ -424,22 +417,27 @@ const userId = user?._id;  // Usar userId desde el contexto
           <label htmlFor="checkout-address">Dirección de entrega</label>
           <input id="checkout-address" type="text" autoComplete="street-address" placeholder="Calle, número, barrio y ciudad" value={address} onChange={(e) => setAddress(e.target.value)} required />
         </div>
-        <fieldset className="evh-payment-choices evh-form-field evh-form-field-wide">
-          <legend>¿Cómo preferirías pagar?</legend>
-          <p className="evh-payment-intro">Elige la opción que te resulte más cómoda. Esta elección es orientativa: <strong>no se realizará ningún cobro ni conexión con bancos</strong> al confirmar tu pedido.</p>
-          <div className="evh-payment-grid">
-            {preferences.map(option => (
-              <label key={option.value} className={`evh-payment-choice ${paymentPreference === option.value ? 'is-selected' : ''}`}>
-                <input type="radio" name="paymentPreference" value={option.value}
-                  checked={paymentPreference === option.value} onChange={() => setPaymentPreference(option.value)} required />
-                <span className="evh-payment-choice-icon" aria-hidden="true">{option.icon}</span>
-                <span className="evh-payment-choice-copy"><strong>{option.title}</strong><small>{option.description}</small></span>
-                <span className="evh-payment-choice-check" aria-hidden="true">✓</span>
-              </label>
-            ))}
+        <section className="evh-pay-section evh-form-field evh-form-field-wide" aria-labelledby="evh-pay-title">
+          <div className="evh-pay-section-head">
+            <div className="evh-pay-brand-mark" aria-hidden="true">⚡</div>
+            <div>
+              <span className="evh-pay-eyebrow">TU EXPERIENCIA DE COMPRA</span>
+              <h3 id="evh-pay-title">ElectroVibe Pay</h3>
+              <p>Una forma más sencilla de cerrar tu elección.</p>
+            </div>
+            <span className="evh-pay-tag">Integrado</span>
           </div>
-          <p className="evh-payment-disclaimer">El pedido se registrará con estado de pago pendiente. No introduzcas números de tarjeta, contraseñas ni claves bancarias.</p>
-        </fieldset>
+          <div className="evh-pay-track" aria-label="Pasos del pedido">
+            <span className="is-complete"><b>✓</b> Tu selección</span>
+            <span className="is-active"><b>2</b> Revisión</span>
+            <span><b>3</b> Confirmación</span>
+          </div>
+          <div className="evh-pay-info">
+            <div><strong>Todo en un mismo lugar</strong><span>Revisa tus productos y confirma tu pedido sin salir de ElectroVibeHome.</span></div>
+            <span className="evh-pay-symbol" aria-hidden="true">↗</span>
+          </div>
+          <p className="evh-pay-terms">Al confirmar se registrará el pedido, no un pago. <strong>No se realizará ningún cobro</strong> ni se solicitarán datos bancarios.</p>
+        </section>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
@@ -489,14 +487,14 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentPreference || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentPreference ? 'Selecciona tu preferencia de pago' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con el pedido'}</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con ElectroVibe Pay'}</button>
         {completedDemoOrderId && (
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>Tu pedido quedó registrado correctamente. Preferencia de pago: <strong>{preferences.find(option => option.value === order?.paymentPreference)?.title || paymentPreference || 'Por definir'}</strong>. No se ha realizado ningún cobro.</p>
+            <p>Tu pedido se registró mediante <strong>{confirmedPreference}</strong>. Puedes seguir su avance en Mis pedidos. El pago permanece pendiente y no se ha realizado ningún cobro.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
-            <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Hacer otro pedido</button>
+            <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Preparar otro pedido</button>
           </div>
         )}
         {orderRequestKey && !pendingCheckoutOrderId && !loading && order && (
@@ -528,7 +526,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             <header className="evh-confirmation-header">
               <span className="evh-confirmation-mark" aria-hidden="true">⚡</span>
               <div className="evh-confirmation-title-wrap">
-                <span className="evh-eyebrow">REVISIÓN FINAL</span>
+                <span className="evh-eyebrow">ELECTROVIBE PAY · REVISIÓN FINAL</span>
                 <h2 id="evh-confirmation-title">Confirma tu pedido</h2>
                 <p id="evh-confirmation-description">Revisa los productos y la información de entrega antes de continuar.</p>
               </div>
@@ -544,9 +542,9 @@ const userId = user?._id;  // Usar userId desde el contexto
             <div className="evh-confirmation-notice" role="note">
               <span className="evh-confirmation-notice-icon" aria-hidden="true">i</span>
               <div>
-                <strong>Antes de confirmar</strong>
-                <p>{isSimulatedPaymentMethod(paymentMethod?.value)
-                  ? 'Al confirmar, registraremos tu pedido. La forma de pago quedará pendiente de coordinación y no se realizará ningún cobro en este paso.'
+                <strong>Confirmación del pedido</strong>
+                <p>{isLocalOrderMethod(paymentMethod?.value)
+                  ? 'Al confirmar se registrará el pedido. El pago permanecerá pendiente: no se realizará ningún cobro ni se enviarán datos a entidades financieras.'
                   : 'La forma de pago quedará pendiente de coordinación antes de procesar el pedido.'}</p>
               </div>
             </div>
@@ -577,7 +575,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>{paymentPreference || 'Por definir'} · pago pendiente</dd>
+                    <dd>ElectroVibe Pay · pago pendiente</dd>
                   </div>
                 </dl>
               </section>
