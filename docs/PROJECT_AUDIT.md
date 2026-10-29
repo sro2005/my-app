@@ -11,9 +11,9 @@ La medición se hizo sobre los archivos versionados del árbol Git, no sobre el 
 
 | Medición | Antes de esta revisión | Rama auditada |
 |---|---:|---:|
-| Archivos versionados | 136 | 131 |
-| Tamaño agregado de los archivos | 2.140.780 bytes (2,04 MiB) | 1.441.662 bytes (1,38 MiB) |
-| Reducción neta | — | 699.118 bytes (682,5 KiB; 32,7 %) |
+| Archivos versionados | 136 | 134 |
+| Tamaño agregado de los archivos | 2.140.780 bytes (2,04 MiB) | 1.452.487 bytes (1,39 MiB) |
+| Reducción neta | — | 688.293 bytes (672,2 KiB; 32,2 %) |
 
 La reducción neta incorpora las nuevas piezas de interfaz y pruebas añadidas en la revisión; no equivale a la reducción exacta del paquete que descargará el navegador. El repositorio no versiona `node_modules/` ni `dist/`, por lo que no está incluyendo instalaciones completas ni resultados de compilación.
 
@@ -39,10 +39,11 @@ En el manifiesto frontend se retiraron las declaraciones directas de estos paque
 - `react-icons`
 - `react-phone-number-input`
 - `react-spinners`
+- `moment-timezone` (sustituido por utilidades nativas de zona horaria, con pruebas de formato y cambio de día)
 
-Se conservó Font Awesome porque sí lo usan el encabezado y el pie; también se conservaron Axios, Moment Timezone, React Select y React Number Format porque existen importaciones activas. Las dependencias del backend no se modificaron.
+Se conservó Font Awesome porque sí se usa en el encabezado y el pie; también se conservaron Axios, React Select y React Number Format. Moment Timezone se reemplazó en el frontend por Intl.DateTimeFormat para las fechas de Bogotá. Las dependencias del backend no se modificaron.
 
-El lockfile frontend se sincronizó con el manifiesto y se podaron **22 entradas de paquetes** sin camino de dependencia desde las dependencias y herramientas conservadas. El tamaño textual del lockfile pasó de 122.697 a 109.101 caracteres (13,3 KiB menos). La instalación limpia de CI debe confirmar que el árbol resultante se resuelve correctamente; no se considera finalizada la optimización hasta comprobar ese resultado.
+El lockfile frontend se sincronizó con el manifiesto y se podaron **24 entradas de paquetes**, incluidos Moment y Moment Timezone. El lockfile pasó de 122.697 a 108.321 bytes (14.376 bytes menos). La instalación limpia y auditoría de npm pasaron en CI con cero vulnerabilidades reportadas.
 
 ## 3. Paleta e interfaz
 
@@ -84,10 +85,10 @@ Se añadieron o actualizaron pruebas para verificar:
 - El icono de perfil de acuerdo con el dato declarado y el icono vectorial de los pedidos.
 - Los textos de acciones del inventario y los selectores usados por la prueba de navegador.
 
-**Estado de validación:** pendiente de los resultados de CI de esta rama/PR. Hasta que terminen las pruebas de instalación con lockfile, frontend, backend, extremo a extremo y navegador, el despliegue no debe considerarse aprobado por esta auditoría.
+**Estado de validación:** CI de la rama completado correctamente: frontend (20 archivos de prueba, 82 pruebas), backend y backend E2E, compilación de producción e instalación limpia. Las comprobaciones smoke-preview/frontend-browser estaban omitidas para esta rama y deben verificarse tras la integración y el despliegue.
 
 ## 7. Límites y seguimiento
 
-El número de bytes del repositorio no es el tamaño real de JavaScript/CSS descargado por los clientes. Para dar una cifra de rendimiento de producción se debe tomar del `vite build` la salida final de bundles, y comprobar la carga inicial con la prueba de navegador.
+Medidas de Vite: el JavaScript principal pasó de 1.477,92 kB / 268,66 kB gzip a 371,68 kB / 113,00 kB gzip gracias a la carga diferida por ruta. El CSS principal pasa de 192,06 kB / 34,71 kB gzip a 162,27 kB / 30,16 kB gzip. Los otros módulos cargan sus propios fragmentos a demanda; no confundir la reducción del bloque inicial con una reducción equivalente de todo el código. Se eliminó el fragmento de Moment Timezone de casi 793 kB sin comprimir.
 
 La hoja de estilos aún requiere una siguiente fase de consolidación gradual por módulo, guiada por pruebas responsive, no una eliminación automática basada solo en el número de selectores. Se debe mantener la rama `main` intacta y promover estos cambios solo si el PR y el despliegue pasan las verificaciones.
