@@ -119,14 +119,14 @@ const AdminInventory = () => {
     <main className="evh-admin">
       <header className="evh-admin-hero">
         <span className="evh-admin-eyebrow">ADMINISTRACIÓN · INVENTARIO</span>
-        <h1>Gestiona cada producto.</h1>
+        <h1>Gestiona Cada Producto</h1>
         <p>Consulta existencias, actualiza precios y administra las fichas de producto. El historial de pedidos se conserva.</p>
         <Link className="evh-admin-hero-link" to="/producto-form">Agregar</Link>
       </header>
       <div className="evh-admin-inventory-tools" role="search" aria-label="Buscar en el inventario">
         <label htmlFor="inventory-search">Buscar producto o categoría</label>
         <input id="inventory-search" type="search" value={search} onChange={event => setSearch(event.target.value)} placeholder="Ej. cafeteras, televisores…" />
-        <button type="button" disabled={loading || busy} onClick={refresh}>Actualizar listado</button>
+        <button type="button" disabled={loading || busy} onClick={refresh}>Actualizar Listado</button>
       </div>
       {loading && (
         <div className="evh-loading-panel evh-admin-loading" role="status" aria-live="polite">
@@ -178,7 +178,7 @@ const AdminInventory = () => {
                   </label>)}
                   <label className="evh-admin-field evh-admin-field-description">Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}/></label>
                   <div className="evh-admin-product-actions">
-                    <button type="submit" disabled={busy}>Guardar cambios</button>
+                    <button type="submit" disabled={busy}>Guardar Cambios</button>
                     <button type="button" disabled={busy} onClick={() => { setActive(null); setDraft(null); }}>Cancelar</button>
                   </div>
                 </form>
