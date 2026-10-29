@@ -530,3 +530,113 @@
   .evh-admin-inventory-tools button { grid-column: 1; width: 100%; white-space: normal; }
   .evh-admin .evh-admin-hero > .evh-admin-hero-link { width: fit-content; }
 }
+
+
+/* Inventario: alinear búsqueda, acciones, precio y existencias sin afectar otros módulos. */
+.evh-admin .evh-admin-inventory-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: .5rem 1rem;
+  padding: 1rem;
+  border: 1px solid var(--evh-border, #e0e6ed);
+  border-radius: 16px;
+  background: var(--evh-surface, #fff);
+}
+.evh-admin .evh-admin-inventory-tools label {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+  margin: 0;
+  line-height: 1.4;
+}
+.evh-admin .evh-admin-inventory-tools input {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  margin: 0;
+  padding: .7rem .9rem;
+}
+.evh-admin .evh-admin-inventory-tools button {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: stretch;
+  min-height: 46px;
+  padding: .65rem 1rem;
+  white-space: nowrap;
+}
+.evh-admin .evh-admin-product > div:first-child {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+.evh-admin .evh-admin-product-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .35rem .85rem;
+  min-width: 0;
+  margin: .25rem 0 0;
+  font-size: .85rem;
+  line-height: 1.45;
+}
+.evh-admin .evh-admin-product-price {
+  color: var(--evh-ink-strong, #14243a);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.evh-admin .evh-admin-product-stock {
+  color: var(--evh-muted, #617084);
+}
+.evh-admin .evh-admin-editor form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+.evh-admin .evh-admin-editor form > .evh-admin-field-imageurl,
+.evh-admin .evh-admin-editor form > .evh-admin-field-description,
+.evh-admin .evh-admin-editor form > .evh-admin-product-actions {
+  grid-column: 1 / -1;
+}
+.evh-admin .evh-admin-editor form > label > input {
+  min-height: 46px;
+}
+.evh-admin .evh-admin-editor form > .evh-admin-product-actions {
+  justify-content: flex-end;
+  align-self: center;
+  margin-top: .1rem;
+}
+@media (max-width: 760px) {
+  .evh-admin .evh-admin-inventory-tools {
+    grid-template-columns: minmax(0, 1fr);
+    gap: .5rem;
+    padding: .85rem;
+  }
+  .evh-admin .evh-admin-inventory-tools label,
+  .evh-admin .evh-admin-inventory-tools input,
+  .evh-admin .evh-admin-inventory-tools button {
+    grid-column: 1;
+    grid-row: auto;
+    width: 100%;
+  }
+  .evh-admin .evh-admin-inventory-tools button {
+    white-space: normal;
+  }
+  .evh-admin .evh-admin-editor form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .evh-admin .evh-admin-editor form > .evh-admin-field-imageurl,
+  .evh-admin .evh-admin-editor form > .evh-admin-field-description,
+  .evh-admin .evh-admin-editor form > .evh-admin-product-actions {
+    grid-column: 1;
+  }
+  .evh-admin .evh-admin-editor form > .evh-admin-product-actions {
+    justify-content: stretch;
+  }
+  .evh-admin .evh-admin-product-actions {
+    width: 100%;
+  }
+  .evh-admin .evh-admin-product-actions button {
+    flex: 1 1 auto;
+  }
+}
