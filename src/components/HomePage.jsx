@@ -20,7 +20,7 @@ const HomePage = () => {
           </div>
           <div className="evh-customer-trust" aria-label="Información del proceso de pedidos">
             <span><b aria-hidden="true">✓</b> Explora y organiza tus pedidos</span>
-            <span><b aria-hidden="true">✓</b> Pago sin procesar al confirmar</span>
+            <span><b aria-hidden="true">✓</b> Seguimiento desde tu cuenta</span>
             <span><b aria-hidden="true">✓</b> Preferencias bajo tu control</span>
           </div>
         </div>
