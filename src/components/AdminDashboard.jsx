@@ -9,25 +9,23 @@ const money = value => new Intl.NumberFormat('es-CO', {
 }).format(Number(value) || 0);
 
 const formatPaymentStatus = status => ({
-  SIMULATED: 'Sin pago',
-  APPROVED: 'Aprobado (Sandbox)',
-  PENDING: 'Pendiente (Sandbox)',
-  DECLINED: 'Rechazado (Sandbox)',
-  ERROR: 'Error de pago (Sandbox)',
+  SIMULATED: 'Simulado',
+  APPROVED: 'Aprobado',
+  PENDING: 'Pendiente',
+  DECLINED: 'Rechazado',
+  ERROR: 'Error de pago',
   EXPIRED: 'Checkout vencido',
-  VOIDED: 'Anulado (Sandbox)'
+  VOIDED: 'Anulado'
 })[status] || status || 'Pendiente';
 
 export const summarizeDemoOperations = (orders, customers, products) => {
   const simulated = orders.filter(order => order.paymentStatus === 'SIMULATED');
-  const sandbox = orders.filter(order => order.paymentMethod === 'Wompi');
   return {
     customers: customers.filter(customer => customer.role === 'user').length,
     products: products.length,
     lowStock: products.filter(product => Number(product.quantity) <= 3).length,
     orders: orders.length,
     simulated: simulated.length,
-    sandbox: sandbox.length,
     pending: orders.filter(order => ['Pendiente', 'Procesando'].includes(order.status)).length,
     simulatedValue: simulated.reduce((total, order) => total + (Number(order.totalAmount) || 0), 0)
   };
@@ -85,7 +83,7 @@ const AdminDashboard = () => {
       <header className="evh-admin-hero">
         <span className="evh-admin-eyebrow">PANEL DE ADMINISTRACIÓN · RESUMEN OPERATIVO</span>
         <h1>Tu tienda, bajo control.</h1>
-        <p>Supervisa pedidos, clientes y productos desde un solo lugar. El checkout de Wompi Sandbox requiere credenciales de prueba válidas en el backend; los pedidos de demostración no generan cobros reales.</p>
+        <p>Supervisa pedidos, clientes y productos desde un solo lugar. Las opciones de pago de esta versión son ilustrativas: no se conectan con bancos ni procesan cobros reales.</p>
         <div className="evh-admin-session" aria-label="Cuenta administrativa conectada">
           <span className="evh-admin-session-mark" aria-hidden="true">✓</span>
           <span className="evh-admin-session-copy"><small>SESIÓN DE ADMINISTRACIÓN</small><strong>{adminEmail}</strong></span>
@@ -111,12 +109,11 @@ const AdminDashboard = () => {
             {[
               ['Clientes registrados', summary.customers],
               ['Total de pedidos', summary.orders],
-              ['Pedidos sin pago', summary.simulated],
-              ['Pedidos mediante Wompi Sandbox', summary.sandbox],
+              ['Pedidos simulados', summary.simulated],
               ['Pedidos por gestionar', summary.pending],
               ['Productos del catálogo', summary.products],
               ['Productos con stock bajo (≤3)', summary.lowStock],
-              ['Valor registrado en pedidos sin pago', money(summary.simulatedValue)]
+              ['Valor de referencia en pedidos simulados', money(summary.simulatedValue)]
             ].map(([label, value]) => (
               <article key={label} className="evh-admin-stat">
                 <span>{label}</span><strong>{value}</strong>
