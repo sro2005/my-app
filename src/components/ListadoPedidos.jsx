@@ -501,7 +501,7 @@ const ListadoPedidos = () => {
           {hasOrderFilters && (
             <button type="button" className="evh-admin-order-clear"
               onClick={() => { setOrderSearch(''); setStatusFilter('Todos'); }}>
-              Limpiar filtros
+              Limpiar Filtros
             </button>
           )}
         </section>
