@@ -1235,7 +1235,6 @@ h2 {
 .evh-form-page {
   --evh-ink: #202b3e;
   --evh-muted: #687386;
-  --evh-orange: #e97816;
   min-height: 68vh;
   padding: clamp(2rem, 5vw, 4.5rem) 1.25rem;
   background:
@@ -2554,7 +2553,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-form-page {
   --evh-ink: #1c2b40;
   --evh-muted: #617084;
-  --evh-orange: var(--evh-accent);
   background: var(--evh-canvas);
 }
 .evh-form-layout {
@@ -2933,8 +2931,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-orders-page,
 .evh-admin-customers {
   --evh-workspace-ink: #14243a;
-  --evh-workspace-blue: #294f7d;
-  --evh-workspace-muted: #617187;
   --evh-workspace-line: #dce5ef;
   width: min(100% - 2rem, 1220px);
   box-sizing: border-box;
