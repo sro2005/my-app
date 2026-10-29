@@ -34,7 +34,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState(null); // Cambiado a objeto para React-Select
-  const isSimulatedPaymentMethod = value => ['Demostración', 'Bre-B (simulado)'].includes(value);
+  const isSimulatedPaymentMethod = value => ['Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación'].includes(value);
   const [deliveryDate, setDeliveryDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState('1');
@@ -405,7 +405,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   };
 
   const paymentMethods = [
-    { value: 'Bre-B (simulado)', label: 'Transferencia inmediata simulada · Bre-B' },
+    { value: 'Pago pendiente de coordinación', label: 'Pago pendiente de coordinación' },
   ];
 
   return (
@@ -425,16 +425,16 @@ const userId = user?._id;  // Usar userId desde el contexto
           <input id="checkout-address" type="text" autoComplete="street-address" placeholder="Calle, número, barrio y ciudad" value={address} onChange={(e) => setAddress(e.target.value)} required />
         </div>
         <div className="payment-method-container evh-form-field">
-          <label htmlFor="checkout-payment">Cómo quieres continuar</label>
+          <label htmlFor="checkout-payment">Método de pago</label>
           <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
           <p role="note">{!paymentMethod
             ? 'Elige una opción. Revisarás los detalles antes de confirmar.'
             : isSimulatedPaymentMethod(paymentMethod.value)
-              ? 'Experiencia ilustrativa inspirada en las transferencias inmediatas Bre-B. No se envía dinero ni se verifica una transferencia real; el pedido y sus estados son demostrativos.'
-              : 'Esta experiencia es una simulación local: no se conecta con bancos, no solicita datos financieros y no realiza cobros.'}</p>
+              ? 'Tu pedido quedará registrado y nuestro equipo coordinará contigo la forma de pago antes de procesarlo.'
+              : 'La forma de pago quedará pendiente de coordinación antes de procesar el pedido.'}</p>
         </div>
         <div className="evh-form-field">
-          <label htmlFor="deliveryDate">{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Fecha de referencia (solo simulación)' : 'Fecha deseada de entrega'}</label>
+          <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
         </div>
         <div className="evh-form-field evh-form-field-wide">
@@ -482,12 +482,12 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentMethod ? 'Selecciona cómo continuar' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con pago simulado'}</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentMethod ? 'Selecciona cómo continuar' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con el pedido'}</button>
         {completedDemoOrderId && (
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>La solicitud quedó registrada en tu cuenta como pedido de demostración. No se ha procesado ningún cobro; la fecha y los estados logísticos son únicamente ilustrativos.</p>
+            <p>Tu pedido quedó registrado correctamente. La forma de pago está pendiente de coordinación y no se ha realizado ningún cobro.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
             <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Hacer otro pedido</button>
           </div>
@@ -539,7 +539,7 @@ const userId = user?._id;  // Usar userId desde el contexto
               <div>
                 <strong>Antes de confirmar</strong>
                 <p>{isSimulatedPaymentMethod(paymentMethod?.value)
-                  ? 'Experiencia ilustrativa inspirada en Bre-B. No se envía dinero ni se verifica una transferencia real; la fecha y los estados logísticos son demostrativos.'
+                  ? 'Al confirmar, registraremos tu pedido. La forma de pago quedará pendiente de coordinación y no se realizará ningún cobro en este paso.'
                   : 'Esta experiencia es una simulación local: no se conecta con bancos, no solicita datos financieros y no realiza cobros.'}</p>
               </div>
             </div>
@@ -565,12 +565,12 @@ const userId = user?._id;  // Usar userId desde el contexto
                     <dd>{address}</dd>
                   </div>
                   <div>
-                    <dt>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Fecha (solo simulación)' : 'Fecha deseada'}</dt>
+                    <dt>Fecha deseada de entrega</dt>
                     <dd>{deliveryDate}</dd>
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Bre-B · simulación' : 'Pago simulado'}</dd>
+                    <dd>Pago pendiente de coordinación</dd>
                   </div>
                 </dl>
               </section>
@@ -602,7 +602,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             {loading && (
               <div className="evh-confirmation-processing" role="status">
                 <span className="evh-confirmation-processing-mark" aria-hidden="true">EV</span>
-                <span>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Registrando tu pedido…' : 'Preparando la simulación…'}</span>
+                <span>Registrando tu pedido…</span>
               </div>
             )}
 
@@ -617,7 +617,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                 onClick={handleConfirm}
                 disabled={loading}
               >
-                {loading ? 'Procesando…' : 'Confirmar simulación'}
+                {loading ? 'Procesando…' : 'Confirmar pedido'}
               </button>
             </footer>
           </section>
