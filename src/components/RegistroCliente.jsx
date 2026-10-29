@@ -229,7 +229,7 @@ const RegistroCliente = () => {
         </div>
       </div>
       <button className="evh-form-submit" type="submit" disabled={loading}>
-        {loading ? 'Creando tu cuenta…' : 'Crear mi cuenta'}
+        {loading ? 'Creando tu cuenta…' : 'Crear Mi Cuenta'}
       </button>
       {error && <div className="evh-form-feedback is-error" role="alert">{error}</div>}
       {successMessage && <div className="evh-form-feedback is-success" role="status">{successMessage}</div>}
