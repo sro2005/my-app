@@ -6801,3 +6801,35 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   border-color: var(--evh-blue);
 }
 .evh-profile-details .evh-profile-detail strong { overflow-wrap: anywhere; }
+
+/* Pulido de formularios, encabezados y estados de sesión. */
+.evh-register-form .evh-form-grid,
+.evh-checkout-form .evh-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1rem;row-gap:.9rem;align-items:start}
+.evh-register-form .evh-form-grid>.evh-form-field,
+.evh-checkout-form .evh-form-grid>.evh-form-field{min-width:0;width:100%;box-sizing:border-box;margin:0;align-self:start}
+.evh-register-form .evh-form-field-wide,
+.evh-checkout-form .evh-form-field-wide{grid-column:1/-1}
+.evh-register-form .evh-form-field>label,
+.evh-checkout-form .evh-form-field>label{display:block;margin:0 0 .35rem;line-height:1.35;min-height:1.1rem}
+.evh-register-form .evh-form-field>input,
+.evh-register-form .evh-form-field>select,
+.evh-checkout-form .evh-form-field>input,
+.evh-checkout-form .evh-form-field>select{box-sizing:border-box;width:100%;max-width:100%;margin:0;min-height:48px}
+.evh-register-form .evh-field-hint{display:block;line-height:1.4;margin-top:.3rem}
+.evh-registration-success{display:flex;justify-content:center;align-items:center;text-align:center;max-width:100%;padding:1rem 1.2rem;border:1px solid #abdac4;border-radius:14px;font-weight:750;line-height:1.5}
+.evh-profile-card-heading{display:flex;align-items:flex-start;justify-content:space-between;width:100%;gap:1.25rem}
+.evh-profile-card-heading>div{flex:1 1 0;min-width:0}
+.evh-profile-card-heading>.evh-button{flex:0 0 auto;margin-left:auto;align-self:flex-start}
+.evh-admin .evh-admin-hero{background:radial-gradient(circle at 94% 12%,rgba(233,120,22,.13),transparent 34%),linear-gradient(120deg,#f7fbff,#e8f2ff);border:1px solid #ccdff2;box-shadow:0 14px 35px rgba(41,79,125,.08);color:#183b61}
+.evh-admin .evh-admin-hero h1{color:#173b61}
+.evh-admin .evh-admin-hero p{color:#4c657f}
+.evh-admin .evh-admin-eyebrow{color:#a84c06}
+.evh-admin .evh-admin-session{background:#fff;border:1px solid #cfdfef;color:#244a72;box-shadow:0 3px 12px rgba(41,79,125,.05)}
+.evh-admin .evh-admin-session-copy small{color:#536e88}
+.evh-admin .evh-admin-session-copy strong{color:#173b61;overflow-wrap:anywhere}
+.evh-admin .evh-admin-session-role{background:#e4effd;color:#214d7a}
+.evh-admin .evh-admin-hero button,.evh-admin .evh-admin-hero-link{background:#e97816;color:#fff;border-color:#e97816}
+.evh-admin .evh-admin-hero button:hover:not(:disabled),.evh-admin .evh-admin-hero-link:hover{background:#c8600b;color:#fff;border-color:#c8600b}
+.evh-washer-category-icon{width:76px;max-width:100%;height:82px;display:block;margin:auto}
+.evh-app-loading{min-height:clamp(340px,62vh,700px)}
+@media(max-width:640px){.evh-register-form .evh-form-grid,.evh-checkout-form .evh-form-grid{grid-template-columns:minmax(0,1fr);gap:.85rem}.evh-register-form .evh-form-field-wide,.evh-checkout-form .evh-form-field-wide{grid-column:1}.evh-profile-card-heading{align-items:stretch;flex-direction:column}.evh-profile-card-heading>.evh-button{align-self:flex-end;margin-left:auto}}
