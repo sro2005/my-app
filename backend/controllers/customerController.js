@@ -64,7 +64,7 @@ exports.updateCustomer = async (req, res) => {
     }
 
     const body = req.body && typeof req.body === 'object' ? req.body : {};
-    const allowedFields = ['firstName', 'lastName', 'email', 'identificationNumber', 'birthDate', 'phone', 'preferences'];
+    const allowedFields = ['firstName', 'lastName', 'email', 'identificationNumber', 'birthDate', 'phone', 'preferences', 'gender'];
     const updates = {};
     for (const field of allowedFields) {
       if (Object.prototype.hasOwnProperty.call(body, field)) updates[field] = body[field];
@@ -82,6 +82,7 @@ exports.updateCustomer = async (req, res) => {
         'any.invalid': 'La fecha de nacimiento debe ser válida y corresponder a una persona mayor de edad.'
       }),
       phone: Joi.string().trim().min(7).max(30),
+      gender: Joi.string().valid('female', 'male', 'non_binary', 'unspecified'),
       preferences: Joi.array().items(Joi.string().trim().min(1).max(100)).max(30)
     }).min(1);
 
