@@ -602,7 +602,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             {loading && (
               <div className="evh-confirmation-processing" role="status">
                 <span className="evh-confirmation-processing-mark" aria-hidden="true">EV</span>
-                <span>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Registrando tu pedido…' : 'Abriendo el checkout de Wompi…'}</span>
+                <span>{isSimulatedPaymentMethod(paymentMethod?.value) ? 'Registrando tu pedido…' : 'Preparando la simulación…'}</span>
               </div>
             )}
 
