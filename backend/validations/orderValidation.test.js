@@ -91,3 +91,10 @@ test('valida fechas de calendario sin conversión a UTC para la edición logíst
   const yesterday = moment.tz('America/Bogota').subtract(1, 'day').format('YYYY-MM-DD');
   assert.ok(deliveryDateSchema.validate(yesterday).error);
 });
+
+test('accepts only non-sensitive payment preferences', () => {
+  for (const paymentPreference of ['Tarjeta', 'PSE', 'Billetera digital', 'Por definir']) {
+    assert.equal(orderSchema.validate({ ...validOrder, paymentMethod: 'Pago pendiente de coordinación', paymentPreference }).error, undefined);
+  }
+  assert.ok(orderSchema.validate({ ...validOrder, paymentPreference: '4111111111111111' }).error);
+});
