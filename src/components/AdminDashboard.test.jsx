@@ -36,8 +36,8 @@ describe('Admin dashboard', () => {
       .mockResolvedValueOnce({ data: [{ quantity: 2 }] });
     render(<AdminDashboard />);
     expect(await screen.findByText('Cliente Demo')).toBeTruthy();
-    expect(screen.getByText(/opciones de pago de esta versión son ilustrativas/i)).toBeTruthy();
-    expect(screen.getByText('Simulado')).toBeTruthy();
+    expect(screen.getByText(/pedidos sin pago confirmado no representan ingresos recibidos/i)).toBeTruthy();
+    expect(screen.getByText('Sin cobro')).toBeTruthy();
     expect(screen.getByText('Aprobado')).toBeTruthy();
     expect(screen.queryByText('APPROVED')).toBeNull();
     expect(axios.get).toHaveBeenCalledTimes(3);
