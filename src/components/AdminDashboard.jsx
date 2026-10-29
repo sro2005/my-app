@@ -92,7 +92,7 @@ const AdminDashboard = () => {
           <span className="evh-admin-session-copy"><small>SESIÓN DE ADMINISTRACIÓN</small><strong>{adminEmail}</strong></span>
           <span className="evh-admin-session-role">Administrador</span>
         </div>
-        <button type="button" onClick={reload} disabled={loading}>Actualizar resumen</button>
+        <button type="button" onClick={reload} disabled={loading}>Actualizar Resumen</button>
       </header>
       {loading && (
         <div className="evh-loading-panel evh-admin-loading" role="status" aria-live="polite">
@@ -141,7 +141,7 @@ const AdminDashboard = () => {
                   </table>
                 </div>
               )}
-              <Link to="/listado-pedidos">Gestionar todos los pedidos</Link>
+              <Link to="/listado-pedidos">Gestionar Todos los Pedidos</Link>
             </section>
             <section className="evh-admin-panel">
               <h2>Accesos de administración</h2>
