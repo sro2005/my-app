@@ -46,7 +46,7 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(err => err.message) });
     }
 
-    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = payload;
+    const { firstName, lastName, email, phone, address, paymentMethod, paymentPreference, deliveryDate, products } = payload;
     const isSimulatedPaymentMethod = ['Demostración', 'Bre-B (simulado)'].includes(paymentMethod);
 
     // Si la petición anterior llegó al servidor pero la respuesta se perdió, devuelve
@@ -108,6 +108,7 @@ exports.createOrder = async (req, res) => {
       const deliveryDateColombia = moment.tz(deliveryDate, 'YYYY-MM-DD', 'America/Bogota').toDate();
       createdOrder = new Order({
         firstName, lastName, email, phone, address, paymentMethod,
+        ...(paymentMethod === 'Pago pendiente de coordinación' && paymentPreference ? { paymentPreference } : {}),
         deliveryDate: deliveryDateColombia,
         totalAmount,
         products,
