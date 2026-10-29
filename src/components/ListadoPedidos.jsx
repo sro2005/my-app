@@ -42,7 +42,7 @@ const formatPaymentMethod = (pedido, isAdmin) => {
 const formatPaymentStatus = (status, isAdmin, pedido) => {
   if (pedido?.paymentMethod === 'Pago pendiente de coordinación') {
     const manualLabels = isAdmin
-      ? { PENDING: 'Pendiente de revisión', APPROVED: 'Verificado manualmente', DECLINED: 'Rechazado en revisión' }
+      ? { PENDING: 'Pendiente de revisión', APPROVED: 'Pago confirmado', DECLINED: 'Pago rechazado' }
       : { PENDING: 'Pendiente de revisión', APPROVED: 'Pago confirmado', DECLINED: 'Pago no aprobado' };
     if (manualLabels[status]) return manualLabels[status];
   }
@@ -71,20 +71,14 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
   const isCoordinatedPayment = pedido.paymentMethod === 'Pago pendiente de coordinación';
   const orderStatus = getOrderDisplayStatus(pedido);
   const orderProducts = Array.isArray(pedido.products) ? pedido.products : [];
-  const [reviewReference, setReviewReference] = useState('');
-  const [reviewNote, setReviewNote] = useState('');
   const [confirmRejectPayment, setConfirmRejectPayment] = useState(false);
   const canReviewPayment = isAdmin && isCoordinatedPayment && pedido.paymentStatus === 'PENDING'
     && !pedido.paymentConfirmed && !pedido.packed && !pedido.delivered
     && ['Pendiente', 'Procesando'].includes(pedido.status);
 
   const submitPaymentReview = async decision => {
-    const saved = await onPaymentReview(pedido._id, decision, reviewReference.trim(), reviewNote.trim());
-    if (saved) {
-      setConfirmRejectPayment(false);
-      setReviewReference('');
-      setReviewNote('');
-    }
+    const saved = await onPaymentReview(pedido._id, decision);
+    if (saved) setConfirmRejectPayment(false);
   };
 
   // Preserve the existing customer-facing order card; the redesign applies only to administrators.
@@ -178,44 +172,21 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
               <div className="evh-payment-review-heading">
                 <span aria-hidden="true">✓</span>
                 <div>
-                  <h3 id={`payment-review-title-${pedido._id}`}>Revisión del pago</h3>
-                  <p>Comprueba la operación en el canal receptor antes de registrar una decisión.</p>
+                  <h3 id={`payment-review-title-${pedido._id}`}>Confirmación del pago</h3>
+                  <p>Comprueba el pago y registra tu decisión desde ElectroVibeHome. Al confirmarlo, el pedido pasará a preparación.</p>
                 </div>
               </div>
-              <label htmlFor={`payment-review-reference-${pedido._id}`}>Referencia de la operación</label>
-              <input
-                id={`payment-review-reference-${pedido._id}`}
-                type="text"
-                autoComplete="off"
-                maxLength={120}
-                value={reviewReference}
-                onChange={event => setReviewReference(event.target.value)}
-                placeholder="Referencia bancaria o del comprobante"
-                disabled={updating}
-              />
-              <small>Para aprobar, la referencia debe coincidir con una operación que hayas verificado fuera de la tienda.</small>
-              <label htmlFor={`payment-review-note-${pedido._id}`}>Observaciones de revisión</label>
-              <textarea
-                id={`payment-review-note-${pedido._id}`}
-                rows={2}
-                minLength={5}
-                maxLength={500}
-                value={reviewNote}
-                onChange={event => setReviewNote(event.target.value)}
-                placeholder="Indica qué comprobaste o el motivo del rechazo"
-                disabled={updating}
-              />
               {!confirmRejectPayment ? (
                 <div className="evh-payment-review-actions">
                   <button type="button" className="is-approve"
-                    disabled={updating || reviewReference.trim().length < 5 || reviewNote.trim().length < 5}
+                    disabled={updating}
                     onClick={() => submitPaymentReview('approve')}>
-                    {updating ? 'Guardando…' : 'Confirmar pago verificado'}
+                    {updating ? 'Guardando…' : 'Confirmar pago'}
                   </button>
                   <button type="button" className="is-reject"
-                    disabled={updating || reviewNote.trim().length < 5}
+                    disabled={updating}
                     onClick={() => setConfirmRejectPayment(true)}>
-                    Rechazar pago
+                    Rechazar pedido
                   </button>
                 </div>
               ) : (
@@ -335,7 +306,7 @@ const ListadoPedidos = () => {
   
   }, [user, retryCount]);  // Recarga cuando cambia el usuario o se solicita un reintento.
 
-  const handlePaymentReview = async (orderId, decision, reference, note) => {
+  const handlePaymentReview = async (orderId, decision) => {
     setStatusMessageOrderId(orderId);
     const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
     const token = localStorage.getItem('authToken');
@@ -351,7 +322,7 @@ const ListadoPedidos = () => {
     try {
       const response = await axios.put(
         `${API_URL}/api/orders/${orderId}/payment-review`,
-        { decision, reference, note },
+        { decision },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const updated = response.data?.order;
