@@ -444,7 +444,6 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
         return res.status(409).json({ message: 'No se puede avanzar un pedido cancelado.' });
       }
 
-      const coordinated = order.paymentMethod === 'Pago pendiente de coordinación' && order.paymentStatus === 'PENDING' && !order.paymentConfirmed;
       if (value.prepare === true) {
         if (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus) || order.status !== 'Pendiente' || order.packed) {
           return res.status(409).json({ message: 'Solo se puede iniciar preparación con un pago aprobado.' });
