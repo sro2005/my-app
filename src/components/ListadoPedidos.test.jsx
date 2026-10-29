@@ -76,10 +76,10 @@ describe('ListadoPedidos', () => {
       }
     });
 
-    renderOrders();
+    const view = renderOrders();
 
     const prepareButton = await screen.findByRole('button', { name: /marcar preparado y enviado/i });
-    expect(screen.getByRole('img', { name: 'Icono de pedido' })).toBeTruthy();
+    expect(view.container.querySelector('svg.evh-order-icon')).toBeTruthy();
     fireEvent.click(prepareButton);
 
     await waitFor(() => {
