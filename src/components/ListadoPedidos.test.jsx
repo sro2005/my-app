@@ -99,7 +99,7 @@ describe('ListadoPedidos', () => {
     const coordinated = order({ paymentMethod: 'Pago pendiente de coordinación', paymentPreference: 'PSE', paymentStatus: 'PENDING', paymentConfirmed: false, status: 'Pendiente' });
     axios.get.mockResolvedValue({ data: [coordinated] });
     const admin = renderOrders();
-    expect(await screen.findByRole('heading', { name: /revisión del pago/i })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /confirmación del pago/i })).toBeTruthy();
     expect(screen.getByText('ElectroVibe Pay')).toBeTruthy();
     expect(screen.getByText('PSE')).toBeTruthy();
     admin.unmount();
@@ -111,7 +111,7 @@ describe('ListadoPedidos', () => {
   });
 
 
-  test('lets an admin approve a manually verified payment with a reference and note', async () => {
+  test('lets an admin confirm payment with one click and advances the order', async () => {
     setApiEnvironment();
     const coordinated = order({
       paymentMethod: 'Pago pendiente de coordinación',
@@ -124,7 +124,7 @@ describe('ListadoPedidos', () => {
     axios.get.mockResolvedValue({ data: [coordinated] });
     axios.put.mockResolvedValue({
       data: {
-        message: 'Pago verificado. El pedido pasó a preparación.',
+        message: 'Pago confirmado. El pedido pasó a preparación.',
         order: {
           ...coordinated,
           status: 'Procesando',
@@ -132,34 +132,25 @@ describe('ListadoPedidos', () => {
           paymentConfirmed: true,
           paymentReviewedAt: '2026-10-29T19:00:00.000Z',
           paymentReviewedBy: 'admin@example.test',
-          manualPaymentReference: 'TRX-20261029-123',
-          paymentReviewNote: 'Abono verificado en cuenta receptora.'
+          paymentReviewNote: 'Pago confirmado por el administrador tras su comprobación.'
         }
       }
     });
 
     renderOrders();
-    expect(await screen.findByRole('heading', { name: /revisión del pago/i })).toBeTruthy();
-    fireEvent.change(screen.getByLabelText(/Referencia de la operación/i), {
-      target: { value: 'TRX-20261029-123' }
-    });
-    fireEvent.change(screen.getByLabelText(/Observaciones de revisión/i), {
-      target: { value: 'Abono verificado en cuenta receptora.' }
-    });
-    fireEvent.click(screen.getByRole('button', { name: /confirmar pago verificado/i }));
+    expect(await screen.findByRole('heading', { name: /confirmación del pago/i })).toBeTruthy();
+    expect(screen.queryByLabelText(/Referencia de la operación/i)).toBeNull();
+    expect(screen.queryByLabelText(/Observaciones de revisión/i)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /^confirmar pago$/i }));
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith(
         'https://api.example.test/api/orders/507f1f77bcf86cd799439011/payment-review',
-        {
-          decision: 'approve',
-          reference: 'TRX-20261029-123',
-          note: 'Abono verificado en cuenta receptora.'
-        },
+        { decision: 'approve' },
         { headers: { Authorization: 'Bearer test-token' } }
       );
     });
-    expect(await screen.findByText('Verificado manualmente')).toBeTruthy();
+    expect(await screen.findByText('Pago confirmado')).toBeTruthy();
     expect(screen.getByText(/admin@example\.test/)).toBeTruthy();
     expect(screen.getByRole('button', { name: /marcar preparado y enviado/i })).toBeTruthy();
   });

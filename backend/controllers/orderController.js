@@ -310,13 +310,13 @@ exports.deleteOrder = async (req, res) => {
 };
 
  
-// La revisión de ElectroVibe Pay la ejecuta un administrador después de comprobar
-// la operación en el canal receptor. Aprobar aquí no inicia ni mueve dinero.
+// La confirmación de ElectroVibe Pay se gestiona dentro de ElectroVibeHome.
+// El administrador comprueba el pago y registra su decisión; no se requieren referencias externas.
 exports.reviewManualPayment = async (req, res) => {
   let session;
   try {
     if (req.user?.role !== 'admin') {
-      return res.status(403).json({ message: 'Solo el administrador puede revisar el pago.' });
+      return res.status(403).json({ message: 'Solo el administrador puede confirmar el pago.' });
     }
 
     const { id } = req.params;
@@ -325,20 +325,12 @@ exports.reviewManualPayment = async (req, res) => {
     }
 
     const reviewSchema = Joi.object({
-      decision: Joi.string().valid('approve', 'reject').required(),
-      reference: Joi.when('decision', {
-        is: 'approve',
-        then: Joi.string().trim().min(5).max(120).required(),
-        otherwise: Joi.string().trim().max(120).allow('').optional()
-      }),
-      note: Joi.string().trim().min(5).max(500).required()
+      decision: Joi.string().valid('approve', 'reject').required()
     }).unknown(false);
     const { error, value } = reviewSchema.validate(req.body || {}, { abortEarly: false });
     if (error) {
       return res.status(400).json({
-        message: value?.decision === 'approve'
-          ? 'Para aprobar, indica una referencia verificable y una nota de revisión.'
-          : 'Indica si apruebas o rechazas la revisión y registra una nota.',
+        message: 'Selecciona si deseas confirmar el pago o rechazar el pedido.',
         errors: error.details.map(item => item.message)
       });
     }
@@ -366,19 +358,19 @@ exports.reviewManualPayment = async (req, res) => {
         return;
       }
 
-      const reviewedAt = new Date();
-      const reviewedBy = String(req.user.email || req.user._id || req.user.id || 'Administrador');
-      order.paymentReviewedAt = reviewedAt;
-      order.paymentReviewedBy = reviewedBy;
-      order.paymentReviewNote = value.note;
-      order.manualPaymentReference = value.reference || undefined;
+      order.paymentReviewedAt = new Date();
+      order.paymentReviewedBy = String(req.user.email || req.user._id || req.user.id || 'Administrador');
+      order.paymentReviewNote = value.decision === 'approve'
+        ? 'Pago confirmado por el administrador tras su comprobación.'
+        : 'Pago rechazado por el administrador.';
+      // No se solicita ni se almacena una referencia externa en este flujo integrado.
 
       if (value.decision === 'approve') {
         order.paymentStatus = 'APPROVED';
         order.paymentConfirmed = true;
         if (order.status === 'Pendiente') order.status = 'Procesando';
       } else {
-        // Rechazar el abono cancela el pedido pendiente y libera las unidades reservadas.
+        // El rechazo cancela el pedido pendiente y libera las unidades reservadas.
         await restoreInventory(order.products, { session });
         order.paymentStatus = 'DECLINED';
         order.paymentConfirmed = false;
@@ -392,7 +384,7 @@ exports.reviewManualPayment = async (req, res) => {
 
     if (outcome === 'not-found') return res.status(404).json({ message: 'Pedido no encontrado.' });
     if (outcome === 'unsupported-method') {
-      return res.status(409).json({ message: 'Este pedido no utiliza la revisión manual de ElectroVibe Pay.' });
+      return res.status(409).json({ message: 'Este pedido no utiliza ElectroVibe Pay.' });
     }
     if (outcome === 'already-reviewed') {
       return res.status(409).json({ message: 'Este pago ya tiene una decisión registrada y no se puede revisar de nuevo.' });
@@ -403,13 +395,13 @@ exports.reviewManualPayment = async (req, res) => {
 
     return res.status(200).json({
       message: value.decision === 'approve'
-        ? 'Pago verificado. El pedido pasó a preparación.'
-        : 'Pago rechazado. El pedido se canceló y el inventario se liberó.',
+        ? 'Pago confirmado. El pedido pasó a preparación.'
+        : 'Pedido rechazado. Se canceló y el inventario se liberó.',
       order: reviewedOrder
     });
   } catch (error) {
-    console.error('Error en la revisión manual del pago:', error.message);
-    return res.status(500).json({ message: 'No fue posible registrar la revisión del pago.' });
+    console.error('Error al confirmar el pago manualmente:', error.message);
+    return res.status(500).json({ message: 'No fue posible registrar la decisión. Vuelve a intentarlo.' });
   } finally {
     if (session) await session.endSession();
   }

@@ -575,7 +575,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>ElectroVibe Pay · pago pendiente</dd>
+                    <dd>ElectroVibe Pay · confirmación pendiente</dd>
                   </div>
                 </dl>
               </section>
@@ -597,10 +597,10 @@ const userId = user?._id;  // Usar userId desde el contexto
                   ))}
                 </ul>
                 <div className="evh-confirmation-total">
-                  <span>Total estimado</span>
+                  <span>Total del pedido</span>
                   <strong>{formatPrice(totalAmount)}</strong>
                 </div>
-                <p className="evh-confirmation-total-note">Importes de referencia. El servidor volverá a validar la disponibilidad antes de registrar el pedido.</p>
+                <p className="evh-confirmation-total-note">El total se confirmará al registrar el pedido, según la disponibilidad de los productos.</p>
               </aside>
             </div>
 

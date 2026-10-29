@@ -122,7 +122,7 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
     expect(confirmation.textContent).toMatch(/estado del pago se actualizará después de la revisión correspondiente/i);
-    expect(confirmation.textContent).toMatch(/ElectroVibe Pay · pago pendiente/i);
+    expect(confirmation.textContent).toMatch(/ElectroVibe Pay · confirmación pendiente/i);
     fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
     await screen.findByText(/pedido registrado/i);

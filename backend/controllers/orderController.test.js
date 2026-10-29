@@ -323,7 +323,7 @@ const makeSession = () => ({
   endSession: async () => {}
 });
 
-test('manual approval requires an operation reference and a review note', async t => {
+test('rejects an invalid payment decision before starting a transaction', async t => {
   const originalStartSession = mongoose.startSession;
   t.after(() => { mongoose.startSession = originalStartSession; });
   let sessionCalls = 0;
@@ -333,14 +333,14 @@ test('manual approval requires an operation reference and a review note', async 
   await reviewManualPayment({
     params: { id: validId },
     user: { role: 'admin', _id: 'admin-id' },
-    body: { decision: 'approve', reference: '', note: 'Checked the transfer' }
+    body: { decision: 'hold' }
   }, response);
 
   assert.equal(response.statusCode, 400);
   assert.equal(sessionCalls, 0);
 });
 
-test('admin can approve a manually verified ElectroVibe Pay payment and audit the decision', async t => {
+test('admin can confirm an ElectroVibe Pay order without an external reference or note', async t => {
   const originalFindById = Order.findById;
   const originalStartSession = mongoose.startSession;
   t.after(() => {
@@ -361,20 +361,16 @@ test('admin can approve a manually verified ElectroVibe Pay payment and audit th
   await reviewManualPayment({
     params: { id: validId },
     user: { role: 'admin', _id: 'admin-id', email: 'admin@example.test' },
-    body: {
-      decision: 'approve',
-      reference: 'TRX-20261029-123',
-      note: 'Abono verificado en cuenta receptora.'
-    }
+    body: { decision: 'approve' }
   }, response);
 
   assert.equal(response.statusCode, 200);
   assert.equal(order.paymentStatus, 'APPROVED');
   assert.equal(order.paymentConfirmed, true);
   assert.equal(order.status, 'Procesando');
-  assert.equal(order.manualPaymentReference, 'TRX-20261029-123');
+  assert.equal(order.manualPaymentReference, undefined);
   assert.equal(order.paymentReviewedBy, 'admin@example.test');
-  assert.equal(order.paymentReviewNote, 'Abono verificado en cuenta receptora.');
+  assert.equal(order.paymentReviewNote, 'Pago confirmado por el administrador tras su comprobación.');
   assert.ok(order.paymentReviewedAt instanceof Date);
   assert.equal(order.saved, true);
 });
@@ -404,14 +400,14 @@ test('admin rejection cancels the order and restores reserved inventory', async 
   await reviewManualPayment({
     params: { id: validId },
     user: { role: 'admin', _id: 'admin-id', email: 'admin@example.test' },
-    body: { decision: 'reject', reference: 'TRX-REJECT-123', note: 'No matching credit found.' }
+    body: { decision: 'reject' }
   }, response);
 
   assert.equal(response.statusCode, 200);
   assert.equal(order.paymentStatus, 'DECLINED');
   assert.equal(order.paymentConfirmed, false);
   assert.equal(order.status, 'Cancelado');
-  assert.equal(order.paymentReviewNote, 'No matching credit found.');
+  assert.equal(order.paymentReviewNote, 'Pago rechazado por el administrador.');
   assert.equal(restored.length, 1);
   assert.equal(restored[0][1].$inc.quantity, 2);
   assert.equal(order.saved, true);
