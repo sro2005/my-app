@@ -430,7 +430,7 @@ const userId = user?._id;  // Usar userId desde el contexto
           <p role="note">{!paymentMethod
             ? 'Elige una opción. Revisarás los detalles antes de confirmar.'
             : isSimulatedPaymentMethod(paymentMethod.value)
-              ? 'Tu pedido quedará registrado y nuestro equipo coordinará contigo la forma de pago antes de procesarlo.'
+              ? 'Tu pedido se registrará con el pago pendiente. En este paso no se solicitan datos financieros ni se realiza ningún cobro.'
               : 'La forma de pago quedará pendiente de coordinación antes de procesar el pedido.'}</p>
         </div>
         <div className="evh-form-field">

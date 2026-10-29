@@ -33,8 +33,9 @@ const getOrderDisplayStatus = pedido => pedido.delivered || pedido.status === 'E
   : pedido.status || 'Sin estado';
 
 const formatPaymentMethod = (pedido, isAdmin) => {
-  if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Sin pago' : 'Pedido sin cobro';
-  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi Sandbox' : 'Wompi';
+  if (pedido.paymentMethod === 'Pago pendiente de coordinación') return 'Pago pendiente de coordinación';
+  if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Registro de prueba (sin pago)' : 'Pedido sin cobro';
+  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Wompi';
   return pedido.paymentMethod || 'No especificado';
 };
 
@@ -42,7 +43,7 @@ const formatPaymentStatus = (status, isAdmin) => {
   const adminLabels = {
     SIMULATED: 'Sin pago',
     APPROVED: 'Aprobado (Sandbox)',
-    PENDING: 'Pendiente (Sandbox)',
+    PENDING: 'Pendiente de pago',
     DECLINED: 'Rechazado (Sandbox)',
     ERROR: 'Error de pago (Sandbox)',
     EXPIRED: 'Checkout vencido · pedido cancelado y stock liberado',
@@ -51,7 +52,7 @@ const formatPaymentStatus = (status, isAdmin) => {
   const customerLabels = {
     SIMULATED: 'Sin cobro',
     APPROVED: 'Resultado recibido · sin cobro real',
-    PENDING: 'Pendiente de verificar · sin cobro',
+    PENDING: 'Pendiente de pago · sin cobro realizado',
     DECLINED: 'No aprobado · sin cobro',
     ERROR: 'No fue posible verificarlo · sin cobro',
     EXPIRED: 'Sesión vencida · pedido cancelado, sin cobro',
@@ -61,6 +62,7 @@ const formatPaymentStatus = (status, isAdmin) => {
 };
 
 const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, statusMessageType }) => {
+  const isCoordinatedPayment = pedido.paymentMethod === 'Pago pendiente de coordinación';
   const orderStatus = getOrderDisplayStatus(pedido);
   const orderProducts = Array.isArray(pedido.products) ? pedido.products : [];
 
@@ -90,7 +92,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido, false)}</p>
             <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, false)}</p>
             <p><strong>Fecha del pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
-            <p><strong>Entrega estimada:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
+            <p><strong>Fecha solicitada de entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
             <p><strong>Productos:</strong>{' '}
               {orderProducts.length > 0 ? orderProducts.map((item, index) => (
                 <span key={item._id || item.productId?._id || index}>
@@ -134,7 +136,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             <p><strong>Teléfono de contacto:</strong><span>{pedido.phone || 'No disponible'}</span></p>
             <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido, true)}</span></p>
             <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true)}</span></p>
-            <p><strong>Entrega estimada:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
+            <p><strong>Fecha solicitada de entrega:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
             <p className="evh-order-admin-products">
               <strong>Productos:</strong>
               <span>
@@ -149,11 +151,17 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
           </div>
 
           {isAdmin && (
-            (pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed) ||
+            (pedido.status === 'Pendiente' && isCoordinatedPayment && !pedido.packed) ||
+            (pedido.status === 'Procesando' && (pedido.paymentConfirmed || isCoordinatedPayment) && !pedido.packed) ||
             (pedido.status === 'Enviado' && pedido.packed && !pedido.delivered)
           ) && (
             <div className="evh-order-actions">
-              {pedido.status === 'Procesando' && pedido.paymentConfirmed && !pedido.packed && (
+              {pedido.status === 'Pendiente' && isCoordinatedPayment && !pedido.packed && (
+                <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'prepare')}>
+                  {updating ? 'Actualizando…' : 'Iniciar preparación'}
+                </button>
+              )}
+              {pedido.status === 'Procesando' && (pedido.paymentConfirmed || isCoordinatedPayment) && !pedido.packed && (
                 <button type="button" disabled={updating} onClick={() => onStatusUpdate(pedido._id, 'packed')}>
                   {updating ? 'Actualizando…' : 'Marcar preparado y enviado'}
                 </button>
@@ -259,7 +267,7 @@ const ListadoPedidos = () => {
     try {
       const response = await axios.put(
         `${API_URL}/api/orders/${orderId}/status`,
-        { [field]: true },
+        field === 'prepare' ? { prepare: true } : { [field]: true },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const updated = response.data?.order;
@@ -324,7 +332,7 @@ const ListadoPedidos = () => {
         <span className="evh-eyebrow">{isAdmin ? 'ADMINISTRACIÓN · PEDIDOS' : 'TU CUENTA ELECTROVIBE'}</span>
         <h1>{isAdmin ? 'Gestión de pedidos' : 'Mis pedidos'}</h1>
         <p>{isAdmin
-          ? 'Consulta los pedidos registrados, verifica su estado y gestiona las etapas de preparación y entrega. Wompi está configurado en modo Sandbox.'
+          ? 'Consulta los pedidos, revisa el estado de pago y gestiona las etapas de preparación y entrega.'
           : 'Consulta los pedidos asociados a tu cuenta, revisa los productos y sigue el estado de cada solicitud.'}</p>
       </header>
 

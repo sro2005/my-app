@@ -69,7 +69,7 @@ La guía está configurada exclusivamente en modo local para evitar cargos de AP
 
 ## Pedidos y pagos
 
-ElectroVibeHome es una demostración. La integración con Wompi existe en el código, pero **su activación está en pausa**: no hay credenciales de Sandbox listas en el entorno revisado, y no se autorizan pagos reales. Mercado Pago se ha considerado como alternativa, pero no está implementado ni validado como nuevo proveedor.
+ElectroVibeHome permite registrar pedidos con la modalidad **Pago pendiente de coordinación**, sin solicitar datos bancarios ni procesar cobros. El pedido se guarda con `paymentStatus: PENDING` y `paymentConfirmed: false`. El cliente lo consulta desde «Mis pedidos» y el administrador puede iniciar preparación y gestionar etapas logísticas sin alterar ni afirmar el estado del pago. Las fechas de entrega son solicitadas, no compromisos de despacho. La integración histórica de Wompi está en el código, pero permanece inactiva; no se autorizan pagos reales. Mercado Pago no está integrado.
 
 No interpretar una redirección del navegador como confirmación de pago. Antes de reactivar cualquier proveedor deben verificarse las credenciales de pruebas, la firma o autenticidad de las notificaciones, los estados de pedidos y la devolución segura de inventario. Las operaciones transaccionales de inventario requieren MongoDB con soporte de transacciones.
 

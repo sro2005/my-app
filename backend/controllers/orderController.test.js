@@ -80,6 +80,33 @@ test('allows an admin to ship a confirmed fictional purchase without a real paym
   assert.equal(order.saved, true);
 });
 
+test('allows coordinated-payment orders to start preparation without marking payment confirmed', async t => {
+  const originalFindById = Order.findById;
+  t.after(() => { Order.findById = originalFindById; });
+  const order = makeOrder({ paymentMethod: 'Pago pendiente de coordinación', paymentConfirmed: false, paymentStatus: 'PENDING', status: 'Pendiente' });
+  Order.findById = async () => order;
+  const response = createResponse();
+  await updateOrderStatusAutomatically({ params: { id: validId }, body: { prepare: true } }, response);
+  assert.equal(response.statusCode, 200);
+  assert.equal(order.status, 'Procesando');
+  assert.equal(order.paymentStatus, 'PENDING');
+  assert.equal(order.paymentConfirmed, false);
+  assert.equal(order.saved, true);
+});
+
+test('allows shipping a coordinated-payment order without falsely approving payment', async t => {
+  const originalFindById = Order.findById;
+  t.after(() => { Order.findById = originalFindById; });
+  const order = makeOrder({ paymentMethod: 'Pago pendiente de coordinación', paymentConfirmed: false, paymentStatus: 'PENDING' });
+  Order.findById = async () => order;
+  const response = createResponse();
+  await updateOrderStatusAutomatically({ params: { id: validId }, body: { packed: true } }, response);
+  assert.equal(response.statusCode, 200);
+  assert.equal(order.status, 'Enviado');
+  assert.equal(order.paymentStatus, 'PENDING');
+  assert.equal(order.paymentConfirmed, false);
+});
+
 test('requires the order to be shipped before marking it delivered', async t => {
   const originalFindById = Order.findById;
   t.after(() => { Order.findById = originalFindById; });

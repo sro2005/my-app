@@ -319,13 +319,14 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     if (Object.keys(body).length > 0) {
       const statusSchema = Joi.object({
+        prepare: Joi.boolean().valid(true),
         packed: Joi.boolean().valid(true),
         delivered: Joi.boolean().valid(true)
-      }).xor('packed', 'delivered').unknown(false);
+      }).xor('prepare', 'packed', 'delivered').unknown(false);
       const { error, value } = statusSchema.validate(body);
       if (error) {
         return res.status(400).json({
-          message: 'Indica si el pedido quedó preparado o entregado.',
+          message: 'Indica si deseas iniciar la preparación, enviar o entregar el pedido.',
           errors: error.details.map(item => item.message)
         });
       }
@@ -334,9 +335,15 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
         return res.status(409).json({ message: 'No se puede avanzar un pedido cancelado.' });
       }
 
-      if (value.packed === true) {
-        if (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus) || order.status !== 'Procesando') {
-          return res.status(409).json({ message: 'Solo se puede preparar un pedido con pago aprobado o simulado y estado Procesando.' });
+      const coordinated = order.paymentMethod === 'Pago pendiente de coordinación' && order.paymentStatus === 'PENDING' && !order.paymentConfirmed;
+      if (value.prepare === true) {
+        if (!coordinated || order.status !== 'Pendiente' || order.packed) {
+          return res.status(409).json({ message: 'Solo se puede iniciar preparación para un pedido pendiente con pago por coordinar.' });
+        }
+        order.status = 'Procesando';
+      } else if (value.packed === true) {
+        if ((!coordinated && (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus))) || order.status !== 'Procesando') {
+          return res.status(409).json({ message: 'El pedido debe estar en preparación con pago confirmado o modalidad de pago por coordinar.' });
         }
         order.packed = true;
         order.status = 'Enviado';

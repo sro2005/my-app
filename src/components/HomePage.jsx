@@ -18,9 +18,9 @@ const HomePage = () => {
             <Link className="evh-button evh-button-primary" to="/catalogo">Descubrir productos <span aria-hidden="true">→</span></Link>
             <Link className="evh-button evh-button-secondary" to="/listado-pedidos">Ver mis pedidos</Link>
           </div>
-          <div className="evh-customer-trust" aria-label="Información del entorno de prueba">
-            <span><b aria-hidden="true">✓</b> Catálogo y pedidos de prueba</span>
-            <span><b aria-hidden="true">✓</b> Sin cobros reales</span>
+          <div className="evh-customer-trust" aria-label="Información del proceso de pedidos">
+            <span><b aria-hidden="true">✓</b> Explora y organiza tus pedidos</span>
+            <span><b aria-hidden="true">✓</b> Seguimiento desde tu cuenta</span>
             <span><b aria-hidden="true">✓</b> Preferencias bajo tu control</span>
           </div>
         </div>
