@@ -36,7 +36,7 @@ const getOrderDisplayStatus = pedido => pedido.delivered || pedido.status === 'E
 const formatPaymentMethod = (pedido, isAdmin) => {
   if (pedido.paymentMethod === 'Pago pendiente de coordinación') return 'ElectroVibe Pay';
   if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Registro de prueba (sin pago)' : 'Pedido sin cobro';
-  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Wompi';
+  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Método histórico';
   return pedido.paymentMethod || 'No especificado';
 };
 
@@ -49,12 +49,12 @@ const formatPaymentStatus = (status, isAdmin, pedido) => {
   }
   const adminLabels = {
     SIMULATED: 'Sin pago',
-    APPROVED: 'Aprobado (Sandbox)',
+    APPROVED: 'Aprobado en prueba (sin cobro real)',
     PENDING: 'Pendiente de pago',
-    DECLINED: 'Rechazado (Sandbox)',
-    ERROR: 'Error de pago (Sandbox)',
-    EXPIRED: 'Checkout vencido · pedido cancelado y stock liberado',
-    VOIDED: 'Anulado (Sandbox)'
+    DECLINED: 'Rechazado en prueba',
+    ERROR: 'Error registrado en prueba',
+    EXPIRED: 'Checkout de prueba vencido · pedido cancelado y stock liberado',
+    VOIDED: 'Anulado en prueba'
   };
   const customerLabels = {
     SIMULATED: 'Sin cobro',
