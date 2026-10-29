@@ -17,6 +17,7 @@ exports.registerSchema = Joi.object({
   email: Joi.string().email().required().messages({ 'string.empty': 'Email is required', 'string.email': 'Invalid email format' }),
   identificationNumber: Joi.when('role', { is: 'user', then: Joi.string().pattern(/^[0-9]{1,3}([.][0-9]{3})*$/).required().messages({ 'string.empty': 'Identification number is required', 'string.pattern.base': 'Identification number format is invalid' }), otherwise: Joi.string().optional() }),
   birthDate: Joi.when('role', { is: 'user', then: birthDateSchema, otherwise: Joi.string().optional() }),
+  gender: Joi.string().valid('female', 'male', 'non_binary', 'unspecified').default('unspecified'),
   password: Joi.string().min(8).max(128).pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\\$%\\^&\\*])')).required().messages({ 'string.empty': 'Password is required', 'string.min': 'Password must be at least 8 characters long', 'string.max': 'Password must be at most 128 characters long', 'string.pattern.base': 'Password must include uppercase, lowercase, number, and special character' }),
   phone: Joi.when('role', { is: 'user', then: Joi.string().required().messages({ 'string.empty': 'Phone number is required' }), otherwise: Joi.string().optional() }),
   preferences: Joi.when('role', { is: 'user', then: Joi.array().items(Joi.string()).messages({ 'array.includes': 'Preferences must be an array of strings' }), otherwise: Joi.array().optional() }),
