@@ -220,7 +220,7 @@
   border-radius: 16px;
   background: linear-gradient(145deg, #f0f6ff, #e1ebf8);
 }
-.evh-orders-page.is-admin .pedido-image img { display: block; width: 44px; height: 44px; object-fit: contain; }
+
 .evh-orders-page.is-admin .pedido-details { min-width: 0; width: 100%; }
 .evh-orders-page.is-admin .evh-order-card-heading {
   display: flex;
@@ -383,8 +383,8 @@
   .evh-orders-page.is-admin .pedido-item { padding: .9rem; border-radius: 16px; }
   .evh-orders-page.is-admin .pedido-info { grid-template-columns: minmax(0, 1fr); gap: .65rem; }
   .evh-orders-page.is-admin .pedido-image { width: 48px; height: 48px; border-radius: 13px; }
-  .evh-orders-page.is-admin .pedido-image img { width: 34px; height: 34px; }
-  .evh-orders-page.is-admin .evh-order-card-heading { gap: .7rem; }
+
+.evh-orders-page.is-admin .evh-order-card-heading { gap: .7rem; }
   .evh-orders-page.is-admin .evh-order-card-state { justify-items: start; text-align: left; }
   .evh-orders-page.is-admin .evh-order-card-state > strong { font-size: 1.05rem; }
   .evh-orders-page.is-admin .evh-order-admin-details > p {
