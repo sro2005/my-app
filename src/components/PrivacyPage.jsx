@@ -11,7 +11,7 @@ const PrivacyPage = () => (
     sections={[
       {
         title: 'Información de tu cuenta',
-        body: 'El formulario solicita nombre, apellidos, correo electrónico, identificación, fecha de nacimiento, celular y preferencias de productos. Estos datos permiten crear tu cuenta, iniciar sesión, mostrar tu perfil y ajustar la exploración del catálogo.'
+        body: 'El formulario solicita nombre, apellidos, correo electrónico, identificación, fecha de nacimiento, celular y preferencias de productos. El género es opcional y solo se utiliza si decides indicarlo: permite adaptar el icono visual de tu perfil. Estos datos permiten crear tu cuenta, iniciar sesión, mostrar tu perfil y ajustar la exploración del catálogo.'
       },
       {
         title: 'Uso del correo y recuperación del acceso',
