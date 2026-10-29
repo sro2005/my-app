@@ -30,7 +30,7 @@ exports.createOrder = async (req, res) => {
   let idempotencyKey = '';
   try {
     if (req.user?.role !== 'user') {
-      return res.status(403).json({ message: 'Solo las cuentas de cliente pueden crear pedidos de demostración.' });
+      return res.status(403).json({ message: 'Solo las cuentas de cliente pueden crear pedidos.' });
     }
     userId = req.user._id;
     const rawIdempotencyKey = req.get?.('Idempotency-Key');

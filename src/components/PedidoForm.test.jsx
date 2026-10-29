@@ -92,7 +92,7 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByRole('status').textContent).toMatch(/no pudimos cargar las recomendaciones/i);
   });
 
-  test('completes the simulated Bre-B flow without an external payment provider', async () => {
+  test('registers an order with coordinated payment without an external payment provider', async () => {
     axios.get.mockResolvedValueOnce({
       data: [{
         _id: 'p-demo',
@@ -112,17 +112,17 @@ describe('PedidoForm catalog loading', () => {
     await screen.findByRole('option', { name: 'p-demo' });
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-demo' } });
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
-    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Bre-B (simulado)' } });
+    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Pago pendiente de coordinación' } });
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
-    fireEvent.change(screen.getByLabelText('Fecha de referencia (solo simulación)'), { target: { value: '2099-01-01' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Continuar con pago simulado' }));
+    fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar con el pedido' }));
     const confirmation = await screen.findByRole('dialog', { name: /confirma tu pedido/i });
     expect(screen.getByText('Antes de confirmar')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
-    expect(confirmation.textContent).toMatch(/no se envía dinero/i);
-    expect(confirmation.textContent).toMatch(/bre-b/i);
-    fireEvent.click(screen.getByRole('button', { name: /confirmar simulación/i }));
+    expect(confirmation.textContent).toMatch(/no se realizará ningún cobro/i);
+    expect(confirmation.textContent).toMatch(/pago pendiente de coordinación/i);
+    fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
     await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
@@ -152,11 +152,11 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByText('Monitor Demo')).toBeTruthy();
     expect(screen.getByText(/290\.000/)).toBeTruthy();
 
-    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Bre-B (simulado)' } });
+    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Pago pendiente de coordinación' } });
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
-    fireEvent.change(screen.getByLabelText('Fecha de referencia (solo simulación)'), { target: { value: '2099-01-01' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Continuar con pago simulado' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'Confirmar simulación' }));
+    fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar con el pedido' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido' }));
 
     await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
@@ -179,7 +179,7 @@ describe('PedidoForm catalog loading', () => {
 
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();
-    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Bre-B (simulado)' } });
+    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Pago pendiente de coordinación' } });
     expect(screen.getByRole('button', { name: 'Añade productos para continuar' }).disabled).toBe(true);
   });
 
