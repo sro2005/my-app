@@ -100,11 +100,11 @@ describe('ListadoPedidos', () => {
     axios.get.mockResolvedValue({ data: [coordinated] });
     const admin = renderOrders();
     expect(await screen.findByRole('button', { name: /iniciar preparación/i })).toBeTruthy();
-    expect(screen.getByText('Pago pendiente de coordinación')).toBeTruthy();
+    expect(screen.getByText('ElectroVibe Pay')).toBeTruthy();
     expect(screen.getByText('PSE')).toBeTruthy();
     admin.unmount();
     renderOrders({ _id: 'customer-1', role: 'user' });
-    expect(await screen.findByText('Pago pendiente de coordinación')).toBeTruthy();
+    expect(await screen.findByText('ElectroVibe Pay')).toBeTruthy();
     expect(screen.getByText('PSE')).toBeTruthy();
     expect(screen.getByText(/pendiente de pago · sin cobro realizado/i)).toBeTruthy();
     expect(screen.queryByRole('button', { name: /iniciar preparación/i })).toBeNull();
