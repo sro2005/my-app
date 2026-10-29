@@ -156,7 +156,7 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha de referencia (solo simulación)'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar con pago simulado' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Confirmar simulación' }));
 
     await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
