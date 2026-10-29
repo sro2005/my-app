@@ -19,7 +19,7 @@ const PrivacyPage = () => (
       },
       {
         title: 'Información de pedidos',
-        body: 'Al registrar un pedido se guardan los datos de contacto y entrega, los productos y cantidades, el importe mostrado, la fecha y el estado. Actualmente, registrar un pedido no genera un cobro ni coordina una entrega. La opción de Wompi no procesa cargos ni transferencias reales.'
+        body: 'Al registrar un pedido se guardan los datos de contacto y entrega, los productos y cantidades, el importe mostrado, la fecha y el estado. Actualmente, registrar un pedido no genera un cobro ni coordina una entrega. La aplicación no procesa cargos ni transferencias reales.'
       },
       {
         title: 'Sesión y seguridad',
