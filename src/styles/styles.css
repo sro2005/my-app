@@ -6818,12 +6818,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-orders-page.is-admin .evh-payment-review-audit p{margin:.3rem 0 0;color:#3e5f50;font-size:.78rem;line-height:1.5;overflow-wrap:anywhere}
 @media(max-width:560px){.evh-orders-page.is-admin .evh-payment-review{padding:.8rem}.evh-orders-page.is-admin .evh-payment-review-actions{flex-direction:column}.evh-orders-page.is-admin .evh-payment-review-actions button{width:100%}}
 
-/* Mis pedidos: keep order-status labels as text, without a pill/container behind them. */
-.evh-orders-page.is-customer .evh-order-status {
-  padding: 0;
-  border: 0;
-  border-radius: 0;
+/* Mis pedidos: remove the white outer card without changing the status pills. */
+.evh-orders-page.is-customer .pedido-item,
+.evh-orders-page.is-customer .pedido-item:hover {
   background: transparent;
+  border-color: transparent;
+  border-radius: 0;
   box-shadow: none;
+  transform: none;
 }
 
