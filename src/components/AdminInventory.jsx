@@ -140,7 +140,7 @@ const AdminInventory = () => {
         </div>
       )}
       {error && <p role="alert" className="evh-admin-inventory-error">{error}</p>}
-      {!loading && error && <button type="button" disabled={busy} onClick={refresh}>Reintentar carga de inventario</button>}
+      {!loading && error && <button type="button" disabled={busy} onClick={refresh}>Reintentar Carga de Inventario</button>}
       {message && !active && <p role="status" className="evh-admin-inventory-success">{message}</p>}
       {!loading && !error && products.length === 0 && <p>No hay productos registrados.</p>}
       {!loading && products.length > 0 && <div className="evh-admin-inventory-list">
@@ -185,12 +185,12 @@ const AdminInventory = () => {
               </section>
             )}
             {pendingDelete?._id === product._id && (
-              <section className="evh-admin-editor evh-admin-delete-inline" role="alertdialog" aria-label="Confirmar eliminación" aria-describedby="inventory-delete-description">
+              <section className="evh-admin-editor evh-admin-delete-inline" role="alertdialog" aria-label="Confirmar Eliminación" aria-describedby="inventory-delete-description">
                 <h2>¿Eliminar este producto?</h2>
                 <p id="inventory-delete-description">¿Eliminar «{pendingDelete.name}»? No se eliminarán productos que ya estén asociados a pedidos. Esta acción actualiza el inventario.</p>
                 <div className="evh-admin-product-actions">
-                  <button type="button" disabled={busy} onClick={remove}>Confirmar eliminación</button>
-                  <button type="button" disabled={busy} onClick={() => setPendingDelete(null)}>Conservar producto</button>
+                  <button type="button" disabled={busy} onClick={remove}>Confirmar Eliminación</button>
+                  <button type="button" disabled={busy} onClick={() => setPendingDelete(null)}>Conservar Producto</button>
                 </div>
               </section>
             )}
