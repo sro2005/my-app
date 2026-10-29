@@ -57,8 +57,8 @@ const HomePage = () => {
           <article className="evh-customer-journey-card">
             <span className="evh-customer-journey-icon" aria-hidden="true">▤</span>
             <span className="evh-customer-step">03 · TU PEDIDO</span>
-            <h3>Revisa antes de confirmar</h3>
-            <p>Agrega productos, ajusta las cantidades y revisa los datos de entrega y el total.</p>
+            <h3>ElectroVibe Pay</h3>
+            <p>Elige tus productos y finaliza tu pedido con nuestra experiencia integrada.</p>
             <Link to="/pedido-form">Preparar mi pedido <span aria-hidden="true">→</span></Link>
           </article>
         </div>
