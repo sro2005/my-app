@@ -6818,13 +6818,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-orders-page.is-admin .evh-payment-review-audit p{margin:.3rem 0 0;color:#3e5f50;font-size:.78rem;line-height:1.5;overflow-wrap:anywhere}
 @media(max-width:560px){.evh-orders-page.is-admin .evh-payment-review{padding:.8rem}.evh-orders-page.is-admin .evh-payment-review-actions{flex-direction:column}.evh-orders-page.is-admin .evh-payment-review-actions button{width:100%}}
 
-/* Mis pedidos: remove the white outer card without changing the status pills. */
-.evh-orders-page.is-customer .pedido-item,
-.evh-orders-page.is-customer .pedido-item:hover {
-  background: transparent;
-  border-color: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  transform: none;
+/* Mis pedidos: mirror the admin wrapper cleanup, keeping each order and status tag styled. */
+.evh-orders-page.is-customer {
+  width: min(calc(100% - 2rem), 1220px) !important;
+  max-width: 1220px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
 
