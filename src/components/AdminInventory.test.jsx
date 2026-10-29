@@ -50,13 +50,13 @@ describe('AdminInventory', () => {
     axios.delete.mockResolvedValue({ data: { message: 'Eliminado' } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Eliminar' }));
-    const dialog = screen.getByRole('alertdialog', { name: 'Confirmar eliminación' });
+    const dialog = screen.getByRole('alertdialog', { name: 'Confirmar Eliminación' });
     expect(dialog.previousElementSibling.classList.contains('evh-admin-product')).toBe(true);
     expect(axios.delete).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Conservar producto' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Conservar Producto' }));
     expect(axios.delete).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole('button', { name: 'Eliminar' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmar eliminación' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar Eliminación' }));
     expect(await screen.findByRole('status')).toBeTruthy();
     expect(axios.delete).toHaveBeenCalledWith('https://api.example.test/api/products/p1',
       { headers: { Authorization: 'Bearer demo-admin' } });
@@ -65,7 +65,7 @@ describe('AdminInventory', () => {
     axios.delete.mockRejectedValue({ response: { status: 409, data: { message: 'Producto asociado a pedidos existentes.' } } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Eliminar' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Confirmar eliminación' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar Eliminación' }));
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.getByText('Producto asociado a pedidos existentes.')).toBeTruthy();
   });
