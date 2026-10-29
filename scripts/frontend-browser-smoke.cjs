@@ -476,7 +476,7 @@ async function main() {
     await captureAuthenticatedRoute('/home-page', /Tu tienda, bajo control/i, 'admin-dashboard', '.evh-admin-stat');
     assert.equal(await page.locator('.evh-admin-session-role').innerText(), 'Administrador');
     assert.equal(await page.locator('.evh-admin-session-copy strong').innerText(), adminUser.email);
-    await page.getByRole('button', { name: 'Actualizar resumen' }).click();
+    await page.getByRole('button', { name: 'Actualizar Resumen' }).click();
     await page.locator('.evh-admin-stat').first().waitFor({ timeout: 15000 });
     assert.ok(mockApiCalls.filter(call => /\/api\/orders\/all$/.test(call)).length >= 2,
       'The admin dashboard reload button should refresh the operational summary.');
@@ -487,7 +487,7 @@ async function main() {
     await page.locator('#inventory-search').fill('');
     await page.getByRole('button', { name: 'Editar' }).first().click();
     await page.getByLabel('Existencias', { exact: true }).fill('4');
-    await page.getByRole('button', { name: 'Guardar cambios' }).click();
+    await page.getByRole('button', { name: 'Guardar Cambios' }).click();
     await page.getByRole('status').filter({ hasText: /Producto actualizado|cambios ya están guardados/i }).waitFor({ timeout: 15000 });
     assert.ok(mockApiWrites.some(call => /^PUT \/api\/products\//.test(call)),
       'Editing inventory should issue only a mocked product update.');
@@ -567,7 +567,7 @@ async function main() {
     assert.equal(await page.getByRole('button', { name: /Marcar preparado y enviado/i }).count(), 0,
       'Customer views must not expose admin shipping actions.');
     await captureAuthenticatedRoute('/perfil-cliente', /Mi perfil/i, 'customer-profile', '.evh-profile-card');
-    await page.getByRole('button', { name: 'Editar perfil' }).click();
+    await page.getByRole('button', { name: 'Editar Perfil' }).click();
     await page.getByRole('heading', { name: 'Editar tus datos' }).waitFor();
     await page.getByRole('button', { name: 'Cancelar' }).click();
     await captureAuthenticatedRoute('/seguridad', /Cambia tu contraseña/i, 'customer-security');
