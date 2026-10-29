@@ -150,7 +150,10 @@ const AdminInventory = () => {
               <div>
                 <span className="evh-admin-product-category">{product.category} {product.demo && '· DEMO'}</span>
                 <h2>{product.name}</h2>
-                <p>{money(product.price)} · {product.quantity} unidades disponibles</p>
+                <div className="evh-admin-product-meta">
+                  <span className="evh-admin-product-price">{money(product.price)}</span>
+                  <span className="evh-admin-product-stock">{product.quantity} unidades disponibles</span>
+                </div>
               </div>
               <div className="evh-admin-product-actions">
                 <button type="button" disabled={busy} aria-expanded={active?._id === product._id} onClick={() => beginEdit(product)}>Editar</button>
@@ -169,11 +172,11 @@ const AdminInventory = () => {
                     ['name', 'Nombre', 'text'], ['category', 'Categoría', 'text'],
                     ['price', 'Precio (COP)', 'number'], ['quantity', 'Existencias', 'number'],
                     ['imageUrl', 'URL de imagen (opcional)', 'text']
-                  ].map(([field, label, type]) => <label key={field}>{label}
+                  ].map(([field, label, type]) => <label key={field} className={`evh-admin-field evh-admin-field-${field.toLowerCase()}`}>{label}
                     <input value={draft[field]} type={type} required={field !== 'imageUrl'} min={type === 'number' ? (field === 'price' ? '0.01' : '0') : undefined} step={type === 'number' ? (field === 'price' ? '0.01' : '1') : undefined}
                       onChange={event => setDraft(current => ({ ...current, [field]: event.target.value }))} />
                   </label>)}
-                  <label>Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}/></label>
+                  <label className="evh-admin-field evh-admin-field-description">Descripción<textarea value={draft.description} maxLength={2000} required onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}/></label>
                   <div className="evh-admin-product-actions">
                     <button type="submit" disabled={busy}>Guardar cambios</button>
                     <button type="button" disabled={busy} onClick={() => { setActive(null); setDraft(null); }}>Cancelar</button>
