@@ -229,7 +229,7 @@ const ListadoProductos = () => {
       <section className="evh-catalog-heading">
         <div>
           <span className="evh-eyebrow">{user?.role === 'admin' ? 'ESPACIO DE INVENTARIO' : 'DESCUBRE ALGO PARA TU HOGAR'}</span>
-          <h1>{user?.role === 'admin' ? 'Catálogo e inventario' : 'Encuentra tu próximo favorito'}</h1>
+          <h1>{user?.role === 'admin' ? 'Catálogo e Inventario' : 'Encuentra tu próximo favorito'}</h1>
           <p>Explora tecnología y electrodomésticos por categoría, busca algo específico o descubre opciones según tus preferencias.</p>
         </div>
         <div className="evh-catalog-count" aria-live="polite">
@@ -279,7 +279,7 @@ const ListadoProductos = () => {
             aria-pressed={showPreferencesOnly}
             onClick={() => setShowPreferencesOnly((value) => !value)}
           >
-            {showPreferencesOnly ? '✓ Solo mis preferencias' : 'Filtrar por mis preferencias'}
+            {showPreferencesOnly ? '✓ Solo Mis Preferencias' : 'Filtrar por Mis Preferencias'}
           </button>
         )}
         {(hasActiveFilters || sortBy !== 'featured') && (
