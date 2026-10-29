@@ -540,7 +540,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                 <strong>Antes de confirmar</strong>
                 <p>{isSimulatedPaymentMethod(paymentMethod?.value)
                   ? 'Al confirmar, registraremos tu pedido. La forma de pago quedará pendiente de coordinación y no se realizará ningún cobro en este paso.'
-                  : 'Esta experiencia es una simulación local: no se conecta con bancos, no solicita datos financieros y no realiza cobros.'}</p>
+                  : 'La forma de pago quedará pendiente de coordinación antes de procesar el pedido.'}</p>
               </div>
             </div>
 
