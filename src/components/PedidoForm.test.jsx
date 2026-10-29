@@ -131,7 +131,7 @@ describe('PedidoForm catalog loading', () => {
     expect(axios.post.mock.calls[0][1].products).toEqual([{ productId: 'p-demo', quantity: 1 }]);
     expect(axios.post.mock.calls[0][1].paymentMethod).toBe('Pago pendiente de coordinación');
     expect(axios.post.mock.calls[0][1].paymentPreference).toBeUndefined();
-    expect(screen.getByRole('link', { name: 'Ver mis pedidos' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Ver Mis Pedidos' })).toBeTruthy();
   });
   test('builds one fictional order with multiple products and quantities', async () => {
     axios.get.mockResolvedValueOnce({ data: [
