@@ -77,7 +77,7 @@ const LoginCliente = () => {
       />
       </div>
       <div className="evh-form-options"><Link to="/recover-password">¿Olvidaste tu contraseña?</Link></div>
-      <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Ingresando…' : 'Ingresar a mi cuenta'}</button>
+      <button className="evh-form-submit" type="submit" disabled={loading}>{loading ? 'Ingresando…' : 'Ingresar a Mi Cuenta'}</button>
       {!loading && message && (
         <p className={`evh-form-feedback is-${messageKind}`} role={messageKind === 'error' ? 'alert' : 'status'}>
           {message}
