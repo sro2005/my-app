@@ -92,7 +92,7 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByRole('status').textContent).toMatch(/no pudimos cargar las recomendaciones/i);
   });
 
-  test('registers an order with coordinated payment without an external payment provider', async () => {
+  test('registers an order for manual payment review without an external payment provider', async () => {
     axios.get.mockResolvedValueOnce({
       data: [{
         _id: 'p-demo',
@@ -121,7 +121,7 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByText('Confirmación del pedido')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
-    expect(confirmation.textContent).toMatch(/no se realizará ningún cobro/i);
+    expect(confirmation.textContent).toMatch(/estado del pago se actualizará después de la revisión correspondiente/i);
     expect(confirmation.textContent).toMatch(/ElectroVibe Pay · pago pendiente/i);
     fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
