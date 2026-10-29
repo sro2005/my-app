@@ -112,7 +112,7 @@ describe('PedidoForm catalog loading', () => {
     await screen.findByRole('option', { name: 'p-demo' });
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-demo' } });
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
-    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Pago pendiente de coordinación' } });
+    fireEvent.click(screen.getByRole('radio', { name: /Tarjeta/i }));
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar con el pedido' }));
@@ -121,13 +121,15 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
     expect(confirmation.textContent).toMatch(/no se realizará ningún cobro/i);
-    expect(confirmation.textContent).toMatch(/pago pendiente de coordinación/i);
+    expect(confirmation.textContent).toMatch(/Tarjeta · pago pendiente/i);
     fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
     await screen.findByText(/pedido registrado/i);
     expect(axios.post).toHaveBeenCalledTimes(1);
     expect(axios.post.mock.calls[0][0]).toBe('https://api.example.test/api/orders/realizar');
     expect(axios.post.mock.calls[0][1].products).toEqual([{ productId: 'p-demo', quantity: 1 }]);
+    expect(axios.post.mock.calls[0][1].paymentMethod).toBe('Pago pendiente de coordinación');
+    expect(axios.post.mock.calls[0][1].paymentPreference).toBe('Tarjeta');
     expect(screen.getByRole('link', { name: 'Ver mis pedidos' })).toBeTruthy();
   });
   test('builds one fictional order with multiple products and quantities', async () => {
@@ -152,7 +154,7 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByText('Monitor Demo')).toBeTruthy();
     expect(screen.getByText(/290\.000/)).toBeTruthy();
 
-    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Pago pendiente de coordinación' } });
+    fireEvent.click(screen.getByRole('radio', { name: /Tarjeta/i }));
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar con el pedido' }));
@@ -179,7 +181,7 @@ describe('PedidoForm catalog loading', () => {
 
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();
-    fireEvent.change(screen.getByLabelText('checkout-payment'), { target: { value: 'Pago pendiente de coordinación' } });
+    fireEvent.click(screen.getByRole('radio', { name: /Tarjeta/i }));
     expect(screen.getByRole('button', { name: 'Añade productos para continuar' }).disabled).toBe(true);
   });
 
