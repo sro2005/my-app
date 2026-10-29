@@ -99,7 +99,7 @@ describe('ListadoPedidos', () => {
     const coordinated = order({ paymentMethod: 'Pago pendiente de coordinación', paymentPreference: 'PSE', paymentStatus: 'PENDING', paymentConfirmed: false, status: 'Pendiente' });
     axios.get.mockResolvedValue({ data: [coordinated] });
     const admin = renderOrders();
-    expect(await screen.findByRole('heading', { name: /revisión del pago/i })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /confirmación del pago/i })).toBeTruthy();
     expect(screen.getByText('ElectroVibe Pay')).toBeTruthy();
     expect(screen.getByText('PSE')).toBeTruthy();
     admin.unmount();
