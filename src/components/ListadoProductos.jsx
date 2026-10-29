@@ -17,9 +17,9 @@ const categoryIcons = {
   'consolas de videojuegos': '🎮',
   estufas: '🔥',
   impresoras: '🖨️',
-  lavadoras: '🫧',
+  lavadoras: '🧺',
   licuadoras: '🥤',
-  microondas: '🍲',
+  microondas: '♨️',
   'planchas de ropa': '👔',
   refrigeradores: '🧊',
   sandwicheras: '🥪',
@@ -37,6 +37,31 @@ const normalize = (value) => String(value || '')
   .toLowerCase();
 
 const getCategoryIcon = (category) => categoryIcons[normalize(category)] || '⚡';
+const categoryDrawings = {
+  lavadoras: <><rect x="15" y="7" width="50" height="66" rx="7"/><path d="M15 26h50"/><circle cx="40" cy="49" r="17"/><path d="M28 49c8-10 14 9 24-2"/><circle cx="25" cy="17" r="2" fill="#E97816" stroke="none"/><circle cx="35" cy="17" r="2"/></>,
+  microondas: <><rect x="8" y="19" width="64" height="44" rx="7"/><rect x="16" y="27" width="42" height="28" rx="3"/><path d="M64 30v10m0 7v4M24 14v-4m12 4v-4"/></>,
+  licuadoras: <><path d="M24 12h32l-5 37H29L24 12ZM29 49h22v9H29zM22 65h36v8H22z"/><path d="M30 23c8-4 12 9 21 1M31 58h18"/></>,
+  batidoras: <><path d="M19 26q8-12 24-10l16 10-8 14H29zM38 40v9M49 39v10M26 52q14 15 28 0M20 52q4 23 20 23t20-23"/></>,
+  'aires acondicionados': <><rect x="9" y="20" width="62" height="28" rx="7"/><path d="M17 40h46M29 53v15m22-15v15m-26-5 4 5 4-5m14 0 4 5 4-5"/></>,
+  refrigeradores: <><rect x="24" y="6" width="32" height="68" rx="5"/><path d="M24 39h32M49 19v11m0 18v12"/></>,
+  aspiradoras: <><path d="M21 61h35a8 8 0 1 0-8-8v8M26 61V29a13 13 0 0 1 26 0v17M20 65h41"/><circle cx="35" cy="32" r="6"/></>,
+  estufas: <><rect x="13" y="21" width="54" height="49" rx="5"/><path d="M13 42h54"/><circle cx="29" cy="32" r="7"/><circle cx="51" cy="32" r="7"/><path d="M24 54h32M24 61h32"/></>,
+  cafeteras: <><path d="M20 19h37v42H20zM57 29h7q9 0 4 14l-11 8M17 69h45M28 12h20"/><path d="M30 40h17M30 49h17"/></>,
+  tostadoras: <><rect x="18" y="30" width="45" height="38" rx="10"/><path d="M28 30V18h25v12M27 48h27M67 43v16M18 61h45"/></>,
+  sandwicheras: <><path d="M17 46l10-23h28l10 23-8 18H25zM17 46h48M30 53h20"/></>,
+  ventiladores: <><circle cx="40" cy="37" r="7"/><circle cx="40" cy="37" r="29"/><path d="M40 30c-5-17 7-20 10-12l-3 14M47 39c17-6 21 7 12 11l-16-7M38 44c-4 17-18 15-17 6l13-13M40 66v9M25 75h30"/></>,
+  'planchas de ropa': <><path d="M12 57q17-22 44-24l11 22v10H12zM29 34V22h22v11M12 65h55"/></>,
+  'secadores de cabello': <><path d="M17 28h35l13 12-13 12H17zM31 52l-5 22h17l4-22M9 35h8m-8 12h8"/></>,
+  impresoras: <><rect x="20" y="9" width="40" height="23" rx="3"/><rect x="12" y="28" width="56" height="31" rx="5"/><path d="M20 50h40v23H20zM55 39h5"/></>
+};
+const CategoryArtwork = ({ category }) => {
+  const key = normalize(category);
+  if (categoryDrawings[key]) {
+    return <svg className="evh-appliance-icon" viewBox="0 0 80 80" fill="none" aria-hidden="true" focusable="false" stroke="#294F7D" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">{categoryDrawings[key]}</svg>;
+  }
+  return <span aria-hidden="true">{getCategoryIcon(category)}</span>;
+};
+
 const getProductKey = (product) => product._id || product.id || product.name;
 const isPlaceholderImage = (url) => typeof url === 'string' && url.includes('placehold.co');
 const formatPrice = (price) => new Intl.NumberFormat('es-CO', {
@@ -62,16 +87,7 @@ const ProductCard = ({ product, demoMode, canOrder = false }) => {
           />
         ) : (
           <div className="evh-product-art" role="img" aria-label={'Ilustración de ' + (product.category || 'producto')}>
-            {normalize(product.category) === 'lavadoras' ? (
-              <svg className="evh-washer-category-icon" viewBox="0 0 80 86" fill="none" aria-hidden="true" focusable="false">
-                <rect x="13" y="6" width="54" height="73" rx="8" fill="#EAF4FF" stroke="#294F7D" strokeWidth="4"/>
-                <path d="M15 25H65" stroke="#294F7D" strokeWidth="3"/>
-                <circle cx="23" cy="16" r="3.5" fill="#E97816"/><circle cx="35" cy="16" r="3" fill="#6EA6D9"/>
-                <circle cx="40" cy="51" r="19" fill="#A8D8F6" stroke="#294F7D" strokeWidth="4"/>
-                <path d="M27 52C31 43 38 58 48 47C52 44 55 44 58 46" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round"/>
-              </svg>
-            ) : <span aria-hidden="true">{getCategoryIcon(product.category)}</span>}
-            <small>{product.category || 'Tecnología para el hogar'}</small>
+            <CategoryArtwork category={product.category} />
           </div>
         )}
       </div>
@@ -242,7 +258,7 @@ const ListadoProductos = () => {
         </div>
         <div className="evh-catalog-count" aria-live="polite">
           <strong>{filteredProducts.length}</strong>
-          <span>{filteredProducts.length === 1 ? 'producto visible' : 'productos visibles'}</span>
+          <span>{filteredProducts.length === 1 ? 'Producto Visible' : 'Productos Visibles'}</span>
         </div>
       </section>
 
