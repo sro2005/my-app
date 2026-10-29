@@ -139,6 +139,7 @@ describe('ListadoPedidos', () => {
     });
 
     renderOrders();
+    expect(await screen.findByRole('heading', { name: /revisión del pago/i })).toBeTruthy();
     fireEvent.change(screen.getByLabelText(/Referencia de la operación/i), {
       target: { value: 'TRX-20261029-123' }
     });
@@ -159,7 +160,7 @@ describe('ListadoPedidos', () => {
       );
     });
     expect(await screen.findByText('Verificado manualmente')).toBeTruthy();
-    expect(screen.getByText('admin@example.test')).toBeTruthy();
+    expect(screen.getByText(/admin@example\.test/)).toBeTruthy();
     expect(screen.getByRole('button', { name: /marcar preparado y enviado/i })).toBeTruthy();
   });
 
