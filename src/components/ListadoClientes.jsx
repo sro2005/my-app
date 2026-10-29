@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
-import moment from 'moment-timezone';
+import { formatBogotaDateTime } from '../utils/dateFormatting';
 import GenderAvatar from './GenderAvatar';
 
 const normalizeSearchValue = value => String(value ?? '')
@@ -31,12 +31,12 @@ const formatDateTime = (dateString) => {
   return `${date.toLocaleDateString('es-CO', dateOptions)} · ${date.toLocaleTimeString('es-CO', timeOptions)}`;
 };
 
-// Función para formatear la fecha en formato 12 horas con AM/PM
-const formatOrderDate = (dateString) => {
-  if (!dateString) return 'Fecha no disponible';
-  const parsed = moment(dateString);
-  return parsed.isValid() ? parsed.tz('America/Bogota').format('DD/MM/YYYY - HH:mm:ss') : 'Fecha no disponible';
-};
+// Los pedidos se muestran con la hora local de Bogotá.
+const formatOrderDate = (dateString) => formatBogotaDateTime(dateString, {
+  fallback: 'Fecha no disponible',
+  includeSeconds: true,
+  separator: ' - '
+});
 
 const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
   style: 'currency', currency: 'COP', maximumFractionDigits: 0
