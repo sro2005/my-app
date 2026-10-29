@@ -617,11 +617,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                 onClick={handleConfirm}
                 disabled={loading}
               >
-                {loading
-                  ? 'Procesando…'
-                  : isSimulatedPaymentMethod(paymentMethod?.value)
-                    ? 'Confirmar simulación'
-                    : 'Confirmar simulación'}
+                {loading ? 'Procesando…' : 'Confirmar simulación'}
               </button>
             </footer>
           </section>
