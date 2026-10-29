@@ -33,7 +33,7 @@ const getOrderDisplayStatus = pedido => pedido.delivered || pedido.status === 'E
   : pedido.status || 'Sin estado';
 
 const formatPaymentMethod = (pedido, isAdmin) => {
-  if (pedido.paymentMethod === 'Pago pendiente de coordinación') return pedido.paymentPreference ? 'ElectroVibe Pay' : 'ElectroVibe Pay';
+  if (pedido.paymentMethod === 'Pago pendiente de coordinación') return 'ElectroVibe Pay';
   if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Registro de prueba (sin pago)' : 'Pedido sin cobro';
   if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Wompi';
   return pedido.paymentMethod || 'No especificado';
