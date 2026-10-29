@@ -87,6 +87,7 @@ const RegistroCliente = () => {
   const [birthDate, setBirthDate] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
+  const [gender, setGender] = useState('unspecified');
   const [preferences, setPreferences] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -131,6 +132,7 @@ const RegistroCliente = () => {
       birthDate,
       password,
       phone,
+      gender,
       preferences: preferences.map(pref => pref.value)
     })
     .then(() => {
@@ -206,6 +208,15 @@ const RegistroCliente = () => {
             <span aria-hidden="true">+57</span>
             <input id="register-phone" type="tel" autoComplete="tel-national" inputMode="numeric" placeholder="302 000 0000" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required />
           </div>
+        </div>
+        <div className="evh-form-field">
+          <label htmlFor="register-gender">Género (opcional)</label>
+          <select id="register-gender" name="gender" value={gender} onChange={(e) => setGender(e.target.value)}>
+            <option value="unspecified">Prefiero no decirlo</option>
+            <option value="female">Femenino</option>
+            <option value="male">Masculino</option>
+            <option value="non_binary">No binario</option>
+          </select>
         </div>
         <div className="evh-form-field">
           <label htmlFor="register-password">Contraseña</label>
