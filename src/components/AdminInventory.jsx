@@ -119,7 +119,7 @@ const AdminInventory = () => {
     <main className="evh-admin">
       <header className="evh-admin-hero">
         <span className="evh-admin-eyebrow">ADMINISTRACIÓN · INVENTARIO</span>
-        <h1>Gestiona Cada Producto</h1>
+        <h1>Gestiona cada producto</h1>
         <p>Consulta existencias, actualiza precios y administra las fichas de producto. El historial de pedidos se conserva.</p>
         <Link className="evh-admin-hero-link" to="/producto-form">Agregar</Link>
       </header>

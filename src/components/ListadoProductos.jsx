@@ -17,7 +17,7 @@ const categoryIcons = {
   'consolas de videojuegos': '🎮',
   estufas: '🔥',
   impresoras: '🖨️',
-  lavadoras: '🧺',
+  lavadoras: '🫧',
   licuadoras: '🥤',
   microondas: '🍲',
   'planchas de ropa': '👔',
@@ -62,7 +62,15 @@ const ProductCard = ({ product, demoMode, canOrder = false }) => {
           />
         ) : (
           <div className="evh-product-art" role="img" aria-label={'Ilustración de ' + (product.category || 'producto')}>
-            <span aria-hidden="true">{getCategoryIcon(product.category)}</span>
+            {normalize(product.category) === 'lavadoras' ? (
+              <svg className="evh-washer-category-icon" viewBox="0 0 80 86" fill="none" aria-hidden="true" focusable="false">
+                <rect x="13" y="6" width="54" height="73" rx="8" fill="#EAF4FF" stroke="#294F7D" strokeWidth="4"/>
+                <path d="M15 25H65" stroke="#294F7D" strokeWidth="3"/>
+                <circle cx="23" cy="16" r="3.5" fill="#E97816"/><circle cx="35" cy="16" r="3" fill="#6EA6D9"/>
+                <circle cx="40" cy="51" r="19" fill="#A8D8F6" stroke="#294F7D" strokeWidth="4"/>
+                <path d="M27 52C31 43 38 58 48 47C52 44 55 44 58 46" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round"/>
+              </svg>
+            ) : <span aria-hidden="true">{getCategoryIcon(product.category)}</span>}
             <small>{product.category || 'Tecnología para el hogar'}</small>
           </div>
         )}
