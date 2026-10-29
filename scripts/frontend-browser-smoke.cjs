@@ -542,9 +542,9 @@ async function main() {
     await page.getByRole('option', { name: /Cafetera Boreal 12 tazas/i }).click();
     await page.getByRole('button', { name: 'Agregar al pedido' }).click();
     await page.getByText('Cafetera Boreal 12 tazas').first().waitFor();
-    await page.getByText('Tarjeta', { exact: true }).click();
-    assert.equal(await page.getByRole('radio', { name: /Tarjeta/i }).isChecked(), true,
-      'Payment preference selection should be reflected in the checkout.');
+    await page.getByRole('heading', { name: 'ElectroVibe Pay' }).waitFor();
+    assert.equal(await page.getByRole('radio', { name: /Tarjeta/i }).count(), 0,
+      'ElectroVibe Pay should not ask the customer to choose unconnected banking methods.');
     await page.getByLabel('Dirección de entrega').fill('Calle 10 # 20-30, Bogotá');
     const requestedDeliveryDate = new Date();
     requestedDeliveryDate.setDate(requestedDeliveryDate.getDate() + 7);
@@ -554,7 +554,7 @@ async function main() {
       String(requestedDeliveryDate.getDate()).padStart(2, '0')
     ].join('-');
     await page.locator('#deliveryDate').fill(requestedDeliveryDateValue);
-    await page.getByRole('button', { name: 'Continuar con el pedido' }).click();
+    await page.getByRole('button', { name: 'Continuar con ElectroVibe Pay' }).click();
     await page.getByRole('dialog', { name: /Confirma tu pedido/i }).waitFor({ timeout: 15000 });
     await page.setViewportSize({ width: 390, height: 844 });
     await assertNoOverflow('Order confirmation dialog at mobile');

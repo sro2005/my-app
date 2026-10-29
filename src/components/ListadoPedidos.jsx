@@ -33,7 +33,7 @@ const getOrderDisplayStatus = pedido => pedido.delivered || pedido.status === 'E
   : pedido.status || 'Sin estado';
 
 const formatPaymentMethod = (pedido, isAdmin) => {
-  if (pedido.paymentMethod === 'Pago pendiente de coordinación') return 'Pago pendiente de coordinación';
+  if (pedido.paymentMethod === 'Pago pendiente de coordinación') return 'ElectroVibe Pay';
   if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Registro de prueba (sin pago)' : 'Pedido sin cobro';
   if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Wompi';
   return pedido.paymentMethod || 'No especificado';
@@ -90,7 +90,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             <p><strong>Dirección de entrega:</strong> {pedido.address || 'No disponible'}</p>
             <p><strong>Teléfono de contacto:</strong> {pedido.phone || 'No disponible'}</p>
             <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido, false)}</p>
-            {pedido.paymentPreference && <p><strong>Preferencia de pago:</strong> {pedido.paymentPreference}</p>}
+            {pedido.paymentPreference && <p><strong>Detalle del método:</strong> {pedido.paymentPreference}</p>}
             <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, false)}</p>
             <p><strong>Fecha del pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
             <p><strong>Fecha solicitada de entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
@@ -136,7 +136,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, statusMessage, 
             <p><strong>Dirección de entrega:</strong><span>{pedido.address || 'No disponible'}</span></p>
             <p><strong>Teléfono de contacto:</strong><span>{pedido.phone || 'No disponible'}</span></p>
             <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido, true)}</span></p>
-            {pedido.paymentPreference && <p><strong>Preferencia de pago:</strong><span>{pedido.paymentPreference}</span></p>}
+            {pedido.paymentPreference && <p><strong>Detalle del método:</strong><span>{pedido.paymentPreference}</span></p>}
             <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true)}</span></p>
             <p><strong>Fecha solicitada de entrega:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
             <p className="evh-order-admin-products">

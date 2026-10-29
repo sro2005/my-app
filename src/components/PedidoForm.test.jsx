@@ -112,16 +112,17 @@ describe('PedidoForm catalog loading', () => {
     await screen.findByRole('option', { name: 'p-demo' });
     fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-demo' } });
     fireEvent.click(screen.getByRole('button', { name: 'Agregar al pedido' }));
-    fireEvent.click(screen.getByRole('radio', { name: /Tarjeta/i }));
+    expect(screen.getByText('ElectroVibe Pay')).toBeTruthy();
+    expect(screen.queryByRole('radio', { name: /Tarjeta/i })).toBeNull();
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Continuar con el pedido' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar con ElectroVibe Pay' }));
     const confirmation = await screen.findByRole('dialog', { name: /confirma tu pedido/i });
-    expect(screen.getByText('Antes de confirmar')).toBeTruthy();
+    expect(screen.getByText('Confirmación del pedido')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
     expect(confirmation.textContent).toMatch(/no se realizará ningún cobro/i);
-    expect(confirmation.textContent).toMatch(/Tarjeta · pago pendiente/i);
+    expect(confirmation.textContent).toMatch(/ElectroVibe Pay · pago pendiente/i);
     fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
     await screen.findByText(/pedido registrado/i);
@@ -129,7 +130,7 @@ describe('PedidoForm catalog loading', () => {
     expect(axios.post.mock.calls[0][0]).toBe('https://api.example.test/api/orders/realizar');
     expect(axios.post.mock.calls[0][1].products).toEqual([{ productId: 'p-demo', quantity: 1 }]);
     expect(axios.post.mock.calls[0][1].paymentMethod).toBe('Pago pendiente de coordinación');
-    expect(axios.post.mock.calls[0][1].paymentPreference).toBe('Tarjeta');
+    expect(axios.post.mock.calls[0][1].paymentPreference).toBeUndefined();
     expect(screen.getByRole('link', { name: 'Ver mis pedidos' })).toBeTruthy();
   });
   test('builds one fictional order with multiple products and quantities', async () => {
@@ -154,10 +155,11 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByText('Monitor Demo')).toBeTruthy();
     expect(screen.getByText(/290\.000/)).toBeTruthy();
 
-    fireEvent.click(screen.getByRole('radio', { name: /Tarjeta/i }));
+    expect(screen.getByText('ElectroVibe Pay')).toBeTruthy();
+    expect(screen.queryByRole('radio', { name: /Tarjeta/i })).toBeNull();
     fireEvent.change(screen.getByLabelText('Dirección de entrega'), { target: { value: 'Calle 10 # 20-30, Bogotá' } });
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Continuar con el pedido' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar con ElectroVibe Pay' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Confirmar pedido' }));
 
     await screen.findByText(/pedido registrado/i);
@@ -181,7 +183,8 @@ describe('PedidoForm catalog loading', () => {
 
     expect(await screen.findByRole('alert')).toBeTruthy();
     expect(screen.queryByText('Producto Limitado', { selector: 'strong' })).toBeNull();
-    fireEvent.click(screen.getByRole('radio', { name: /Tarjeta/i }));
+    expect(screen.getByText('ElectroVibe Pay')).toBeTruthy();
+    expect(screen.queryByRole('radio', { name: /Tarjeta/i })).toBeNull();
     expect(screen.getByRole('button', { name: 'Añade productos para continuar' }).disabled).toBe(true);
   });
 

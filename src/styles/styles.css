@@ -6761,3 +6761,27 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 /* Override legacy form input dimensions for visually hidden, accessible payment radios. */
 .evh-checkout-form .evh-payment-choice input[type="radio"]{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;max-width:1px!important;margin:0!important;padding:0!important;opacity:0!important;border:0!important;pointer-events:none}
 .evh-checkout-form .evh-payment-choice{position:relative}
+
+/* ElectroVibe Pay: native, mobile-first order experience */
+.evh-pay-section{display:block!important;min-width:0;width:100%;padding:0!important;border:1px solid #c8d9f5!important;border-radius:20px!important;overflow:hidden;background:linear-gradient(140deg,#f7fbff 0%,#f1f6ff 65%,#e9f1ff 100%);box-shadow:0 14px 38px rgba(24,66,130,.07)}
+.evh-pay-section-head{display:flex;align-items:center;gap:.85rem;padding:1.25rem 1.25rem .9rem}
+.evh-pay-brand-mark{display:grid;place-items:center;flex:none;width:3.05rem;height:3.05rem;border-radius:15px;background:linear-gradient(140deg,#073781,#2878ee);color:white;font-size:1.65rem;box-shadow:0 7px 20px rgba(29,88,184,.18)}
+.evh-pay-section-head>div:nth-child(2){flex:1;min-width:0}
+.evh-pay-eyebrow{display:block;color:#3566a9;font-size:.64rem;font-weight:800;letter-spacing:.12em}
+.evh-pay-section-head h3{color:#092f6c;margin:.2rem 0 .1rem;font-size:1.25rem;font-weight:850}
+.evh-pay-section-head p{margin:0;font-size:.76rem;color:#526b8c}
+.evh-pay-tag{display:inline-flex;align-items:center;border:1px solid #b9d2f5;color:#174c9c;background:white;border-radius:99px;padding:.35rem .6rem;font-size:.7rem;font-weight:700}
+.evh-pay-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;padding:.65rem 1.15rem 1rem}
+.evh-pay-track span{display:flex;align-items:center;gap:.45rem;min-width:0;font-size:.71rem;color:#59718f;font-weight:650;white-space:nowrap}
+.evh-pay-track b{display:grid;place-items:center;flex:0 0 1.55rem;width:1.55rem;height:1.55rem;border-radius:50%;background:#dce8f8;color:#37639c;font-size:.75rem}
+.evh-pay-track .is-complete b{background:#d9efe8;color:#168263}
+.evh-pay-track .is-active{color:#124a9d}
+.evh-pay-track .is-active b{background:#155cc3;color:white}
+.evh-pay-info{display:flex;gap:1rem;justify-content:space-between;align-items:center;border-top:1px solid #d4e3f7;background:rgba(255,255,255,.74);padding:1.05rem 1.25rem}
+.evh-pay-info>div{display:flex;flex-direction:column;gap:.25rem}
+.evh-pay-info strong{color:#0c2b5c;font-size:.92rem}
+.evh-pay-info span{color:#4f6889;font-size:.79rem;line-height:1.5}
+.evh-pay-symbol{font-size:1.65rem!important;color:#246ed1!important;font-weight:750}
+.evh-pay-terms{border-top:1px solid #e5edf8;padding:.8rem 1.25rem .95rem;margin:0;color:#435d7c;font-size:.78rem;line-height:1.55;background:rgba(255,255,255,.52)}
+.evh-pay-terms strong{color:#143967}
+@media(max-width:610px){.evh-pay-section-head{flex-wrap:wrap;padding:1rem}.evh-pay-tag{margin-left:auto}.evh-pay-track{padding:.7rem .8rem}.evh-pay-track span{flex-direction:column;align-items:center;text-align:center;white-space:normal;font-size:.63rem}.evh-pay-info{padding:.95rem 1rem}.evh-pay-terms{padding:.8rem 1rem}}
