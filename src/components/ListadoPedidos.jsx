@@ -158,7 +158,6 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
             <p><strong>Teléfono de contacto:</strong><span>{pedido.phone || 'No disponible'}</span></p>
             <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido, true)}</span></p>
             {pedido.paymentPreference && <p><strong>Detalle del método:</strong><span>{pedido.paymentPreference}</span></p>}
-}
             <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true, pedido)}</span></p>
             <p><strong>Fecha solicitada de entrega:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
             <p className="evh-order-admin-products">
