@@ -33,7 +33,14 @@ const requestedProductId = searchParams.get('productId');
 const userId = user?._id;  // Usar userId desde el contexto 
   
   const [address, setAddress] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState(null); // Cambiado a objeto para React-Select
+  const paymentMethod = { value: "Pago pendiente de coordinación" };
+  const [paymentPreference, setPaymentPreference] = useState("");
+  const preferences = [
+    { value: "Tarjeta", icon: "▣", title: "Tarjeta", description: "Crédito o débito" },
+    { value: "PSE", icon: "⇄", title: "PSE", description: "Desde tu banco" },
+    { value: "Billetera digital", icon: "◈", title: "Billetera digital", description: "Desde tu celular" },
+    { value: "Por definir", icon: "◎", title: "Decidir después", description: "Sin elegir todavía" }
+  ];
   const isSimulatedPaymentMethod = value => ['Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación'].includes(value);
   const [deliveryDate, setDeliveryDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -246,10 +253,6 @@ const userId = user?._id;  // Usar userId desde el contexto
     setFormError('');
   };
 
-  // Maneja el cambio en el método de pago
-  const handlePaymentMethodChange = (selectedOption) => {
-    setPaymentMethod(selectedOption);
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();   
@@ -266,7 +269,7 @@ const userId = user?._id;  // Usar userId desde el contexto
     // Usamos el userId directamente aquí, ya que ya lo obtuvimos arriba
 
     // Validación antes de enviar el pedido
-    if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentMethod || !deliveryDate || cartItems.length === 0 || totalAmount <= 0) {
+    if (!customerData.firstName || !customerData.lastName || !customerData.email || !customerData.phone || !address || !paymentPreference || !deliveryDate || cartItems.length === 0 || totalAmount <= 0) {
      setFormError('Revisa los datos del pedido y selecciona un producto disponible.');
      return;
     }
@@ -279,6 +282,7 @@ const userId = user?._id;  // Usar userId desde el contexto
       phone: customerData.phone,
       address,
       paymentMethod: paymentMethod.value,
+      paymentPreference,
       deliveryDate,
       products: cartItems.map(item => ({ productId: item.value, quantity: item.quantity })),
       totalAmount,
@@ -323,7 +327,7 @@ const userId = user?._id;  // Usar userId desde el contexto
         setSelectedProduct(null);
         setSelectedQuantity('1');
         setCartItems([]);
-        setPaymentMethod(null);
+        // Mantener la preferencia para mostrarla en la confirmación de registro.
         setAddress('');
         setDeliveryDate('');
         setOrder(null);
@@ -404,10 +408,6 @@ const userId = user?._id;  // Usar userId desde el contexto
     setShowConfirmModal(false);
   };
 
-  const paymentMethods = [
-    { value: 'Pago pendiente de coordinación', label: 'Pago pendiente de coordinación' },
-  ];
-
   return (
     <FormPage eyebrow="FINALIZA TU PEDIDO" title="Revisa tu pedido" description="Confirma tus datos, organiza los productos y revisa el total antes de continuar." className="evh-checkout-page">
       <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
@@ -424,15 +424,22 @@ const userId = user?._id;  // Usar userId desde el contexto
           <label htmlFor="checkout-address">Dirección de entrega</label>
           <input id="checkout-address" type="text" autoComplete="street-address" placeholder="Calle, número, barrio y ciudad" value={address} onChange={(e) => setAddress(e.target.value)} required />
         </div>
-        <div className="payment-method-container evh-form-field">
-          <label htmlFor="checkout-payment">Método de pago</label>
-          <Select inputId="checkout-payment" placeholder="Selecciona una opción" options={paymentMethods} onChange={handlePaymentMethodChange} value={paymentMethod} isClearable classNamePrefix="evh-select" />
-          <p role="note">{!paymentMethod
-            ? 'Elige una opción. Revisarás los detalles antes de confirmar.'
-            : isSimulatedPaymentMethod(paymentMethod.value)
-              ? 'Tu pedido se registrará con el pago pendiente. En este paso no se solicitan datos financieros ni se realiza ningún cobro.'
-              : 'La forma de pago quedará pendiente de coordinación antes de procesar el pedido.'}</p>
-        </div>
+        <fieldset className="evh-payment-choices evh-form-field evh-form-field-wide">
+          <legend>¿Cómo preferirías pagar?</legend>
+          <p className="evh-payment-intro">Elige la opción que te resulte más cómoda. Esta elección es orientativa: <strong>no se realizará ningún cobro ni conexión con bancos</strong> al confirmar tu pedido.</p>
+          <div className="evh-payment-grid">
+            {preferences.map(option => (
+              <label key={option.value} className={`evh-payment-choice ${paymentPreference === option.value ? 'is-selected' : ''}`}>
+                <input type="radio" name="paymentPreference" value={option.value}
+                  checked={paymentPreference === option.value} onChange={() => setPaymentPreference(option.value)} required />
+                <span className="evh-payment-choice-icon" aria-hidden="true">{option.icon}</span>
+                <span className="evh-payment-choice-copy"><strong>{option.title}</strong><small>{option.description}</small></span>
+                <span className="evh-payment-choice-check" aria-hidden="true">✓</span>
+              </label>
+            ))}
+          </div>
+          <p className="evh-payment-disclaimer">El pedido se registrará con estado de pago pendiente. No introduzcas números de tarjeta, contraseñas ni claves bancarias.</p>
+        </fieldset>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
@@ -482,12 +489,12 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentMethod || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentMethod ? 'Selecciona cómo continuar' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con el pedido'}</button>
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || !paymentPreference || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{!paymentPreference ? 'Selecciona tu preferencia de pago' : cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con el pedido'}</button>
         {completedDemoOrderId && (
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
             <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>Tu pedido quedó registrado correctamente. La forma de pago está pendiente de coordinación y no se ha realizado ningún cobro.</p>
+            <p>Tu pedido quedó registrado correctamente. Preferencia de pago: <strong>{preferences.find(option => option.value === order?.paymentPreference)?.title || paymentPreference || 'Por definir'}</strong>. No se ha realizado ningún cobro.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver mis pedidos</Link></p>
             <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Hacer otro pedido</button>
           </div>
@@ -570,7 +577,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>Pago pendiente de coordinación</dd>
+                    <dd>{paymentPreference} · pago pendiente</dd>
                   </div>
                 </dl>
               </section>
