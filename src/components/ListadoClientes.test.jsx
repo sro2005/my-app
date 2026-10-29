@@ -13,6 +13,7 @@ const client = {
   role: 'user',
   firstName: 'Demo',
   lastName: 'Buyer',
+  gender: 'female',
   email: 'buyer@example.test',
   phone: '+57 300 123 4567',
   identificationNumber: '1.234.567',
@@ -51,6 +52,7 @@ describe('Admin customer history', () => {
   test('shows an expandable order history with payment status and product details', async () => {
     renderClients();
     const summary = await screen.findByText('Ver historial de pedidos (1)');
+    expect(screen.getByRole('img', { name: /icono de perfil: femenino/i })).toBeTruthy();
     expect(screen.getByText('Demo Buyer (1 pedido)')).toBeTruthy();
     fireEvent.click(summary);
     expect(await screen.findByText(/Sin pago/)).toBeTruthy();
