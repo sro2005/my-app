@@ -136,7 +136,7 @@ const RegistroCliente = () => {
       preferences: preferences.map(pref => pref.value)
     })
     .then(() => {
-      setSuccessMessage('¡Registro exitoso! Redirigiendo...');
+      setSuccessMessage('¡Cuenta creada correctamente! Te llevaremos a iniciar sesión.');
       setTimeout(() => {
         navigate('/login');
       }, 3000);
@@ -228,11 +228,11 @@ const RegistroCliente = () => {
           <Select inputId="preferences" isMulti options={optionsWithDefault.filter(option => option.value)} value={preferences} onChange={setPreferences} placeholder="Elige una o varias categorías" className="select-preferences" classNamePrefix="evh-select" menuPortalTarget={document.body} menuPosition="fixed" styles={preferenceSelectStyles} />
         </div>
       </div>
-      <button className="evh-form-submit" type="submit" disabled={loading}>
-        {loading ? 'Creando tu cuenta…' : 'Crear Mi Cuenta'}
+      <button className="evh-form-submit" type="submit" disabled={loading || Boolean(successMessage)}>
+        {successMessage ? '✓ Cuenta creada' : loading ? 'Creando tu cuenta…' : 'Crear Mi Cuenta'}
       </button>
       {error && <div className="evh-form-feedback is-error" role="alert">{error}</div>}
-      {successMessage && <div className="evh-form-feedback is-success" role="status">{successMessage}</div>}
+      {successMessage && <div className="evh-form-feedback is-success evh-registration-success" role="status">{successMessage}</div>}
     </form>
     <p className="evh-form-alternate">¿Ya tienes una cuenta? <Link to="/login">Inicia sesión</Link></p>
     </FormPage>
