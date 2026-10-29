@@ -76,6 +76,7 @@ test('updateCustomer normalizes allowed fields and ignores privileged fields', a
       firstName: '  Demo Person  ',
       email: 'DEMO@EXAMPLE.COM',
       preferences: ['Televisores'],
+      gender: 'female',
       role: 'admin',
       password: 'MustNotBeSaved1!'
     }
@@ -86,7 +87,8 @@ test('updateCustomer normalizes allowed fields and ignores privileged fields', a
   assert.deepEqual(received[1].$set, {
     firstName: 'Demo Person',
     email: 'demo@example.com',
-    preferences: ['Televisores']
+    preferences: ['Televisores'],
+    gender: 'female'
   });
   assert.deepEqual(received[2], { new: true, runValidators: true, context: 'query' });
   assert.equal(response.body.updatedCustomer.email, 'demo@example.com');
