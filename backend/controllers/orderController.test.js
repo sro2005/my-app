@@ -253,8 +253,7 @@ test('createOrder returns 500 for uncertain transaction failures so the client c
   assert.match(response.body.message, /Reintenta la misma solicitud/i);
 });
 
-test('createOrder recovers the winner when a concurrent idempotent insert reports duplicate key', async t => {
-  configureSandbox(t);
+test('createOrder recovers the winner when a concurrent idempotent insert reports duplicate key', async () => {
   const originalFindOne = Order.findOne;
   const originalStartSession = mongoose.startSession;
   t.after(() => {
