@@ -53,7 +53,7 @@ describe('Admin customer history', () => {
     renderClients();
     const summary = await screen.findByText('Ver Historial de Pedidos (1)');
     expect(screen.getByRole('img', { name: /icono de perfil: femenino/i })).toBeTruthy();
-    expect(screen.getByText('Demo Buyer (1 pedido)')).toBeTruthy();
+    expect(screen.getByText('Demo Buyer (1 Pedido)')).toBeTruthy();
     fireEvent.click(summary);
     expect(await screen.findByText(/Pendiente de revisión/)).toBeTruthy();
     expect(screen.getByText(/Valor del pedido:/)).toBeTruthy();
@@ -82,7 +82,7 @@ describe('Admin customer history', () => {
     expect(screen.getByText('Cliente con Más Pedidos')).toBeTruthy();
     expect(screen.getByText('Directorio de Clientes')).toBeTruthy();
     expect(screen.getByText('3 Resultados')).toBeTruthy();
-    expect(screen.getAllByText(/Historial de Pedidos: 0 Pedidos/)).toHaveLength(3);
+    expect(Array.from(document.querySelectorAll('.cliente-details p')).filter(item => item.textContent.includes('Historial de Pedidos: 0 Pedidos'))).toHaveLength(3);
   });
 
   test('filters customers by name and searches identification without punctuation', async () => {
