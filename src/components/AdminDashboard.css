@@ -1,21 +1,20 @@
-.evh-admin{
+.evh-admin {
   width: min(100%, 1250px);
   box-sizing: border-box;
   margin: 0 auto;
   padding: clamp(1rem, 3vw, 2.5rem);
   color: var(--evh-ink, #1c2b40);
 }
-.evh-admin-hero{
+.evh-admin-hero {
   padding: clamp(1.25rem, 3vw, 2.5rem);
   border-radius: 24px;
   background: linear-gradient(120deg, var(--evh-ink-strong, #14243a), var(--evh-blue, var(--evh-blue)));
   color: #fff;
 }
-.evh-admin-eyebrow{ color: #ffd5a9; font-size: .73rem; font-weight: 800; letter-spacing: .12em; }
-.evh-admin-hero h1{ margin: .6rem 0; color: #fff; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -.04em; line-height: 1.12; }
-.evh-admin-hero p{ max-width: 680px; color: #e0e9f5; font-size: .94rem; line-height: 1.65; }
-.evh-admin-hero button,
-.evh-admin-hero-link{
+.evh-admin-eyebrow { color: #ffd5a9; font-size: .73rem; font-weight: 800; letter-spacing: .12em; }
+.evh-admin-hero h1 { margin: .6rem 0; color: #fff; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -.04em; line-height: 1.12; }
+.evh-admin-hero p { max-width: 680px; color: #e0e9f5; font-size: .94rem; line-height: 1.65; }
+.evh-admin-hero button, .evh-admin-hero-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -32,10 +31,9 @@
   text-decoration: none;
   cursor: pointer;
 }
-.evh-admin-hero button:hover:not(:disabled),
-.evh-admin-hero-link:hover{ background: var(--evh-accent-hover, #d96f12); color: #fff; transform: translateY(-1px); }
-.evh-admin-hero button:disabled{ cursor: wait; opacity: .6; }
-.evh-admin-session{
+.evh-admin-hero button:hover:not(:disabled), .evh-admin-hero-link:hover { background: var(--evh-accent-hover, #d96f12); color: #fff; transform: translateY(-1px); }
+.evh-admin-hero button:disabled { cursor: wait; opacity: .6; }
+.evh-admin-session {
   display: inline-flex;
   max-width: 100%;
   align-items: center;
@@ -46,14 +44,13 @@
   border-radius: 13px;
   background: rgba(255,255,255,.08);
 }
-.evh-admin-session-mark{ display: grid; width: 28px; height: 28px; place-items: center; flex: 0 0 28px; border-radius: 9px; background: #d5f4e1; color: #176b45; font-size: .85rem; font-weight: 900; }
-.evh-admin-session-copy{ display: grid; min-width: 0; gap: .12rem; }
-.evh-admin-session-copy small{ color: #ffd5a9; font-size: .62rem; font-weight: 800; letter-spacing: .1em; }
-.evh-admin-session-copy strong{ color: #fff; font-size: .82rem; overflow-wrap: anywhere; }
-.evh-admin-session-role{ margin-left: .4rem; padding: .3rem .5rem; border-radius: 999px; background: rgba(242,140,40,.17); color: #ffd5a9; font-size: .62rem; font-weight: 900; letter-spacing: .08em; }
-.evh-admin-stats{ display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
-.evh-admin-stat,
-.evh-admin-panel{
+.evh-admin-session-mark { display: grid; width: 28px; height: 28px; place-items: center; flex: 0 0 28px; border-radius: 9px; background: #d5f4e1; color: #176b45; font-size: .85rem; font-weight: 900; }
+.evh-admin-session-copy { display: grid; min-width: 0; gap: .12rem; }
+.evh-admin-session-copy small { color: #ffd5a9; font-size: .62rem; font-weight: 800; letter-spacing: .1em; }
+.evh-admin-session-copy strong { color: #fff; font-size: .82rem; overflow-wrap: anywhere; }
+.evh-admin-session-role { margin-left: .4rem; padding: .3rem .5rem; border-radius: 999px; background: rgba(242,140,40,.17); color: #ffd5a9; font-size: .62rem; font-weight: 900; letter-spacing: .08em; }
+.evh-admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.evh-admin-stat, .evh-admin-panel {
   min-width: 0;
   padding: 1.2rem;
   border: 1px solid var(--evh-border, #e0e6ed);
@@ -62,59 +59,54 @@
   color: var(--evh-ink, #1c2b40);
   box-shadow: 0 8px 24px rgba(20,36,58,.04);
 }
-.evh-admin-stat span{ display: block; color: var(--evh-muted, #617084); font-size: .83rem; line-height: 1.4; }
-.evh-admin-stat strong{ display: block; margin-top: .65rem; color: var(--evh-ink-strong, #14243a); font-size: clamp(1.25rem, 2.5vw, 1.85rem); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
-.evh-admin-grid{ display: grid; grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 1rem; }
-.evh-admin-panel h2{ margin: 0 0 1rem; color: var(--evh-ink-strong, #14243a); font-size: 1.05rem; }
-.evh-admin-table-scroll{ overflow-x: auto; }
-.evh-admin table{ width: 100%; border-collapse: collapse; text-align: left; }
-.evh-admin th,
-.evh-admin td{ padding: .8rem .6rem; border-bottom: 1px solid var(--evh-border, #e0e6ed); font-size: .83rem; vertical-align: top; }
-.evh-admin th{ color: var(--evh-muted, #617084); font-weight: 750; white-space: nowrap; }
-.evh-admin td small{ display: block; margin-top: .2rem; color: var(--evh-muted, #617084); overflow-wrap: anywhere; }
-.evh-admin-panel a{ display: inline-block; margin-top: .8rem; color: var(--evh-blue, var(--evh-blue)); font-size: .85rem; font-weight: 800; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.evh-admin-panel a:hover{ color: var(--evh-accent-ink, #84430c); }
-.evh-admin-actions{ display: flex; flex-direction: column; align-items: stretch; gap: .55rem; }
-.evh-admin-actions a{ display: block; margin: 0; padding: .75rem .85rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 11px; background: #fff; text-decoration: none; }
-.evh-admin-actions a:hover{ border-color: #f1c18f; background: var(--evh-accent-soft, #fff3e5); }
-.evh-admin-panel > p{ color: var(--evh-muted, #617084); font-size: .8rem; line-height: 1.55; }
+.evh-admin-stat span { display: block; color: var(--evh-muted, #617084); font-size: .83rem; line-height: 1.4; }
+.evh-admin-stat strong { display: block; margin-top: .65rem; color: var(--evh-ink-strong, #14243a); font-size: clamp(1.25rem, 2.5vw, 1.85rem); overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.evh-admin-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(250px, 1fr); gap: 1rem; }
+.evh-admin-panel h2 { margin: 0 0 1rem; color: var(--evh-ink-strong, #14243a); font-size: 1.05rem; }
+.evh-admin-table-scroll { overflow-x: auto; }
+.evh-admin table { width: 100%; border-collapse: collapse; text-align: left; }
+.evh-admin th, .evh-admin td { padding: .8rem .6rem; border-bottom: 1px solid var(--evh-border, #e0e6ed); font-size: .83rem; vertical-align: top; }
+.evh-admin th { color: var(--evh-muted, #617084); font-weight: 750; white-space: nowrap; }
+.evh-admin td small { display: block; margin-top: .2rem; color: var(--evh-muted, #617084); overflow-wrap: anywhere; }
+.evh-admin-panel a { display: inline-block; margin-top: .8rem; color: var(--evh-blue, var(--evh-blue)); font-size: .85rem; font-weight: 800; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.evh-admin-panel a:hover { color: var(--evh-accent-ink, #84430c); }
+.evh-admin-actions { display: flex; flex-direction: column; align-items: stretch; gap: .55rem; }
+.evh-admin-actions a { display: block; margin: 0; padding: .75rem .85rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 11px; background: #fff; text-decoration: none; }
+.evh-admin-actions a:hover { border-color: #f1c18f; background: var(--evh-accent-soft, #fff3e5); }
+.evh-admin-panel > p { color: var(--evh-muted, #617084); font-size: .8rem; line-height: 1.55; }
 
-@media (max-width: 760px){
-  .evh-admin-grid{ grid-template-columns: 1fr; }
-  .evh-admin-stats{ grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
-  .evh-admin-session{ align-items: flex-start; }
-  .evh-admin-session-role{ display: none; }
+@media (max-width: 760px) {
+  .evh-admin-grid { grid-template-columns: 1fr; }
+  .evh-admin-stats { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
+  .evh-admin-session { align-items: flex-start; }
+  .evh-admin-session-role { display: none; }
 }
 
 /* Shared administration layout: consistent button placement and form hierarchy. */
-.evh-admin-hero{ position: relative; }
-.evh-admin-hero button,
-.evh-admin-hero-link{ width: fit-content; max-width: 100%; }
+.evh-admin-hero { position: relative; }
+.evh-admin-hero button, .evh-admin-hero-link { width: fit-content; max-width: 100%; }
 
-.evh-admin button:focus-visible,
-.evh-admin a:focus-visible,
-.evh-admin input:focus-visible,
-.evh-admin textarea:focus-visible{
+.evh-admin button:focus-visible, .evh-admin a:focus-visible, .evh-admin input:focus-visible, .evh-admin textarea:focus-visible {
   outline: 3px solid var(--evh-accent, #e97816);
   outline-offset: 3px;
 }
 
 /* Refinamiento de jerarquía y distribución del panel administrativo. */
-.evh-admin-session{ display: flex; flex-wrap: wrap; width: fit-content; box-sizing: border-box; }
-.evh-admin-session-copy{ flex: 1 1 180px; }
-.evh-admin-session-copy small{ line-height: 1.45; }
-.evh-admin-session-copy strong{ line-height: 1.5; overflow-wrap: anywhere; }
-.evh-admin-session-role{ margin-left: auto; white-space: nowrap; font-size: .7rem; }
-.evh-admin-hero > button{ display: flex; margin-top: 1rem; }
+.evh-admin-session { display: flex; flex-wrap: wrap; width: fit-content; box-sizing: border-box; }
+.evh-admin-session-copy { flex: 1 1 180px; }
+.evh-admin-session-copy small { line-height: 1.45; }
+.evh-admin-session-copy strong { line-height: 1.5; overflow-wrap: anywhere; }
+.evh-admin-session-role { margin-left: auto; white-space: nowrap; font-size: .7rem; }
+.evh-admin-hero > button { display: flex; margin-top: 1rem; }
 
-@media (max-width: 480px){
-  .evh-admin-session{ width: 100%; gap: .55rem; }
-  .evh-admin-session-role{ margin-left: 0; }
-  .evh-admin-hero > button{ width: 100%; }
+@media (max-width: 480px) {
+  .evh-admin-session { width: 100%; gap: .55rem; }
+  .evh-admin-session-role { margin-left: 0; }
+  .evh-admin-hero > button { width: 100%; }
 }
 
 /* Session identity: keep label, email, and role on a controlled grid. */
-.evh-admin .evh-admin-session{
+.evh-admin .evh-admin-session {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr) auto;
   align-items: center;
@@ -122,21 +114,21 @@
   min-width: 0;
   box-sizing: border-box;
 }
-.evh-admin .evh-admin-session-copy{ min-width: 0; flex: initial; }
-.evh-admin .evh-admin-session-copy small{ line-height: 1.45; }
-.evh-admin .evh-admin-session-copy strong{ min-width: 0; line-height: 1.5; overflow-wrap: anywhere; }
-.evh-admin .evh-admin-session-role{ margin-left: 0; white-space: nowrap; }
-.evh-admin .evh-admin-hero > button{ width: fit-content; max-width: 100%; }
-@media (max-width: 760px){
-  .evh-admin .evh-admin-session{ grid-template-columns: 28px minmax(0, 1fr); align-items: start; }
-  .evh-admin .evh-admin-session-role{ grid-column: 2; justify-self: start; margin: 0; }
+.evh-admin .evh-admin-session-copy { min-width: 0; flex: initial; }
+.evh-admin .evh-admin-session-copy small { line-height: 1.45; }
+.evh-admin .evh-admin-session-copy strong { min-width: 0; line-height: 1.5; overflow-wrap: anywhere; }
+.evh-admin .evh-admin-session-role { margin-left: 0; white-space: nowrap; }
+.evh-admin .evh-admin-hero > button { width: fit-content; max-width: 100%; }
+@media (max-width: 760px) {
+  .evh-admin .evh-admin-session { grid-template-columns: 28px minmax(0, 1fr); align-items: start; }
+  .evh-admin .evh-admin-session-role { grid-column: 2; justify-self: start; margin: 0; }
 }
-@media (max-width: 480px){
-  .evh-admin .evh-admin-hero > button{ width: 100%; }
+@media (max-width: 480px) {
+  .evh-admin .evh-admin-hero > button { width: 100%; }
 }
 
 /* Compact the recent-orders summary into labelled rows on narrow screens. */
-@media (max-width: 600px){
+@media (max-width: 600px) {
   .evh-admin .evh-admin-table-scroll {
     overflow: visible;
   }
@@ -181,22 +173,22 @@
 }
 
 /* Ajuste visual fino: jerarquía centrada, controles compactos y medidas consistentes. */
-.evh-admin-hero{
+.evh-admin-hero {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
-.evh-admin-hero > p{
+.evh-admin-hero > p {
   width: min(100%, 720px);
   margin: .45rem auto 1rem;
 }
-.evh-admin .evh-admin-session{
+.evh-admin .evh-admin-session {
   margin: .65rem auto .2rem;
   text-align: left;
 }
 .evh-admin .evh-admin-hero > button,
-.evh-admin .evh-admin-hero-link{
+.evh-admin .evh-admin-hero-link {
   width: auto;
   min-height: 40px;
   padding: .6rem .95rem;
@@ -205,25 +197,25 @@
 }
 
 .evh-admin .evh-admin-panel > a,
-.evh-admin .evh-admin-actions a{
+.evh-admin .evh-admin-actions a {
   font-size: .82rem;
   line-height: 1.4;
 }
 
-@media (max-width: 480px){
-  .evh-admin-hero{
+@media (max-width: 480px) {
+  .evh-admin-hero {
     align-items: stretch;
   }
-  .evh-admin-hero > p{
+  .evh-admin-hero > p {
     margin-left: 0;
     margin-right: 0;
   }
-  .evh-admin .evh-admin-session{
+  .evh-admin .evh-admin-session {
     margin-left: 0;
     margin-right: 0;
   }
   .evh-admin .evh-admin-hero > button,
-.evh-admin .evh-admin-hero-link{
+  .evh-admin .evh-admin-hero-link {
     align-self: stretch;
     width: 100%;
     box-sizing: border-box;
@@ -232,21 +224,21 @@
 }
 
 /* Alineación final del encabezado administrativo y control del CTA. */
-.evh-admin .evh-admin-hero{
+.evh-admin .evh-admin-hero {
   text-align: center;
 }
-.evh-admin .evh-admin-hero > p{
+.evh-admin .evh-admin-hero > p {
   margin-right: auto;
   margin-left: auto;
   max-width: 720px;
 }
-.evh-admin .evh-admin-session{
+.evh-admin .evh-admin-session {
   margin-right: auto;
   margin-left: auto;
   text-align: left;
 }
 .evh-admin .evh-admin-hero > .evh-admin-hero-link,
-.evh-admin .evh-admin-hero > button{
+.evh-admin .evh-admin-hero > button {
   display: flex;
   width: fit-content;
   min-width: 0;
@@ -258,14 +250,14 @@
   font-size: .82rem;
   line-height: 1.3;
 }
-@media (max-width: 480px){
+@media (max-width: 480px) {
   .evh-admin .evh-admin-hero > .evh-admin-hero-link,
-.evh-admin .evh-admin-hero > button{
+  .evh-admin .evh-admin-hero > button {
     width: 100%;
   }
 }
 
-.evh-admin-hero .evh-admin-hero-link{
+.evh-admin-hero .evh-admin-hero-link {
   display: inline-flex;
   width: fit-content;
   max-width: max-content;
@@ -278,24 +270,24 @@
   flex: 0 0 auto;
 }
 
-@media (max-width: 600px){
+@media (max-width: 600px) {
 
-  .evh-admin-hero .evh-admin-hero-link{
+  .evh-admin-hero .evh-admin-hero-link {
     min-height: 38px;
     padding: .48rem .72rem;
   }
 
 }
 
-.evh-admin .evh-admin-hero > .evh-admin-hero-link{
+.evh-admin .evh-admin-hero > .evh-admin-hero-link {
   display: inline-flex; align-items: center; justify-content: center;
   width: fit-content; min-width: 0; max-width: 100%; min-height: 38px;
   margin: .55rem auto 0; padding: .48rem .75rem; font-size: .79rem; line-height: 1.2;
 }
 
-@media (max-width: 600px){
+@media (max-width: 600px) {
 
-  .evh-admin .evh-admin-hero > .evh-admin-hero-link{ width: fit-content; }
+  .evh-admin .evh-admin-hero > .evh-admin-hero-link { width: fit-content; }
 }
 
 /* Inventory module — consolidated layout and responsive rules. */
