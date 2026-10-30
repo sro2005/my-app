@@ -1,18 +1,22 @@
 # Auditoría de dependencias y estado de verificación — ElectroVibeHome
 
-## Última verificación — 30 de octubre de 2026
+## Última verificación — 29 de octubre de 2026
 
-La [ejecución 41000310456](https://github.com/sro2005/ElectroVibeHome/actions/runs/41000310456), sobre el commit 35aff4d5ed61df1eea8bfcacabe1909c77223963 de electrovibehome-stable, terminó con **5/5 trabajos correctos**:
+La [ejecución 41001693723](https://github.com/sro2005/ElectroVibeHome/actions/runs/41001693723), sobre el commit `66433c2776b10cf464fa373e4ca2dbb2eff3c0ec` de `electrovibehome-stable`, terminó con **5/5 trabajos correctos**:
 
-- Frontend: instalación limpia, pruebas y compilación aprobadas.
-- Backend: auditoría de dependencias, sintaxis y pruebas unitarias aprobadas.
-- Backend E2E: pruebas HTTP con MongoDB temporal aprobadas.
-- Smoke de producción: salud de API, CORS, controles de autenticación y catálogo aprobado.
-- Playwright: navegación responsive y módulos de cliente/administración aprobados en el sitio publicado.
+- **frontend:** instalación limpia, auditoría de dependencias, pruebas y compilación aprobadas.
+- **backend:** instalación limpia, auditoría de dependencias, comprobación sintáctica y pruebas unitarias aprobadas.
+- **backend-e2e:** pruebas HTTP contra una instancia MongoDB temporal con soporte para transacciones.
+- **smoke-preview:** comprobación de salud de la API, conexión MongoDB, CORS, rutas protegidas y catálogo publicado.
+- **frontend-browser:** comprobaciones responsive con Chromium en el sitio publicado; capturas disponibles en el [artefacto de la ejecución](https://github.com/sro2005/ElectroVibeHome/actions/runs/41001693723/artifacts/12954105915).
 
-Las auditorías bloquearían la ejecución ante vulnerabilidades altas o críticas; el paso configurado aprobó en ambos proyectos. Esta comprobación no afirma que no existan avisos de severidad menor. Los artefactos de esa ejecución contienen los informes completos de npm audit.
+Las auditorías ejecutaron `npm audit --audit-level=high` tanto en frontend como en backend y ambas pasaron. Esto significa que no se detectaron vulnerabilidades altas o críticas que bloquearan la ejecución; no equivale a afirmar que no existan avisos de severidad moderada o baja. Los informes completos se conservaron como artefactos: [auditoría frontend](https://github.com/sro2005/ElectroVibeHome/actions/runs/41001693723/artifacts/12953812069) y [auditoría backend](https://github.com/sro2005/ElectroVibeHome/actions/runs/41001693723/artifacts/12953856717).
 
-El E2E actual también verifica tokens de restablecimiento válidos, vencidos y reutilizados en una base MongoDB desechable. Las comprobaciones no procesaron pagos ni modificaron los datos vivos de producción.
+El E2E incluye comprobaciones de tokens de restablecimiento válidos, vencidos y reutilizados en una base MongoDB desechable. La ejecución no procesó pagos ni modificó pedidos, inventario o cuentas en la base de datos viva.
+
+## Verificación anterior — 29 de octubre de 2026
+
+La [ejecución 41000310456](https://github.com/sro2005/ElectroVibeHome/actions/runs/41000310456), sobre el commit `35aff4d5ed61df1eea8bfcacabe1909c77223963`, también terminó con **5/5 trabajos correctos**. Validó las pruebas y compilación del frontend, las pruebas de backend, E2E con MongoDB temporal, smoke del servicio publicado y navegación responsive. Se conserva como referencia de la revisión de inventario y precios anterior a la limpieza de dependencias.
 
 ## Referencia histórica — 27 de octubre de 2026
 

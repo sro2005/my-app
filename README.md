@@ -1,37 +1,148 @@
 # ElectroVibeHome
 
-Tienda web de electrodomésticos construida con React, Vite, Node.js, Express y MongoDB. Este repositorio corresponde a un proyecto personal de demostración; no está habilitado para ventas ni pagos reales.
+**Transforma tu hogar con la energía del futuro.**
 
-## Ramas y despliegue
+ElectroVibeHome es una plataforma web de comercio electrónico enfocada en productos y soluciones para el hogar. Integra una experiencia de catálogo, cuentas de cliente, pedidos y herramientas de administración en una aplicación construida con React, Node.js y MongoDB.
 
-- `electrovibehome-stable`: rama predeterminada y versión renovada que se mantiene y valida.
-- `main`: versión original conservada por separado; no modificarla al trabajar en la versión estable.
-- Frontend publicado: https://electrovibehome.onrender.com/
-- API de la versión estable: https://electrovibehome-v2-api.onrender.com
-- El frontend y la API de la versión estable se despliegan desde `electrovibehome-stable`.
-- Los rulesets protegen `main` y `electrovibehome-stable` contra eliminación y `force push`; la rama estable exige los cinco checks de CI antes de integrar cambios.
+El repositorio corresponde a un proyecto personal y de demostración técnica. La experiencia permite recorrer el flujo de compra y administrar pedidos, pero **no procesa cobros ni transferencias reales**. Los precios, productos y existencias del catálogo son información de muestra.
 
-Los nombres heredados que puedan permanecer en URLs de servicios o en código no implican la existencia de una tercera rama o una versión distinta.
+## Sitio, API y ramas
 
-## Requisitos
+- **Tienda:** [electrovibehome.onrender.com](https://electrovibehome.onrender.com/)
+- **API:** [electrovibehome-v2-api.onrender.com](https://electrovibehome-v2-api.onrender.com/)
+- **Repositorio:** [github.com/sro2005/ElectroVibeHome](https://github.com/sro2005/ElectroVibeHome)
 
-- Node.js 24.x y npm compatible.
-- MongoDB configurado para el backend.
-- Variables de entorno locales o del proveedor de alojamiento; no publicar credenciales en Git.
+La rama `electrovibehome-stable` es la rama principal de trabajo y contiene la versión vigente del proyecto. La rama `main` conserva la versión original como referencia independiente y debe permanecer sin cambios durante el mantenimiento de la versión estable.
 
-## Frontend
+Ambos servicios de Render se despliegan desde `electrovibehome-stable`. Los rulesets protegen las ramas principales frente a eliminación y `force push`; la rama estable exige que los controles configurados de CI se completen antes de integrar cambios.
 
-Desde la raíz del repositorio:
+El nombre `-v2-api` se conserva únicamente en el dominio heredado del servicio backend. No representa una segunda versión activa del producto.
+
+## Funcionalidades
+
+### Experiencia de cliente
+
+- Explorar el catálogo, buscar productos y filtrar por categoría.
+- Crear una cuenta de cliente, iniciar y cerrar sesión.
+- Consultar y actualizar la información del perfil.
+- Solicitar la recuperación de contraseña y establecer una nueva mediante un enlace de un solo uso.
+- Registrar pedidos y consultar su historial y evolución.
+
+### Administración
+
+- Consultar el panel general.
+- Crear, consultar, editar y eliminar productos.
+- Gestionar existencias e información del inventario.
+- Consultar clientes y revisar pedidos.
+- Actualizar las etapas logísticas de los pedidos.
+
+El registro público crea cuentas de cliente; no concede permisos de administrador. El acceso administrativo requiere aprovisionamiento controlado.
+
+### Guía ElectroVibe
+
+La guía conversacional ofrece recomendaciones a partir de nombres, categorías, descripciones, precios de referencia y existencias del catálogo. Actualmente funciona con reglas locales en el navegador: no llama a OpenAI ni a otros servicios externos de IA, no necesita una clave de API y no genera cargos por uso de modelos.
+
+## Tecnologías
+
+| Capa | Tecnologías principales |
+| --- | --- |
+| Frontend | React, Vite, React Router, JavaScript y CSS |
+| Backend | Node.js, Express y API REST |
+| Persistencia | MongoDB y Mongoose |
+| Validación | Joi y validaciones específicas de dominio |
+| Autenticación | JSON Web Tokens (JWT), bcrypt y control de acceso por roles |
+| Correo transaccional | Brevo para recuperación de contraseña |
+| Calidad | Vitest, Node.js Test Runner, GitHub Actions y Playwright/Chromium |
+| Alojamiento | Render para el frontend y la API |
+
+El backend centraliza la validación de solicitudes y los permisos. Las operaciones que coordinan pedidos e inventario utilizan transacciones de MongoDB; para probar ese flujo localmente se requiere MongoDB Atlas o una instancia compatible con replica set.
+
+## Catálogo de muestra
+
+El catálogo incluye **66 productos distribuidos en 22 categorías**. Estos registros sirven para recorrer la experiencia y probar la gestión de productos; no representan ofertas, existencias ni compromisos comerciales reales. La aplicación prioriza el catálogo de la API y dispone de datos locales de respaldo cuando corresponde.
+
+Consulta [docs/DEMO-CATALOG.md](docs/DEMO-CATALOG.md) para conocer el origen de los datos y las condiciones del script de carga. Ese script está restringido a bases aisladas de prueba y no debe ejecutarse contra la base de datos de los servicios publicados.
+
+## Pedidos y pagos
+
+El checkout actual utiliza **ElectroVibe Pay** como interfaz propia para registrar y confirmar la solicitud del pedido. La modalidad vigente es **Pago pendiente de coordinación**: no se solicitan datos de tarjeta o credenciales bancarias, no se inicia una operación financiera y no se recibe dinero.
+
+Los pedidos se guardan con `paymentStatus: PENDING` y `paymentConfirmed: false`. El administrador puede gestionar las etapas logísticas sin que eso signifique que el pago haya sido recibido o confirmado. Las fechas solicitadas por el cliente tampoco constituyen una promesa de despacho.
+
+Se conserva código de Wompi para compatibilidad con pedidos heredados y pruebas aisladas, pero no forma parte del checkout actual. Wompi está en pausa y Mercado Pago no está integrado. No configures credenciales reales ni habilites cobros desde este repositorio.
+
+## Configuración local
+
+### Requisitos
+
+- Node.js **24.x** y npm.
+- Una instancia de MongoDB accesible. Para probar pedidos y movimientos de inventario debe admitir transacciones (por ejemplo, MongoDB Atlas o un replica set local).
+- Git.
+
+### 1. Clonar e instalar el frontend
 
 ```bash
+git clone https://github.com/sro2005/ElectroVibeHome.git
+cd ElectroVibeHome
 npm ci
-cp .env.example .env.development
+```
+
+Crea el archivo local de variables de Vite a partir de `.env.example`:
+
+```powershell
+Copy-Item .env.example .env.development
+```
+
+En macOS o Linux, utiliza `cp .env.example .env.development`. Verifica que `.env.development` contenga la URL base de la API local, sin añadir `/api` al final:
+
+```dotenv
+REACT_APP_API_BASE_URL=http://localhost:5000
+```
+
+### 2. Configurar e iniciar el backend
+
+En otra terminal:
+
+```bash
+cd backend
+npm ci
+```
+
+Copia `backend/.env.example` como `backend/.env.development` (PowerShell: `Copy-Item .env.example .env.development`; macOS/Linux: `cp .env.example .env.development`). Ajusta como mínimo estas variables para desarrollo local:
+
+```dotenv
+NODE_ENV=development
+PORT=5000
+MONGO_URI=URI_DE_TU_BASE_DE_DATOS
+JWT_SECRET=SECRETO_LOCAL_LARGO_Y_UNICO
+ALLOWED_ORIGINS=http://localhost:3000
+```
+
+No reutilices secretos de producción. Mantén `MONGO_URI` y `JWT_SECRET` fuera del repositorio. El archivo `.gitignore` excluye los archivos `.env` y `.env.development`.
+
+Para probar el envío de recuperación de contraseña, configura también `BREVO_API_KEY`, `BREVO_SENDER_EMAIL` y `BREVO_SENDER_NAME` con un remitente autorizado en Brevo y define `FRONTEND_URL` con una dirección HTTPS accesible que pueda abrir el enlace de restablecimiento. No es necesario configurar correo para ejecutar la aplicación básica.
+
+Inicia el backend desde la carpeta `backend`:
+
+```bash
 npm run dev
 ```
 
-Vite inicia el frontend en `http://localhost:3000`. Configura `REACT_APP_API_BASE_URL` con la URL base del backend, sin añadir `/api` al final.
+La API queda disponible por defecto en `http://localhost:5000`; el endpoint `/health` informa el estado de la API y la conexión con MongoDB.
 
-Comandos de validación:
+### 3. Iniciar el frontend
+
+Desde la raíz del repositorio, en una tercera terminal:
+
+```bash
+npm run dev
+```
+
+Abre [http://localhost:3000](http://localhost:3000/). Comprueba que el backend esté activo y que `REACT_APP_API_BASE_URL` apunte a él.
+
+## Pruebas y compilación
+
+Desde la raíz del repositorio:
 
 ```bash
 npm test
@@ -39,46 +150,26 @@ npm run build
 npm run preview
 ```
 
-## Backend
-
-Desde otra terminal:
+Desde `backend/`, para ejecutar las pruebas del backend:
 
 ```bash
-cd backend
-npm ci
-npm start
+npm test
 ```
 
-Consulta [backend/.env.example](backend/.env.example) como referencia de variables y contrasta los valores de ejemplo con las URLs actuales indicadas arriba antes de utilizarlos. Configura los secretos exclusivamente en el entorno autorizado. La API expone `/health` para comprobar su estado y la conexión a MongoDB.
+`npm run preview` sirve localmente la compilación de producción y debe ejecutarse después de `npm run build`. La integración continua ejecuta además pruebas HTTP de extremo a extremo con una instancia MongoDB desechable, comprobaciones del servicio publicado y pruebas responsive con Chromium.
 
-### Acceso de administración
+## Aprovisionamiento de administración
 
-El registro público crea cuentas de cliente, no administradores. El script interno `backend/scripts/provisionAdmin.js` está destinado únicamente al aprovisionamiento controlado de una cuenta administradora cuando no exista; **no debe ejecutarse como parte de las verificaciones normales ni para restablecer una cuenta existente**.
+El script `backend/scripts/provisionAdmin.js` está reservado para crear de forma controlada una cuenta administradora cuando corresponda. No se ejecuta durante el despliegue ni forma parte de las comprobaciones normales. Antes de utilizarlo, revisa sus instrucciones, confirma la base de datos de destino y evita operar sobre una base distinta de la autorizada.
 
-Antes de cualquier aprovisionamiento, comprueba la base de datos y el servicio de destino de la versión estable, manteniéndolos separados de `main`. Consulta el código y las instrucciones del script, utiliza secretos temporales fuera de Git y retíralos al terminar. El script no se ejecuta automáticamente durante el despliegue.
+## Integración continua y estado de validación
 
-### Recuperación de contraseña
+El workflow [ElectroVibeHome CI](.github/workflows/ci.yml) valida los cambios relevantes en `electrovibehome-stable` y en las solicitudes de integración. Incluye instalación limpia desde lockfiles, auditoría de dependencias, pruebas y compilación del frontend, revisión sintáctica y pruebas unitarias del backend, pruebas E2E con MongoDB aislado, smoke tests del sitio/API publicados y navegación responsive.
 
-La recuperación utiliza correo transaccional mediante Brevo en el backend. El flujo de solicitud, recepción del correo y cambio de contraseña fue probado satisfactoriamente con una cuenta de cliente y un buzón accesible (confirmación manual del 27 de octubre de 2026). Las pruebas de caducidad, uso único y otras condiciones negativas del enlace deben registrarse de forma independiente; no se consideran cubiertas por esa comprobación manual.
+La última ejecución posterior a la limpieza del repositorio, [CI #41001693723](https://github.com/sro2005/ElectroVibeHome/actions/runs/41001693723), terminó el **29 de octubre de 2026 (hora de Colombia)** con **5/5 trabajos aprobados**. Los controles de auditoría configurados no detectaron vulnerabilidades altas o críticas que bloquearan esa ejecución. El resultado automatizado no sustituye las pruebas manuales de cada operación con cuentas reales.
 
-## Guía ElectroVibe (opcional)
+Consulta la [lista de verificación de la versión estable](docs/RELEASE-CHECKLIST.md) para el alcance de las pruebas, los límites conocidos y las validaciones manuales. El resumen de dependencias está en [docs/DEPENDENCY-AUDIT.md](docs/DEPENDENCY-AUDIT.md).
 
-El catálogo dispone de una guía conversacional para orientar sobre productos. No crea pedidos ni gestiona pagos o información privada de cuentas.
-
-La guía está configurada exclusivamente en modo local para evitar cargos de API: compara nombres, categorías, descripciones, precios de referencia y existencias del catálogo mediante reglas de recomendación en el navegador. No envía mensajes a OpenAI ni a otros servicios externos, no necesita una clave API y no genera costos de uso de IA. Por esta razón, sus respuestas son más guiadas y menos flexibles que las de un modelo generativo.
-
-## Pedidos y pagos
-
-ElectroVibeHome permite registrar pedidos con la modalidad **Pago pendiente de coordinación**, sin solicitar datos bancarios ni procesar cobros. El flujo principal de compra utiliza **ElectroVibe Pay**, una interfaz propia de confirmación de pedidos; no solicita números de tarjeta ni credenciales bancarias, no inicia operaciones financieras y deja el pago pendiente. El campo histórico opcional `paymentPreference` se conserva para pedidos ya creados. El pedido se guarda con `paymentStatus: PENDING` y `paymentConfirmed: false`. El cliente lo consulta desde «Mis pedidos» y el administrador puede iniciar preparación y gestionar etapas logísticas sin alterar ni afirmar el estado del pago. Las fechas de entrega son solicitadas, no compromisos de despacho. Se conserva código de Wompi por compatibilidad con pedidos heredados y pruebas aisladas; no forma parte del flujo actual ni se autorizan pagos reales. Mercado Pago no está integrado.
-
-No interpretar una redirección del navegador como confirmación de pago. Antes de reactivar cualquier proveedor deben verificarse las credenciales de pruebas, la firma o autenticidad de las notificaciones, los estados de pedidos y la devolución segura de inventario. Las operaciones transaccionales de inventario requieren MongoDB con soporte de transacciones.
-
-## CI y validación
-
-[ElectroVibeHome CI](.github/workflows/ci.yml) se ejecuta para los cambios relevantes de `electrovibehome-stable` y admite ejecución manual. Comprueba, según el trabajo, pruebas unitarias, compilación, auditoría de dependencias, sintaxis backend, pruebas HTTP aisladas con MongoDB temporal, salud de API/CORS/catálogo publicado y navegación responsive mediante Chromium.
-
-La [última ejecución completa de CI](https://github.com/sro2005/ElectroVibeHome/actions/runs/41000310456) del 30 de octubre de 2026 aprobó los cinco trabajos: frontend, backend, E2E, smoke del sitio publicado y navegador responsive. Esto no equivale a una validación manual de cada operación con cuentas reales.
-
-Consulta [la lista de validación pendiente](docs/RELEASE-CHECKLIST.md) para las comprobaciones que todavía requieren evidencia.
+---
 
 Repositorio: https://github.com/sro2005/ElectroVibeHome
