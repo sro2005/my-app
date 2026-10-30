@@ -2,14 +2,24 @@
 
 **Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome mantiene el modo de compra simulado; no se procesan pagos reales. En las pruebas automatizadas de esta revisión no se crearon pedidos, no se modificó inventario ni se realizaron pagos en la base de datos viva. La comprobación manual de recuperación/restablecimiento de contraseña realizada con una cuenta cliente está registrada más abajo.
 
-## Última validación publicada — 30 de octubre de 2026
+## Última validación publicada — 29 de octubre de 2026
+
+- PR [#60 — Limpiar archivos y dependencias obsoletas](https://github.com/sro2005/ElectroVibeHome/pull/60) integrado mediante squash.
+- Commit publicado en `electrovibehome-stable`: `66433c2776b10cf464fa373e4ca2dbb2eff3c0ec`.
+- [CI posterior a la integración](https://github.com/sro2005/ElectroVibeHome/actions/runs/41001693723): **5/5 trabajos aprobados**.
+- Los cinco trabajos completados fueron: `frontend`, `backend`, `backend-e2e`, `smoke-preview` y `frontend-browser`.
+- La ejecución validó instalación limpia, auditorías de dependencias, pruebas y build del frontend, sintaxis y pruebas unitarias del backend, pruebas HTTP contra MongoDB desechable, salud/CORS/autenticación/catálogo publicados y navegación responsive del sitio con Chromium.
+- El smoke test confirmó la disponibilidad de la API y la conexión con MongoDB; Playwright completó las comprobaciones responsive y publicó el artefacto de capturas [frontend-responsive-screenshots](https://github.com/sro2005/ElectroVibeHome/actions/runs/41001693723/artifacts/12954105915).
+- Los servicios frontend y API de Render permanecen asociados a `electrovibehome-stable`; la validación del sitio/API publicado finalizó correctamente.
+- `main` conserva su commit original `123bf6be2aded2a118f3f5d90c27954c1ac565e2`; los cambios de mantenimiento se integraron únicamente en `electrovibehome-stable`.
+- La limpieza eliminó un archivo redundante y dependencias sin uso identificadas, ajustó la documentación y no modificó la lógica funcional del checkout ni los datos vivos.
+
+## Validación anterior de interfaz e inventario — 29 de octubre de 2026
 
 - PR [#59 — Pulir inventario y unificar precios COP](https://github.com/sro2005/ElectroVibeHome/pull/59) integrado mediante squash.
-- Commit publicado: 35aff4d5ed61df1eea8bfcacabe1909c77223963.
-- [CI posterior a la integración](https://github.com/sro2005/ElectroVibeHome/actions/runs/41000310456): **5/5 trabajos aprobados**, incluidos smoke del sitio publicado y Playwright responsive.
-- Frontend y backend de Render: despliegues del commit anterior en estado live.
-- main conserva su commit de referencia; los cambios se integraron únicamente en electrovibehome-stable.
-- Se ampliaron pruebas de precio con centavos y alineación del inventario. La integración visual se validó con fixtures para las pantallas autenticadas y sin escrituras en datos vivos.
+- Commit publicado en esa validación: `35aff4d5ed61df1eea8bfcacabe1909c77223963`.
+- [CI de esa integración](https://github.com/sro2005/ElectroVibeHome/actions/runs/41000310456): **5/5 trabajos aprobados**, incluidos smoke del sitio publicado y Playwright responsive.
+- Se ampliaron pruebas de precio con centavos y alineación del inventario; las pantallas autenticadas se comprobaron con fixtures, sin escrituras en datos vivos.
 
 ## Historial de validación de dependencias — 27 de octubre de 2026
 
