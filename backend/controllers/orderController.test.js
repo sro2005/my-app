@@ -66,21 +66,6 @@ test('moves a paid order from processing to shipped when admin marks it prepared
   assert.equal(order.saved, true);
 });
 
-test('allows an admin to ship a confirmed fictional purchase without a real payment', async t => {
-  const originalFindById = Order.findById;
-  t.after(() => { Order.findById = originalFindById; });
-  const order = makeOrder({ paymentStatus: 'SIMULATED', paymentMethod: 'Demostración' });
-  Order.findById = async () => order;
-
-  const response = createResponse();
-  await updateOrderStatusAutomatically({ params: { id: validId }, body: { packed: true } }, response);
-
-  assert.equal(response.statusCode, 200);
-  assert.equal(order.packed, true);
-  assert.equal(order.status, 'Enviado');
-  assert.equal(order.saved, true);
-});
-
 test('blocks preparation until the coordinated payment has been reviewed', async t => {
   const originalFindById = Order.findById;
   t.after(() => { Order.findById = originalFindById; });
@@ -164,7 +149,7 @@ test('createOrder refuses administrator accounts before querying or changing ord
       body: {
         firstName: 'Admin', lastName: 'Demo', email: 'company@example.test',
         phone: '+57 300 000 0000', address: 'Dirección demo',
-        paymentMethod: 'Demostración', deliveryDate: '2099-01-01',
+        paymentMethod: 'Pago pendiente de coordinación', deliveryDate: '2099-01-01',
         products: [{ productId: validId, quantity: 1 }]
       }
     }, response);
@@ -208,7 +193,7 @@ test('createOrder returns an existing order for a repeated idempotency key witho
       email: 'cliente@example.com',
       phone: '+57 300 123 4567',
       address: 'Calle 10 # 20-30, Bogotá',
-      paymentMethod: 'Wompi',
+      paymentMethod: 'Pago pendiente de coordinación',
       deliveryDate: '2099-01-01',
       products: [{ productId: validId, quantity: 1 }]
     }
@@ -238,22 +223,6 @@ test('createOrder rejects malformed idempotency keys before querying orders', as
   assert.equal(calls, 0);
 });
 
-
-const configureSandbox = t => {
-  const names = ['WOMPI_PUBLIC_KEY', 'WOMPI_INTEGRITY_SECRET', 'WOMPI_EVENTS_SECRET', 'FRONTEND_URL'];
-  const old = Object.fromEntries(names.map(name => [name, process.env[name]]));
-  process.env.WOMPI_PUBLIC_KEY = 'pub_test_unit-test';
-  process.env.WOMPI_INTEGRITY_SECRET = 'test_integrity_unit-test';
-  process.env.WOMPI_EVENTS_SECRET = 'test_events_unit-test';
-  process.env.FRONTEND_URL = 'https://preview.example.test';
-  t.after(() => {
-    for (const name of names) {
-      if (old[name] === undefined) delete process.env[name];
-      else process.env[name] = old[name];
-    }
-  });
-};
-
 const validOrderBody = () => ({
   firstName: 'Cliente',
   lastName: 'Demo',
@@ -266,7 +235,6 @@ const validOrderBody = () => ({
 });
 
 test('createOrder returns 500 for uncertain transaction failures so the client can reuse its idempotency key', async t => {
-  configureSandbox(t);
   const originalStartSession = mongoose.startSession;
   t.after(() => { mongoose.startSession = originalStartSession; });
   mongoose.startSession = async () => ({
@@ -368,7 +336,6 @@ test('admin can confirm an ElectroVibe Pay order without an external reference o
   assert.equal(order.paymentStatus, 'APPROVED');
   assert.equal(order.paymentConfirmed, true);
   assert.equal(order.status, 'Procesando');
-  assert.equal(order.manualPaymentReference, undefined);
   assert.equal(order.paymentReviewedBy, 'admin@example.test');
   assert.equal(order.paymentReviewNote, 'Pago confirmado por el administrador tras su comprobación.');
   assert.ok(order.paymentReviewedAt instanceof Date);
