@@ -236,17 +236,16 @@ jobs:
 
           const enqueue = (raw, fromUrl) => {
             try {
-              const assetUrl = new URL(raw, fromUrl);
+              let assetUrl;
+              if (raw.startsWith('assets/')) {
+                assetUrl = new URL('/' + raw, origin);
+              } else if (raw.startsWith('./assets/')) {
+                assetUrl = new URL('/' + raw.slice(2), origin);
+              } else {
+                assetUrl = new URL(raw, fromUrl);
+              }
               if (assetUrl.origin === origin && /\.js(?:\?|$)/i.test(assetUrl.pathname) && !visited.has(assetUrl.href)) {
                 queued.push(assetUrl);
-              }
-              if (raw.startsWith('assets/')) {
-                const rootAsset = new URL('/' + raw, origin);
-                if (!visited.has(rootAsset.href)) queued.push(rootAsset);
-              }
-              if (raw.startsWith('./assets/')) {
-                const rootAsset = new URL('/' + raw.slice(2), origin);
-                if (!visited.has(rootAsset.href)) queued.push(rootAsset);
               }
             } catch {
               // Ignore non-URL strings in compiled JavaScript.
