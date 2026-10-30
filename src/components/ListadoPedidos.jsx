@@ -1,3 +1,4 @@
+import LoadingBrandMark from './LoadingBrandMark';
 import React, { useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext'; // Importar el contexto de autenticación
@@ -502,7 +503,7 @@ const ListadoPedidos = () => {
       <section className="evh-orders-content" aria-label={isAdmin ? 'Pedidos registrados' : 'Historial de mis pedidos'} aria-busy={loading}>
         {loading ? (
           <div className="evh-loading-panel evh-orders-loading" role="status" aria-live="polite">
-            <div className="evh-loading-mark" aria-hidden="true">EV</div>
+            <div className="evh-loading-mark" aria-hidden="true"><LoadingBrandMark /></div>
             <div className="evh-loading-copy">
               <span className="evh-loading-kicker">ELECTROVIBEHOME</span>
               <h2>{isAdmin ? 'Preparando el centro de pedidos' : 'Consultando tus pedidos'}</h2>
