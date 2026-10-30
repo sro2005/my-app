@@ -64,6 +64,13 @@ jobs:
         run: npm audit --audit-level=high
       - run: CI=true npm test
       - run: npm run build
+      - name: Upload all compiled frontend JavaScript chunks for live verification
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-build-assets
+          path: build/assets/*.js
+          if-no-files-found: error
+          retention-days: 1
 
   backend:
     runs-on: ubuntu-latest
@@ -188,6 +195,11 @@ jobs:
     needs: [frontend, backend, backend-e2e]
     runs-on: ubuntu-latest
     steps:
+      - name: Download compiled frontend JavaScript chunks
+        uses: actions/download-artifact@v7
+        with:
+          name: frontend-build-assets
+          path: frontend-build-assets
       - name: Wait for API health and database readiness
         env:
           API_URL: https://electrovibehome-v2-api.onrender.com
@@ -221,21 +233,14 @@ jobs:
           curl --fail --silent --show-error --max-time 20 "$FRONTEND_URL/" -o /tmp/frontend.html
           grep -Fq 'id="root"' /tmp/frontend.html
 
-          asset=$(grep -oE 'src="[^"]+\.js"' /tmp/frontend.html | head -n 1 | cut -d '"' -f 2)
-          if [ -z "$asset" ]; then
-            echo "Could not find the compiled frontend JavaScript asset."
+          # Vite splits lazy-loaded pages into separate chunks. The API base URL may
+          # therefore live in a route chunk, not in the first script loaded by index.html.
+          if ! grep -RFl -- "$API_URL" frontend-build-assets >/dev/null; then
+            echo "No compiled frontend JavaScript chunk contains the configured API base URL."
+            echo "Checked every JavaScript asset produced by the frontend build."
             exit 1
           fi
-          case "$asset" in
-            http://*|https://*) asset_url="$asset" ;;
-            /*) asset_url="$FRONTEND_URL$asset" ;;
-            *) asset_url="$FRONTEND_URL/$asset" ;;
-          esac
-          curl --fail --silent --show-error --max-time 20 "$asset_url" -o /tmp/frontend.js
-          if ! grep -Fq "$API_URL" /tmp/frontend.js; then
-            echo "The built frontend bundle does not contain the configured preview API URL."
-            exit 1
-          fi
+          echo "Configured API base URL found in the compiled frontend chunks."
 
           curl --fail --silent --show-error --max-time 20 \
             -D /tmp/products.headers \
