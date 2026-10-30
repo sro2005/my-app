@@ -23,7 +23,6 @@ const RegistroCliente = lazy(() => import('./components/RegistroCliente'));
 const LoginCliente = lazy(() => import('./components/LoginCliente'));
 const RecoverPassword = lazy(() => import('./components/RecoverPassword'));
 const ResetPassword = lazy(() => import('./components/ResetPassword'));
-const PaymentResult = lazy(() => import('./components/PaymentResult'));
 const AboutPage = lazy(() => import('./components/AboutPage'));
 const PrivacyPage = lazy(() => import('./components/PrivacyPage'));
 const TermsPage = lazy(() => import('./components/TermsPage'));
@@ -48,7 +47,6 @@ const AppContent = () => {
   if (loading) return <Loading />;
 
   const isAdmin = user?.role === 'admin';
-  const isCustomer = user?.role === 'user';
 
   return (
     <>
@@ -57,7 +55,6 @@ const AppContent = () => {
       <Routes>
         <Route path="/recover-password" element={isAdmin ? <Navigate to="/home-page" replace /> : <RecoverPassword />} />
         <Route path="/reset-password/:token" element={isAdmin ? <Navigate to="/home-page" replace /> : <ResetPassword />} />
-        <Route path="/pago-resultado" element={isCustomer ? <PaymentResult /> : <Navigate to={user ? '/home-page' : '/login'} replace />} />
         <Route path="/catalogo" element={isAdmin ? <Navigate to="/home-page" replace /> : <ListadoProductos />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
