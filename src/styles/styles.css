@@ -2750,13 +2750,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   height: 38px;
   min-width: 38px;
   place-items: center;
+  align-self: start;
+  justify-self: end;
   padding: 0;
   border: 1px solid var(--evh-border);
   border-radius: 12px;
   background: #fff;
   color: var(--evh-muted);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 500;
+  line-height: 1;
+  text-align: center;
 }
 .evh-confirmation-close:hover:not(:disabled) { background: #f1f4f8; color: var(--evh-ink); transform: none; }
 .evh-confirmation-close:disabled { opacity: .5; cursor: wait; }

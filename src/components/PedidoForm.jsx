@@ -77,7 +77,11 @@ const userId = user?._id;  // Usar userId desde el contexto
     const previousActiveElement = document.activeElement;
     const previousBodyOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    confirmOrderButtonRef.current?.focus();
+    const confirmationDialog = confirmationDialogRef.current;
+    if (confirmationDialog) {
+      confirmationDialog.scrollTop = 0;
+      confirmationDialog.focus({ preventScroll: true });
+    }
 
     const handleDialogKeys = event => {
       if (event.key === 'Escape' && !loading) {
