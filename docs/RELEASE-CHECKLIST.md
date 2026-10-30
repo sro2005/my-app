@@ -34,6 +34,13 @@
 - Se cerraron los PR de Dependabot `#4–#14` que proponían saltos fuera del rango actual o migraciones mayores sin aprobar. Los casos con fallos de CI (MUI 9 y Mongoose 9) no se fusionaron. La configuración ahora ignora actualizaciones mayores y los saltos menores 0.x pendientes de revisión para moment-timezone y react-spinners.
 - `main` permanece intacta. Las actualizaciones mayores no se incorporaron automáticamente; requieren una evaluación de compatibilidad y sus propias pruebas antes de adoptarse.
 
+## Verificación de datos en MongoDB Atlas — 29 de octubre de 2026
+
+- La colección `orders` de `electrovibehome_dev`, base conectada a la aplicación, no contenía pedidos al momento de la revisión.
+- Se eliminó de esa colección el índice obsoleto `paymentReference_1`; permanecen los índices `_id_` e `idempotencyKey_1`.
+- La base auxiliar `test` conserva un pedido de prueba antiguo con `paymentMethod: Transfiya` (febrero de 2025). No se modificó ni eliminó: está aislado de la base activa y se conserva como dato histórico hasta recibir autorización expresa para alterar esos registros.
+- No se modificaron cuentas de clientes, productos ni pedidos de la base activa.
+
 ## Validaciones automatizadas completadas
 
 ### Backend y datos — MongoDB de prueba aislado
