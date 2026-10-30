@@ -6851,7 +6851,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-admin .evh-admin-hero button,.evh-admin .evh-admin-hero-link{background:#e97816;color:#fff;border-color:#e97816}
 .evh-admin .evh-admin-hero button:hover:not(:disabled),.evh-admin .evh-admin-hero-link:hover{background:#c8600b;color:#fff;border-color:#c8600b}
 .evh-washer-category-icon{width:76px;max-width:100%;height:82px;display:block;margin:auto}
-.evh-app-loading{min-height:clamp(340px,62vh,700px)}
+.evh-app-loading{min-height:100vh;min-height:100svh}
 @media(max-width:640px){.evh-register-form .evh-form-grid,.evh-checkout-form .evh-form-grid{grid-template-columns:minmax(0,1fr);gap:.85rem}.evh-register-form .evh-form-field-wide,.evh-checkout-form .evh-form-field-wide{grid-column:1}.evh-profile-card-heading{align-items:stretch;flex-direction:column}.evh-profile-card-heading>.evh-button{align-self:flex-end;margin-left:auto}}
 
 /* Iconos de electrodomésticos sin etiquetas duplicadas dentro de la imagen. */

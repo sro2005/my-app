@@ -14,10 +14,46 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4" sizes="any" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <style>
+      html,body{margin:0;min-height:100%}
+      #root{min-height:100vh;min-height:100svh}
+      #evh-initial-loading{display:grid;place-items:center;min-height:100vh;min-height:100svh;box-sizing:border-box;padding:clamp(1rem,4vw,2.5rem);background:radial-gradient(circle at 12% 10%,rgba(80,133,190,.09),transparent 24rem),linear-gradient(145deg,#f6f9fd,#fff 70%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+      #evh-initial-loading .evh-app-loading-card{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:start;gap:1.1rem;width:min(100%,650px);box-sizing:border-box;padding:clamp(1.2rem,4vw,2.2rem);border:1px solid #dce5ef;border-radius:22px;background:rgba(255,255,255,.94);box-shadow:0 20px 55px rgba(20,44,75,.075)}
+      #evh-initial-loading .evh-app-loading-mark{display:grid;place-items:center;width:64px;height:64px;border:1px solid #d1e1f4;border-radius:20px;background:linear-gradient(145deg,#edf4ff,#dceaff);color:#246ed1}
+      #evh-initial-loading .evh-loading-brand-icon{display:block;width:68%;height:68%;max-width:46px;max-height:46px}
+      #evh-initial-loading .evh-loading-kicker{display:block;margin:.1rem 0 .45rem;color:#476b98;font-size:.65rem;font-weight:850;letter-spacing:.13em}
+      #evh-initial-loading h1{margin:0 0 .4rem;color:#1a3558;font-size:clamp(1.25rem,3vw,1.65rem);letter-spacing:-.035em;line-height:1.3}
+      #evh-initial-loading p{margin:0;color:#617187;font-size:.88rem;line-height:1.6}
+      #evh-initial-loading .evh-loading-lines{display:grid;gap:.55rem;max-width:650px;margin-top:1.25rem}
+      #evh-initial-loading .evh-loading-lines span{display:block;height:9px;border-radius:999px;background:linear-gradient(90deg,#eaf0f8 0%,#f7faff 45%,#eaf0f8 100%);background-size:220% 100%;animation:evh-loading-shimmer 1.7s ease-in-out infinite}
+      #evh-initial-loading .evh-loading-lines span:nth-child(1){width:94%}
+      #evh-initial-loading .evh-loading-lines span:nth-child(2){width:78%}
+      #evh-initial-loading .evh-loading-lines span:nth-child(3){width:54%}
+      @keyframes evh-loading-shimmer{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+      @media(max-width:640px){#evh-initial-loading .evh-app-loading-card{grid-template-columns:46px minmax(0,1fr);gap:.8rem;padding:1.2rem}#evh-initial-loading .evh-app-loading-mark{width:46px;height:46px;border-radius:14px}}
+    </style>
   </head>
   <body>
     <noscript>Debes habilitar JavaScript para usar ElectroVibeHome.</noscript>
-    <div id="root"></div>
+    <div id="root">
+      <main id="evh-initial-loading" class="evh-app-loading" role="status" aria-live="polite">
+        <div class="evh-app-loading-card">
+          <span class="evh-app-loading-mark" aria-hidden="true">
+            <svg class="evh-loading-brand-icon" viewBox="0 0 48 48" fill="none" focusable="false">
+              <path d="M6 22.5 24 8l18 14.5" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M11.5 21v18h25V21" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M27.5 22 16.5 30h6.3l-2.3 7L32 26h-6.3l1.8-4Z" fill="#ed8d32" stroke="#b95a17" stroke-width=".8" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <div class="evh-app-loading-copy">
+            <span class="evh-loading-kicker">ELECTROVIBEHOME</span>
+            <h1>Preparando tu espacio</h1>
+            <p>Estamos organizando todo para que continúes con comodidad.</p>
+            <div class="evh-loading-lines" aria-hidden="true"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      </main>
+    </div>
     <script type="module" src="/src/index.jsx"></script>
   </body>
 </html>
