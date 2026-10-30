@@ -476,9 +476,8 @@ const userId = user?._id;  // Usar userId desde el contexto
             <div>
               <span className="evh-pay-eyebrow">PAGO Y CONFIRMACIÓN</span>
               <h3 id="evh-pay-title">ElectroVibe Pay</h3>
-              <p>Tu pedido, en un proceso claro y acompañado.</p>
+              <p>Revisa y confirma tu pedido de forma sencilla.</p>
             </div>
-            <span className="evh-pay-tag">Gestión Integrada</span>
           </div>
           <div className="evh-pay-track" aria-label="Progreso del pedido">
             <span
