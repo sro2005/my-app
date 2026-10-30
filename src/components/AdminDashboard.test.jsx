@@ -36,7 +36,7 @@ describe('Admin dashboard', () => {
     ] }).mockResolvedValueOnce({ data: [{ role: 'user' }] })
       .mockResolvedValueOnce({ data: [{ quantity: 2 }] });
     render(<AdminDashboard />);
-    expect(await screen.findByText('Cliente Demo')).toBeTruthy();
+    expect(await screen.findAllByText('Cliente Demo')).toHaveLength(2);
     expect(screen.getByText(/pedidos sin pago confirmado no representan ingresos recibidos/i)).toBeTruthy();
     expect(screen.getByText('Pendiente de revisión')).toBeTruthy();
     expect(screen.getByText('Pago confirmado')).toBeTruthy();
