@@ -44,7 +44,7 @@ describe('AdminInventory', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Guardar Cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
     expect(screen.getByRole('region', { name: 'Editar producto' })).toBeTruthy();
-    expect(screen.getByText(formatCop(125000.5))).toBeTruthy();
+    expect(editor.previousElementSibling.querySelector('.evh-admin-product-price').textContent).toBe(formatCop(125000.5));
     expect(axios.put).toHaveBeenCalledWith('https://api.example.test/api/products/p1',
       expect.objectContaining({ price: 125000.5, quantity: 3, demo: true, demoIcon: '☕', catalogVersion: 'v2' }),
       { headers: { Authorization: 'Bearer demo-admin' } });
