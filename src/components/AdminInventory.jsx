@@ -1,3 +1,4 @@
+import LoadingBrandMark from './LoadingBrandMark';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -130,7 +131,7 @@ const AdminInventory = () => {
       </div>
       {loading && (
         <div className="evh-loading-panel evh-admin-loading" role="status" aria-live="polite">
-          <span className="evh-loading-mark" aria-hidden="true">EV</span>
+          <span className="evh-loading-mark" aria-hidden="true"><LoadingBrandMark /></span>
           <div className="evh-loading-copy">
             <span className="evh-loading-kicker">INVENTARIO</span>
             <h2>Actualizando productos</h2>

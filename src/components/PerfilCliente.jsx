@@ -1,3 +1,4 @@
+import LoadingBrandMark from './LoadingBrandMark';
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
@@ -225,7 +226,7 @@ const PerfilCliente = () => {
     return (
       <main className="evh-profile-page evh-profile-loading" aria-busy="true">
         <div className="evh-loading-panel" role="status" aria-live="polite">
-          <span className="evh-loading-mark" aria-hidden="true">EV</span>
+          <span className="evh-loading-mark" aria-hidden="true"><LoadingBrandMark /></span>
           <div className="evh-loading-copy">
             <span className="evh-loading-kicker">TU ESPACIO PERSONAL</span>
             <h2>Preparando tu perfil</h2>

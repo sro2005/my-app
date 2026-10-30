@@ -1,3 +1,4 @@
+import LoadingBrandMark from './LoadingBrandMark';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { formatBogotaDateTime } from '../utils/dateFormatting';
@@ -221,7 +222,7 @@ const ListadoClientes = () => {
 
       {loading ? (
         <div className="evh-loading-panel evh-customers-loading" role="status" aria-live="polite">
-          <div className="evh-loading-mark" aria-hidden="true">EV</div>
+          <div className="evh-loading-mark" aria-hidden="true"><LoadingBrandMark /></div>
           <div className="evh-loading-copy">
             <span className="evh-loading-kicker">ELECTROVIBEHOME</span>
             <h2>Preparando el directorio de clientes</h2>

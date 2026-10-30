@@ -1,3 +1,4 @@
+import LoadingBrandMark from './LoadingBrandMark';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -220,7 +221,7 @@ const ListadoProductos = () => {
     return (
       <main className="evh-catalog-page evh-catalog-loading" aria-busy="true">
         <div className="evh-loading-panel" role="status" aria-live="polite">
-          <span className="evh-loading-mark" aria-hidden="true">EV</span>
+          <span className="evh-loading-mark" aria-hidden="true"><LoadingBrandMark /></span>
           <div className="evh-loading-copy">
             <span className="evh-loading-kicker">DESCUBRE TU PRÓXIMO FAVORITO</span>
             <h2>Preparando el Catálogo</h2>
