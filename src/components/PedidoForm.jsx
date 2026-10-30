@@ -417,27 +417,6 @@ const userId = user?._id;  // Usar userId desde el contexto
           <label htmlFor="checkout-address">Dirección de entrega</label>
           <input id="checkout-address" type="text" autoComplete="street-address" placeholder="Calle, número, barrio y ciudad" value={address} onChange={(e) => setAddress(e.target.value)} required />
         </div>
-        <section className="evh-pay-section evh-form-field evh-form-field-wide" aria-labelledby="evh-pay-title">
-          <div className="evh-pay-section-head">
-            <div className="evh-pay-brand-mark" aria-hidden="true">⚡</div>
-            <div>
-              <span className="evh-pay-eyebrow">TU EXPERIENCIA DE COMPRA</span>
-              <h3 id="evh-pay-title">ElectroVibe Pay</h3>
-              <p>Una forma más sencilla de cerrar tu elección.</p>
-            </div>
-            <span className="evh-pay-tag">Integrado</span>
-          </div>
-          <div className="evh-pay-track" aria-label="Pasos del pedido">
-            <span className="is-complete"><b>✓</b> Tu selección</span>
-            <span className="is-active"><b>2</b> Revisión</span>
-            <span><b>3</b> Confirmación</span>
-          </div>
-          <div className="evh-pay-info">
-            <div><strong>Todo en un mismo lugar</strong><span>Revisa tus productos y confirma tu pedido sin salir de ElectroVibeHome.</span></div>
-            <span className="evh-pay-symbol" aria-hidden="true">↗</span>
-          </div>
-          <p className="evh-pay-terms">El estado del pago se actualizará después de la revisión correspondiente.</p>
-        </section>
         <div className="evh-form-field">
           <label htmlFor="deliveryDate">Fecha deseada de entrega</label>
           <input type="date" id="deliveryDate" name="deliveryDate" value={deliveryDate} onChange={(e) => setDeliveryDate(e.target.value)} min={today} required />
@@ -481,6 +460,31 @@ const userId = user?._id;  // Usar userId desde el contexto
             <p className="evh-cart-note">Revisa el precio y la cantidad de cada producto. La disponibilidad se validará antes de registrar el pedido.</p>
           </section>
         )}
+
+        <section className="evh-pay-section" aria-labelledby="evh-pay-title">
+          <div className="evh-pay-section-head">
+            <div className="evh-pay-brand-mark" aria-hidden="true">⚡</div>
+            <div>
+              <span className="evh-pay-eyebrow">PAGO Y CONFIRMACIÓN</span>
+              <h3 id="evh-pay-title">ElectroVibe Pay</h3>
+              <p>Tu pedido, en un proceso claro y acompañado.</p>
+            </div>
+            <span className="evh-pay-tag">Gestión Integrada</span>
+          </div>
+          <div className="evh-pay-track" aria-label="Pasos del pedido">
+            <span className="is-complete"><b>✓</b> Productos</span>
+            <span className="is-active"><b>2</b> Revisión</span>
+            <span><b>3</b> Confirmación</span>
+          </div>
+          <div className="evh-pay-info">
+            <div>
+              <strong>Tu pedido, paso a paso</strong>
+              <span>Revisa los artículos, confirma la solicitud y consulta cualquier actualización desde Mis pedidos.</span>
+            </div>
+            <span className="evh-pay-symbol" aria-hidden="true">✓</span>
+          </div>
+          <p className="evh-pay-terms">Después de enviar tu pedido, el equipo de ElectroVibeHome revisará el pago y actualizará su estado en tu cuenta.</p>
+        </section>
 
         <div className="evh-order-summary">
           <span>Total estimado</span>
