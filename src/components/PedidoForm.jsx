@@ -401,6 +401,11 @@ const userId = user?._id;  // Usar userId desde el contexto
     setShowConfirmModal(false);
   };
 
+  const orderIsRegistered = Boolean(completedDemoOrderId);
+  const selectionIsComplete = cartItems.length > 0 || showConfirmModal || orderIsRegistered;
+  const reviewIsComplete = showConfirmModal || orderIsRegistered;
+  const confirmationIsComplete = orderIsRegistered;
+
   return (
     <FormPage eyebrow="EXPERIENCIA ELECTROVIBE PAY" title="Tu compra, a tu manera" description="Revisa tu selección, completa tus datos y confirma tu pedido en un solo lugar." className="evh-checkout-page">
       <form className="evh-form evh-checkout-form" onSubmit={handleSubmit}>
@@ -471,19 +476,28 @@ const userId = user?._id;  // Usar userId desde el contexto
             </div>
             <span className="evh-pay-tag">Gestión Integrada</span>
           </div>
-          <div className="evh-pay-track" aria-label="Pasos del pedido">
-            <span className="is-complete"><b>✓</b> Productos</span>
-            <span className="is-active"><b>2</b> Revisión</span>
-            <span><b>3</b> Confirmación</span>
+          <div className="evh-pay-track" aria-label="Progreso del pedido">
+            <span
+              className={selectionIsComplete ? 'is-complete' : 'is-active'}
+              aria-current={!selectionIsComplete ? 'step' : undefined}
+            ><b>{selectionIsComplete ? '✓' : '1'}</b> Selección</span>
+            <span
+              className={reviewIsComplete ? 'is-complete' : selectionIsComplete ? 'is-active' : undefined}
+              aria-current={selectionIsComplete && !reviewIsComplete ? 'step' : undefined}
+            ><b>{reviewIsComplete ? '✓' : '2'}</b> Revisión</span>
+            <span
+              className={confirmationIsComplete ? 'is-complete' : showConfirmModal ? 'is-active' : undefined}
+              aria-current={showConfirmModal && !confirmationIsComplete ? 'step' : undefined}
+            ><b>{confirmationIsComplete ? '✓' : '3'}</b> Confirmación</span>
           </div>
           <div className="evh-pay-info">
             <div>
               <strong>Tu pedido, paso a paso</strong>
-              <span>Revisa los artículos, confirma la solicitud y consulta cualquier actualización desde Mis pedidos.</span>
+              <span>Selecciona los productos que deseas incluir, revisa los datos y confirma tu solicitud. Una vez registrado el pedido, podrás consultar su estado y cualquier novedad en “Mis pedidos”.</span>
             </div>
             <span className="evh-pay-symbol" aria-hidden="true">✓</span>
           </div>
-          <p className="evh-pay-terms">Después de enviar tu pedido, el equipo de ElectroVibeHome revisará el pago y actualizará su estado en tu cuenta.</p>
+          <p className="evh-pay-terms">El equipo de ElectroVibeHome revisará el pago y actualizará el estado de tu pedido en tu cuenta.</p>
         </section>
 
         <div className="evh-order-summary">
