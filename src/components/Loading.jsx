@@ -1,5 +1,5 @@
-import LoadingBrandMark from './LoadingBrandMark';
 import React from 'react';
+import LoadingBrandMark from './LoadingBrandMark';
 
 const Loading = ({
   title = 'Preparando tu espacio',
