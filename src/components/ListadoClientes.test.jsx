@@ -29,10 +29,10 @@ const client = {
   }]
 };
 
-const renderClients = () => {
+const renderClients = (customers = [client]) => {
   vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
   localStorage.setItem('authToken', 'admin-demo-token');
-  axios.get.mockResolvedValue({ data: [client] });
+  axios.get.mockResolvedValue({ data: customers });
   return render(<ListadoClientes />);
 };
 
@@ -51,9 +51,9 @@ describe('Admin customer history', () => {
 
   test('shows an expandable order history with payment status and product details', async () => {
     renderClients();
-    const summary = await screen.findByText('Ver historial de pedidos (1)');
+    const summary = await screen.findByText('Ver Historial de Pedidos (1)');
     expect(screen.getByRole('img', { name: /icono de perfil: femenino/i })).toBeTruthy();
-    expect(screen.getByText('Demo Buyer (1 pedido)')).toBeTruthy();
+    expect(screen.getByText('Demo Buyer (1 Pedido)')).toBeTruthy();
     fireEvent.click(summary);
     expect(await screen.findByText(/Pendiente de revisión/)).toBeTruthy();
     expect(screen.getByText(/Valor del pedido:/)).toBeTruthy();
@@ -63,6 +63,26 @@ describe('Admin customer history', () => {
     expect(axios.get).toHaveBeenCalledWith('https://api.example.test/api/customers/all', {
       headers: { Authorization: 'Bearer admin-demo-token' }
     });
+  });
+
+  test('uses title case for the customer summary and directory, including zero orders', async () => {
+    const customers = [
+      { ...client, _id: '507f1f77bcf86cd799439011', firstName: 'Ana', orders: [] },
+      { ...client, _id: '507f1f77bcf86cd799439012', firstName: 'Bruno', orders: [] },
+      { ...client, _id: '507f1f77bcf86cd799439013', firstName: 'Carla', orders: [] }
+    ];
+    renderClients(customers);
+
+    expect(await screen.findByRole('heading', { name: /Resumen de Clientes/ })).toBeTruthy();
+    expect(screen.getByText('Total de Clientes')).toBeTruthy();
+    expect(screen.getByText('Clientes Activos')).toBeTruthy();
+    expect(screen.getByText('Clientes Inactivos')).toBeTruthy();
+    expect(screen.getByText('Pedidos Registrados')).toBeTruthy();
+    expect(screen.getByText('Último Pedido')).toBeTruthy();
+    expect(screen.getByText('Cliente con Más Pedidos')).toBeTruthy();
+    expect(screen.getByText('Directorio de Clientes')).toBeTruthy();
+    expect(screen.getByText('3 Resultados')).toBeTruthy();
+    expect(Array.from(document.querySelectorAll('.cliente-details p')).filter(item => item.textContent.includes('Historial de Pedidos: 0 Pedidos'))).toHaveLength(3);
   });
 
   test('filters customers by name and searches identification without punctuation', async () => {
@@ -75,6 +95,6 @@ describe('Admin customer history', () => {
     expect(screen.getByText('buyer@example.test')).toBeTruthy();
     fireEvent.change(search, { target: { value: 'missing' } });
     expect(screen.queryByText('buyer@example.test')).toBeNull();
-    expect(screen.getByText('Total de clientes').parentElement.querySelector('p').textContent).toBe('1');
+    expect(screen.getByText('Total de Clientes').parentElement.querySelector('p').textContent).toBe('1');
   });
 });

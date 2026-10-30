@@ -80,10 +80,10 @@ const ClienteItem = ({ cliente }) => {
           <p><strong>Teléfono de contacto:</strong> {cliente.phone || 'No disponible'}</p>
           <p><strong>Número de identificación:</strong> {formatIdentificationNumber(cliente.identificationNumber)}</p>
           <p><strong>Fecha de nacimiento:</strong> {formatDate(cliente.birthDate)}</p>
-          <p><strong>Historial de pedidos:</strong> {pedidosCount} pedido{pedidosCount === 1 ? '' : 's'}</p>
+          <p><strong>Historial de Pedidos:</strong> {pedidosCount} {pedidosCount === 1 ? 'Pedido' : 'Pedidos'}</p>
           {pedidosCount > 0 && (
             <details className="cliente-historial-pedidos">
-              <summary>Ver historial de pedidos ({pedidosCount})</summary>
+              <summary>Ver Historial de Pedidos ({pedidosCount})</summary>
               <ul>
                 {cliente.orders.map(pedido => (
                   <li key={pedido._id}>
@@ -258,32 +258,32 @@ const ListadoClientes = () => {
 
       <div className="dashboard-container">
         <div className="dashboard-card">
-          <h2>📊 Resumen de clientes</h2>
+          <h2>📊 Resumen de Clientes</h2>
           <div className="client-stats">
             <div className="stat-item">
-              <h3>Total de clientes</h3>
+              <h3>Total de Clientes</h3>
               <p>{clientes.length}</p>
             </div>
             <div className="stat-item active">
-              <h3>Clientes activos</h3>
+              <h3>Clientes Activos</h3>
               <p>{activos}</p>
             </div>
             <div className="stat-item inactive">
-              <h3>Clientes inactivos</h3>
+              <h3>Clientes Inactivos</h3>
               <p>{inactivos}</p>
             </div>
             <div className="stat-item">
-              <h3>Pedidos registrados</h3>
+              <h3>Pedidos Registrados</h3>
               <p>{pedidosTotales}</p>
             </div>
             <div className="stat-item">
-              <h3>Último pedido</h3>
+              <h3>Último Pedido</h3>
               <p>{ultimoPedido}</p>
             </div>
             <div className="stat-item top-client">
-              <h3>Cliente con más pedidos</h3>
+              <h3>Cliente con Más Pedidos</h3>
               {clienteMasPedidos ? (
-                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({topClientOrderCount} {topClientOrderCount === 1 ? 'pedido' : 'pedidos'})</p>
+                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({topClientOrderCount} {topClientOrderCount === 1 ? 'Pedido' : 'Pedidos'})</p>
               ) : (
                 <p>No se encontró un cliente con más pedidos.</p>
               )}
@@ -293,8 +293,8 @@ const ListadoClientes = () => {
     </div>
 
     <div className="evh-customers-list-heading">
-      <h2>Directorio de clientes</h2>
-      <span>{clientesFiltrados.length} {clientesFiltrados.length === 1 ? 'resultado' : 'resultados'}</span>
+      <h2>Directorio de Clientes</h2>
+      <span>{clientesFiltrados.length} {clientesFiltrados.length === 1 ? 'Resultado' : 'Resultados'}</span>
     </div>
     {clientesFiltrados.length > 0 ? (
       <ul className="clientes-list">
