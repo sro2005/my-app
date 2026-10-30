@@ -23,7 +23,7 @@ const client = {
     _id: '507f1f77bcf86cd799439099',
     orderDate: '2026-10-24T15:00:00.000Z',
     status: 'Procesando',
-    paymentStatus: 'SIMULATED',
+    paymentStatus: 'PENDING',
     totalAmount: 45000,
     products: [{ productId: { _id: '507f1f77bcf86cd799439088', name: 'Cafetera de muestra', category: 'Cafeteras' }, quantity: 2 }]
   }]
