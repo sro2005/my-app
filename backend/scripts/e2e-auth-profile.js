@@ -253,11 +253,11 @@ async function main() {
   );
   const scarceStockAfterRace = await Product.findById(scarceProduct._id);
   assert.equal(scarceStockAfterRace.quantity, 1, 'Concurrent stock race must not oversell or double-decrement');
-  assert.equal(await Order.countDocuments({ userId: customerId }), 4, 'Only four successful orders should persist for the primary test customer');
+  assert.equal(await Order.countDocuments({ userId: customerId }), 3, 'Only three orders should exist before the admin payment-review scenarios');
 
   const ordersForFirstUser = await request('/api/orders/my-orders', { token });
   expectStatus(ordersForFirstUser, 200, 'Authenticated order history');
-  assert.equal(ordersForFirstUser.body.length, 4, 'Only the four successful order creations should appear in the history');
+  assert.equal(ordersForFirstUser.body.length, 3, 'The customer history should include the three orders created before admin review');
   assert.equal(ordersForFirstUser.body[0]._id, firstOrderId);
   const adminListForbidden = await request('/api/orders/all', { token });
   expectStatus(adminListForbidden, 403, 'Non-admin order listing');
