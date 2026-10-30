@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import Loading from '../components/Loading';
 
 export const AuthContext = createContext();
@@ -12,8 +12,6 @@ const clearAuthStorage = () => {
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const logoutTimerRef = useRef(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('authToken');
@@ -57,30 +55,12 @@ const AuthProvider = ({ children }) => {
     localStorage.setItem('userData', JSON.stringify(updatedUser));
   };
 
-  useEffect(() => () => {
-    if (logoutTimerRef.current) window.clearTimeout(logoutTimerRef.current);
-  }, []);
-
   const handleLogout = () => {
     clearAuthStorage();
     setUser(null);
-    setIsLoggingOut(true);
-    if (logoutTimerRef.current) window.clearTimeout(logoutTimerRef.current);
-    logoutTimerRef.current = window.setTimeout(() => {
-      setIsLoggingOut(false);
-      logoutTimerRef.current = null;
-    }, 700);
   };
 
   if (loading) return <Loading />;
-  if (isLoggingOut) {
-    return (
-      <Loading
-        title="Cerrando tu sesión"
-        description="Estamos finalizando tu sesión de forma segura."
-      />
-    );
-  }
 
   return (
     <AuthContext.Provider value={{ user, handleLoginSuccess, handleLogout, updateUser }}>
