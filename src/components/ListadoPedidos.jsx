@@ -6,11 +6,7 @@ import { formatBogotaDate, formatBogotaDateTime } from '../utils/dateFormatting'
 import { Link } from 'react-router-dom';
 import OrderIcon from './OrderIcon';
 import './ListadoPedidos.css';
-
-// Función para formatear el precio en formato local (COP)
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(price) || 0);
-};
+import { formatCop as formatPrice } from '../utils/currency';
 
 // Mostrar la fecha local de Bogotá sin cargar datos de zonas horarias externos.
 const formatOrderDate = (dateString) => formatBogotaDateTime(dateString);
