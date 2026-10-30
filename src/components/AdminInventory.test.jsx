@@ -3,6 +3,7 @@ import { afterEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import axios from 'axios';
 import AdminInventory, { editableProduct } from './AdminInventory';
+import { formatCop } from '../utils/currency';
 
 vi.mock('axios', () => ({ default: { get: vi.fn(), put: vi.fn(), delete: vi.fn() } }));
 vi.mock('react-router-dom', () => ({ Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a> }));
@@ -32,18 +33,20 @@ describe('AdminInventory', () => {
     expect(editableProduct(item)).toMatchObject({ demo: true, demoIcon: '☕', catalogVersion: 'v2' });
   });
   test('sends updated demo product to admin-only API', async () => {
-    axios.put.mockResolvedValue({ data: { product: { ...item, quantity: 3 } } });
+    axios.put.mockResolvedValue({ data: { product: { ...item, price: 125000.5, quantity: 3 } } });
     initialize();
     fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
     const editor = screen.getByRole('region', { name: 'Editar producto' });
     expect(editor.previousElementSibling.classList.contains('evh-admin-product')).toBe(true);
     expect(editor.previousElementSibling.contains(screen.getByRole('button', { name: 'Editar' }))).toBe(true);
+    fireEvent.change(screen.getByLabelText('Precio (COP)'), { target: { value: '125000.5' } });
     fireEvent.change(screen.getByLabelText('Existencias'), { target: { value: '3' } });
     fireEvent.click(screen.getByRole('button', { name: 'Guardar Cambios' }));
     expect(await screen.findByRole('status')).toBeTruthy();
     expect(screen.getByRole('region', { name: 'Editar producto' })).toBeTruthy();
+    expect(screen.getByText(formatCop(125000.5))).toBeTruthy();
     expect(axios.put).toHaveBeenCalledWith('https://api.example.test/api/products/p1',
-      expect.objectContaining({ quantity: 3, demo: true, demoIcon: '☕', catalogVersion: 'v2' }),
+      expect.objectContaining({ price: 125000.5, quantity: 3, demo: true, demoIcon: '☕', catalogVersion: 'v2' }),
       { headers: { Authorization: 'Bearer demo-admin' } });
   });
   test('requires explicit deletion confirmation', async () => {
