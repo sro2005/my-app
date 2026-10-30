@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useContext, useEffect } from 'react';
+import LandingPage from './components/LandingPage';
 import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import Loading from './components/Loading';
@@ -8,7 +9,6 @@ import RoleGuard from './components/RoleGuard';
 import AuthProvider from './contexts/AuthContext';
 
 // Load each screen only when its route is opened to keep the initial bundle small.
-const LandingPage = lazy(() => import('./components/LandingPage'));
 const HomePage = lazy(() => import('./components/HomePage'));
 const AdminDashboard = lazy(() => import('./components/AdminDashboard'));
 const AdminInventory = lazy(() => import('./components/AdminInventory'));
