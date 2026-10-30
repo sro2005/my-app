@@ -92,6 +92,35 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByRole('status').textContent).toMatch(/no pudimos cargar las recomendaciones/i);
   });
 
+  test('shows ElectroVibe Pay after the delivery and product fields, before the order total', async () => {
+    axios.get.mockResolvedValueOnce({ data: [{
+      _id: 'p-layout',
+      name: 'Lavadora de prueba',
+      category: 'Lavadoras',
+      price: 500000,
+      quantity: 4,
+      demo: true
+    }] });
+    renderCheckout();
+
+    await screen.findByRole('option', { name: 'p-layout' });
+    fireEvent.change(screen.getByLabelText('checkout-product'), { target: { value: 'p-layout' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Agregar al Pedido' }));
+
+    const checkout = document.querySelector('.evh-checkout-form');
+    const children = Array.from(checkout.children);
+    const gridIndex = children.findIndex(node => node.classList?.contains('evh-form-grid'));
+    const cartIndex = children.findIndex(node => node.classList?.contains('evh-cart'));
+    const payIndex = children.findIndex(node => node.classList?.contains('evh-pay-section'));
+    const totalIndex = children.findIndex(node => node.classList?.contains('evh-order-summary'));
+
+    expect(gridIndex).toBeGreaterThan(-1);
+    expect(cartIndex).toBeGreaterThan(gridIndex);
+    expect(payIndex).toBeGreaterThan(cartIndex);
+    expect(payIndex).toBeLessThan(totalIndex);
+    expect(screen.getByText(/el equipo de ElectroVibeHome revisará el pago/i)).toBeTruthy();
+  });
+
   test('registers an order for manual payment review without an external payment provider', async () => {
     axios.get.mockResolvedValueOnce({
       data: [{
