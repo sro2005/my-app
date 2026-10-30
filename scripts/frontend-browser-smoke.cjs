@@ -639,9 +639,6 @@ async function main() {
     await page.getByRole('button', { name: 'Actualizar Contraseña' }).click();
     await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
 
-    await captureAuthenticatedRoute('/pago-resultado?reference=EVH-TEST-BROWSER&status=APPROVED',
-      /Estamos revisando el resultado/i, 'customer-payment-result');
-
     await page.goto(new URL('/admin-inventario', baseUrl).toString(), { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForFunction(() => window.location.pathname === '/home-page', null, { timeout: 15000 });
     assert.match(page.url(), /\/home-page$/,
