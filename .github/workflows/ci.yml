@@ -64,14 +64,6 @@ jobs:
         run: npm audit --audit-level=high
       - run: CI=true npm test
       - run: npm run build
-      - name: Upload all compiled frontend JavaScript chunks for live verification
-        uses: actions/upload-artifact@v7
-        with:
-          name: frontend-build-assets
-          path: build/assets/*.js
-          if-no-files-found: error
-          retention-days: 1
-
   backend:
     runs-on: ubuntu-latest
     defaults:
@@ -195,11 +187,6 @@ jobs:
     needs: [frontend, backend, backend-e2e]
     runs-on: ubuntu-latest
     steps:
-      - name: Download compiled frontend JavaScript chunks
-        uses: actions/download-artifact@v7
-        with:
-          name: frontend-build-assets
-          path: frontend-build-assets
       - name: Wait for API health and database readiness
         env:
           API_URL: https://electrovibehome-v2-api.onrender.com
@@ -233,14 +220,66 @@ jobs:
           curl --fail --silent --show-error --max-time 20 "$FRONTEND_URL/" -o /tmp/frontend.html
           grep -Fq 'id="root"' /tmp/frontend.html
 
-          # Vite splits lazy-loaded pages into separate chunks. The API base URL may
-          # therefore live in a route chunk, not in the first script loaded by index.html.
-          if ! grep -RFl -- "$API_URL" frontend-build-assets >/dev/null; then
-            echo "No compiled frontend JavaScript chunk contains the configured API base URL."
-            echo "Checked every JavaScript asset produced by the frontend build."
-            exit 1
-          fi
-          echo "Configured API base URL found in the compiled frontend chunks."
+          # Inspect the JavaScript actually published by Render. Vite splits lazy-loaded
+          # pages into chunks, so the API URL may not live in the entry script alone.
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          const frontendUrl = new URL(process.env.FRONTEND_URL);
+          const apiUrl = process.env.API_URL;
+          const html = fs.readFileSync('/tmp/frontend.html', 'utf8');
+          const origin = frontendUrl.origin;
+          const queued = [];
+          const visited = new Set();
+          const maxAssets = 150;
+
+          const enqueue = (raw, fromUrl) => {
+            try {
+              const assetUrl = new URL(raw, fromUrl);
+              if (assetUrl.origin === origin && /\.js(?:\?|$)/i.test(assetUrl.pathname) && !visited.has(assetUrl.href)) {
+                queued.push(assetUrl);
+              }
+              if (raw.startsWith('assets/')) {
+                const rootAsset = new URL('/' + raw, origin);
+                if (!visited.has(rootAsset.href)) queued.push(rootAsset);
+              }
+              if (raw.startsWith('./assets/')) {
+                const rootAsset = new URL('/' + raw.slice(2), origin);
+                if (!visited.has(rootAsset.href)) queued.push(rootAsset);
+              }
+            } catch {
+              // Ignore non-URL strings in compiled JavaScript.
+            }
+          };
+
+          const entryPattern = /(?:src|href)=["']([^"']+\.js(?:\?[^"']*)?)["']/gi;
+          for (const match of html.matchAll(entryPattern)) enqueue(match[1], frontendUrl);
+
+          let foundApiUrl = false;
+          while (queued.length && visited.size < maxAssets) {
+            const assetUrl = queued.shift();
+            if (visited.has(assetUrl.href)) continue;
+            visited.add(assetUrl.href);
+
+            const response = await fetch(assetUrl, { signal: AbortSignal.timeout(20000) });
+            if (!response.ok) {
+              throw new Error('Published JavaScript asset returned HTTP ' + response.status + ': ' + assetUrl.pathname);
+            }
+            const source = await response.text();
+            if (source.includes(apiUrl)) {
+              foundApiUrl = true;
+              break;
+            }
+
+            const chunkPattern = /["']([^"']+\.js(?:\?[^"']*)?)["']/gi;
+            for (const match of source.matchAll(chunkPattern)) enqueue(match[1], assetUrl);
+          }
+
+          if (!foundApiUrl) {
+            throw new Error('The published frontend JavaScript chunks do not contain the configured API base URL. Inspected ' + visited.size + ' asset(s).');
+          }
+          console.log('Configured API base URL found in ' + visited.size + ' published JavaScript asset(s).');
+          NODE
 
           curl --fail --silent --show-error --max-time 20 \
             -D /tmp/products.headers \
