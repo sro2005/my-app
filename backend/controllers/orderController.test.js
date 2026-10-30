@@ -229,7 +229,7 @@ const validOrderBody = () => ({
   email: 'cliente@example.com',
   phone: '+57 300 123 4567',
   address: 'Calle 10 # 20-30, Bogotá',
-  paymentMethod: 'Wompi',
+  paymentMethod: 'Pago pendiente de coordinación',
   deliveryDate: '2099-01-01',
   products: [{ productId: validId, quantity: 1 }]
 });
