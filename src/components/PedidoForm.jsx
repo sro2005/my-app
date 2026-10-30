@@ -29,9 +29,7 @@ const requestedProductId = searchParams.get('productId');
 const userId = user?._id;  // Usar userId desde el contexto 
   
   const [address, setAddress] = useState("");
-  const paymentMethod = { value: 'Pago pendiente de coordinación' };
-  const isLocalOrderMethod = value => ['Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación'].includes(value);
-  const [confirmedPreference, setConfirmedPreference] = useState('ElectroVibe Pay');
+  const paymentMethod = 'Pago pendiente de coordinación';
   const [deliveryDate, setDeliveryDate] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedQuantity, setSelectedQuantity] = useState('1');
@@ -41,8 +39,7 @@ const userId = user?._id;  // Usar userId desde el contexto
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState(null); // Estado para guardar la información del pedido
-  const [pendingCheckoutOrderId, setPendingCheckoutOrderId] = useState(null);
-  const [completedDemoOrderId, setCompletedDemoOrderId] = useState(null);
+  const [completedOrderId, setCompletedOrderId] = useState(null);
   const [orderRequestKey, setOrderRequestKey] = useState(null);
   const [productLoadError, setProductLoadError] = useState('');
   const [productLoadNotice, setProductLoadNotice] = useState('');
@@ -251,10 +248,6 @@ const userId = user?._id;  // Usar userId desde el contexto
   const handleSubmit = (e) => {
     e.preventDefault();   
     setFormError('');
-    if (pendingCheckoutOrderId) {
-      setFormError('Ya existe un pedido pendiente de iniciar pago. Reintenta el pago de ese pedido antes de crear otro.');
-      return;
-    }
     if (orderRequestKey) {
       setFormError('Hay una solicitud de pedido pendiente de confirmar. Reintenta esa misma solicitud antes de iniciar otra compra.');
       return;
@@ -275,7 +268,7 @@ const userId = user?._id;  // Usar userId desde el contexto
       email: customerData.email,
       phone: customerData.phone,
       address,
-      paymentMethod: paymentMethod.value,
+      paymentMethod,
       deliveryDate,
       products: cartItems.map(item => ({ productId: item.value, quantity: item.quantity })),
       totalAmount,
@@ -297,9 +290,8 @@ const userId = user?._id;  // Usar userId desde el contexto
       setShowConfirmModal(false);
       return;
     }
-    setOrderRequestKey(requestKey);
 
-    let createdOrderId = null;
+    setOrderRequestKey(requestKey);
     setLoading(true);
     try {
       const created = await axios.post(`${API_URL}/api/orders/realizar`, order, {
@@ -308,91 +300,27 @@ const userId = user?._id;  // Usar userId desde el contexto
           'Idempotency-Key': requestKey
         }
       });
-      createdOrderId = created.data?.order?._id;
+      const createdOrderId = created.data?.order?._id;
       if (!createdOrderId) throw new Error('El servidor no devolvió el identificador del pedido.');
 
-      // La API confirmó qué pedido corresponde a esta solicitud.
       setOrderRequestKey(null);
-      if (isLocalOrderMethod(order?.paymentMethod)) {
-        // El pedido se guarda como SIMULATED en el servidor; nunca se abre un proveedor externo.
-        setPendingCheckoutOrderId(null);
-        setCompletedDemoOrderId(createdOrderId);
-        setSelectedProduct(null);
-        setSelectedQuantity('1');
-        setCartItems([]);
-        setConfirmedPreference("ElectroVibe Pay");
-        setAddress('');
-        setDeliveryDate('');
-        setOrder(null);
-        setFormError('');
-        return;
-      }
-
-      // Compatibilidad con pedidos heredados que aún necesiten reintentar un checkout Wompi.
-      setPendingCheckoutOrderId(createdOrderId);
-      const checkout = await axios.post(`${API_URL}/api/orders/${createdOrderId}/wompi-checkout`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!checkout.data?.checkoutUrl) throw new Error('No se recibió el enlace de pago.');
-
-      setPendingCheckoutOrderId(null);
-      window.location.assign(checkout.data.checkoutUrl);
+      setCompletedOrderId(createdOrderId);
+      setSelectedProduct(null);
+      setSelectedQuantity('1');
+      setCartItems([]);
+      setAddress('');
+      setDeliveryDate('');
+      setOrder(null);
+      setFormError('');
     } catch (error) {
-      const checkoutExpired = error.response?.data?.code === 'WOMPI_CHECKOUT_EXPIRED';
-      console.error('No fue posible iniciar el pago:', error.response?.data?.message || error.message);
-      if (checkoutExpired) {
-        // El backend ya canceló el pedido vencido y liberó el stock; permite confirmar uno nuevo.
-        setOrderRequestKey(null);
-        setPendingCheckoutOrderId(null);
-        setFormError(error.response?.data?.message || 'La sesión de pago venció. Revisa el carrito y confirma un nuevo pedido.');
-      } else {
-        if (createdOrderId) {
-          setOrderRequestKey(null);
-          setPendingCheckoutOrderId(createdOrderId);
-        } else {
-          const status = error.response?.status;
-          const outcomeIsUncertain = !error.response || status >= 500 || [408, 425, 429].includes(status);
-          // Reutiliza la clave solo cuando no es posible saber si el servidor llegó
-          // a registrar el pedido. Errores definitivos dejan iniciar una nueva solicitud.
-          setOrderRequestKey(outcomeIsUncertain ? requestKey : null);
-        }
-        setFormError(error.response?.data?.message || 'No pudimos confirmar la respuesta del servidor. Reintenta la misma solicitud para evitar duplicar el pedido.');
-      }
+      console.error('No fue posible registrar el pedido:', error.response?.data?.message || error.message);
+      const status = error.response?.status;
+      const outcomeIsUncertain = !error.response || status >= 500 || [408, 425, 429].includes(status);
+      setOrderRequestKey(outcomeIsUncertain ? requestKey : null);
+      setFormError(error.response?.data?.message || 'No pudimos confirmar la respuesta del servidor. Reintenta la misma solicitud para evitar duplicar el pedido.');
     } finally {
       setLoading(false);
       setShowConfirmModal(false);
-    }
-  };
-
-  const handleRetryCheckout = async () => {
-    const API_URL = (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
-    const token = localStorage.getItem('authToken');
-    if (!pendingCheckoutOrderId || !API_URL || !token) {
-      setFormError('No se puede reintentar el pago con la sesión actual. Revisa tus pedidos.');
-      return;
-    }
-
-    setLoading(true);
-    setFormError('');
-    try {
-      const checkout = await axios.post(
-        `${API_URL}/api/orders/${pendingCheckoutOrderId}/wompi-checkout`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (!checkout.data?.checkoutUrl) throw new Error('No se recibió el enlace de pago.');
-      setPendingCheckoutOrderId(null);
-      window.location.assign(checkout.data.checkoutUrl);
-    } catch (error) {
-      console.error('No fue posible reintentar el checkout:', error.response?.data?.message || error.message);
-      if (error.response?.data?.code === 'WOMPI_CHECKOUT_EXPIRED') {
-        setPendingCheckoutOrderId(null);
-        setFormError(error.response?.data?.message || 'La sesión de pago venció. Revisa el carrito y confirma un nuevo pedido.');
-      } else {
-        setFormError(error.response?.data?.message || 'No se pudo reabrir el checkout. Intenta nuevamente sin crear otro pedido.');
-      }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -401,7 +329,7 @@ const userId = user?._id;  // Usar userId desde el contexto
     setShowConfirmModal(false);
   };
 
-  const orderIsRegistered = Boolean(completedDemoOrderId);
+  const orderIsRegistered = Boolean(completedOrderId);
   const selectionIsComplete = cartItems.length > 0 || showConfirmModal || orderIsRegistered;
   const reviewIsComplete = showConfirmModal || orderIsRegistered;
   const confirmationIsComplete = orderIsRegistered;
@@ -496,7 +424,7 @@ const userId = user?._id;  // Usar userId desde el contexto
             </div>
             <span className="evh-pay-symbol" aria-hidden="true">✓</span>
           </div>
-          <p className="evh-pay-terms">El equipo de ElectroVibeHome revisará el pago y actualizará el estado de tu pedido en tu cuenta.</p>
+          <p className="evh-pay-terms">El pago permanecerá pendiente hasta que el administrador registre su revisión.</p>
         </section>
 
         <div className="evh-order-summary">
@@ -504,26 +432,20 @@ const userId = user?._id;  // Usar userId desde el contexto
           <strong>{formatPrice(totalAmount)}</strong>
           <p>El servidor confirma el precio y la disponibilidad antes de crear el pedido.</p>
         </div>
-        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || Boolean(pendingCheckoutOrderId) || Boolean(orderRequestKey)}>{cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con ElectroVibe Pay'}</button>
-        {completedDemoOrderId && (
+        <button className="evh-form-submit" type="submit" disabled={loading || cartItems.length === 0 || totalAmount === 0 || Boolean(orderRequestKey)}>{cartItems.length === 0 || totalAmount === 0 ? 'Añade productos para continuar' : 'Continuar con ElectroVibe Pay'}</button>
+        {completedOrderId && (
           <div className="evh-form-feedback is-success" role="status">
             <h3>¡Pedido registrado!</h3>
-            <p>Referencia del pedido: <strong>{completedDemoOrderId}</strong></p>
-            <p>Tu pedido se registró mediante <strong>{confirmedPreference}</strong>. Puedes seguir su avance en Mis pedidos. El equipo de ElectroVibeHome revisará el pago y podrás consultar el resultado en Mis pedidos.</p>
+            <p>Número de pedido: <strong>{completedOrderId}</strong></p>
+            <p>Tu pedido quedó registrado y permanece pendiente de revisión. No se ha realizado ningún cobro. El administrador verificará el pago antes de iniciar la preparación.</p>
             <p className="evh-form-alternate"><Link to="/listado-pedidos">Ver Mis Pedidos</Link></p>
-            <button type="button" className="evh-form-submit" onClick={() => setCompletedDemoOrderId(null)}>Preparar otro pedido</button>
+            <button type="button" className="evh-form-submit" onClick={() => setCompletedOrderId(null)}>Preparar otro pedido</button>
           </div>
         )}
-        {orderRequestKey && !pendingCheckoutOrderId && !loading && order && (
+        {orderRequestKey && !loading && order && (
           <div className="evh-form-feedback" role="status">
             <p>No se ha podido confirmar la respuesta del pedido. Reintenta la misma solicitud; el servidor verificará si ya existe.</p>
             <button type="button" className="evh-form-submit" onClick={handleConfirm}>Reintentar la misma solicitud</button>
-          </div>
-        )}
-        {pendingCheckoutOrderId && !loading && (
-          <div className="evh-form-feedback" role="status">
-            <p>El pedido {pendingCheckoutOrderId} ya está creado. Puedes reintentar el checkout sin reservar inventario nuevamente.</p>
-            <button type="button" className="evh-form-submit" onClick={handleRetryCheckout}>Reintentar checkout</button>
           </div>
         )}
         {formError && <p className="evh-form-feedback is-error" role="alert">{formError}</p>}
@@ -560,9 +482,7 @@ const userId = user?._id;  // Usar userId desde el contexto
               <span className="evh-confirmation-notice-icon" aria-hidden="true">i</span>
               <div>
                 <strong>Confirmación del pedido</strong>
-                <p>{isLocalOrderMethod(paymentMethod?.value)
-                  ? 'El pedido quedará registrado y el estado del pago se actualizará después de la revisión correspondiente.'
-                  : 'La forma de pago quedará pendiente de coordinación antes de procesar el pedido.'}</p>
+                <p>El pedido quedará registrado con el pago pendiente de coordinación. El administrador deberá comprobarlo antes de aprobar su preparación.</p>
               </div>
             </div>
 
