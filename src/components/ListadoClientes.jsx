@@ -40,10 +40,6 @@ const formatOrderDate = (dateString) => formatBogotaDateTime(dateString, {
   separator: ' - '
 });
 
-const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
-  style: 'currency', currency: 'COP', maximumFractionDigits: 0
-}).format(Number(amount) || 0);
-
 // Formatear número de identificación
 const formatIdentificationNumber = (number) => {
   const value = String(number ?? '').trim();
