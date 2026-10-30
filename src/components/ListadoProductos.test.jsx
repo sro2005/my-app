@@ -151,6 +151,19 @@ describe('ListadoProductos', () => {
     expect(demoProducts.every((product) => Number.isInteger(product.quantity) && product.quantity > 0)).toBe(true);
   });
 
+  test('renders a matching vector illustration for all 66 demo products across all 22 categories', async () => {
+    vi.stubEnv('REACT_APP_API_BASE_URL', '');
+    renderCatalog();
+
+    expect(await screen.findByText('Disponibilidad pendiente de verificación')).toBeTruthy();
+    const productCards = document.querySelectorAll('.evh-product-card');
+    expect(productCards).toHaveLength(66);
+    productCards.forEach((card) => {
+      expect(card.querySelector('svg.evh-appliance-icon')).toBeTruthy();
+      expect(card.querySelector('.evh-product-art small')).toBeNull();
+    });
+  });
+
   test('offers an add-to-order link for authenticated customers when products come from the live API', async () => {
     vi.stubEnv('REACT_APP_API_BASE_URL', 'https://api.example.test');
     axios.get.mockResolvedValue({ data: [
