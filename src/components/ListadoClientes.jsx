@@ -84,7 +84,7 @@ const ClienteItem = ({ cliente }) => {
                     <strong>Pedido #{String(pedido._id).slice(-8)}</strong>
                     <span>Fecha: {formatOrderDate(pedido.orderDate)}</span>
                     <span>Estado: {pedido.status || 'Sin estado'}</span>
-                    <span>Pago: {pedido.paymentStatus === 'SIMULATED' ? 'Sin pago' : (pedido.paymentStatus || 'No disponible')}</span>
+                    <span>Pago: {pedido.paymentStatus || 'No disponible'}</span>
                     <span>Valor del pedido: {formatMoney(pedido.totalAmount)}</span>
                     {Array.isArray(pedido.products) && pedido.products.length > 0 && (
                       <ul>
