@@ -2,6 +2,7 @@ import LoadingBrandMark from './LoadingBrandMark';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { formatBogotaDateTime } from '../utils/dateFormatting';
+import { formatCop as formatMoney } from '../utils/currency';
 import GenderAvatar from './GenderAvatar';
 
 const normalizeSearchValue = value => String(value ?? '')
@@ -38,10 +39,6 @@ const formatOrderDate = (dateString) => formatBogotaDateTime(dateString, {
   includeSeconds: true,
   separator: ' - '
 });
-
-const formatMoney = (amount) => new Intl.NumberFormat('es-CO', {
-  style: 'currency', currency: 'COP', maximumFractionDigits: 0
-}).format(Number(amount) || 0);
 
 // Formatear número de identificación
 const formatIdentificationNumber = (number) => {

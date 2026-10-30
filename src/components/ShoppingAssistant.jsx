@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatCop as formatIllustrativePrice } from '../utils/currency';
 
 const starterMessage = {
   role: 'assistant',
@@ -57,12 +58,6 @@ const stopWords = new Set([
   'opciones', 'hay', 'mas', 'muy', 'practico', 'practica', 'pequena',
   'pequeno', 'tiempo', 'ahorrar', 'comodidad', 'una', 'unos', 'unas'
 ]);
-
-const formatIllustrativePrice = price => new Intl.NumberFormat('es-CO', {
-  style: 'currency',
-  currency: 'COP',
-  maximumFractionDigits: 0
-}).format(Number(price) || 0);
 
 const buildLocalRecommendation = (query, products) => {
   const normalizedQuery = normalize(query);

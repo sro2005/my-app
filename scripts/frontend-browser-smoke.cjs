@@ -332,7 +332,7 @@ async function main() {
     const mockApiCalls = [];
     const mockApiWrites = [];
     const fixtureProducts = [
-      { _id: 'product-coffee-001', name: 'Cafetera Boreal 12 tazas', category: 'Cafeteras', description: 'Cafetera programable con jarra de vidrio, filtro lavable y apagado automático.', price: 149900, quantity: 5, imageUrl: '', demo: false },
+      { _id: 'product-coffee-001', name: 'Cafetera Boreal 12 tazas', category: 'Cafeteras', description: 'Cafetera programable con jarra de vidrio, filtro lavable y apagado automático.', price: 149900.5, quantity: 5, imageUrl: '', demo: false },
       { _id: 'product-fridge-001', name: 'Refrigerador Nórdico 300 L', category: 'Refrigeración', description: 'Refrigerador de 300 litros con control de temperatura y bandejas ajustables.', price: 1299900, quantity: 7, imageUrl: '', demo: false },
       { _id: 'product-vacuum-001', name: 'Aspiradora NovaClean 1800', category: 'Aspiradoras', description: 'Aspiradora doméstica con filtro lavable y accesorios para superficies múltiples.', price: 379900, quantity: 3, imageUrl: '', demo: false }
     ];
@@ -354,7 +354,7 @@ async function main() {
       email: customerUser.email, address: 'Calle 10 # 20-30, Bogotá', phone: customerUser.phone,
       paymentMethod: 'Wompi', paymentStatus: 'APPROVED', paymentConfirmed: true,
       orderDate: new Date().toISOString(), deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      totalAmount: 299800, status: 'Procesando', packed: false, delivered: false,
+      totalAmount: 299801, status: 'Procesando', packed: false, delivered: false,
       products: [{ productId: { _id: fixtureProducts[0]._id, name: fixtureProducts[0].name, category: fixtureProducts[0].category }, quantity: 2 }]
     };
     let fixtureOrders = [fixtureOrder];
@@ -482,10 +482,72 @@ async function main() {
       'The admin dashboard reload button should refresh the operational summary.');
 
     await captureAuthenticatedRoute('/admin-inventario', /Gestiona cada producto/i, 'admin-inventory', '.evh-admin-product');
+
+    const desktopInventoryToolbar = await page.locator('.evh-admin-inventory-tools').evaluate(container => {
+      const rect = selector => {
+        const { top, bottom, width, height } = container.querySelector(selector).getBoundingClientRect();
+        return { top, bottom, width, height };
+      };
+      return { label: rect('label'), search: rect('input'), refresh: rect('button') };
+    });
+    assert.ok(desktopInventoryToolbar.label.bottom <= desktopInventoryToolbar.search.top + 1,
+      'Inventory search label should remain above its input on desktop.');
+    assert.ok(Math.abs(desktopInventoryToolbar.search.top - desktopInventoryToolbar.refresh.top) <= 1,
+      'Inventory search and refresh controls should align vertically on desktop.');
+    assert.ok(Math.abs(desktopInventoryToolbar.search.height - desktopInventoryToolbar.refresh.height) <= 1,
+      'Inventory search and refresh controls should have matching heights on desktop.');
+
+    const fractionalCafeteraPrice = await page.locator('.evh-admin-product')
+      .filter({ hasText: 'Cafetera Boreal 12 tazas' })
+      .locator('.evh-admin-product-price').innerText();
+    assert.match(fractionalCafeteraPrice, /149\.900,50/,
+      'Inventory should preserve the two decimal places stored for a product price.');
+
+    const inventoryPriceAndStock = await page.locator('.evh-admin-product-meta').first().evaluate(container => {
+      const price = container.querySelector('.evh-admin-product-price').getBoundingClientRect();
+      const stock = container.querySelector('.evh-admin-product-stock').getBoundingClientRect();
+      return { priceTop: price.top, stockTop: stock.top };
+    });
+    assert.ok(Math.abs(inventoryPriceAndStock.priceTop - inventoryPriceAndStock.stockTop) <= 1,
+      'Inventory price and stock should share the same visual row on desktop.');
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(100);
+    await assertNoOverflow('Inventory toolbar at mobile');
+    const mobileInventoryToolbar = await page.locator('.evh-admin-inventory-tools').evaluate(container => {
+      const rect = selector => {
+        const { top, bottom, left, width } = container.querySelector(selector).getBoundingClientRect();
+        return { top, bottom, left, width };
+      };
+      return { label: rect('label'), search: rect('input'), refresh: rect('button') };
+    });
+    assert.ok(mobileInventoryToolbar.label.bottom <= mobileInventoryToolbar.search.top + 1,
+      'Inventory search label should remain above its input on mobile.');
+    assert.ok(mobileInventoryToolbar.search.bottom <= mobileInventoryToolbar.refresh.top + 1,
+      'Inventory refresh action should stack below the search input on mobile.');
+    assert.ok(Math.abs(mobileInventoryToolbar.search.width - mobileInventoryToolbar.refresh.width) <= 1,
+      'Inventory search and refresh controls should share the same width on mobile.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.waitForTimeout(100);
     await page.locator('#inventory-search').fill('Refrigerador');
     assert.equal(await page.locator('.evh-admin-product').count(), 1, 'Inventory search should filter product cards.');
     await page.locator('#inventory-search').fill('');
     await page.getByRole('button', { name: 'Editar' }).first().click();
+    const desktopEditorColumns = await page.locator('.evh-admin-editor-inline form').evaluate(form =>
+      getComputedStyle(form).gridTemplateColumns.trim().split(' ').filter(Boolean).length
+    );
+    assert.equal(desktopEditorColumns, 2,
+      'Inventory editor should use two balanced columns on desktop.');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.waitForTimeout(100);
+    await assertNoOverflow('Inventory editor at mobile');
+    const mobileEditorColumns = await page.locator('.evh-admin-editor-inline form').evaluate(form =>
+      getComputedStyle(form).gridTemplateColumns.trim().split(' ').filter(Boolean).length
+    );
+    assert.equal(mobileEditorColumns, 1,
+      'Inventory editor should collapse to one column on mobile.');
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.waitForTimeout(100);
     await page.getByLabel('Existencias', { exact: true }).fill('4');
     await page.getByRole('button', { name: 'Guardar Cambios' }).click();
     await page.getByRole('status').filter({ hasText: /Producto actualizado|cambios ya están guardados/i }).waitFor({ timeout: 15000 });

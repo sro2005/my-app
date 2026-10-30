@@ -74,33 +74,7 @@
 .evh-admin-actions a { display: block; margin: 0; padding: .75rem .85rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 11px; background: #fff; text-decoration: none; }
 .evh-admin-actions a:hover { border-color: #f1c18f; background: var(--evh-accent-soft, #fff3e5); }
 .evh-admin-panel > p { color: var(--evh-muted, #617084); font-size: .8rem; line-height: 1.55; }
-.evh-admin-inventory-tools { display: flex; flex-wrap: wrap; gap: .8rem; align-items: center; margin: 1.5rem 0; }
-.evh-admin-inventory-tools label { color: var(--evh-ink, #1c2b40); font-size: .85rem; font-weight: 750; }
-.evh-admin-inventory-tools input { flex: 1; min-width: 180px; box-sizing: border-box; padding: .75rem .9rem; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; color: var(--evh-ink, #1c2b40); }
-.evh-admin-inventory-tools button, .evh-admin-product-actions button {
-  min-width: 0;
-  padding: .65rem .9rem;
-  border: 1px solid var(--evh-border, #e0e6ed);
-  border-radius: 10px;
-  background: #fff;
-  color: var(--evh-blue, var(--evh-blue));
-  font-size: .82rem;
-  cursor: pointer;
-}
-.evh-admin-inventory-tools button:hover, .evh-admin-product-actions button:hover { border-color: #f1c18f; background: var(--evh-accent-soft, #fff3e5); transform: none; }
-.evh-admin-inventory-list { display: grid; gap: .8rem; }
-.evh-admin-product { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; padding: 1rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 14px; background: #fff; color: var(--evh-ink, #1c2b40); }
-.evh-admin-product h2 { margin: .35rem 0; color: var(--evh-ink-strong, #14243a); font-size: 1rem; }
-.evh-admin-product p { margin: 0; color: var(--evh-muted, #617084); font-size: .85rem; }
-.evh-admin-product-category { color: var(--evh-muted, #617084); font-size: .78rem; }
-.evh-admin-product-actions { display: flex; flex-wrap: wrap; gap: .55rem; }
-.evh-admin-editor { margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 16px; background: #f8fafc; color: var(--evh-ink, #1c2b40); }
-.evh-admin-editor form { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
-.evh-admin-editor label { display: flex; flex-direction: column; gap: .4rem; color: var(--evh-ink, #1c2b40); font-size: .85rem; font-weight: 750; }
-.evh-admin-editor input, .evh-admin-editor textarea { width: 100%; box-sizing: border-box; padding: .75rem; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff; color: var(--evh-ink, #1c2b40); font: inherit; }
-.evh-admin-editor input:focus, .evh-admin-editor textarea:focus { border-color: var(--evh-accent, #e97816); outline: 0; box-shadow: 0 0 0 4px var(--evh-focus, rgba(233,120,22,.24)); }
-.evh-admin-editor textarea { min-height: 95px; }
-.evh-admin-editor form > .evh-admin-product-actions { align-self: end; }
+
 @media (max-width: 760px) {
   .evh-admin-grid { grid-template-columns: 1fr; }
   .evh-admin-stats { grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); }
@@ -111,26 +85,10 @@
 /* Shared administration layout: consistent button placement and form hierarchy. */
 .evh-admin-hero { position: relative; }
 .evh-admin-hero button, .evh-admin-hero-link { width: fit-content; max-width: 100%; }
-.evh-admin-inventory-tools { padding: 1rem; border: 1px solid var(--evh-border, #e0e6ed); border-radius: 14px; background: #fff; }
-.evh-admin-inventory-tools input { min-height: 44px; }
-.evh-admin-inventory-tools button, .evh-admin-product-actions button { min-height: 44px; font-weight: 750; }
-.evh-admin-product > div:first-child { flex: 1 1 240px; min-width: 0; }
-.evh-admin-product h2, .evh-admin-product p { overflow-wrap: anywhere; }
-.evh-admin-product-actions { align-items: center; justify-content: flex-end; }
-.evh-admin-editor form > label:has(textarea) { grid-column: 1 / -1; }
-.evh-admin-editor form > .evh-admin-product-actions { grid-column: 1 / -1; justify-content: flex-end; margin-top: .25rem; }
-.evh-admin-inventory-error { color: #9b2b28; font-weight: 650; }
+
 .evh-admin button:focus-visible, .evh-admin a:focus-visible, .evh-admin input:focus-visible, .evh-admin textarea:focus-visible {
   outline: 3px solid var(--evh-accent, #e97816);
   outline-offset: 3px;
-}
-@media (max-width: 600px) {
-  .evh-admin-inventory-tools { display: grid; grid-template-columns: minmax(0, 1fr); }
-  .evh-admin-inventory-tools input, .evh-admin-inventory-tools button { width: 100%; min-width: 0; }
-  .evh-admin-product-actions { width: 100%; justify-content: stretch; }
-  .evh-admin-product-actions button { flex: 1 1 125px; }
-  .evh-admin-editor form { grid-template-columns: minmax(0, 1fr); }
-  .evh-admin-editor form > .evh-admin-product-actions { flex-direction: column; align-items: stretch; }
 }
 
 /* Refinamiento de jerarquía y distribución del panel administrativo. */
@@ -140,15 +98,12 @@
 .evh-admin-session-copy strong { line-height: 1.5; overflow-wrap: anywhere; }
 .evh-admin-session-role { margin-left: auto; white-space: nowrap; font-size: .7rem; }
 .evh-admin-hero > button { display: flex; margin-top: 1rem; }
-.evh-admin-inventory-tools { align-items: end; }
-.evh-admin-inventory-tools label { line-height: 1.45; }
-.evh-admin-product-actions button { white-space: normal; line-height: 1.35; }
+
 @media (max-width: 480px) {
   .evh-admin-session { width: 100%; gap: .55rem; }
   .evh-admin-session-role { margin-left: 0; }
   .evh-admin-hero > button { width: 100%; }
 }
-
 
 /* Session identity: keep label, email, and role on a controlled grid. */
 .evh-admin .evh-admin-session {
@@ -171,7 +126,6 @@
 @media (max-width: 480px) {
   .evh-admin .evh-admin-hero > button { width: 100%; }
 }
-
 
 /* Compact the recent-orders summary into labelled rows on narrow screens. */
 @media (max-width: 600px) {
@@ -218,7 +172,6 @@
   }
 }
 
-
 /* Ajuste visual fino: jerarquía centrada, controles compactos y medidas consistentes. */
 .evh-admin-hero {
   display: flex;
@@ -242,57 +195,13 @@
   font-size: .82rem;
   line-height: 1.25;
 }
-.evh-admin-inventory-tools {
-  display: grid;
-  grid-template-columns: auto minmax(220px, 1fr) auto;
-  gap: .7rem 1rem;
-  align-items: center;
-}
-.evh-admin-inventory-tools label {
-  margin: 0;
-}
-.evh-admin-inventory-tools input {
-  width: 100%;
-  min-width: 0;
-  min-height: 42px;
-  padding: .65rem .8rem;
-  font-size: .9rem;
-}
-.evh-admin-inventory-tools button,
-.evh-admin-product-actions button {
-  min-height: 38px;
-  padding: .55rem .8rem;
-  font-size: .8rem;
-  line-height: 1.25;
-  font-weight: 700;
-}
-.evh-admin-product-actions {
-  gap: .45rem;
-}
-.evh-admin .evh-admin-product-actions button {
-  min-height: 36px;
-  padding: .5rem .75rem;
-}
+
 .evh-admin .evh-admin-panel > a,
 .evh-admin .evh-admin-actions a {
   font-size: .82rem;
   line-height: 1.4;
 }
-@media (max-width: 760px) {
-  .evh-admin-inventory-tools {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
-  }
-  .evh-admin-inventory-tools label {
-    grid-column: 1 / -1;
-  }
-  .evh-admin-inventory-tools input {
-    grid-column: 1;
-  }
-  .evh-admin-inventory-tools button {
-    grid-column: 2;
-    width: 100%;
-  }
-}
+
 @media (max-width: 480px) {
   .evh-admin-hero {
     align-items: stretch;
@@ -311,18 +220,8 @@
     width: 100%;
     box-sizing: border-box;
   }
-  .evh-admin-inventory-tools {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .evh-admin-inventory-tools label,
-  .evh-admin-inventory-tools input,
-  .evh-admin-inventory-tools button {
-    grid-column: 1;
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
 
+}
 
 /* Alineación final del encabezado administrativo y control del CTA. */
 .evh-admin .evh-admin-hero {
@@ -358,44 +257,6 @@
   }
 }
 
-
-/* Inventory refinement: align the label, search field and refresh action on one line. */
-.evh-admin-inventory-tools {
-  display: grid;
-  grid-template-columns: max-content minmax(240px, 1fr) max-content;
-  align-items: center;
-  gap: .7rem .9rem;
-  margin: 1.25rem 0;
-  padding: 1rem 1.1rem;
-}
-.evh-admin-inventory-tools label {
-  align-self: center;
-  margin: 0;
-  line-height: 1.35;
-  white-space: nowrap;
-}
-.evh-admin-inventory-tools input {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  height: 46px;
-  min-height: 46px;
-  margin: 0;
-  padding: 0 .9rem;
-  line-height: 1.3;
-  font-size: .88rem;
-}
-.evh-admin-inventory-tools button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 46px;
-  min-height: 46px;
-  margin: 0;
-  padding: .55rem .85rem;
-  line-height: 1.2;
-  white-space: nowrap;
-}
 .evh-admin-hero .evh-admin-hero-link {
   display: inline-flex;
   width: fit-content;
@@ -408,136 +269,34 @@
   line-height: 1.2;
   flex: 0 0 auto;
 }
-.evh-admin-product.is-editing,
-.evh-admin-product.is-pending-delete {
-  border-color: #b6c9df;
-  border-radius: 14px 14px 9px 9px;
-  background: #f8fbff;
-}
-.evh-admin-product.is-pending-delete {
-  border-color: #e7c4b9;
-  background: #fffaf8;
-}
-.evh-admin-product-actions button[aria-expanded="true"] {
-  border-color: var(--evh-blue, var(--evh-blue));
-  background: #edf4ff;
-  color: var(--evh-ink-strong, #14243a);
-}
-.evh-admin-inventory-list .evh-admin-editor-inline,
-.evh-admin-inventory-list .evh-admin-delete-inline {
-  margin: -.45rem 0 0;
-  padding: 1rem 1.1rem;
-  border-radius: 9px 9px 14px 14px;
-}
-.evh-admin-editor-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: .35rem .8rem;
-  margin-bottom: .9rem;
-}
-.evh-admin-editor-heading h2,
-.evh-admin-delete-inline h2 {
-  margin: 0;
-  color: var(--evh-ink-strong, #14243a);
-  font-size: 1rem;
-}
-.evh-admin-editor-heading span {
-  color: var(--evh-muted, #617084);
-  font-size: .78rem;
-}
-.evh-admin-delete-inline > p {
-  margin: .65rem 0 1rem;
-  line-height: 1.55;
-}
-.evh-admin-inventory-list .evh-admin-delete-inline .evh-admin-product-actions {
-  justify-content: flex-start;
-}
-@media (max-width: 900px) {
-  .evh-admin-inventory-tools {
-    grid-template-columns: minmax(0, 1fr) max-content;
-  }
-  .evh-admin-inventory-tools label {
-    grid-column: 1 / -1;
-  }
-  .evh-admin-inventory-tools input {
-    width: 100%;
-  }
-}
+
 @media (max-width: 600px) {
-  .evh-admin-inventory-tools {
-    grid-template-columns: minmax(0, 1fr);
-    gap: .55rem;
-    padding: .85rem;
-  }
-  .evh-admin-inventory-tools label {
-    grid-column: auto;
-    white-space: normal;
-  }
-  .evh-admin-inventory-tools input,
-  .evh-admin-inventory-tools button {
-    width: 100%;
-  }
+
   .evh-admin-hero .evh-admin-hero-link {
     min-height: 38px;
     padding: .48rem .72rem;
   }
-  .evh-admin-inventory-list .evh-admin-editor-inline,
-  .evh-admin-inventory-list .evh-admin-delete-inline {
-    padding: .85rem;
-  }
+
 }
 
-
-/* Ajustes finales del inventario: controles alineados y CTA compacto. */
-.evh-admin-inventory-tools {
-  grid-template-columns: max-content minmax(240px, 1fr) max-content;
-  align-items: center;
-  gap: .7rem .9rem;
-}
-.evh-admin-inventory-tools label { align-self: center; margin: 0; line-height: 1.35; }
-.evh-admin-inventory-tools input {
-  display: block; width: 100%; min-width: 0; height: 44px; min-height: 44px;
-  margin: 0; padding: 0 .85rem;
-}
-.evh-admin-inventory-tools button {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 44px; min-height: 44px; margin: 0; padding: .55rem .8rem; white-space: nowrap;
-}
 .evh-admin .evh-admin-hero > .evh-admin-hero-link {
   display: inline-flex; align-items: center; justify-content: center;
   width: fit-content; min-width: 0; max-width: 100%; min-height: 38px;
   margin: .55rem auto 0; padding: .48rem .75rem; font-size: .79rem; line-height: 1.2;
 }
-.evh-admin .evh-admin-inventory-success {
-  margin: .2rem 0 .7rem; padding: .75rem .9rem;
-  border: 1px solid #bce5cf; border-radius: 11px;
-  background: #effaf3; color: #176b45; font-size: .83rem; line-height: 1.5;
-}
-.evh-admin .evh-admin-inventory-list { gap: .65rem; }
-.evh-admin .evh-admin-inventory-list .evh-admin-editor-inline,
-.evh-admin .evh-admin-inventory-list .evh-admin-delete-inline { margin: -.45rem 0 0; padding: 1rem; }
-@media (max-width: 900px) {
-  .evh-admin-inventory-tools { grid-template-columns: minmax(0, 1fr) max-content; align-items: center; }
-  .evh-admin-inventory-tools label { grid-column: 1 / -1; }
-  .evh-admin-inventory-tools input { grid-column: 1; }
-  .evh-admin-inventory-tools button { grid-column: 2; }
-}
+
 @media (max-width: 600px) {
-  .evh-admin-inventory-tools { grid-template-columns: minmax(0, 1fr); gap: .55rem; }
-  .evh-admin-inventory-tools label,
-  .evh-admin-inventory-tools input,
-  .evh-admin-inventory-tools button { grid-column: 1; width: 100%; white-space: normal; }
+
   .evh-admin .evh-admin-hero > .evh-admin-hero-link { width: fit-content; }
 }
 
-
-/* Inventario: alinear búsqueda, acciones, precio y existencias sin afectar otros módulos. */
+/* Inventory module — consolidated layout and responsive rules. */
 .evh-admin .evh-admin-inventory-tools {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: end;
   gap: .5rem 1rem;
+  margin: 1.25rem 0;
   padding: 1rem;
   border: 1px solid var(--evh-border, #e0e6ed);
   border-radius: 16px;
@@ -548,7 +307,11 @@
   grid-row: 1;
   align-self: end;
   margin: 0;
+  color: var(--evh-ink, #1c2b40);
+  font-size: .85rem;
+  font-weight: 750;
   line-height: 1.4;
+  white-space: nowrap;
 }
 .evh-admin .evh-admin-inventory-tools input {
   grid-column: 1;
@@ -558,18 +321,74 @@
   min-height: 46px;
   margin: 0;
   padding: .7rem .9rem;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--evh-ink, #1c2b40);
 }
 .evh-admin .evh-admin-inventory-tools button {
   grid-column: 2;
   grid-row: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   align-self: stretch;
+  min-width: 0;
   min-height: 46px;
+  margin: 0;
   padding: .65rem 1rem;
+  border: 1px solid var(--evh-border, #e0e6ed);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--evh-blue, var(--evh-blue));
+  font-size: .8rem;
+  font-weight: 700;
+  line-height: 1.25;
   white-space: nowrap;
+  cursor: pointer;
+}
+.evh-admin .evh-admin-inventory-tools button:hover,
+.evh-admin .evh-admin-product-actions button:hover {
+  border-color: #f1c18f;
+  background: var(--evh-accent-soft, #fff3e5);
+  transform: none;
+}
+.evh-admin .evh-admin-inventory-list {
+  display: grid;
+  gap: .65rem;
+}
+.evh-admin .evh-admin-product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem;
+  border: 1px solid var(--evh-border, #e0e6ed);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--evh-ink, #1c2b40);
 }
 .evh-admin .evh-admin-product > div:first-child {
   flex: 1 1 280px;
   min-width: 0;
+}
+.evh-admin .evh-admin-product h2 {
+  margin: .35rem 0;
+  color: var(--evh-ink-strong, #14243a);
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.evh-admin .evh-admin-product p {
+  margin: 0;
+  color: var(--evh-muted, #617084);
+  font-size: .85rem;
+  overflow-wrap: anywhere;
+}
+.evh-admin .evh-admin-product-category {
+  color: var(--evh-muted, #617084);
+  font-size: .78rem;
 }
 .evh-admin .evh-admin-product-meta {
   display: flex;
@@ -589,9 +408,112 @@
 .evh-admin .evh-admin-product-stock {
   color: var(--evh-muted, #617084);
 }
+.evh-admin .evh-admin-product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .45rem;
+}
+.evh-admin .evh-admin-product-actions button {
+  min-width: 0;
+  min-height: 36px;
+  padding: .5rem .75rem;
+  border: 1px solid var(--evh-border, #e0e6ed);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--evh-blue, var(--evh-blue));
+  font-size: .8rem;
+  line-height: 1.35;
+  white-space: normal;
+  cursor: pointer;
+}
+.evh-admin .evh-admin-product-actions button[aria-expanded="true"] {
+  border-color: var(--evh-blue, var(--evh-blue));
+  background: #edf4ff;
+  color: var(--evh-ink-strong, #14243a);
+}
+.evh-admin .evh-admin-product.is-editing {
+  border-color: #b6c9df;
+  border-radius: 14px 14px 9px 9px;
+  background: #f8fbff;
+}
+.evh-admin .evh-admin-product.is-pending-delete {
+  border-color: #e7c4b9;
+  border-radius: 14px 14px 9px 9px;
+  background: #fffaf8;
+}
+.evh-admin .evh-admin-editor {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border: 1px solid var(--evh-border, #e0e6ed);
+  border-radius: 16px;
+  background: #f8fafc;
+  color: var(--evh-ink, #1c2b40);
+}
+.evh-admin .evh-admin-inventory-list .evh-admin-editor-inline,
+.evh-admin .evh-admin-inventory-list .evh-admin-delete-inline {
+  margin: -.45rem 0 0;
+  padding: 1rem;
+  border-radius: 9px 9px 14px 14px;
+}
+.evh-admin .evh-admin-editor-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem .8rem;
+  margin-bottom: .9rem;
+}
+.evh-admin .evh-admin-editor-heading h2,
+.evh-admin .evh-admin-delete-inline h2 {
+  margin: 0;
+  color: var(--evh-ink-strong, #14243a);
+  font-size: 1rem;
+}
+.evh-admin .evh-admin-editor-heading span {
+  color: var(--evh-muted, #617084);
+  font-size: .78rem;
+}
+.evh-admin .evh-admin-delete-inline > p {
+  margin: .65rem 0 1rem;
+  line-height: 1.55;
+}
+.evh-admin .evh-admin-inventory-list .evh-admin-delete-inline .evh-admin-product-actions {
+  justify-content: flex-start;
+}
 .evh-admin .evh-admin-editor form {
+  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: start;
+  gap: 1rem;
+}
+.evh-admin .evh-admin-editor label {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  color: var(--evh-ink, #1c2b40);
+  font-size: .85rem;
+  font-weight: 750;
+}
+.evh-admin .evh-admin-editor input,
+.evh-admin .evh-admin-editor textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: .75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--evh-ink, #1c2b40);
+  font: inherit;
+}
+.evh-admin .evh-admin-editor input:focus,
+.evh-admin .evh-admin-editor textarea:focus {
+  border-color: var(--evh-accent, #e97816);
+  outline: 0;
+  box-shadow: 0 0 0 4px var(--evh-focus, rgba(233,120,22,.24));
+}
+.evh-admin .evh-admin-editor textarea {
+  min-height: 95px;
 }
 .evh-admin .evh-admin-editor form > .evh-admin-field-imageurl,
 .evh-admin .evh-admin-editor form > .evh-admin-field-description,
@@ -605,6 +527,20 @@
   justify-content: flex-end;
   align-self: center;
   margin-top: .1rem;
+}
+.evh-admin .evh-admin-inventory-error {
+  color: #9b2b28;
+  font-weight: 650;
+}
+.evh-admin .evh-admin-inventory-success {
+  margin: .2rem 0 .7rem;
+  padding: .75rem .9rem;
+  border: 1px solid #bce5cf;
+  border-radius: 11px;
+  background: #effaf3;
+  color: #176b45;
+  font-size: .83rem;
+  line-height: 1.5;
 }
 @media (max-width: 760px) {
   .evh-admin .evh-admin-inventory-tools {
@@ -622,6 +558,12 @@
   .evh-admin .evh-admin-inventory-tools button {
     white-space: normal;
   }
+  .evh-admin .evh-admin-product-actions {
+    width: 100%;
+  }
+  .evh-admin .evh-admin-product-actions button {
+    flex: 1 1 auto;
+  }
   .evh-admin .evh-admin-editor form {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -633,10 +575,10 @@
   .evh-admin .evh-admin-editor form > .evh-admin-product-actions {
     justify-content: stretch;
   }
-  .evh-admin .evh-admin-product-actions {
-    width: 100%;
-  }
-  .evh-admin .evh-admin-product-actions button {
-    flex: 1 1 auto;
+}
+@media (max-width: 600px) {
+  .evh-admin .evh-admin-editor form > .evh-admin-product-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
