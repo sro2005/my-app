@@ -22,39 +22,14 @@ const getOrderDisplayStatus = pedido => pedido.delivered || pedido.status === 'E
   ? 'Entregado'
   : pedido.status || 'Sin estado';
 
-const formatPaymentMethod = (pedido, isAdmin) => {
-  if (pedido.paymentMethod === 'Pago pendiente de coordinación') return 'ElectroVibe Pay';
-  if (pedido.paymentStatus === 'SIMULATED') return isAdmin ? 'Registro de prueba (sin pago)' : 'Pedido sin cobro';
-  if (pedido.paymentMethod === 'Wompi') return isAdmin ? 'Wompi (histórico)' : 'Método histórico';
-  return pedido.paymentMethod || 'No especificado';
-};
+const formatPaymentMethod = pedido =>
+  pedido.paymentMethod === 'Pago pendiente de coordinación' ? 'ElectroVibe Pay' : 'Método anterior';
 
-const formatPaymentStatus = (status, isAdmin, pedido) => {
-  if (pedido?.paymentMethod === 'Pago pendiente de coordinación') {
-    const manualLabels = isAdmin
-      ? { PENDING: 'Pendiente de revisión', APPROVED: 'Pago confirmado', DECLINED: 'Pago rechazado' }
-      : { PENDING: 'Pendiente de revisión', APPROVED: 'Pago confirmado', DECLINED: 'Pago no aprobado' };
-    if (manualLabels[status]) return manualLabels[status];
-  }
-  const adminLabels = {
-    SIMULATED: 'Sin pago',
-    APPROVED: 'Aprobado en prueba (sin cobro real)',
-    PENDING: 'Pendiente de pago',
-    DECLINED: 'Rechazado en prueba',
-    ERROR: 'Error registrado en prueba',
-    EXPIRED: 'Checkout de prueba vencido · pedido cancelado y stock liberado',
-    VOIDED: 'Anulado en prueba'
-  };
-  const customerLabels = {
-    SIMULATED: 'Sin cobro',
-    APPROVED: 'Resultado recibido · sin cobro real',
-    PENDING: 'Pendiente de pago · sin cobro realizado',
-    DECLINED: 'No aprobado · sin cobro',
-    ERROR: 'No fue posible verificarlo · sin cobro',
-    EXPIRED: 'Sesión vencida · pedido cancelado, sin cobro',
-    VOIDED: 'Pago anulado · sin cobro'
-  };
-  return (isAdmin ? adminLabels : customerLabels)[status] || status || 'No disponible';
+const formatPaymentStatus = (status, isAdmin) => {
+  const labels = isAdmin
+    ? { PENDING: 'Pendiente de revisión', APPROVED: 'Pago confirmado', DECLINED: 'Pago rechazado' }
+    : { PENDING: 'Pendiente de revisión', APPROVED: 'Pago confirmado', DECLINED: 'Pago no aprobado' };
+  return labels[status] || 'Estado no disponible';
 };
 
 const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview, statusMessage, statusMessageType }) => {
@@ -94,8 +69,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
             <p><strong>Titular del pedido:</strong> {pedido.firstName || ''} {pedido.lastName || ''}</p>
             <p><strong>Dirección de entrega:</strong> {pedido.address || 'No disponible'}</p>
             <p><strong>Teléfono de contacto:</strong> {pedido.phone || 'No disponible'}</p>
-            <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido, false)}</p>
-            {pedido.paymentPreference && <p><strong>Detalle del método:</strong> {pedido.paymentPreference}</p>}
+            <p><strong>Método de pago:</strong> {formatPaymentMethod(pedido)}</p>
             <p><strong>Estado del pago:</strong> {formatPaymentStatus(pedido.paymentStatus, false, pedido)}</p>
             <p><strong>Fecha del pedido:</strong> {formatOrderDate(pedido.orderDate)}</p>
             <p><strong>Fecha solicitada de entrega:</strong> {formatDeliveryDate(pedido.deliveryDate)}</p>
@@ -140,8 +114,7 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
             <p><strong>Cliente:</strong><span>{[pedido.firstName, pedido.lastName].filter(Boolean).join(' ') || 'No disponible'}</span></p>
             <p><strong>Dirección de entrega:</strong><span>{pedido.address || 'No disponible'}</span></p>
             <p><strong>Teléfono de contacto:</strong><span>{pedido.phone || 'No disponible'}</span></p>
-            <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido, true)}</span></p>
-            {pedido.paymentPreference && <p><strong>Detalle del método:</strong><span>{pedido.paymentPreference}</span></p>}
+            <p><strong>Método de pago:</strong><span>{formatPaymentMethod(pedido)}</span></p>
             <p><strong>Estado del pago:</strong><span>{formatPaymentStatus(pedido.paymentStatus, true, pedido)}</span></p>
             <p><strong>Fecha solicitada de entrega:</strong><span>{formatDeliveryDate(pedido.deliveryDate)}</span></p>
             <p className="evh-order-admin-products">
@@ -197,7 +170,6 @@ const PedidoItem = ({ pedido, isAdmin, updating, onStatusUpdate, onPaymentReview
               <strong>Decisión registrada</strong>
               <p>Fecha: {formatOrderDate(pedido.paymentReviewedAt)}</p>
               {pedido.paymentReviewedBy && <p>Administrador: {pedido.paymentReviewedBy}</p>}
-              {pedido.manualPaymentReference && <p>Referencia: <span className="evh-order-full-id">{pedido.manualPaymentReference}</span></p>}
               {pedido.paymentReviewNote && <p>Observación: {pedido.paymentReviewNote}</p>}
             </section>
           )}
