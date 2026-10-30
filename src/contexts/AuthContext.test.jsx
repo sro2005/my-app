@@ -52,15 +52,11 @@ describe('AuthProvider session persistence', () => {
     await waitFor(() => expect(screen.getByTestId('user').textContent).toBe('customer@example.com'));
     fireEvent.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
 
-    expect(screen.getByText('Cerrando tu sesión')).toBeTruthy();
+    expect(screen.getByTestId('user').textContent).toBe('signed-out');
+    expect(screen.queryByText('Cerrando tu sesión')).toBeNull();
     expect(localStorage.getItem('authToken')).toBeNull();
     expect(localStorage.getItem('userData')).toBeNull();
     expect(localStorage.getItem('userId')).toBeNull();
     expect(localStorage.getItem('unrelatedPreference')).toBe('keep-me');
-
-    await waitFor(
-      () => expect(screen.getByTestId('user').textContent).toBe('signed-out'),
-      { timeout: 2000 }
-    );
   });
 });
