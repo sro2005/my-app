@@ -2,7 +2,16 @@
 
 **Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome mantiene el modo de compra simulado; no se procesan pagos reales. En las pruebas automatizadas de esta revisión no se crearon pedidos, no se modificó inventario ni se realizaron pagos en la base de datos viva. La comprobación manual de recuperación/restablecimiento de contraseña realizada con una cuenta cliente está registrada más abajo.
 
-## Validación de actualización de dependencias — 27 de octubre de 2026
+## Última validación publicada — 30 de octubre de 2026
+
+- PR [#59 — Pulir inventario y unificar precios COP](https://github.com/sro2005/ElectroVibeHome/pull/59) integrado mediante squash.
+- Commit publicado: 35aff4d5ed61df1eea8bfcacabe1909c77223963.
+- [CI posterior a la integración](https://github.com/sro2005/ElectroVibeHome/actions/runs/41000310456): **5/5 trabajos aprobados**, incluidos smoke del sitio publicado y Playwright responsive.
+- Frontend y backend de Render: despliegues del commit anterior en estado live.
+- main conserva su commit de referencia; los cambios se integraron únicamente en electrovibehome-stable.
+- Se ampliaron pruebas de precio con centavos y alineación del inventario. La integración visual se validó con fixtures para las pantallas autenticadas y sin escrituras en datos vivos.
+
+## Historial de validación de dependencias — 27 de octubre de 2026
 
 - Ejecución de GitHub Actions posterior al despliegue y a la política de mantenimiento: [CI #528](https://github.com/sro2005/ElectroVibeHome/actions/runs/40597676584), **5/5 trabajos correctos**.
 - Commit del refresco de dependencias: `76b5dfeb3f8025c6ccb9181afa9a905ea41c27ae`. Las pruebas se repitieron después en `82f88cf2e6e92f541f839b292bf44472e9641a57`, ya con frontend y API desplegados desde el commit de actualización de dependencias.
@@ -90,7 +99,7 @@ Solo si se decide reactivar una pasarela:
 
 - [x] `main` permanece en su commit original y protegida.
 - [x] `electrovibehome-stable` está protegida contra eliminación y `force push`.
-- [ ] **Pendiente de configuración manual en GitHub:** hacer que la regla de la rama estable requiera los checks de CI antes de permitir una fusión. El ruleset activo protege contra eliminación y `force push`, pero actualmente no exige que CI esté en verde.
+- [x] Ruleset `CI - ElectroVibeHome` activo en la rama predeterminada `electrovibehome-stable`: exige `frontend`, `backend`, `backend-e2e`, `smoke-preview` y `frontend-browser`. El ruleset de protección conserva las restricciones de eliminación y `force push` para `main` y la rama estable.
 - [x] Frontend Render está publicado desde el commit validado de la rama estable.
 - [x] No se modificaron secretos, variables reales de Render, datos de la base viva ni configuración del backend.
 - [x] Wompi/Mercado Pago siguen en pausa; no se realizaron pagos reales.

@@ -9,7 +9,7 @@ Tienda web de electrodomésticos construida con React, Vite, Node.js, Express y 
 - Frontend publicado: https://electrovibehome.onrender.com/
 - API de la versión estable: https://electrovibehome-v2-api.onrender.com
 - El frontend y la API de la versión estable se despliegan desde `electrovibehome-stable`.
-- Ambas ramas tienen reglas contra eliminación y pushes forzados. Estas reglas no impiden los pushes normales ni exigen pull requests.
+- Los rulesets protegen `main` y `electrovibehome-stable` contra eliminación y `force push`; la rama estable exige los cinco checks de CI antes de integrar cambios.
 
 Los nombres heredados que puedan permanecer en URLs de servicios o en código no implican la existencia de una tercera rama o una versión distinta.
 
@@ -69,7 +69,7 @@ La guía está configurada exclusivamente en modo local para evitar cargos de AP
 
 ## Pedidos y pagos
 
-ElectroVibeHome permite registrar pedidos con la modalidad **Pago pendiente de coordinación**, sin solicitar datos bancarios ni procesar cobros. El flujo principal de compra utiliza **ElectroVibe Pay**, una interfaz propia de confirmación de pedidos; no solicita números de tarjeta ni credenciales bancarias, no inicia operaciones financieras y deja el pago pendiente. El campo histórico opcional `paymentPreference` se conserva para pedidos ya creados. El pedido se guarda con `paymentStatus: PENDING` y `paymentConfirmed: false`. El cliente lo consulta desde «Mis pedidos» y el administrador puede iniciar preparación y gestionar etapas logísticas sin alterar ni afirmar el estado del pago. Las fechas de entrega son solicitadas, no compromisos de despacho. La integración histórica de Wompi está en el código, pero permanece inactiva; no se autorizan pagos reales. Mercado Pago no está integrado.
+ElectroVibeHome permite registrar pedidos con la modalidad **Pago pendiente de coordinación**, sin solicitar datos bancarios ni procesar cobros. El flujo principal de compra utiliza **ElectroVibe Pay**, una interfaz propia de confirmación de pedidos; no solicita números de tarjeta ni credenciales bancarias, no inicia operaciones financieras y deja el pago pendiente. El campo histórico opcional `paymentPreference` se conserva para pedidos ya creados. El pedido se guarda con `paymentStatus: PENDING` y `paymentConfirmed: false`. El cliente lo consulta desde «Mis pedidos» y el administrador puede iniciar preparación y gestionar etapas logísticas sin alterar ni afirmar el estado del pago. Las fechas de entrega son solicitadas, no compromisos de despacho. Se conserva código de Wompi por compatibilidad con pedidos heredados y pruebas aisladas; no forma parte del flujo actual ni se autorizan pagos reales. Mercado Pago no está integrado.
 
 No interpretar una redirección del navegador como confirmación de pago. Antes de reactivar cualquier proveedor deben verificarse las credenciales de pruebas, la firma o autenticidad de las notificaciones, los estados de pedidos y la devolución segura de inventario. Las operaciones transaccionales de inventario requieren MongoDB con soporte de transacciones.
 
@@ -77,7 +77,7 @@ No interpretar una redirección del navegador como confirmación de pago. Antes 
 
 [ElectroVibeHome CI](.github/workflows/ci.yml) se ejecuta para los cambios relevantes de `electrovibehome-stable` y admite ejecución manual. Comprueba, según el trabajo, pruebas unitarias, compilación, auditoría de dependencias, sintaxis backend, pruebas HTTP aisladas con MongoDB temporal, salud de API/CORS/catálogo publicado y navegación responsive mediante Chromium.
 
-La [ejecución 493](https://github.com/sro2005/ElectroVibeHome/actions/runs/40566521064) del 27 de octubre de 2026 terminó correctamente con cinco trabajos. Esto no equivale a una validación manual completa de todos los flujos de compra y administración.
+La [última ejecución completa de CI](https://github.com/sro2005/ElectroVibeHome/actions/runs/41000310456) del 30 de octubre de 2026 aprobó los cinco trabajos: frontend, backend, E2E, smoke del sitio publicado y navegador responsive. Esto no equivale a una validación manual de cada operación con cuentas reales.
 
 Consulta [la lista de validación pendiente](docs/RELEASE-CHECKLIST.md) para las comprobaciones que todavía requieren evidencia.
 
