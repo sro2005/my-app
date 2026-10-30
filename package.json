@@ -44,7 +44,6 @@
     ]
   },
   "description": "ElectroVibeHome storefront built with React and Vite.",
-  "main": "index.js",
   "keywords": [],
   "author": "",
   "license": "ISC"
