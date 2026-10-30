@@ -147,6 +147,9 @@ describe('PedidoForm catalog loading', () => {
     fireEvent.change(screen.getByLabelText('Fecha deseada de entrega'), { target: { value: '2099-01-01' } });
     fireEvent.click(screen.getByRole('button', { name: 'Continuar con ElectroVibe Pay' }));
     const confirmation = await screen.findByRole('dialog', { name: /confirma tu pedido/i });
+    expect(document.activeElement).toBe(confirmation);
+    expect(confirmation.scrollTop).toBe(0);
+    expect(screen.getByRole('button', { name: 'Cerrar revisión del pedido' })).toBeTruthy();
     expect(screen.getByText('Confirmación del pedido')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
