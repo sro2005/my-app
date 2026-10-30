@@ -597,7 +597,7 @@ const userId = user?._id;  // Usar userId desde el contexto
                   </div>
                   <div>
                     <dt>Modalidad</dt>
-                    <dd>ElectroVibe Pay · confirmación pendiente</dd>
+                    <dd>ElectroVibe Pay</dd>
                   </div>
                 </dl>
               </section>
