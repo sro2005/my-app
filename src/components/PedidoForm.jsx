@@ -5,11 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import FormPage from './FormPage';
-
-// Función para formatear el precio en formato local
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(price);
-};
+import { formatCop as formatPrice } from '../utils/currency';
 
 // Función para obtener la fecha de hoy en Colombia en formato YYYY-MM-DD
 const getColombianToday = () => {
