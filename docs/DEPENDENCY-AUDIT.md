@@ -38,7 +38,7 @@ La revisión de CI #105 (22–23 de octubre de 2026, commit `baa141b845fa3fd7f2f
 
 Las pruebas automáticas de CI no certifican toda la experiencia funcional ni eliminan la necesidad de comprobar permisos, formularios, pedidos, inventario, recuperación de contraseña y comportamiento ante errores con cuentas de prueba. El flujo manual de recuperación por correo fue confirmado anteriormente; la suite E2E actual también comprueba expiración y reutilización de tokens en MongoDB desechable.
 
-Los pagos reales permanecen deshabilitados. Wompi Sandbox está en pausa y Mercado Pago no está incorporado como sustituto. Antes de habilitar una pasarela se necesitarán pruebas de autenticidad de webhooks, estados de transacción, referencias, importe, autorización e inventario.
+El checkout vigente solo registra pedidos con pago pendiente de coordinación. La aprobación o el rechazo se realiza manualmente desde el panel administrativo. El código activo no integra proveedores externos de pago ni solicita credenciales bancarias; el repositorio no inicia cobros ni transferencias.
 
 El backend de la versión estable utiliza correo transaccional mediante Brevo; las instrucciones antiguas que únicamente mencionaban SMTP no describen toda la configuración actual. Los secretos deben permanecer fuera del repositorio.
 

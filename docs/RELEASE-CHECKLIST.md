@@ -1,6 +1,6 @@
 # ElectroVibeHome — lista de verificación de la versión estable
 
-**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. ElectroVibeHome mantiene el modo de compra simulado; no se procesan pagos reales. En las pruebas automatizadas de esta revisión no se crearon pedidos, no se modificó inventario ni se realizaron pagos en la base de datos viva. La comprobación manual de recuperación/restablecimiento de contraseña realizada con una cuenta cliente está registrada más abajo.
+**Alcance:** rama `electrovibehome-stable`. La rama `main` conserva la versión original y no fue modificada en esta validación. El checkout registra pedidos con el pago pendiente de coordinación; un administrador debe revisar y registrar la decisión antes de iniciar la preparación. No se procesan cobros ni transferencias. Las pruebas automatizadas utilizan una base MongoDB desechable y no alteran los datos de la base viva. La comprobación manual de recuperación/restablecimiento de contraseña realizada con una cuenta cliente está registrada más abajo.
 
 ## Última validación publicada — 29 de octubre de 2026
 
@@ -33,6 +33,13 @@
 - Tras superar CI, los lockfiles actualizados se desplegaron en Render desde el commit `76b5dfeb`: frontend `dep-dbgie2p42hec73f688m0` y API `dep-dbgidv4s728c73e6ndl0`. Ambos despliegues terminaron en estado `live`; el CI #528 volvió a comprobar el sitio/API y el navegador después de ese despliegue.
 - Se cerraron los PR de Dependabot `#4–#14` que proponían saltos fuera del rango actual o migraciones mayores sin aprobar. Los casos con fallos de CI (MUI 9 y Mongoose 9) no se fusionaron. La configuración ahora ignora actualizaciones mayores y los saltos menores 0.x pendientes de revisión para moment-timezone y react-spinners.
 - `main` permanece intacta. Las actualizaciones mayores no se incorporaron automáticamente; requieren una evaluación de compatibilidad y sus propias pruebas antes de adoptarse.
+
+## Verificación de datos en MongoDB Atlas — 29 de octubre de 2026
+
+- La colección `orders` de `electrovibehome_dev`, base conectada a la aplicación, no contenía pedidos al momento de la revisión.
+- Se eliminó de esa colección el índice obsoleto `paymentReference_1`; permanecen los índices `_id_` e `idempotencyKey_1`.
+- La base auxiliar `test` conserva un pedido de prueba antiguo con `paymentMethod: Transfiya` (febrero de 2025). No se modificó ni eliminó: está aislado de la base activa y se conserva como dato histórico hasta recibir autorización expresa para alterar esos registros.
+- No se modificaron cuentas de clientes, productos ni pedidos de la base activa.
 
 ## Validaciones automatizadas completadas
 
@@ -91,19 +98,18 @@ Los puntos marcados con `[x]` se completaron en los entornos indicados. Estos co
 - [x] La aceptación autenticada se ejecutó contra el backend publicado en el run [40578235519](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519): salud HTTP 200; registro HTTP 201; login y perfil HTTP 200; `/api/customers/all` y `/api/orders/all` rechazaron el token de cliente con HTTP 403; historial de pedidos propio HTTP 200 y vacío.
 - [x] La respuesta de login y perfil no expuso contraseña ni campos de restablecimiento. No se creó ningún pedido ni se inició ningún pago.
 - [x] Se eliminaron y verificaron ausentes tanto la cuenta sintética de aceptación como su registro en `loginlogs`.
-- [x] El escaneo histórico [detectó dos claves PEM](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519). Los dos archivos tienen el mismo contenido y proceden del commit `e4cf25e02f6777881770e8a98643ccf013028f1a` (24-feb-2025): certificados locales `localhost`, usados por el código de desarrollo fuera de producción. No son credenciales de MongoDB, Brevo ni Wompi y no deben reutilizarse. `.gitignore` de `electrovibehome-stable` ignora `*.pem` y `*.key`; en `main` no se añadieron reglas para respetar la versión antigua.
+- [x] El escaneo histórico [detectó dos claves PEM](https://github.com/sro2005/ElectroVibeHome/actions/runs/40578235519). Los dos archivos tienen el mismo contenido y proceden del commit `e4cf25e02f6777881770e8a98643ccf013028f1a` (24-feb-2025): certificados locales `localhost`, usados por el código de desarrollo fuera de producción. No son credenciales de MongoDB ni Brevo y no deben reutilizarse. `.gitignore` de `electrovibehome-stable` ignora `*.pem` y `*.key`; en `main` no se añadieron reglas para respetar la versión antigua.
 - [x] Decisión (27-oct-2026): conservar el historial existente, no reescribir `electrovibehome-stable` y dejar `main` intacta. La versión actual de stable no contiene los PEM y `.gitignore` impide añadirlos de nuevo. El hallazgo se limita a certificados TLS locales heredados; no se identificaron como credenciales de MongoDB, Brevo ni pagos. No reutilizarlos. No se necesita cambiar protecciones de ramas ni pausar/reanudar Render.
 - [x] La suite de navegador comprobó el flujo de cierre de sesión con fixtures locales: cancelar conserva la sesión y confirmar elimina `authToken`, `userData` y `userId`. La UI autenticada usa respuestas simuladas para no tocar datos de producción; los endpoints administrativos se aceptan por separado contra MongoDB desechable en CI. La UI no se probó con una sesión admin real contra la base de producción, deliberadamente, para no modificar registros vivos.
 
-## Pagos — en pausa
+## Modelo de pago vigente
 
-No se habilitaron pagos reales. La suite prueba lógica y firmas de Wompi con secretos y datos de prueba dentro de un entorno aislado; **eso no equivale a haber probado una transacción real en la cuenta Sandbox del proveedor**.
-
-Solo si se decide reactivar una pasarela:
-- [ ] Elegir proveedor (Wompi Sandbox, investigar Mercado Pago o conservar la simulación).
-- [ ] Configurar únicamente credenciales Sandbox, webhook de pruebas y URLs correctas.
-- [ ] Probar aprobado, rechazado, pendiente, eventos duplicados y tardíos desde el proveedor de pruebas; verificar pedido, importe, referencia, moneda y reserva/restauración de inventario.
-- [ ] No considerar una redirección del navegador como confirmación definitiva del pago.
+- [x] El checkout solo admite **Pago pendiente de coordinación** y crea el pedido con `paymentStatus: PENDING` y `paymentConfirmed: false`.
+- [x] La aprobación manual del administrador cambia el pago a `APPROVED` y permite pasar el pedido a preparación.
+- [x] El rechazo manual cambia el pago a `DECLINED`, cancela el pedido y restaura las unidades reservadas dentro de una transacción.
+- [x] Clientes sin rol administrativo no pueden aprobar ni rechazar pagos.
+- [x] No hay integración activa con proveedores externos, formularios de datos bancarios, enlaces de checkout ni notificaciones de pago externas.
+- [x] Las pruebas E2E verifican el flujo de aprobación, rechazo, permisos e inventario en MongoDB desechable; no se envían pagos reales.
 
 ## Estado de ramas y despliegues
 
@@ -112,7 +118,7 @@ Solo si se decide reactivar una pasarela:
 - [x] Ruleset `CI - ElectroVibeHome` activo en la rama predeterminada `electrovibehome-stable`: exige `frontend`, `backend`, `backend-e2e`, `smoke-preview` y `frontend-browser`. El ruleset de protección conserva las restricciones de eliminación y `force push` para `main` y la rama estable.
 - [x] Frontend Render está publicado desde el commit validado de la rama estable.
 - [x] No se modificaron secretos, variables reales de Render, datos de la base viva ni configuración del backend.
-- [x] Wompi/Mercado Pago siguen en pausa; no se realizaron pagos reales.
+- [x] El flujo publicado no inicia cobros ni transferencias; la decisión del pago permanece bajo revisión manual del administrador.
 
 ## Enlaces
 

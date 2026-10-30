@@ -118,7 +118,7 @@ describe('PedidoForm catalog loading', () => {
     expect(cartIndex).toBeGreaterThan(gridIndex);
     expect(payIndex).toBeGreaterThan(cartIndex);
     expect(payIndex).toBeLessThan(totalIndex);
-    expect(screen.getByText(/el equipo de ElectroVibeHome revisará el pago/i)).toBeTruthy();
+    expect(screen.getByText(/el pago permanecerá pendiente hasta que el administrador registre su revisión/i)).toBeTruthy();
   });
 
   test('registers an order for manual payment review without an external payment provider', async () => {
@@ -153,7 +153,7 @@ describe('PedidoForm catalog loading', () => {
     expect(screen.getByText('Confirmación del pedido')).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Datos de entrega' })).toBeTruthy();
     expect(confirmation.textContent).toContain('Cafetera ficticia');
-    expect(confirmation.textContent).toMatch(/estado del pago se actualizará después de la revisión correspondiente/i);
+    expect(confirmation.textContent).toMatch(/pago pendiente de coordinación.*administrador deberá comprobarlo/i);
     expect(confirmation.textContent).toMatch(/ElectroVibe Pay/i);
     fireEvent.click(screen.getByRole('button', { name: /confirmar pedido/i }));
 
@@ -162,7 +162,6 @@ describe('PedidoForm catalog loading', () => {
     expect(axios.post.mock.calls[0][0]).toBe('https://api.example.test/api/orders/realizar');
     expect(axios.post.mock.calls[0][1].products).toEqual([{ productId: 'p-demo', quantity: 1 }]);
     expect(axios.post.mock.calls[0][1].paymentMethod).toBe('Pago pendiente de coordinación');
-    expect(axios.post.mock.calls[0][1].paymentPreference).toBeUndefined();
     expect(screen.getByRole('link', { name: 'Ver Mis Pedidos' })).toBeTruthy();
   });
   test('builds one fictional order with multiple products and quantities', async () => {

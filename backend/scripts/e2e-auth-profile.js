@@ -4,27 +4,7 @@ const mongoose = require('mongoose');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const Customer = require('../models/Customer');
-const { calculateEventChecksum } = require('../utils/wompiSecurity');
 const bcrypt = require('bcrypt');
-
-const wompiSignedProperties = [
-  'transaction.id',
-  'transaction.status',
-  'transaction.amount_in_cents',
-  'transaction.currency',
-  'transaction.reference'
-];
-
-function createSignedWompiEvent(transaction) {
-  const event = {
-    event: 'transaction.updated',
-    timestamp: Math.floor(Date.now() / 1000),
-    signature: { properties: wompiSignedProperties, checksum: '' },
-    data: { transaction }
-  };
-  event.signature.checksum = calculateEventChecksum(event, process.env.WOMPI_EVENTS_SECRET);
-  return event;
-}
 
 const baseUrl = process.env.E2E_API_URL || 'http://127.0.0.1:5001';
 
@@ -144,7 +124,7 @@ async function main() {
     email,
     phone: '+57 300 123 4567',
     address: 'Calle 123 # 45-67, Bogotá',
-    paymentMethod: 'Wompi',
+    paymentMethod: 'Pago pendiente de coordinación',
     deliveryDate: '2099-01-01',
     products: [{ productId: purchasableProduct._id.toString(), quantity: 2 }]
   };
@@ -188,115 +168,11 @@ async function main() {
   assert.equal(await Order.countDocuments({ userId: customerId }), 1, 'Insufficient stock must not persist a second order');
 
 
-  // The checkout URL is only inspected; this test never visits Wompi or starts a real transaction.
-  const checkout = await request('/api/orders/' + firstOrderId + '/wompi-checkout', {
-    method: 'POST',
-    token
-  });
-  expectStatus(checkout, 200, 'Wompi sandbox checkout creation');
-  const checkoutUrl = new URL(checkout.body.checkoutUrl);
-  assert.equal(checkoutUrl.origin, 'https://checkout.wompi.co');
-  assert.equal(checkoutUrl.searchParams.get('public-key'), process.env.WOMPI_PUBLIC_KEY);
-  assert.equal(checkoutUrl.searchParams.get('currency'), 'COP');
-  assert.equal(checkoutUrl.searchParams.get('amount-in-cents'), '2469000');
-  assert.equal(checkout.body.amountInCents, 2469000);
-  assert.equal(checkout.body.currency, 'COP');
-  const orderWithReference = await Order.findById(firstOrderId);
-  assert.equal(orderWithReference.paymentReference, checkout.body.reference, 'Checkout reference must persist on the order');
-
-  const repeatedCheckout = await request('/api/orders/' + firstOrderId + '/wompi-checkout', {
-    method: 'POST',
-    token
-  });
-  expectStatus(repeatedCheckout, 200, 'Repeated checkout request');
-  assert.equal(repeatedCheckout.body.reference, checkout.body.reference, 'Repeated checkout must reuse the same payment reference');
-
-  const approvedTransaction = {
-    id: 'CI-APPROVED-' + fixtureTag,
-    status: 'APPROVED',
-    amount_in_cents: 2469000,
-    currency: 'COP',
-    reference: checkout.body.reference
-  };
-  const badSignatureEvent = createSignedWompiEvent(approvedTransaction);
-  badSignatureEvent.signature.checksum = 'invalid-ci-checksum';
-  const badSignatureResponse = await request('/api/orders/wompi/webhook', {
-    method: 'POST',
-    body: badSignatureEvent
-  });
-  expectStatus(badSignatureResponse, 401, 'Invalid Wompi webhook signature');
-  const orderAfterBadSignature = await Order.findById(firstOrderId);
-  assert.equal(orderAfterBadSignature.paymentStatus, 'PENDING', 'Invalid signature must not change payment state');
-
-  const approvalEvent = createSignedWompiEvent(approvedTransaction);
-  const approvalResponse = await request('/api/orders/wompi/webhook', {
-    method: 'POST',
-    body: approvalEvent
-  });
-  expectStatus(approvalResponse, 200, 'Valid Wompi approval webhook');
-  const approvedOrder = await Order.findById(firstOrderId);
-  assert.equal(approvedOrder.paymentStatus, 'APPROVED');
-  assert.equal(approvedOrder.paymentConfirmed, true);
-  assert.equal(approvedOrder.status, 'Procesando');
-
-  const duplicateApprovalResponse = await request('/api/orders/wompi/webhook', {
-    method: 'POST',
-    body: approvalEvent
-  });
-  expectStatus(duplicateApprovalResponse, 200, 'Repeated approval webhook');
-  assert.equal(duplicateApprovalResponse.body.ignored, true);
-  persistedStock = await Product.findById(purchasableProduct._id);
-  assert.equal(persistedStock.quantity, 3, 'Repeated approval events must not alter stock again');
-
-  // A sandbox DECLINED event must cancel the second pending order and restore its reservation only once.
-  const declineOrderBody = {
-    ...orderBody,
-    products: [{ productId: purchasableProduct._id.toString(), quantity: 2 }]
-  };
-  const declineOrderResponse = await request('/api/orders/realizar', {
-    method: 'POST',
-    token,
-    body: declineOrderBody,
-    idempotencyKey: 'ci-e2e-order-' + fixtureTag + '-declined'
-  });
-  expectStatus(declineOrderResponse, 201, 'Second order for declined-payment inventory test');
-  const declineOrderId = declineOrderResponse.body.order._id;
-  persistedStock = await Product.findById(purchasableProduct._id);
-  assert.equal(persistedStock.quantity, 1, 'Second order should reserve two remaining units');
-
-  const declineCheckout = await request('/api/orders/' + declineOrderId + '/wompi-checkout', {
-    method: 'POST',
-    token
-  });
-  expectStatus(declineCheckout, 200, 'Checkout for declined-payment inventory test');
-  const declinedTransaction = {
-    id: 'CI-DECLINED-' + fixtureTag,
-    status: 'DECLINED',
-    amount_in_cents: 2469000,
-    currency: 'COP',
-    reference: declineCheckout.body.reference
-  };
-  const declineEvent = createSignedWompiEvent(declinedTransaction);
-  const declineResponse = await request('/api/orders/wompi/webhook', {
-    method: 'POST',
-    body: declineEvent
-  });
-  expectStatus(declineResponse, 200, 'Valid Wompi declined webhook');
-  const cancelledOrder = await Order.findById(declineOrderId);
-  assert.equal(cancelledOrder.paymentStatus, 'DECLINED');
-  assert.equal(cancelledOrder.status, 'Cancelado');
-  persistedStock = await Product.findById(purchasableProduct._id);
-  assert.equal(persistedStock.quantity, 3, 'Declined payment must restore the reserved inventory');
-
-  const repeatedDeclineResponse = await request('/api/orders/wompi/webhook', {
-    method: 'POST',
-    body: declineEvent
-  });
-  expectStatus(repeatedDeclineResponse, 200, 'Repeated declined webhook');
-  assert.equal(repeatedDeclineResponse.body.ignored, true);
-  persistedStock = await Product.findById(purchasableProduct._id);
-  assert.equal(persistedStock.quantity, 3, 'Repeated declined events must not restore stock twice');
-
+  const orderPendingReview = await Order.findById(firstOrderId);
+  assert.equal(orderPendingReview.paymentMethod, 'Pago pendiente de coordinación');
+  assert.equal(orderPendingReview.paymentStatus, 'PENDING');
+  assert.equal(orderPendingReview.paymentConfirmed, false);
+  assert.equal(orderPendingReview.status, 'Pendiente');
 
   // Submit the same idempotent order twice at once; only one stock reservation may commit.
   const concurrentIdempotentProduct = await Product.create({
@@ -377,11 +253,11 @@ async function main() {
   );
   const scarceStockAfterRace = await Product.findById(scarceProduct._id);
   assert.equal(scarceStockAfterRace.quantity, 1, 'Concurrent stock race must not oversell or double-decrement');
-  assert.equal(await Order.countDocuments({ userId: customerId }), 4, 'Only four successful orders should persist for the primary test customer');
+  assert.equal(await Order.countDocuments({ userId: customerId }), 3, 'Only three orders should exist before the admin payment-review scenarios');
 
   const ordersForFirstUser = await request('/api/orders/my-orders', { token });
   expectStatus(ordersForFirstUser, 200, 'Authenticated order history');
-  assert.equal(ordersForFirstUser.body.length, 4, 'Only the four successful order creations should appear in the history');
+  assert.equal(ordersForFirstUser.body.length, 3, 'The customer history should include the three orders created before admin review');
   assert.equal(ordersForFirstUser.body[0]._id, firstOrderId);
   const adminListForbidden = await request('/api/orders/all', { token });
   expectStatus(adminListForbidden, 403, 'Non-admin order listing');
@@ -430,6 +306,58 @@ async function main() {
   assert.equal(adminLogin.body.user.role, 'admin');
   assert.equal(typeof adminLogin.body.token, 'string');
   const adminToken = adminLogin.body.token;
+
+  const customerPaymentReviewDenied = await request('/api/orders/' + firstOrderId + '/payment-review', {
+    method: 'PUT',
+    token,
+    body: { decision: 'approve' }
+  });
+  expectStatus(customerPaymentReviewDenied, 403, 'Customer cannot approve a payment');
+
+  const approvedReview = await request('/api/orders/' + firstOrderId + '/payment-review', {
+    method: 'PUT',
+    token: adminToken,
+    body: { decision: 'approve' }
+  });
+  expectStatus(approvedReview, 200, 'Admin approves coordinated payment');
+  assert.equal(approvedReview.body.order.paymentStatus, 'APPROVED');
+  assert.equal(approvedReview.body.order.paymentConfirmed, true);
+  assert.equal(approvedReview.body.order.status, 'Procesando');
+
+  const declinedOrderResponse = await request('/api/orders/realizar', {
+    method: 'POST',
+    token,
+    body: {
+      ...orderBody,
+      products: [{ productId: purchasableProduct._id.toString(), quantity: 2 }]
+    },
+    idempotencyKey: 'ci-e2e-order-' + fixtureTag + '-manual-rejection'
+  });
+  expectStatus(declinedOrderResponse, 201, 'Second order awaiting manual payment review');
+  const declinedOrderId = declinedOrderResponse.body.order._id;
+  persistedStock = await Product.findById(purchasableProduct._id);
+  assert.equal(persistedStock.quantity, 1, 'Second pending order reserves the remaining two units');
+
+  const rejectedReview = await request('/api/orders/' + declinedOrderId + '/payment-review', {
+    method: 'PUT',
+    token: adminToken,
+    body: { decision: 'reject' }
+  });
+  expectStatus(rejectedReview, 200, 'Admin rejects coordinated payment');
+  assert.equal(rejectedReview.body.order.paymentStatus, 'DECLINED');
+  assert.equal(rejectedReview.body.order.paymentConfirmed, false);
+  assert.equal(rejectedReview.body.order.status, 'Cancelado');
+  persistedStock = await Product.findById(purchasableProduct._id);
+  assert.equal(persistedStock.quantity, 3, 'Rejected payment restores the reserved inventory');
+
+  const repeatedRejection = await request('/api/orders/' + declinedOrderId + '/payment-review', {
+    method: 'PUT',
+    token: adminToken,
+    body: { decision: 'reject' }
+  });
+  expectStatus(repeatedRejection, 409, 'Repeated payment rejection');
+  persistedStock = await Product.findById(purchasableProduct._id);
+  assert.equal(persistedStock.quantity, 3, 'Repeated rejection must not restore inventory twice');
 
   const customersDenied = await request('/api/customers/all', { token });
   expectStatus(customersDenied, 403, 'Customer cannot access admin customer directory');
@@ -572,51 +500,7 @@ async function main() {
   });
   expectStatus(expiredResetResponse, 400, 'Expired password-reset token');
 
-  // A fully local demo purchase must work even if Wompi credentials are absent.
-  const demoPaymentEnvironment = ['WOMPI_PUBLIC_KEY', 'WOMPI_INTEGRITY_SECRET', 'WOMPI_EVENTS_SECRET', 'FRONTEND_URL']
-    .map(name => [name, process.env[name]]);
-  for (const [name] of demoPaymentEnvironment) delete process.env[name];
-  try {
-    const demoProduct = await Product.create({
-      name: 'CI E2E Simulated Purchase ' + fixtureTag,
-      description: 'Disposable fixture for in-app demo purchase',
-      category: 'CI E2E',
-      price: 15000,
-      quantity: 2,
-      demo: true,
-      demoIcon: 'test',
-      catalogVersion: 'e2e'
-    });
-    const demoPurchase = await request('/api/orders/realizar', {
-      method: 'POST',
-      token,
-      body: {
-        ...orderBody,
-        paymentMethod: 'Demostración',
-        products: [{ productId: demoProduct._id.toString(), quantity: 1 }]
-      },
-      idempotencyKey: 'ci-e2e-order-' + fixtureTag + '-demo'
-    });
-    expectStatus(demoPurchase, 201, 'In-app demo purchase without Wompi credentials');
-    assert.equal(demoPurchase.body.order.paymentStatus, 'SIMULATED');
-    assert.equal(demoPurchase.body.order.paymentConfirmed, true);
-    assert.equal(demoPurchase.body.order.status, 'Procesando');
-    assert.equal(demoPurchase.body.order.totalAmount, 15000);
-    assert.equal((await Product.findById(demoProduct._id)).quantity, 1, 'A demo order changes only the disposable fixture inventory');
-
-    const demoCheckoutAttempt = await request('/api/orders/' + demoPurchase.body.order._id + '/wompi-checkout', {
-      method: 'POST',
-      token
-    });
-    expectStatus(demoCheckoutAttempt, 409, 'Demo orders must not open Wompi checkout');
-  } finally {
-    for (const [name, value] of demoPaymentEnvironment) {
-      if (value === undefined) delete process.env[name];
-      else process.env[name] = value;
-    }
-  }
-
-  console.log('HTTP E2E passed: registration/login/profile persistence, customer/admin authorization, admin customer/order reads, admin product create/edit/delete and order delivery transitions using disposable fixtures, transactional orders, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, concurrent idempotency and stock-race protection, Wompi sandbox checkout signatures, approved/declined webhooks, duplicate events, inventory restoration, in-app demo purchase without Wompi credentials, checkout isolation, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no external payment was initiated.');
+  console.log('HTTP E2E passed: registration/login/profile persistence, customer/admin authorization, admin customer/order reads, admin product create/edit/delete, payment review permissions, manual approval/rejection, inventory restoration after rejection, logistics transitions after approval, transactional order creation, server-side totals, stock decrement and insufficient-stock rejection, idempotency, per-user order isolation, concurrent idempotency and stock-race protection, password reset/token expiry and reuse protection. All writes stayed in the disposable CI MongoDB replica set; no payment provider was called and no real payment was initiated.');
 }
 
 main()

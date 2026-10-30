@@ -23,7 +23,7 @@ const client = {
     _id: '507f1f77bcf86cd799439099',
     orderDate: '2026-10-24T15:00:00.000Z',
     status: 'Procesando',
-    paymentStatus: 'SIMULATED',
+    paymentStatus: 'PENDING',
     totalAmount: 45000,
     products: [{ productId: { _id: '507f1f77bcf86cd799439088', name: 'Cafetera de muestra', category: 'Cafeteras' }, quantity: 2 }]
   }]
@@ -55,7 +55,7 @@ describe('Admin customer history', () => {
     expect(screen.getByRole('img', { name: /icono de perfil: femenino/i })).toBeTruthy();
     expect(screen.getByText('Demo Buyer (1 pedido)')).toBeTruthy();
     fireEvent.click(summary);
-    expect(await screen.findByText(/Sin pago/)).toBeTruthy();
+    expect(await screen.findByText(/Pendiente de revisión/)).toBeTruthy();
     expect(screen.getByText(/Valor del pedido:/)).toBeTruthy();
     expect(screen.getByText(/45.000/)).toBeTruthy();
     expect(screen.getByText(/Cafetera de muestra/)).toBeTruthy();

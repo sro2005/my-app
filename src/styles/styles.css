@@ -665,91 +665,6 @@ form select {
   top: -7px;             /* Ajusta este valor (puede ser -2px, -4px, etc.) para subir la etiqueta */
 }
 
-/* Contenedor del selector de método de pago */
-.payment-method-container {
-  margin-bottom: 20px; /* Separa este campo del siguiente bloque */
-}
-
-/* Contenedor para los campos de banco (Nombre del Banco y Número de Cuenta) */
-.bank-fields {
-  display: flex;
-  flex-direction: column; /* Los inputs se ubican uno debajo del otro */
-  gap: 10px;            /* Espacio entre cada input */
-  margin-bottom: 20px;  /* Separa este grupo del siguiente bloque */
-}
-
-/* Opciones de pago para Nequi, Daviplata o Transfiya */
-.payment-options {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centra horizontalmente todo el bloque */
-  gap: 10px;
-  margin-top: 20px; /* Separa este grupo de los campos anteriores */
-}
-
-/* Estilos existentes para los botones de radio */
-.payment-options p {
-  margin: 0;
-  padding: 0;
-  font-weight: bold;
-  text-align: center;
-}
-
-/* Contenedor específico para los botones de radio */
-.radio-group {
-  display: flex;
-  justify-content: center; /* Centra los elementos dentro de este contenedor */
-  gap: 20px; /* Espacio entre "Sí" y "No" */
-}
-
-/* Estilos para cada label de los botones de radio */
-.payment-options label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 8px;
-}
-
-/* Estilos para los inputs de tipo radio */
-.payment-options input[type="radio"] {
-  appearance: none;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  position: relative;
-}
-
-/* Cuando se selecciona el radio, quitamos el borde */
-.payment-options input[type="radio"]:checked {
-  border-color: transparent;
-}
-
-/* Estilos específicos para el botón "Sí" cuando está seleccionado */
-.payment-options input[type="radio"][value="Sí"]:checked {
-  background-color: #4caf50; /* Verde para Sí */
-}
-
-/* Estilos específicos para el botón "No" cuando está seleccionado */
-.payment-options input[type="radio"][value="No"]:checked {
-  background-color: #f44336; /* Rojo para No */
-}
-
-/* Añadimos un pseudo-elemento para indicar la selección en ambos botones */
-.payment-options input[type="radio"][value="Sí"]:checked::after,
-.payment-options input[type="radio"][value="No"]:checked::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background-color: #fff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
 /* Estilo para el contenedor del modal */
 .modal {
   position: fixed;
@@ -1336,9 +1251,6 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 .evh-form .evh-form-hint { margin: -.6rem 0 .2rem; }
 .evh-register-form { gap: 1.15rem !important; }
 .evh-form-page-wide .evh-form-layout { width: min(100%, 1180px); }
-.evh-checkout-form .payment-method-container { display: grid; align-content: start; gap: .45rem; min-width: 0; }
-.evh-checkout-form .payment-method-container > label { color: #30394a; font-size: .82rem; font-weight: 750; }
-.evh-checkout-form .payment-method-container p { margin: .2rem 0 0; color: #687386; font-size: .73rem; line-height: 1.5; }
 .evh-order-summary { display: grid; grid-template-columns: 1fr auto; gap: .25rem .75rem; align-items: baseline; padding: 1rem 1.1rem; border: 1px solid #f0d9c4; border-radius: 14px; background: #fff9f2; }
 .evh-order-summary span { color: #687386; font-size: .82rem; }
 .evh-order-summary strong { color: #202b3e; font-size: 1.35rem; }
@@ -1353,7 +1265,6 @@ form.evh-form { display: grid; gap: 1.1rem; max-width: none; margin: 0; padding:
 }
 .evh-checkout-form .evh-form-grid > * { min-width: 0; }
 .evh-checkout-form .evh-form-field-wide { grid-column: 1 / -1; }
-.evh-checkout-form .payment-method-container { margin: 0; }
 .evh-checkout-form .evh-select__container,
 .evh-checkout-form .evh-select__control {
   width: 100%;
@@ -4011,47 +3922,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 @keyframes evh-logout-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes evh-logout-enter { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-/* Checkout result page: prominent blue surfaces and one honest payment notice. */
-.evh-payment-result {
-  display: grid;
-  place-items: center;
-  min-height: 68vh;
-  box-sizing: border-box;
-  padding: clamp(1rem, 4vw, 3rem);
-  background: #f6f9fd;
-}
-.evh-payment-result-card {
-  width: min(100%, 720px);
-  box-sizing: border-box;
-  padding: clamp(1.4rem, 4vw, 2.6rem);
-  border: 1px solid #dce5ef;
-  border-radius: 24px;
-  background: #fff;
-  box-shadow: 0 20px 55px rgba(20,44,75,.07);
-}
-.evh-payment-result-mark {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  margin-bottom: 1.1rem;
-  border: 1px solid #d4e3f6;
-  border-radius: 17px;
-  background: var(--evh-blue-soft);
-  color: #294f7d;
-  font-size: 1.7rem;
-  font-weight: 900;
-}
-.evh-payment-result-card .evh-eyebrow { color: #294f7d; font-size: .67rem; }
-.evh-payment-result-card h1 { margin: .5rem 0 .7rem; color: #152f50; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -.04em; line-height: 1.18; }
-.evh-payment-result-card > p { color: #53657d; font-size: .9rem; line-height: 1.7; }
-.evh-payment-result-notice { margin: 1.2rem 0; padding: 1rem 1.1rem; border: 1px solid #f0d5b6; border-radius: 14px; background: #fff8ef; }
-.evh-payment-result-notice strong { color: #733f10; font-size: .86rem; }
-.evh-payment-result-notice p { margin: .25rem 0 0; color: #76563b; font-size: .82rem; line-height: 1.6; }
-.evh-payment-result-detail { padding: .8rem .9rem; border: 1px solid #e4eaf2; border-radius: 11px; background: #f8fafc; overflow-wrap: anywhere; }
-.evh-payment-result-detail strong { color: #294f7d; }
-.evh-payment-result-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.2rem; }
-.evh-payment-result-actions .evh-button { flex: 0 1 auto; }
 @media (max-width: 620px) {
   .evh-hero-copy .evh-hero-tagline { font-size: .62rem; letter-spacing: .035em; }
   .evh-register-form .evh-form-grid { grid-template-columns: minmax(0, 1fr); }
@@ -4121,14 +3991,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   column-gap: clamp(.85rem, 2vw, 1.15rem);
   row-gap: 1.1rem;
 }
-.evh-checkout-form .evh-form-field,
-.evh-checkout-form .payment-method-container {
+.evh-checkout-form .evh-form-field{
   min-width: 0;
   align-self: start;
   align-content: start;
 }
-.evh-checkout-form .evh-form-field > label,
-.evh-checkout-form .payment-method-container > label {
+.evh-checkout-form .evh-form-field > label{
   display: block;
   min-height: 1.25em;
   margin: 0;
@@ -4153,22 +4021,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   color: #65758a;
   opacity: 1;
   cursor: default;
-}
-.evh-checkout-form .payment-method-container {
-  display: grid;
-  gap: .45rem;
-  margin: 0;
-}
-.evh-checkout-form .payment-method-container > p[role="note"] {
-  margin: .2rem 0 0;
-  padding: .68rem .75rem;
-  border: 1px solid #d8e5f5;
-  border-radius: 11px;
-  background: #f3f7fd;
-  color: #526780;
-  font-size: .75rem;
-  line-height: 1.55;
-  text-align: left;
 }
 .evh-checkout-form .evh-select__control { min-height: 48px !important; box-sizing: border-box; }
 .evh-checkout-form .evh-form-field-wide { min-width: 0; }
@@ -4935,8 +4787,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   column-gap: clamp(.85rem, 1.8vw, 1.1rem);
   row-gap: 1rem;
 }
-.evh-checkout-form .evh-form-grid > .evh-form-field,
-.evh-checkout-form .evh-form-grid > .payment-method-container {
+.evh-checkout-form .evh-form-grid > .evh-form-field{
   display: grid;
   align-content: start;
   align-self: stretch;
@@ -4947,7 +4798,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   gap: .45rem;
 }
 .evh-checkout-form .evh-form-grid > .evh-form-field > label,
-.evh-checkout-form .evh-form-grid > .payment-method-container > label,
 .evh-checkout-form .evh-cart-quantity-field > label {
   min-height: 1.2rem;
   margin: 0;
@@ -5025,19 +4875,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-checkout-form .evh-form-field > input:focus,
 .evh-checkout-form .evh-form-field > select:focus {
   outline: 0;
-}
-.evh-checkout-form .payment-method-container > p[role="note"] {
-  min-height: 0;
-  box-sizing: border-box;
-  margin: .25rem 0 0;
-  padding: .65rem .75rem;
-  border: 1px solid #d8e5f5;
-  border-radius: 10px;
-  background: #f3f7fd;
-  color: #526780;
-  font-size: .74rem;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
 }
 .evh-checkout-form .evh-cart-add-controls {
   display: grid;

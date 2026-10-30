@@ -5,7 +5,6 @@ const Joi = require('joi');
 const { validateProducts, reduceInventory, restoreInventory } = require('../utils/productUtils');
 const Product = require('../models/Product');
 const moment = require('moment-timezone'); // Importa moment-timezone
-const { hasSandboxWompiCredentials } = require('../utils/wompiSecurity');
 
 // Función para actualizar el estado del pedido automáticamente
 const updateOrderStatus = async (order) => {
@@ -46,8 +45,7 @@ exports.createOrder = async (req, res) => {
       return res.status(400).json({ message: 'Datos inválidos', errors: error.details.map(err => err.message) });
     }
 
-    const { firstName, lastName, email, phone, address, paymentMethod, paymentPreference, deliveryDate, products } = payload;
-    const isSimulatedPaymentMethod = ['Demostración', 'Bre-B (simulado)'].includes(paymentMethod);
+    const { firstName, lastName, email, phone, address, paymentMethod, deliveryDate, products } = payload;
 
     // Si la petición anterior llegó al servidor pero la respuesta se perdió, devuelve
     // el mismo pedido en lugar de volver a descontar existencias.
@@ -56,20 +54,6 @@ exports.createOrder = async (req, res) => {
       if (existingOrder) {
         return res.status(200).json({ message: 'Esta solicitud ya había creado un pedido.', order: existingOrder });
       }
-    }
-
-    if (
-      paymentMethod === 'Wompi' && (
-        !hasSandboxWompiCredentials({
-          publicKey: process.env.WOMPI_PUBLIC_KEY,
-          integritySecret: process.env.WOMPI_INTEGRITY_SECRET,
-          eventsSecret: process.env.WOMPI_EVENTS_SECRET
-        }) ||
-        !process.env.FRONTEND_URL ||
-        !/^https:\/\//.test(process.env.FRONTEND_URL)
-      )
-    ) {
-      return res.status(503).json({ message: 'Los pagos no están configurados por completo. El pedido no se ha creado.' });
     }
 
     // La reserva de inventario y la creación del pedido se confirman juntas.
@@ -108,15 +92,14 @@ exports.createOrder = async (req, res) => {
       const deliveryDateColombia = moment.tz(deliveryDate, 'YYYY-MM-DD', 'America/Bogota').toDate();
       createdOrder = new Order({
         firstName, lastName, email, phone, address, paymentMethod,
-        ...(paymentMethod === 'Pago pendiente de coordinación' && paymentPreference ? { paymentPreference } : {}),
         deliveryDate: deliveryDateColombia,
         totalAmount,
         products,
         orderDate: new Date(),
         userId,
-        paymentStatus: isSimulatedPaymentMethod ? 'SIMULATED' : 'PENDING',
-        paymentConfirmed: isSimulatedPaymentMethod,
-        status: isSimulatedPaymentMethod ? 'Procesando' : 'Pendiente',
+        paymentStatus: 'PENDING',
+        paymentConfirmed: false,
+        status: 'Pendiente',
         ...(idempotencyKey ? { idempotencyKey } : {})
       });
       await createdOrder.save({ session });
@@ -173,7 +156,7 @@ exports.getOrdersByUserId = async (req, res) => {
     const userId = req.user._id;  // Identificador del usuario autenticado
     // Filtrar solo los pedidos que tengan el userId del usuario autenticado
     const orders = await Order.find({ userId: userId })
-      .select('-manualPaymentReference -paymentReviewedBy -paymentReviewNote')
+      .select('-paymentReviewedBy -paymentReviewNote')
       .populate('products.productId');
     // Devolver el arreglo (vacío si no hay pedidos)
     res.status(200).json(orders);
@@ -269,7 +252,7 @@ exports.deleteOrder = async (req, res) => {
       }
 
       // Conservar pedidos con referencias o historial de pago para auditoría.
-      if (order.paymentReference || order.paymentStatus !== 'PENDING' || order.paymentConfirmed || order.status === 'Cancelado') {
+      if (order.paymentStatus !== 'PENDING' || order.paymentConfirmed || order.status === 'Cancelado') {
         outcome = 'protected';
         return;
       }
@@ -278,7 +261,6 @@ exports.deleteOrder = async (req, res) => {
         _id: id,
         paymentStatus: 'PENDING',
         paymentConfirmed: false,
-        paymentReference: { $exists: false },
         status: { $ne: 'Cancelado' }
       }, { session });
 
@@ -437,12 +419,12 @@ exports.updateOrderStatusAutomatically = async (req, res) => {
       }
 
       if (value.prepare === true) {
-        if (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus) || order.status !== 'Pendiente' || order.packed) {
+        if (!order.paymentConfirmed || !['APPROVED'].includes(order.paymentStatus) || order.status !== 'Pendiente' || order.packed) {
           return res.status(409).json({ message: 'Solo se puede iniciar preparación con un pago aprobado.' });
         }
         order.status = 'Procesando';
       } else if (value.packed === true) {
-        if (!order.paymentConfirmed || !['APPROVED', 'SIMULATED'].includes(order.paymentStatus) || order.status !== 'Procesando') {
+        if (!order.paymentConfirmed || !['APPROVED'].includes(order.paymentStatus) || order.status !== 'Procesando') {
           return res.status(409).json({ message: 'El pedido debe tener pago aprobado antes de preparar el envío.' });
         }
         order.packed = true;

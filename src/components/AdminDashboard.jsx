@@ -7,27 +7,20 @@ import { AuthContext } from '../contexts/AuthContext';
 import { formatCop } from '../utils/currency';
 
 const formatPaymentStatus = status => ({
-  SIMULATED: 'Sin cobro',
-  APPROVED: 'Aprobado',
-  PENDING: 'Pendiente',
-  DECLINED: 'Rechazado',
-  ERROR: 'Error de pago',
-  EXPIRED: 'Checkout vencido',
-  VOIDED: 'Anulado'
-})[status] || status || 'Pendiente';
+  PENDING: 'Pendiente de revisión',
+  APPROVED: 'Pago confirmado',
+  DECLINED: 'Pago rechazado'
+})[status] || 'No disponible';
 
-export const summarizeDemoOperations = (orders, customers, products) => {
-  const simulated = orders.filter(order => order.paymentStatus === 'SIMULATED');
+export const summarizeAdminOperations = (orders, customers, products) => {
   const pendingPayment = orders.filter(order => order.paymentStatus === 'PENDING');
   return {
     customers: customers.filter(customer => customer.role === 'user').length,
     products: products.length,
     lowStock: products.filter(product => Number(product.quantity) <= 3).length,
     orders: orders.length,
-    simulated: simulated.length,
     pendingPayment: pendingPayment.length,
     pending: orders.filter(order => ['Pendiente', 'Procesando'].includes(order.status)).length,
-    simulatedValue: simulated.reduce((total, order) => total + (Number(order.totalAmount) || 0), 0),
     pendingValue: pendingPayment.reduce((total, order) => total + (Number(order.totalAmount) || 0), 0)
   };
 };
@@ -75,7 +68,7 @@ const AdminDashboard = () => {
 
   useEffect(() => { reload(); }, [reload]);
 
-  const summary = useMemo(() => summarizeDemoOperations(orders, customers, products), [orders, customers, products]);
+  const summary = useMemo(() => summarizeAdminOperations(orders, customers, products), [orders, customers, products]);
   const recent = useMemo(() => [...orders]
     .sort((a, b) => new Date(b.orderDate || 0) - new Date(a.orderDate || 0)).slice(0, 6), [orders]);
 

@@ -31,8 +31,7 @@ exports.orderSchema = Joi.object({
   email: Joi.string().trim().email().max(254).required(),
   phone: Joi.string().trim().min(7).max(30).required(),
   address: Joi.string().trim().min(1).max(300).required(),
-  paymentMethod: Joi.string().valid('Wompi', 'Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación').required(),
-  paymentPreference: Joi.string().valid('Tarjeta', 'PSE', 'Billetera digital', 'Por definir').optional(),
+  paymentMethod: Joi.string().valid('Pago pendiente de coordinación').required(),
   deliveryDate: deliveryDateSchema,
   // El total del navegador se acepta por compatibilidad, pero el controlador lo ignora
   // y calcula el importe con los precios almacenados en el servidor.
@@ -43,8 +42,5 @@ exports.orderSchema = Joi.object({
       quantity: Joi.number().integer().min(1).max(1000000).required()
     }).unknown(false)
   ).min(1).max(100).required(),
-  accountNumber: Joi.string().trim().min(1).optional(),
-  bankName: Joi.string().trim().allow('').optional(),
-  sameRegisteredNumber: Joi.boolean().optional(),
   userId: Joi.string().hex().length(24).required()
 }).unknown(false);

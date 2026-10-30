@@ -11,7 +11,7 @@ const validOrder = {
   email: 'cliente@example.com',
   phone: '+57 300 123 4567',
   address: 'Calle 10 # 20-30, Bogotá',
-  paymentMethod: 'Wompi',
+  paymentMethod: 'Pago pendiente de coordinación',
   deliveryDate: todayInBogota(),
   products: [{ productId: '507f1f77bcf86cd799439011', quantity: 1 }],
   userId: '507f1f77bcf86cd799439012'
@@ -45,15 +45,15 @@ test('rechaza pedido sin productos o con cantidad no válida', () => {
   }
 });
 
-test('acepta los métodos de pago simulados sin proveedor externo', () => {
-  for (const paymentMethod of ['Demostración', 'Bre-B (simulado)', 'Pago pendiente de coordinación']) {
-    const { error } = orderSchema.validate({ ...validOrder, paymentMethod });
-    assert.equal(error, undefined, paymentMethod);
+test('solo acepta el método de pago coordinado de ElectroVibeHome', () => {
+  assert.equal(orderSchema.validate(validOrder).error, undefined);
+  for (const paymentMethod of ['Otro método de pago', 'Pago con tarjeta', 'Pago externo']) {
+    assert.ok(orderSchema.validate({ ...validOrder, paymentMethod }).error, paymentMethod);
   }
 });
 
 test('rechaza método de pago diferente al permitido', () => {
-  assert.ok(orderSchema.validate({ ...validOrder, paymentMethod: 'Transferencia' }).error);
+  assert.ok(orderSchema.validate({ ...validOrder, paymentMethod: 'Otro método de pago' }).error);
 });
 
 test('rechaza datos de contacto obligatorios vacíos o correo inválido', () => {
@@ -90,11 +90,4 @@ test('valida fechas de calendario sin conversión a UTC para la edición logíst
   assert.ok(deliveryDateSchema.validate('fecha-inválida').error);
   const yesterday = moment.tz('America/Bogota').subtract(1, 'day').format('YYYY-MM-DD');
   assert.ok(deliveryDateSchema.validate(yesterday).error);
-});
-
-test('accepts only non-sensitive payment preferences', () => {
-  for (const paymentPreference of ['Tarjeta', 'PSE', 'Billetera digital', 'Por definir']) {
-    assert.equal(orderSchema.validate({ ...validOrder, paymentMethod: 'Pago pendiente de coordinación', paymentPreference }).error, undefined);
-  }
-  assert.ok(orderSchema.validate({ ...validOrder, paymentPreference: '4111111111111111' }).error);
 });

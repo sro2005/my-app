@@ -7,8 +7,6 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const dotenv = require('dotenv');
-const { expireAbandonedWompiOrders, PENDING_WOMPI_TTL_MINUTES } = require('./utils/wompiPendingOrderCleanup');
-const { hasSandboxWompiCredentials } = require('./utils/wompiSecurity');
 
 // Define el archivo de entorno a usar según NODE_ENV
 const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
@@ -27,22 +25,6 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 const isProduction = process.env.NODE_ENV === 'production';
-
-if (isProduction) {
-  const publicKey = process.env.WOMPI_PUBLIC_KEY;
-  const integritySecret = process.env.WOMPI_INTEGRITY_SECRET;
-  const eventsSecret = process.env.WOMPI_EVENTS_SECRET;
-  const frontendUrl = process.env.FRONTEND_URL;
-  const wompiConfigStatus = {
-    publicKeyConfigured: Boolean(String(publicKey || '').trim()),
-    integritySecretConfigured: Boolean(String(integritySecret || '').trim()),
-    eventsSecretConfigured: Boolean(String(eventsSecret || '').trim()),
-    frontendUrlHttps: typeof frontendUrl === 'string' && /^https:\/\//.test(frontendUrl),
-    sandboxCredentialsReady: hasSandboxWompiCredentials({ publicKey, integritySecret, eventsSecret }) &&
-      typeof frontendUrl === 'string' && /^https:\/\//.test(frontendUrl)
-  };
-  console.log('Estado de configuración Wompi Sandbox (solo indicadores, sin valores secretos):', JSON.stringify(wompiConfigStatus));
-}
 
 // Render requests pass through Cloudflare and Render's load balancer.
 // Trust only those two proxy hops so Express derives req.ip from the forwarded chain.
@@ -72,36 +54,6 @@ if (!isProduction) {
   const accessLogStream = fs.createWriteStream(path.join(logDirectory, 'access.log'), { flags: 'a' });
   app.use(morgan('dev', { stream: accessLogStream }));
 }
-
-
-const schedulePendingWompiCleanup = () => {
-  const intervalMs = 5 * 60 * 1000;
-  let sweepInProgress = false;
-
-  const runSweep = async () => {
-    if (sweepInProgress) return;
-    sweepInProgress = true;
-    try {
-      const result = await expireAbandonedWompiOrders();
-      if (result.expiredCount > 0) {
-        console.log(`Limpieza Wompi: ${result.expiredCount} pedido(s) vencido(s); inventario liberado.`);
-      }
-      if (result.failedCount > 0) {
-        console.error(`Limpieza Wompi: ${result.failedCount} pedido(s) no pudieron procesarse; se reintentará en el siguiente ciclo.`);
-      }
-    } catch (error) {
-      console.error('Falló el ciclo de expiración de pedidos Wompi:', error.message);
-    } finally {
-      sweepInProgress = false;
-    }
-  };
-
-  // El barrido inicial también recupera trabajo pendiente después de reinicios del servicio.
-  void runSweep();
-  const timer = setInterval(() => { void runSweep(); }, intervalMs);
-  timer.unref?.();
-  console.log(`Limpieza automática de checkout Wompi activa: expiración tras ${PENDING_WOMPI_TTL_MINUTES} minutos.`);
-};
 
 // Conectar primero a MongoDB. No iniciar la API si la base de datos no está lista:
  // así Render puede detectar una configuración rota en lugar de dejar un backend aparentemente activo.
@@ -281,7 +233,6 @@ connectDatabase()
   .then(() => {
     server.listen(PORT, () => {
       console.log(`🚀 Servidor corriendo en ${server === app ? 'http' : 'https'}://localhost:${PORT}`);
-      if (isProduction) schedulePendingWompiCleanup();
     });
   })
   .catch((error) => {

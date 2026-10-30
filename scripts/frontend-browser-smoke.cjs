@@ -352,9 +352,9 @@ async function main() {
     const fixtureOrder = {
       _id: '507f1f77bcf86cd799439099', firstName: 'Marina', lastName: 'Rojas',
       email: customerUser.email, address: 'Calle 10 # 20-30, Bogotá', phone: customerUser.phone,
-      paymentMethod: 'Wompi', paymentStatus: 'APPROVED', paymentConfirmed: true,
+      paymentMethod: 'Pago pendiente de coordinación', paymentStatus: 'PENDING', paymentConfirmed: false,
       orderDate: new Date().toISOString(), deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      totalAmount: 299801, status: 'Procesando', packed: false, delivered: false,
+      totalAmount: 299801, status: 'Pendiente', packed: false, delivered: false,
       products: [{ productId: { _id: fixtureProducts[0]._id, name: fixtureProducts[0].name, category: fixtureProducts[0].category }, quantity: 2 }]
     };
     let fixtureOrders = [fixtureOrder];
@@ -638,9 +638,6 @@ async function main() {
     await page.getByLabel('Confirma la nueva contraseña').fill('OtherSecurePass123!');
     await page.getByRole('button', { name: 'Actualizar Contraseña' }).click();
     await page.getByRole('alert').filter({ hasText: /confirmación no coincide/i }).waitFor();
-
-    await captureAuthenticatedRoute('/pago-resultado?reference=EVH-TEST-BROWSER&status=APPROVED',
-      /Estamos revisando el resultado/i, 'customer-payment-result');
 
     await page.goto(new URL('/admin-inventario', baseUrl).toString(), { waitUntil: 'domcontentloaded', timeout: 60000 });
     await page.waitForFunction(() => window.location.pathname === '/home-page', null, { timeout: 15000 });
