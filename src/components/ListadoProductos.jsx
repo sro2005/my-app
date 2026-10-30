@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import ShoppingAssistant from './ShoppingAssistant';
 import demoProducts from '../../data/demo-products.json';
+import { formatCop as formatPrice } from '../utils/currency';
 
 const normalize = (value) => String(value || '')
   .normalize('NFD')
@@ -49,12 +50,6 @@ const CategoryArtwork = ({ category }) => {
 
 const getProductKey = (product) => product._id || product.id || product.name;
 const isPlaceholderImage = (url) => typeof url === 'string' && url.includes('placehold.co');
-const formatPrice = (price) => new Intl.NumberFormat('es-CO', {
-  style: 'currency',
-  currency: 'COP',
-  maximumFractionDigits: 0
-}).format(Number(price) || 0);
-
 const ProductCard = ({ product, demoMode, canOrder = false }) => {
   const [imageFailed, setImageFailed] = useState(false);
   const illustrative = demoMode || product.demo === true || isPlaceholderImage(product.imageUrl);
