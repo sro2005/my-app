@@ -37,9 +37,9 @@
 ## Verificación de datos en MongoDB Atlas — 29 de octubre de 2026
 
 - La colección `orders` de `electrovibehome_dev`, base conectada a la aplicación, no contenía pedidos al momento de la revisión.
-- Se eliminó de esa colección el índice obsoleto `paymentReference_1`; permanecen los índices `_id_` e `idempotencyKey_1`.
-- La base auxiliar `test` conserva un pedido de prueba antiguo con `paymentMethod: Transfiya` (febrero de 2025). No se modificó ni eliminó: está aislado de la base activa y se conserva como dato histórico hasta recibir autorización expresa para alterar esos registros.
-- No se modificaron cuentas de clientes, productos ni pedidos de la base activa.
+- Se eliminó el índice obsoleto asociado a la antigua referencia de pago; permanecen los índices necesarios para la identidad del documento y la idempotencia.
+- La colección `orders` de la base auxiliar `test` también quedó vacía tras eliminar el único pedido histórico de prueba con una modalidad de transferencia heredada.
+- No se modificaron cuentas de clientes ni productos; la colección de pedidos de la base activa ya estaba vacía.
 
 ## Validaciones automatizadas completadas
 
@@ -53,8 +53,8 @@
 - [x] Reintentos idempotentes y solicitudes concurrentes no duplican pedidos ni permiten sobreventa.
 - [x] El historial de un cliente no muestra pedidos de otro usuario.
 - [x] El ciclo de recuperación de contraseña acepta un token válido, rechaza su reutilización y rechaza un token vencido; estas pruebas usan fixtures y una base desechable.
-- [x] La suite E2E prueba notificaciones de pago simuladas: firma inválida no cambia estado; aprobación y rechazo funcionan en los fixtures; eventos repetidos no duplican movimientos de inventario.
-- [x] El modo de compra demostrativo crea una orden marcada como simulada con datos de la base desechable, sin requerir credenciales de una pasarela.
+- [x] La suite E2E verifica que un cliente no puede aprobar pagos, que el administrador puede aprobar o rechazar y que el rechazo cancela el pedido y restaura el inventario una sola vez en MongoDB desechable.
+- [x] El checkout solo admite `Pago pendiente de coordinación`; los pedidos nuevos se guardan como `PENDING` y `paymentConfirmed: false`, sin proveedor externo ni operación financiera.
 
 ### Backend en el servicio publicado — solo lectura
 
@@ -72,7 +72,7 @@
 - [x] Rutas públicas de registro, login, recuperación, restablecimiento, catálogo, acerca de, privacidad y términos responden correctamente y pasan la comprobación de ancho móvil.
 - [x] Validación de formularios bloquea registro vacío, email mal formado, recuperación sin email y contraseña de restablecimiento débil; el test confirma que no se enviaron solicitudes mutativas.
 - [x] La guía ElectroVibe apareció disponible y su interacción local de ejemplo no llamó al endpoint de chat de pago.
-- [x] Pantallas principales de administración y cliente recorridas en escritorio y móvil: panel, inventario, alta de producto, clientes, pedidos, seguridad, home, catálogo, formulario de pedido, historial, perfil y resultado informativo de pago.
+- [x] Pantallas principales de administración y cliente recorridas en escritorio y móvil: panel, inventario, alta de producto, clientes, pedidos, seguridad, home, catálogo, formulario de pedido, historial y perfil.
 - [x] Se verificaron filtros, edición simulada de inventario, cancelación del diálogo de eliminación, validación de producto vacío, estado logístico de pedido en fixtures, validación de perfil/contraseña y redirección de un rol cliente fuera de una ruta administrativa.
 - [x] El formulario de pedido se llevó hasta la confirmación y se volvió a editar/cancelar; el test comprobó que no se envió ningún POST para crear una orden en el backend publicado.
 - [x] No se detectaron errores JavaScript durante las pruebas de navegador.
