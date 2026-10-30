@@ -69,7 +69,7 @@ El checkout actual utiliza **ElectroVibe Pay** como interfaz propia para registr
 
 Los pedidos se guardan con `paymentStatus: PENDING` y `paymentConfirmed: false`. El administrador puede gestionar las etapas logísticas sin que eso signifique que el pago haya sido recibido o confirmado. Las fechas solicitadas por el cliente tampoco constituyen una promesa de despacho.
 
-Se conserva código de Wompi para compatibilidad con pedidos heredados y pruebas aisladas, pero no forma parte del checkout actual. Wompi está en pausa y Mercado Pago no está integrado. No configures credenciales reales ni habilites cobros desde este repositorio.
+El checkout se limita al registro del pedido y a su revisión manual dentro de ElectroVibeHome. El administrador debe comprobar el pago por el canal que corresponda antes de aprobar la preparación. No se conecta con pasarelas externas, no solicita datos bancarios y no realiza cobros ni transferencias.
 
 ## Configuración local
 
