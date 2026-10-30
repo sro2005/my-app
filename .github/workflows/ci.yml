@@ -108,10 +108,6 @@ jobs:
       JWT_SECRET: ci-only-e2e-jwt-secret-with-enough-length-123456
       MONGO_URI: mongodb://localhost:27017/electrovibehome_e2e?replicaSet=rs0
       E2E_API_URL: http://127.0.0.1:5001
-      WOMPI_PUBLIC_KEY: pub_test_ci_e2e_only
-      WOMPI_INTEGRITY_SECRET: test_integrity_ci_e2e_only
-      WOMPI_EVENTS_SECRET: test_events_ci_e2e_only
-      FRONTEND_URL: https://ci-preview.example.test
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
