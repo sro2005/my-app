@@ -296,7 +296,6 @@ const ListadoPedidos = () => {
           paymentConfirmed: updated.paymentConfirmed,
           paymentReviewedAt: updated.paymentReviewedAt,
           paymentReviewedBy: updated.paymentReviewedBy,
-          manualPaymentReference: updated.manualPaymentReference,
           paymentReviewNote: updated.paymentReviewNote,
           packed: updated.packed,
           delivered: updated.delivered
@@ -380,7 +379,6 @@ const ListadoPedidos = () => {
         order.paymentStatus,
         formatPaymentMethod(order, true),
         formatPaymentStatus(order.paymentStatus, true, order),
-        order.manualPaymentReference,
         ...productValues
       ].some(value => normalizeOrderSearch(value).includes(query));
       const matchesStatus = statusFilter === 'Todos' || getOrderDisplayStatus(order) === statusFilter;
