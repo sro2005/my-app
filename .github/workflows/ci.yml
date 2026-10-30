@@ -223,6 +223,7 @@ jobs:
           # Inspect the JavaScript actually published by Render. Vite splits lazy-loaded
           # pages into chunks, so the API URL may not live in the entry script alone.
           node <<'NODE'
+          async function main() {
           const fs = require('node:fs');
 
           const frontendUrl = new URL(process.env.FRONTEND_URL);
@@ -279,6 +280,8 @@ jobs:
             throw new Error('The published frontend JavaScript chunks do not contain the configured API base URL. Inspected ' + visited.size + ' asset(s).');
           }
           console.log('Configured API base URL found in ' + visited.size + ' published JavaScript asset(s).');
+          }
+          main().catch(error => { console.error(error); process.exitCode = 1; });
           NODE
 
           curl --fail --silent --show-error --max-time 20 \
