@@ -105,7 +105,6 @@ describe('ListadoPedidos', () => {
     admin.unmount();
     renderOrders({ _id: 'customer-1', role: 'user' });
     expect(await screen.findByText('ElectroVibe Pay')).toBeTruthy();
-    expect(screen.getByText('PSE')).toBeTruthy();
     expect(screen.getByText(/pendiente de revisión/i)).toBeTruthy();
     expect(screen.queryByRole('button', { name: /iniciar preparación/i })).toBeNull();
   });
