@@ -73,7 +73,7 @@ describe('Admin customer history', () => {
     ];
     renderClients(customers);
 
-    expect(await screen.findByText('Resumen de Clientes')).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: /Resumen de Clientes/ })).toBeTruthy();
     expect(screen.getByText('Total de Clientes')).toBeTruthy();
     expect(screen.getByText('Clientes Activos')).toBeTruthy();
     expect(screen.getByText('Clientes Inactivos')).toBeTruthy();
