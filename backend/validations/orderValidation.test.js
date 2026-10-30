@@ -47,13 +47,13 @@ test('rechaza pedido sin productos o con cantidad no válida', () => {
 
 test('solo acepta el método de pago coordinado de ElectroVibeHome', () => {
   assert.equal(orderSchema.validate(validOrder).error, undefined);
-  for (const paymentMethod of ['Wompi', 'Demostración', 'Bre-B', 'Transferencia', 'Tarjeta', 'PSE']) {
+  for (const paymentMethod of ['Otro método de pago', 'Pago con tarjeta', 'Pago externo']) {
     assert.ok(orderSchema.validate({ ...validOrder, paymentMethod }).error, paymentMethod);
   }
 });
 
 test('rechaza método de pago diferente al permitido', () => {
-  assert.ok(orderSchema.validate({ ...validOrder, paymentMethod: 'Transferencia' }).error);
+  assert.ok(orderSchema.validate({ ...validOrder, paymentMethod: 'Otro método de pago' }).error);
 });
 
 test('rechaza datos de contacto obligatorios vacíos o correo inválido', () => {
