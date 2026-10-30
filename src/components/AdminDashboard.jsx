@@ -4,10 +4,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './AdminDashboard.css';
 import { AuthContext } from '../contexts/AuthContext';
-
-const money = value => new Intl.NumberFormat('es-CO', {
-  style: 'currency', currency: 'COP', maximumFractionDigits: 0
-}).format(Number(value) || 0);
+import { formatCop } from '../utils/currency';
 
 const formatPaymentStatus = status => ({
   SIMULATED: 'Sin cobro',
@@ -117,7 +114,7 @@ const AdminDashboard = () => {
               ['Pedidos por gestionar', summary.pending],
               ['Productos del catálogo', summary.products],
               ['Productos con stock bajo (≤3)', summary.lowStock],
-              ['Valor de pedidos pendientes de pago', money(summary.pendingValue)]
+              ['Valor de pedidos pendientes de pago', formatCop(summary.pendingValue)]
             ].map(([label, value]) => (
               <article key={label} className="evh-admin-stat">
                 <span>{label}</span><strong>{value}</strong>
@@ -134,7 +131,7 @@ const AdminDashboard = () => {
                     <tbody>{recent.map(order => (
                       <tr key={order._id}>
                         <td data-label="Cliente"><span className="evh-admin-order-customer">{order.firstName} {order.lastName}<small>{order.email}</small></span></td>
-                        <td data-label="Valor del pedido">{money(order.totalAmount)}</td>
+                        <td data-label="Valor del pedido">{formatCop(order.totalAmount)}</td>
                         <td data-label="Pago">{formatPaymentStatus(order.paymentStatus)}</td>
                         <td data-label="Pedido">{order.status || 'Sin estado'}</td>
                       </tr>
