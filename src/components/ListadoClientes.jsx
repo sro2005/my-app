@@ -2,6 +2,7 @@ import LoadingBrandMark from './LoadingBrandMark';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { formatBogotaDateTime } from '../utils/dateFormatting';
+import { formatCop as formatMoney } from '../utils/currency';
 import GenderAvatar from './GenderAvatar';
 
 const normalizeSearchValue = value => String(value ?? '')
