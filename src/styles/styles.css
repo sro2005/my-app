@@ -3215,6 +3215,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   font-weight: 950;
   letter-spacing: -.04em;
 }
+.evh-loading-brand-icon {
+  display: block;
+  width: 68%;
+  height: 68%;
+  max-width: 46px;
+  max-height: 46px;
+  flex-shrink: 0;
+}
 .evh-loading-copy { min-width: 0; }
 .evh-loading-kicker {
   display: block;
