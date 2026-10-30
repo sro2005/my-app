@@ -2701,24 +2701,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   color: var(--evh-ink);
   box-shadow: 0 28px 90px rgba(5,14,28,.3);
   animation: evh-confirmation-enter .18s ease-out;
-  scrollbar-width: thin;
-  scrollbar-color: #a7bdd8 transparent;
+  /* Keep the dialog scrollable while hiding browser-specific bars and arrow controls. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .evh-confirmation-dialog::-webkit-scrollbar {
-  width: 10px;
-}
-.evh-confirmation-dialog::-webkit-scrollbar-track {
-  margin-block: 16px;
-  background: transparent;
-}
-.evh-confirmation-dialog::-webkit-scrollbar-thumb {
-  border: 2px solid transparent;
-  border-radius: 999px;
-  background: #a7bdd8;
-  background-clip: padding-box;
-}
-.evh-confirmation-dialog::-webkit-scrollbar-thumb:hover {
-  background-color: #7899c4;
+  display: none;
+  width: 0;
+  height: 0;
 }
 @keyframes evh-confirmation-enter {
   from { opacity: 0; transform: translateY(8px) scale(.99); }
