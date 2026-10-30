@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './AdminDashboard.css';
+import { formatCop } from '../utils/currency';
 
 const baseUrl = () => (process.env.REACT_APP_API_BASE_URL || '').trim().replace(/\/$/, '');
-const money = amount => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(Number(amount) || 0);
 
 export const editableProduct = product => ({
   name: product.name || '',
@@ -152,7 +152,7 @@ const AdminInventory = () => {
                 <span className="evh-admin-product-category">{product.category} {product.demo && '· DEMO'}</span>
                 <h2>{product.name}</h2>
                 <div className="evh-admin-product-meta">
-                  <span className="evh-admin-product-price">{money(product.price)}</span>
+                  <span className="evh-admin-product-price">{formatCop(product.price)}</span>
                   <span className="evh-admin-product-stock">{product.quantity} unidades disponibles</span>
                 </div>
               </div>
