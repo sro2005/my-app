@@ -241,8 +241,8 @@ test('getCustomers returns populated purchase history without exposing password 
     lastName: 'Buyer',
     email: 'buyer@example.test',
     totalAmount: 45000,
-    paymentMethod: 'Demostración',
-    paymentStatus: 'SIMULATED',
+    paymentMethod: 'Pago pendiente de coordinación',
+    paymentStatus: 'PENDING',
     status: 'Procesando',
     orderDate: new Date(),
     products: [{ productId: { name: 'Cafetera de muestra', category: 'Cafeteras' }, quantity: 1 }]
@@ -264,7 +264,7 @@ test('getCustomers returns populated purchase history without exposing password 
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.body[0].orders.length, 1);
-  assert.equal(response.body[0].orders[0].paymentStatus, 'SIMULATED');
+  assert.equal(response.body[0].orders[0].paymentStatus, 'PENDING');
   assert.equal(response.body[0].orders[0].products[0].productId.name, 'Cafetera de muestra');
   assert.doesNotMatch(JSON.stringify(response.body), /private-hash/);
 });
