@@ -283,7 +283,7 @@ const ListadoClientes = () => {
             <div className="stat-item top-client">
               <h3>Cliente con Más Pedidos</h3>
               {clienteMasPedidos ? (
-                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({topClientOrderCount} {topClientOrderCount === 1 ? 'pedido' : 'pedidos'})</p>
+                <p>{clienteMasPedidos.firstName} {clienteMasPedidos.lastName} ({topClientOrderCount} {topClientOrderCount === 1 ? 'Pedido' : 'Pedidos'})</p>
               ) : (
                 <p>No se encontró un cliente con más pedidos.</p>
               )}
