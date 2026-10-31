@@ -3,7 +3,7 @@ import React from 'react';
 // SVG original embebido para mostrar la escena sin depender de una URL externa.
 // Los detalles permanecen vectoriales y accesibles en cualquier tamaño.
 const HeroAppliances = () => (
-<svg className="evh-appliances-illustration" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" role="img" aria-labelledby="title desc">
+<svg className="evh-appliances-illustration" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 560" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
 <title id="title">Colección de electrodomésticos para el hogar</title>
 <desc id="desc">Composición vectorial de refrigerador, lavadora, aire acondicionado, televisor, horno, lavavajillas, microondas, freidora, cafetera, aspiradora, licuadora, ventilador, portátil y pequeños aparatos.</desc>
 <defs>
