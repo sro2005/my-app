@@ -40,6 +40,8 @@ describe('LandingPage', () => {
 
     const image = screen.getByRole('img', { name: /logotipo de electrovibehome/i });
     expect(image.getAttribute('src')).toBe('/favicon.svg');
+    expect(document.querySelector('.evh-brand-showcase-name')).toBeNull();
+    expect(document.querySelector('.evh-brand-showcase')).toBeNull();
     expect(screen.getByText('La energía de tu hogar, en un solo lugar.')).toBeTruthy();
     expect(screen.queryByText('Tecnología que acompaña tu vida en casa.')).toBeNull();
   });
