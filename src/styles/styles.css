@@ -3214,18 +3214,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   outline: 3px solid rgba(41, 79, 125, .13);
 }
 .evh-admin-customers .filters-container {
-  display: grid;
-  grid-template-columns: repeat(3, max-content);
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   gap: .45rem;
   margin: 0;
-}
-.evh-admin-customers .filters-container .evh-filter-reset {
-  grid-column: 1 / -1;
-  justify-self: center;
-  width: min(100%, 13.5rem);
-  text-align: center;
 }
 .evh-admin-customers .filters-container button {
   min-height: 43px;
