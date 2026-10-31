@@ -46,8 +46,8 @@ const LandingPage = () => (
 
       <div className="evh-hero-art evh-smart-home-illustration">
         <img
-          src="https://images.unsplash.com/photo-1721396114496-26ad180b1b5b?auto=format&fit=crop&w=1400&q=80"
-          alt="Cocina luminosa con refrigerador de acero inoxidable y lavadora frontal."
+          src="/electrovibehome-hero.webp"
+          alt="Composición original de ElectroVibeHome con refrigerador, lavadora, microondas y freidora de aire en un hogar moderno."
           loading="eager"
           fetchPriority="high"
           decoding="async"
