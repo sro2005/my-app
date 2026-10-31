@@ -35,12 +35,13 @@ describe('LandingPage', () => {
     expect(registerLink.querySelector('.evh-button-arrow')).toBeTruthy();
   });
 
-  test('uses an accessible lifestyle photo instead of the CSS appliance illustration', () => {
+  test('reuses the corporate brand logo and renewed slogan in the hero', () => {
     render(<LandingPage />);
 
-    const image = screen.getByRole('img', { name: /composición original de electrovibehome/i });
-    expect(image.getAttribute('src')).toBe('/electrovibehome-hero.webp');
-    expect(image.getAttribute('loading')).toBe('eager');
+    const image = screen.getByRole('img', { name: /logotipo de electrovibehome/i });
+    expect(image.getAttribute('src')).toBe('/favicon.svg');
+    expect(screen.getByText('La energía de tu hogar, en un solo lugar.')).toBeTruthy();
+    expect(screen.queryByText('Tecnología que acompaña tu vida en casa.')).toBeNull();
   });
 
   test('shows category collections that cover every real catalog category exactly once', () => {
