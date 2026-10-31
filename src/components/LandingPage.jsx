@@ -37,7 +37,6 @@ const LandingPage = () => (
           <span><strong aria-hidden="true">✓</strong> Opciones para distintos espacios</span>
           <span><strong aria-hidden="true">✓</strong> Orientación gratuita para elegir</span>
         </div>
-        <p className="evh-landing-account">¿Primera vez en ElectroVibeHome? <Link to="/register">Crea tu cuenta</Link></p>
       </div>
 
       <div className="evh-hero-art evh-smart-home-illustration" aria-label="Ilustración de un refrigerador, un televisor y una lavadora" role="img">
