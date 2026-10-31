@@ -38,8 +38,8 @@ describe('LandingPage', () => {
   test('uses an accessible lifestyle photo instead of the CSS appliance illustration', () => {
     render(<LandingPage />);
 
-    const image = screen.getByRole('img', { name: /cocina luminosa con refrigerador/i });
-    expect(image.getAttribute('src')).toContain('images.unsplash.com');
+    const image = screen.getByRole('img', { name: /composición original de electrovibehome/i });
+    expect(image.getAttribute('src')).toBe('/electrovibehome-hero.webp');
     expect(image.getAttribute('loading')).toBe('eager');
   });
 
