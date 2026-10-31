@@ -135,7 +135,7 @@ async function main() {
     await page.locator('#guia-electrovibe .evh-assistant').waitFor({ timeout: 45000 });
     await page.waitForFunction(() => {
       const guide = document.getElementById('guia-electrovibe');
-      return window.location.hash === '#guia-electrovibe' && guide && guide.getBoundingClientRect().top < window.innerHeight;
+      return window.location.hash === '#guia-electrovibe' && guide && guide.getBoundingClientRect().top >= -5 && guide.getBoundingClientRect().top < 260;
     }, null, { timeout: 15000 });
     const guidePosition = await page.locator('#guia-electrovibe').evaluate(element => element.getBoundingClientRect().top);
     assert.ok(guidePosition >= -5 && guidePosition < 260,
