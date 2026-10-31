@@ -35,11 +35,11 @@ describe('LandingPage', () => {
     expect(registerLink.querySelector('.evh-button-arrow')).toBeTruthy();
   });
 
-  test('reuses the corporate brand logo and renewed slogan in the hero', () => {
+  test('renders a compact locally hosted appliance illustration without repeated branding', () => {
     render(<LandingPage />);
 
-    const image = screen.getByRole('img', { name: /logotipo de electrovibehome/i });
-    expect(image.getAttribute('src')).toBe('/favicon.svg');
+    const image = screen.getByRole('img', { name: /colección organizada de electrodomésticos/i });
+    expect(image.getAttribute('src')).toBe('/electrovibehome-appliances.svg');
     expect(document.querySelector('.evh-brand-showcase-name')).toBeNull();
     expect(document.querySelector('.evh-brand-showcase')).toBeNull();
     expect(screen.getByText('La energía de tu hogar, en un solo lugar.')).toBeTruthy();

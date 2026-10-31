@@ -46,9 +46,9 @@ const LandingPage = () => (
 
       <div className="evh-hero-art evh-smart-home-illustration">
         <img
-          className="evh-brand-showcase-logo"
-          src="/favicon.svg"
-          alt="Logotipo de ElectroVibeHome: casa naranja con un rayo blanco sobre fondo azul oscuro."
+          className="evh-appliances-illustration"
+          src="/electrovibehome-appliances.svg"
+          alt="Colección organizada de electrodomésticos: refrigerador, lavadora, televisor, aire acondicionado, horno, microondas, lavavajillas, freidora, cafetera, aspiradora, licuadora, tostadora, ventilador, computador y secador."
           loading="eager"
           decoding="async"
         />
