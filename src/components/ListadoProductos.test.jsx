@@ -1,7 +1,8 @@
 import React from 'react';
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>
+  Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>,
+  useLocation: () => ({ hash: window.location.hash })
 }));
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -130,7 +131,11 @@ describe('ListadoProductos', () => {
 
     expect(await screen.findByText('Disponibilidad pendiente de verificación')).toBeTruthy();
     await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
-    expect(document.getElementById('guia-electrovibe')).toBeTruthy();
+    const productGrid = document.querySelector('.evh-product-grid');
+    const guide = document.getElementById('guia-electrovibe');
+    expect(productGrid).toBeTruthy();
+    expect(guide).toBeTruthy();
+    expect((productGrid.compareDocumentPosition(guide) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0).toBe(true);
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
   });
 

@@ -1,7 +1,7 @@
 import LoadingBrandMark from './LoadingBrandMark';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
 import ShoppingAssistant from './ShoppingAssistant';
 import demoProducts from '../../data/demo-products.json';
@@ -100,8 +100,9 @@ const ProductCard = ({ product, demoMode, canOrder = false }) => {
   );
 };
 
-const ListadoProductos = ({ guideOnly = false }) => {
+const ListadoProductos = () => {
   const { user } = useContext(AuthContext);
+  const { hash } = useLocation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [source, setSource] = useState('loading');
@@ -125,12 +126,12 @@ const ListadoProductos = ({ guideOnly = false }) => {
   }, [user?._id, user?.role, preferenceSignature]);
 
   useEffect(() => {
-    if (loading || window.location.hash !== '#guia-electrovibe') return;
+    if (loading || hash !== '#guia-electrovibe') return;
     const guide = document.getElementById('guia-electrovibe');
     if (guide && typeof guide.scrollIntoView === 'function') {
       guide.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [loading]);
+  }, [loading, hash]);
 
   useEffect(() => {
     let active = true;
@@ -241,35 +242,6 @@ const ListadoProductos = ({ guideOnly = false }) => {
             <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
           </div>
         </div>
-      </main>
-    );
-  }
-
-  if (guideOnly) {
-    return (
-      <main className="evh-catalog-page evh-guide-page">
-        <section className="evh-catalog-heading">
-          <div>
-            <span className="evh-eyebrow">ORIENTACIÓN PARA TU HOGAR</span>
-            <h1>Guía ElectroVibe</h1>
-            <p>Cuéntanos qué necesitas y explora recomendaciones basadas en los productos del catálogo.</p>
-          </div>
-        </section>
-        {source === 'demo' && (
-          <aside className="evh-catalog-notice" role="status">
-            <span className="evh-catalog-notice-icon" aria-hidden="true">i</span>
-            <div>
-              <strong>Disponibilidad pendiente de verificación</strong>
-              <p>{sourceMessage || 'Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.'}</p>
-            </div>
-            <button type="button" onClick={() => setRetryCount((count) => count + 1)}>Actualizar</button>
-          </aside>
-        )}
-        <div className="evh-catalog-assistant" id="guia-electrovibe">
-          <ShoppingAssistant products={products} />
-        </div>
-        <p className="evh-catalog-footnote">Las recomendaciones se basan en la información disponible en el catálogo y no sustituyen la verificación de disponibilidad.</p>
-        <div className="evh-guide-back-link"><Link to="/catalogo">Explorar todos los productos →</Link></div>
       </main>
     );
   }
