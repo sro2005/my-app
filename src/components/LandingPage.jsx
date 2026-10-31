@@ -46,7 +46,7 @@ const LandingPage = () => (
 
       <div className="evh-hero-art evh-smart-home-illustration">
         <img
-          src="https://images.unsplash.com/photo-1721396114496-26ad180b1b5b?auto=format&fit=crop&fm=jpg&ixid=NHwxMjA3fDA%3D&ixlib=rb-4.1.0&q=60&w=3000"
+          src="https://images.unsplash.com/photo-1721396114496-26ad180b1b5b?auto=format&fit=crop&w=1400&q=80"
           alt="Cocina luminosa con refrigerador de acero inoxidable y lavadora frontal."
           loading="eager"
           fetchPriority="high"
