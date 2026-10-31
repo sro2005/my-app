@@ -6495,6 +6495,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-admin-customers .dashboard-card { padding: .85rem; border-radius: 15px; }
   .evh-admin-customers .filters-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .evh-admin-customers .filters-container button { width: 100%; min-width: 0; padding: .6rem .55rem; }
+  .evh-admin-customers .filters-container .evh-filter-reset {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(100%, 13.5rem);
+  }
   .evh-admin-customers .client-stats { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
   .evh-admin-customers .stat-item { min-height: 0; padding: .85rem; }
   .evh-admin-customers .cliente-item { padding: .9rem; border-radius: 15px; }
