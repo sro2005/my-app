@@ -23,7 +23,7 @@ describe('LandingPage', () => {
     ).toBeTruthy();
     expect(screen.getByText(/ELECTRODOMÉSTICOS Y TECNOLOGÍA PARA TU HOGAR/i)).toBeTruthy();
     expect(screen.getByRole('link', { name: /explorar el catálogo/i }).getAttribute('href')).toBe('/catalogo');
-    expect(screen.queryByText(/primera vez en electrovibehome|crea tu cuenta/i)).toBeNull();
+    expect(screen.getByRole('link', { name: /crear cuenta/i }).getAttribute('href')).toBe('/register');
   });
 
   test('shows category collections that cover every real catalog category exactly once', () => {
@@ -58,10 +58,8 @@ describe('LandingPage', () => {
     render(<LandingPage />);
 
     const guideLinks = screen.getAllByRole('link', { name: /probar la guía electrovibe/i });
-    expect(guideLinks).toHaveLength(2);
-    guideLinks.forEach(link => {
-      expect(link.getAttribute('href')).toBe('/catalogo#guia-electrovibe');
-    });
+    expect(guideLinks).toHaveLength(1);
+    expect(guideLinks[0].getAttribute('href')).toBe('/catalogo#guia-electrovibe');
     expect(screen.getByRole('heading', { name: /cuéntanos qué quieres mejorar en casa/i })).toBeTruthy();
     expect(screen.getByText(/orientación gratuita basada en el catálogo disponible/i)).toBeTruthy();
   });
