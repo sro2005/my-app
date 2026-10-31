@@ -39,10 +39,16 @@ describe('LandingPage', () => {
     render(<LandingPage />);
 
     const illustration = screen.getByRole('img', { name: /colección de electrodomésticos para el hogar/i });
+    const stage = document.querySelector('.evh-hero-illustration-stage');
+    const caption = screen.getByText('La energía de tu hogar, en un solo lugar.');
+
     expect(illustration.tagName.toLowerCase()).toBe('svg');
     expect(illustration.querySelectorAll('g').length).toBeGreaterThan(10);
     expect(illustration.querySelectorAll('rect, circle, path').length).toBeGreaterThan(30);
     expect(illustration.getAttribute('viewBox')).toBe('0 0 760 560');
+    expect(stage.contains(illustration)).toBe(true);
+    expect(stage.contains(caption)).toBe(false);
+    expect(caption.parentElement).toBe(illustration.parentElement.parentElement);
     expect(document.querySelector('.evh-brand-showcase-name')).toBeNull();
     expect(document.querySelector('.evh-brand-showcase')).toBeNull();
     expect(screen.getByText('La energía de tu hogar, en un solo lugar.')).toBeTruthy();
