@@ -100,7 +100,7 @@ const ProductCard = ({ product, demoMode, canOrder = false }) => {
   );
 };
 
-const ListadoProductos = () => {
+const ListadoProductos = ({ guideOnly = false }) => {
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -241,6 +241,35 @@ const ListadoProductos = () => {
             <div className="evh-loading-lines" aria-hidden="true"><span /><span /><span /></div>
           </div>
         </div>
+      </main>
+    );
+  }
+
+  if (guideOnly) {
+    return (
+      <main className="evh-catalog-page evh-guide-page">
+        <section className="evh-catalog-heading">
+          <div>
+            <span className="evh-eyebrow">ORIENTACIÓN PARA TU HOGAR</span>
+            <h1>Guía ElectroVibe</h1>
+            <p>Cuéntanos qué necesitas y explora recomendaciones basadas en los productos del catálogo.</p>
+          </div>
+        </section>
+        {source === 'demo' && (
+          <aside className="evh-catalog-notice" role="status">
+            <span className="evh-catalog-notice-icon" aria-hidden="true">i</span>
+            <div>
+              <strong>Disponibilidad pendiente de verificación</strong>
+              <p>{sourceMessage || 'Mostramos la información disponible localmente; la disponibilidad podría no estar actualizada.'}</p>
+            </div>
+            <button type="button" onClick={() => setRetryCount((count) => count + 1)}>Actualizar</button>
+          </aside>
+        )}
+        <div className="evh-catalog-assistant" id="guia-electrovibe">
+          <ShoppingAssistant products={products} />
+        </div>
+        <p className="evh-catalog-footnote">Las recomendaciones se basan en la información disponible en el catálogo y no sustituyen la verificación de disponibilidad.</p>
+        <div className="evh-guide-back-link"><Link to="/catalogo">Explorar todos los productos →</Link></div>
       </main>
     );
   }

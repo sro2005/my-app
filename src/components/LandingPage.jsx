@@ -30,21 +30,20 @@ const LandingPage = () => (
         <p>Encuentra electrodomésticos y tecnología para cada espacio. Explora categorías, compara opciones y elige con más claridad lo que necesitas.</p>
         <div className="evh-hero-actions">
           <Link className="evh-button evh-button-primary" to="/catalogo">Explorar el Catálogo <span aria-hidden="true">→</span></Link>
-          <Link className="evh-button evh-button-secondary" to="/catalogo#guia-electrovibe">Probar la Guía ElectroVibe</Link>
+          <Link className="evh-button evh-button-secondary" to="/guia-electrovibe">Probar la Guía ElectroVibe</Link>
         </div>
         <div className="evh-trust-row" aria-label="Ventajas de ElectroVibeHome">
           <span><strong aria-hidden="true">✓</strong> Categorías organizadas</span>
           <span><strong aria-hidden="true">✓</strong> Opciones para distintos espacios</span>
           <span><strong aria-hidden="true">✓</strong> Orientación gratuita para elegir</span>
         </div>
-        <p className="evh-landing-account">¿Primera vez en ElectroVibeHome? <Link to="/register">Crea tu cuenta</Link></p>
       </div>
 
       <div className="evh-hero-art evh-smart-home-illustration" aria-label="Ilustración de un refrigerador, un televisor y una lavadora" role="img">
         <div className="evh-scene-halo" />
         <div className="evh-scene-showcase">
           <div className="evh-scene-appliance evh-scene-fridge">
-            <span className="evh-fridge-badge" aria-hidden="true">❄</span>
+            <span className="evh-fridge-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M8.5 5.1 12 8l3.5-2.9M8.5 18.9 12 16l3.5 2.9M3.7 11l4.2.4-.7 4.1M20.3 13l-4.2-.4.7-4.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
             <i className="evh-fridge-seam" />
             <b className="evh-fridge-handle evh-fridge-handle-one" />
             <b className="evh-fridge-handle evh-fridge-handle-two" />
@@ -104,7 +103,7 @@ const LandingPage = () => (
         <p>La Guía ElectroVibe revisa las opciones del catálogo y te orienta según la tarea, el espacio o la necesidad que quieras resolver.</p>
         <span className="evh-guide-benefit">Orientación gratuita basada en el catálogo disponible.</span>
       </div>
-      <Link className="evh-button evh-button-primary" to="/catalogo#guia-electrovibe">
+      <Link className="evh-button evh-button-primary" to="/guia-electrovibe">
         Probar la Guía ElectroVibe <span aria-hidden="true">→</span>
       </Link>
     </section>

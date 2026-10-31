@@ -6781,29 +6781,30 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 }
 .evh-landing .evh-button-primary,
 .evh-landing .evh-button-primary:visited {
-  border: 1px solid #285887;
-  background: #285887;
+  border: 1px solid #e97816;
+  background: #e97816;
   color: #fff;
-  box-shadow: 0 9px 22px rgba(40, 88, 135, .17);
+  box-shadow: 0 9px 22px rgba(233, 120, 22, .2);
 }
 .evh-landing .evh-button-primary:hover,
 .evh-landing .evh-button-primary:focus-visible {
-  border-color: #183b61;
-  background: #183b61;
+  border-color: #c65f0b;
+  background: #c65f0b;
   color: #fff;
-  box-shadow: 0 12px 24px rgba(24, 59, 97, .2);
+  box-shadow: 0 12px 24px rgba(198, 95, 11, .22);
 }
 .evh-landing .evh-button-secondary,
 .evh-landing .evh-button-secondary:visited {
-  border: 1px solid #cbd9e9;
-  background: #fff;
-  color: #244d78;
+  border: 1px solid #294f7d;
+  background: #294f7d;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(41, 79, 125, .16);
 }
 .evh-landing .evh-button-secondary:hover,
 .evh-landing .evh-button-secondary:focus-visible {
-  border-color: #91afd0;
-  background: #f2f7fd;
-  color: #183b61;
+  border-color: #1c3c65;
+  background: #1c3c65;
+  color: #fff;
 }
 .evh-landing .evh-trust-row {
   gap: .6rem 1.2rem;
@@ -6819,18 +6820,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .evh-landing .evh-trust-row strong {
   color: #2f865f;
   margin: 0;
-}
-.evh-landing .evh-landing-account {
-  margin: 1.1rem 0 0;
-  color: #64778a;
-  font-size: .82rem;
-}
-.evh-landing .evh-landing-account a {
-  color: #285887;
-  font-weight: 800;
-  text-decoration: underline;
-  text-decoration-color: #b9cce0;
-  text-underline-offset: 3px;
 }
 .evh-landing .evh-hero-art.evh-smart-home-illustration {
   min-height: 420px;
@@ -7192,4 +7181,90 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .evh-landing .evh-button {
     transition: none !important;
   }
+}
+
+/* Dedicated guide route and final responsive storefront refinements */
+.evh-guide-page {
+  min-height: 58vh;
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+.evh-guide-page .evh-catalog-heading {
+  margin-bottom: 1.25rem;
+}
+.evh-guide-page .evh-catalog-heading > div {
+  max-width: 760px;
+}
+.evh-guide-page .evh-catalog-assistant {
+  max-width: 1040px;
+  margin: 0 auto;
+  scroll-margin-top: 1.5rem;
+}
+.evh-guide-page .evh-catalog-footnote {
+  max-width: 1040px;
+  margin: 1.1rem auto 0;
+}
+.evh-guide-back-link {
+  max-width: 1040px;
+  margin: 1.25rem auto 0;
+}
+.evh-guide-back-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: var(--evh-blue, #294f7d);
+  font-weight: 800;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.evh-guide-back-link a:hover {
+  text-decoration: underline;
+}
+.evh-fridge-badge svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+.evh-landing .evh-category-card:focus-visible,
+.evh-landing .evh-button:focus-visible,
+.evh-guide-back-link a:focus-visible {
+  outline: 3px solid #77a9ec;
+  outline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .evh-guide-page .evh-catalog-heading {
+    padding-top: 1.5rem;
+  }
+  .evh-guide-page .evh-catalog-assistant,
+  .evh-guide-page .evh-catalog-footnote,
+  .evh-guide-back-link {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+
+/* Paleta compartida de acciones: primarias naranjas y secundarias azules en todos los módulos. */
+.evh-button-primary:not(:disabled),
+.evh-button-primary:not(:disabled):visited {
+  border-color: var(--evh-accent);
+  background: var(--evh-accent);
+  color: #fff;
+}
+.evh-button-primary:not(:disabled):hover,
+.evh-button-primary:not(:disabled):focus-visible {
+  border-color: #c65f0b;
+  background: #c65f0b;
+  color: #fff;
+}
+.evh-button-secondary:not(:disabled),
+.evh-button-secondary:not(:disabled):visited {
+  border: 1px solid var(--evh-blue);
+  background: var(--evh-blue);
+  color: #fff;
+}
+.evh-button-secondary:not(:disabled):hover,
+.evh-button-secondary:not(:disabled):focus-visible {
+  border-color: #1c3c65;
+  background: #1c3c65;
+  color: #fff;
 }

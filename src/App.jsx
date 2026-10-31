@@ -56,6 +56,7 @@ const AppContent = () => {
         <Route path="/recover-password" element={isAdmin ? <Navigate to="/home-page" replace /> : <RecoverPassword />} />
         <Route path="/reset-password/:token" element={isAdmin ? <Navigate to="/home-page" replace /> : <ResetPassword />} />
         <Route path="/catalogo" element={isAdmin ? <Navigate to="/home-page" replace /> : <ListadoProductos />} />
+        <Route path="/guia-electrovibe" element={isAdmin ? <Navigate to="/home-page" replace /> : <ListadoProductos guideOnly />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
