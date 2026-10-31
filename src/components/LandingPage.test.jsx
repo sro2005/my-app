@@ -23,7 +23,7 @@ describe('LandingPage', () => {
     ).toBeTruthy();
     expect(screen.getByText(/ELECTRODOMÉSTICOS Y TECNOLOGÍA PARA TU HOGAR/i)).toBeTruthy();
     expect(screen.getByRole('link', { name: /explorar el catálogo/i }).getAttribute('href')).toBe('/catalogo');
-    expect(screen.getByRole('link', { name: /crea tu cuenta/i }).getAttribute('href')).toBe('/register');
+    expect(screen.queryByText(/primera vez en electrovibehome|crea tu cuenta/i)).toBeNull();
   });
 
   test('shows category collections that cover every real catalog category exactly once', () => {
