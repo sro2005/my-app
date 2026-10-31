@@ -4,11 +4,12 @@ vi.mock('react-router-dom', () => ({
   Link: ({ to, children, ...props }) => <a href={to} {...props}>{children}</a>
 }));
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
 import ListadoProductos from './ListadoProductos';
 import demoProducts from '../../data/demo-products.json';
+import catalogCategoryGroups from '../utils/catalogCategoryGroups';
 
 vi.mock('axios', () => ({
   default: { get: vi.fn() }
@@ -18,11 +19,19 @@ vi.mock('./ShoppingAssistant', () => ({
   default: () => null
 }));
 
+const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
+
 afterEach(() => {
   cleanup();
   vi.clearAllMocks();
   vi.unstubAllEnvs();
   localStorage.clear();
+  window.history.replaceState({}, '', '/');
+  if (originalScrollIntoView) {
+    HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+  } else {
+    delete HTMLElement.prototype.scrollIntoView;
+  }
 });
 
 const renderCatalog = (user = null) => render(
@@ -90,6 +99,49 @@ describe('ListadoProductos', () => {
     expect(screen.getByRole('button', { name: /restablecer/i })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Tostadora Test' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Licuadora Test' })).toBeNull();
+  });
+
+  test('opens a catalog collection from the homepage category link and can clear it', async () => {
+    window.history.replaceState({}, '', '/catalogo?grupo=cocina');
+    vi.stubEnv('REACT_APP_API_BASE_URL', '');
+
+    renderCatalog();
+
+    expect(await screen.findByText('Colección: Cocina')).toBeTruthy();
+    expect(document.querySelectorAll('.evh-product-card')).toHaveLength(21);
+    expect(screen.getByRole('heading', { name: /encuentra tu próximo favorito/i })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: /restablecer/i }));
+
+    expect(screen.queryByText('Colección: Cocina')).toBeNull();
+    expect(document.querySelectorAll('.evh-product-card')).toHaveLength(66);
+  });
+
+  test('scrolls directly to the guide when the catalog route has its guide hash', async () => {
+    window.history.replaceState({}, '', '/catalogo#guia-electrovibe');
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoView
+    });
+    vi.stubEnv('REACT_APP_API_BASE_URL', '');
+
+    renderCatalog();
+
+    expect(await screen.findByText('Disponibilidad pendiente de verificación')).toBeTruthy();
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
+    expect(document.getElementById('guia-electrovibe')).toBeTruthy();
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+  });
+
+  test('homepage collection definitions map all real product categories without duplicates', () => {
+    const groupedCategories = catalogCategoryGroups.flatMap(group => group.categories);
+    const actualCategories = [...new Set(demoProducts.map(product => product.category))];
+
+    expect(groupedCategories).toHaveLength(actualCategories.length);
+    expect(new Set(groupedCategories).size).toBe(groupedCategories.length);
+    expect(groupedCategories).toEqual(expect.arrayContaining(actualCategories));
+    expect(actualCategories).toEqual(expect.arrayContaining(groupedCategories));
   });
 
   test('uses saved category preferences as an optional filter, without preventing access to the full catalog', async () => {
