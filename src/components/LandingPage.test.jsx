@@ -26,10 +26,27 @@ describe('LandingPage', () => {
     expect(screen.getByRole('link', { name: /crear cuenta/i }).getAttribute('href')).toBe('/register');
   });
 
+  test('adds matching arrow cues to both main hero calls to action', () => {
+    render(<LandingPage />);
+
+    const catalogLink = screen.getByRole('link', { name: /explorar el catálogo/i });
+    const registerLink = screen.getByRole('link', { name: /crear cuenta/i });
+    expect(catalogLink.querySelector('.evh-button-arrow')).toBeTruthy();
+    expect(registerLink.querySelector('.evh-button-arrow')).toBeTruthy();
+  });
+
+  test('uses an accessible lifestyle photo instead of the CSS appliance illustration', () => {
+    render(<LandingPage />);
+
+    const image = screen.getByRole('img', { name: /cocina luminosa con refrigerador/i });
+    expect(image.getAttribute('src')).toContain('images.unsplash.com');
+    expect(image.getAttribute('loading')).toBe('eager');
+  });
+
   test('shows category collections that cover every real catalog category exactly once', () => {
     render(<LandingPage />);
 
-    const cards = screen.getAllByRole('link', { name: /ver \d+ categor(?:ía|ías) en el catálogo/i });
+    const cards = screen.getAllByRole('link', { name: /ver \\d+ categor(?:ía|ías) en el catálogo/i });
     expect(cards).toHaveLength(catalogCategoryGroups.length);
     expect(screen.getByText('Refrigeración')).toBeTruthy();
     expect(screen.getByText('Lavado y cuidado')).toBeTruthy();
