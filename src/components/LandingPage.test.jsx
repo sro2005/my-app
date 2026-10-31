@@ -29,7 +29,7 @@ describe('LandingPage', () => {
   test('shows category collections that cover every real catalog category exactly once', () => {
     render(<LandingPage />);
 
-    const cards = screen.getAllByRole('link', { name: /ver \d+ categorías en el catálogo/i });
+    const cards = screen.getAllByRole('link', { name: /ver \d+ categor(?:ía|ías) en el catálogo/i });
     expect(cards).toHaveLength(catalogCategoryGroups.length);
     expect(screen.getByText('Refrigeración')).toBeTruthy();
     expect(screen.getByText('Lavado y cuidado')).toBeTruthy();
