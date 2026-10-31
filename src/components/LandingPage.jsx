@@ -45,8 +45,10 @@ const LandingPage = () => (
         </div>
       </div>
 
-      <div className="evh-hero-art evh-smart-home-illustration">
-        <HeroAppliances />
+      <div className="evh-hero-art evh-smart-home-illustration evh-hero-art-compact">
+        <div className="evh-hero-illustration-stage">
+          <HeroAppliances />
+        </div>
         <div className="evh-art-label">La energía de tu hogar, en un solo lugar.</div>
       </div>
     </section>
