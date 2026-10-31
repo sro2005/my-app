@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import catalogCategoryGroups from '../utils/catalogCategoryGroups';
+import './LandingPage.css';
 
 const CategoryIcon = ({ name }) => {
   const drawings = {
@@ -29,8 +30,12 @@ const LandingPage = () => (
         <h1>Un hogar que funciona mejor. <span>Un día a día más fácil.</span></h1>
         <p>Encuentra electrodomésticos y tecnología para cada espacio. Explora categorías, compara opciones y elige con más claridad lo que necesitas.</p>
         <div className="evh-hero-actions">
-          <Link className="evh-button evh-button-primary" to="/catalogo">Explorar el Catálogo <span aria-hidden="true">→</span></Link>
-          <Link className="evh-button evh-button-secondary" to="/register">Crear cuenta</Link>
+          <Link className="evh-button evh-button-primary" to="/catalogo">
+            Explorar el Catálogo <span className="evh-button-arrow" aria-hidden="true">→</span>
+          </Link>
+          <Link className="evh-button evh-button-secondary" to="/register">
+            Crear cuenta <span className="evh-button-arrow" aria-hidden="true">→</span>
+          </Link>
         </div>
         <div className="evh-trust-row" aria-label="Ventajas de ElectroVibeHome">
           <span><strong aria-hidden="true">✓</strong> Categorías organizadas</span>
@@ -39,25 +44,14 @@ const LandingPage = () => (
         </div>
       </div>
 
-      <div className="evh-hero-art evh-smart-home-illustration" aria-label="Ilustración de un refrigerador, un televisor y una lavadora" role="img">
-        <div className="evh-scene-halo" />
-        <div className="evh-scene-showcase">
-          <div className="evh-scene-appliance evh-scene-fridge">
-            <span className="evh-fridge-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M8.5 5.1 12 8l3.5-2.9M8.5 18.9 12 16l3.5 2.9M3.7 11l4.2.4-.7 4.1M20.3 13l-4.2-.4.7-4.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
-            <i className="evh-fridge-seam" />
-            <b className="evh-fridge-handle evh-fridge-handle-one" />
-            <b className="evh-fridge-handle evh-fridge-handle-two" />
-          </div>
-          <div className="evh-scene-tv">
-            <div className="evh-tv-screen"><span aria-hidden="true">⌁</span></div>
-            <i className="evh-tv-stand" />
-          </div>
-          <div className="evh-scene-appliance evh-scene-washer">
-            <span className="evh-washer-controls"><i /></span>
-            <i className="evh-washer-door" />
-          </div>
-        </div>
-        <div className="evh-scene-platform" />
+      <div className="evh-hero-art evh-smart-home-illustration">
+        <img
+          src="https://images.unsplash.com/photo-1721396114496-26ad180b1b5b?auto=format&fit=crop&fm=jpg&ixid=NHwxMjA3fDA%3D&ixlib=rb-4.1.0&q=60&w=3000"
+          alt="Cocina luminosa con refrigerador de acero inoxidable y lavadora frontal."
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
         <div className="evh-art-label">Tecnología que acompaña tu vida en casa.</div>
       </div>
     </section>
