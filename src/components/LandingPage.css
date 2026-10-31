@@ -119,77 +119,35 @@
   }
 }
 
-/* Identidad visual de portada, reutilizando el mismo símbolo corporativo */
+/* El emblema institucional ocupa el panel visual completo, sin duplicar el nombre. */
 .evh-hero-art.evh-smart-home-illustration {
-  background: radial-gradient(circle at 50% 37%, #235784 0%, #122f53 58%, #0a1c37 100%);
-}
-
-.evh-brand-showcase {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  width: 100%;
-  min-height: 335px;
-  padding: 26px 22px 80px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  isolation: isolate;
-}
-
-.evh-brand-showcase::before,
-.evh-brand-showcase::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  border: 1px solid rgba(255, 255, 255, .14);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-.evh-brand-showcase::before { width: 340px; height: 340px; }
-.evh-brand-showcase::after { width: 450px; height: 450px; border-color: rgba(242, 140, 40, .12); }
-
-.evh-brand-glow {
-  position: absolute;
-  z-index: -1;
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(242, 140, 40, .24), rgba(57, 135, 213, .14) 45%, transparent 72%);
-  filter: blur(10px);
+  background: #122f53;
 }
 
 .evh-hero-art .evh-brand-showcase-logo {
-  position: relative;
-  inset: auto;
-  width: clamp(132px, 17vw, 206px);
-  height: clamp(132px, 17vw, 206px);
-  flex: 0 0 auto;
-  object-fit: contain;
-  border-radius: 23%;
-  box-shadow: 0 18px 42px rgba(1, 12, 27, .35), 0 0 0 1px rgba(255, 255, 255, .2);
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  border-radius: 0;
+  box-shadow: none;
 }
-
-.evh-brand-showcase-name {
-  color: #fff;
-  font-size: clamp(1.45rem, 2.6vw, 2.1rem);
-  font-weight: 850;
-  letter-spacing: -.035em;
-  line-height: 1.2;
-  text-align: center;
-}
-
-.evh-brand-showcase-name span { color: #f28c28; }
 
 .evh-hero-art .evh-art-label {
-  background: rgba(6, 20, 41, .62);
-  border-color: rgba(255, 255, 255, .16);
+  z-index: 2;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  background: rgba(6, 20, 41, .8);
+  border-color: rgba(255, 255, 255, .22);
 }
 
 @media (max-width: 560px) {
-  .evh-brand-showcase { min-height: 280px; gap: 12px; padding-bottom: 75px; }
-  .evh-brand-showcase::before { width: 255px; height: 255px; }
-  .evh-brand-showcase::after { width: 345px; height: 345px; }
+  .evh-hero-art .evh-art-label {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+  }
 }
