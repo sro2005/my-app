@@ -79,7 +79,7 @@ const LandingPage = () => (
             className="evh-category-card"
             to={`/catalogo?grupo=${category.slug}`}
             key={category.slug}
-            aria-label={`${category.name}. Ver ${category.categories.length} categorías en el catálogo`}
+            aria-label={`${category.name}. Ver ${category.categories.length} ${category.categories.length === 1 ? 'categoría' : 'categorías'} en el catálogo`}
           >
             <span className="evh-category-icon"><CategoryIcon name={category.icon} /></span>
             <strong>{category.name}</strong>
