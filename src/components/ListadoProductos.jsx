@@ -6,6 +6,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import ShoppingAssistant from './ShoppingAssistant';
 import demoProducts from '../../data/demo-products.json';
 import { formatCop as formatPrice } from '../utils/currency';
+import catalogCategoryGroups from '../utils/catalogCategoryGroups';
 
 const normalize = (value) => String(value || '')
   .normalize('NFD')
@@ -108,7 +109,12 @@ const ListadoProductos = () => {
   const [retryCount, setRetryCount] = useState(0);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [categoryGroup, setCategoryGroup] = useState(() => {
+    const requestedGroup = new URLSearchParams(window.location.search).get('grupo') || '';
+    return catalogCategoryGroups.some(group => group.slug === requestedGroup) ? requestedGroup : '';
+  });
   const [sortBy, setSortBy] = useState('featured');
+  const selectedCategoryGroup = catalogCategoryGroups.find(group => group.slug === categoryGroup);
   const preferenceValues = Array.isArray(user?.preferences) ? user.preferences : [];
   const preferenceSignature = preferenceValues.join('|');
   const canFilterByPreferences = user?.role === 'user' && preferenceValues.length > 0;
@@ -117,6 +123,14 @@ const ListadoProductos = () => {
   useEffect(() => {
     setShowPreferencesOnly(canFilterByPreferences);
   }, [user?._id, user?.role, preferenceSignature]);
+
+  useEffect(() => {
+    if (loading || window.location.hash !== '#guia-electrovibe') return;
+    const guide = document.getElementById('guia-electrovibe');
+    if (guide && typeof guide.scrollIntoView === 'function') {
+      guide.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [loading]);
 
   useEffect(() => {
     let active = true;
@@ -178,7 +192,9 @@ const ListadoProductos = () => {
         product.description,
         product.category
       ].some((value) => normalize(value).includes(normalizedSearch));
-      const matchesCategory = category === 'all' || product.category === category;
+      const matchesCategory = category !== 'all'
+        ? product.category === category
+        : !selectedCategoryGroup || selectedCategoryGroup.categories.some(item => normalize(item) === normalize(product.category));
       const matchesPreferences = !showPreferencesOnly || normalizedPreferences.has(normalize(product.category));
       return matchesSearch && matchesCategory && matchesPreferences;
     });
@@ -199,14 +215,15 @@ const ListadoProductos = () => {
       default:
         return matchingProducts;
     }
-  }, [products, search, category, showPreferencesOnly, preferenceSignature, sortBy]);
+  }, [products, search, category, categoryGroup, showPreferencesOnly, preferenceSignature, sortBy]);
 
   const hasActiveFilters = Boolean(
-    search.trim() || category !== 'all' || (canFilterByPreferences && showPreferencesOnly)
+    search.trim() || category !== 'all' || Boolean(categoryGroup) || (canFilterByPreferences && showPreferencesOnly)
   );
   const resetCatalogControls = () => {
     setSearch('');
     setCategory('all');
+    setCategoryGroup('');
     setSortBy('featured');
     setShowPreferencesOnly(false);
   };
@@ -261,7 +278,7 @@ const ListadoProductos = () => {
         </label>
         <label className="evh-catalog-category-filter">
           <span>Categoría</span>
-          <select value={category} onChange={(event) => setCategory(event.target.value)}>
+          <select value={category} onChange={(event) => { setCategory(event.target.value); setCategoryGroup(''); }}>
             <option value="all">Todas las categorías</option>
             {categories.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
@@ -295,6 +312,7 @@ const ListadoProductos = () => {
 
       <div className="evh-catalog-results-bar" aria-live="polite">
         <span>Mostrando <strong>{filteredProducts.length}</strong> de <strong>{products.length}</strong> productos</span>
+        {selectedCategoryGroup && <span className="evh-catalog-active-filter">Colección: {selectedCategoryGroup.name}</span>}
         {category !== 'all' && <span className="evh-catalog-active-filter">Categoría: {category}</span>}
         {search.trim() && <span className="evh-catalog-active-filter">Búsqueda: “{search.trim()}”</span>}
       </div>

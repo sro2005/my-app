@@ -11,10 +11,10 @@ fs.mkdirSync(artifactsDir, { recursive: true });
 
 const viewportCases = [
   { width: 1440, height: 1000, heroColumns: 2, categoryColumns: 4, screenshot: 'landing-desktop.png' },
-  { width: 1024, height: 768, heroColumns: 2, categoryColumns: 4 },
+  { width: 1024, height: 768, heroColumns: 2, categoryColumns: 3 },
   { width: 768, height: 1024, heroColumns: 1, categoryColumns: 2 },
   { width: 390, height: 844, heroColumns: 1, categoryColumns: 2, screenshot: 'landing-mobile.png' },
-  { width: 320, height: 740, heroColumns: 1, categoryColumns: 2 }
+  { width: 320, height: 740, heroColumns: 1, categoryColumns: 1 }
 ];
 
 async function readLayout(page) {
@@ -107,7 +107,7 @@ async function main() {
   try {
     const response = await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
     assert.ok(response && response.ok(), 'Preview returned a non-success status: ' + (response ? response.status() : 'no response'));
-    await page.getByRole('heading', { name: /encuentra tecnología que haga más fácil tu día a día/i }).waitFor({ timeout: 45000 });
+    await page.getByRole('heading', { name: /un hogar que funciona mejor/i }).waitFor({ timeout: 45000 });
     await page.getByRole('navigation', { name: /navegación principal/i }).waitFor();
 
     for (const viewport of viewportCases) {
@@ -131,7 +131,32 @@ async function main() {
     }
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.getByRole('link', { name: /explorar productos/i }).click();
+    await page.getByRole('link', { name: /probar la guía electrovibe/i }).first().click();
+    await page.locator('#guia-electrovibe .evh-assistant').waitFor({ timeout: 45000 });
+    await page.waitForFunction(() => {
+      const guide = document.getElementById('guia-electrovibe');
+      return window.location.hash === '#guia-electrovibe' && guide && guide.getBoundingClientRect().top >= -5 && guide.getBoundingClientRect().top < 260;
+    }, null, { timeout: 15000 });
+    const guidePosition = await page.locator('#guia-electrovibe').evaluate(element => element.getBoundingClientRect().top);
+    assert.ok(guidePosition >= -5 && guidePosition < 260,
+      'The ElectroVibe Guide should be brought into view directly: top=' + guidePosition + '.');
+    console.log('Direct ElectroVibe Guide navigation passed: the guide is visible after following its homepage CTA.');
+
+    await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.getByRole('heading', { name: /un hogar que funciona mejor/i }).waitFor({ timeout: 45000 });
+    await page.getByRole('link', { name: /cocina.*ver 7 categorías/i }).click();
+    await page.getByRole('heading', { name: /encuentra tu próximo favorito/i }).waitFor({ timeout: 45000 });
+    await page.getByText('Colección: Cocina').waitFor({ timeout: 15000 });
+    await page.waitForFunction(() => document.querySelectorAll('.evh-product-card').length === 21, null, { timeout: 45000 });
+    assert.equal(await page.locator('.evh-product-card').count(), 21,
+      'The Cocina homepage collection should show its 7 catalog categories (21 products).');
+    await page.getByRole('button', { name: /restablecer/i }).click();
+    await page.waitForFunction(() => document.querySelectorAll('.evh-product-card').length >= 66, null, { timeout: 15000 });
+    console.log('Homepage collection navigation passed: Cocina shows its 21 products and restores the full catalogue.');
+
+    await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.getByRole('heading', { name: /un hogar que funciona mejor/i }).waitFor({ timeout: 45000 });
+    await page.getByRole('link', { name: /explorar el catálogo/i }).click();
     await page.getByRole('heading', { name: /encuentra tu próximo favorito/i }).waitFor({ timeout: 45000 });
     await page.waitForFunction(() => document.querySelectorAll('.evh-product-card').length >= 66, null, { timeout: 45000 });
     const productCount = await page.locator('.evh-product-card').count();
