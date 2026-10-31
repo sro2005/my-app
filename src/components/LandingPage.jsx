@@ -30,7 +30,7 @@ const LandingPage = () => (
         <p>Encuentra electrodomésticos y tecnología para cada espacio. Explora categorías, compara opciones y elige con más claridad lo que necesitas.</p>
         <div className="evh-hero-actions">
           <Link className="evh-button evh-button-primary" to="/catalogo">Explorar el Catálogo <span aria-hidden="true">→</span></Link>
-          <Link className="evh-button evh-button-secondary" to="/catalogo#guia-electrovibe">Probar la Guía ElectroVibe</Link>
+          <Link className="evh-button evh-button-secondary" to="/register">Crear cuenta</Link>
         </div>
         <div className="evh-trust-row" aria-label="Ventajas de ElectroVibeHome">
           <span><strong aria-hidden="true">✓</strong> Categorías organizadas</span>
