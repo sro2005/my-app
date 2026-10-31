@@ -7193,3 +7193,62 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     transition: none !important;
   }
 }
+
+/* Dedicated guide route and final responsive storefront refinements */
+.evh-guide-page {
+  min-height: 58vh;
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+}
+.evh-guide-page .evh-catalog-heading {
+  margin-bottom: 1.25rem;
+}
+.evh-guide-page .evh-catalog-heading > div {
+  max-width: 760px;
+}
+.evh-guide-page .evh-catalog-assistant {
+  max-width: 1040px;
+  margin: 0 auto;
+  scroll-margin-top: 1.5rem;
+}
+.evh-guide-page .evh-catalog-footnote {
+  max-width: 1040px;
+  margin: 1.1rem auto 0;
+}
+.evh-guide-back-link {
+  max-width: 1040px;
+  margin: 1.25rem auto 0;
+}
+.evh-guide-back-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: var(--evh-blue, #294f7d);
+  font-weight: 800;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+.evh-guide-back-link a:hover {
+  text-decoration: underline;
+}
+.evh-fridge-badge svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+.evh-landing .evh-category-card:focus-visible,
+.evh-landing .evh-button:focus-visible,
+.evh-guide-back-link a:focus-visible {
+  outline: 3px solid #77a9ec;
+  outline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .evh-guide-page .evh-catalog-heading {
+    padding-top: 1.5rem;
+  }
+  .evh-guide-page .evh-catalog-assistant,
+  .evh-guide-page .evh-catalog-footnote,
+  .evh-guide-back-link {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
