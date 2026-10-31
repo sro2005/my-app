@@ -44,7 +44,7 @@ const LandingPage = () => (
         <div className="evh-scene-halo" />
         <div className="evh-scene-showcase">
           <div className="evh-scene-appliance evh-scene-fridge">
-            <span className="evh-fridge-badge" aria-hidden="true">❄</span>
+            <span className="evh-fridge-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M8.5 5.1 12 8l3.5-2.9M8.5 18.9 12 16l3.5 2.9M3.7 11l4.2.4-.7 4.1M20.3 13l-4.2-.4.7-4.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
             <i className="evh-fridge-seam" />
             <b className="evh-fridge-handle evh-fridge-handle-one" />
             <b className="evh-fridge-handle evh-fridge-handle-two" />
