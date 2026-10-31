@@ -45,14 +45,18 @@ const LandingPage = () => (
       </div>
 
       <div className="evh-hero-art evh-smart-home-illustration">
-        <img
-          src="/electrovibehome-hero.webp"
-          alt="Composición original de ElectroVibeHome con refrigerador, lavadora, microondas y freidora de aire en un hogar moderno."
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-        />
-        <div className="evh-art-label">Tecnología que acompaña tu vida en casa.</div>
+        <div className="evh-brand-showcase">
+          <span className="evh-brand-glow" aria-hidden="true" />
+          <img
+            className="evh-brand-showcase-logo"
+            src="/favicon.svg"
+            alt="Logotipo de ElectroVibeHome: casa naranja con un rayo blanco sobre fondo azul oscuro."
+            loading="eager"
+            decoding="async"
+          />
+          <span className="evh-brand-showcase-name">ElectroVibe<span>Home</span></span>
+        </div>
+        <div className="evh-art-label">La energía de tu hogar, en un solo lugar.</div>
       </div>
     </section>
 
