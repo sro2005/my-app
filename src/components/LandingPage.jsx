@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import catalogCategoryGroups from '../utils/catalogCategoryGroups';
 import './LandingPage.css';
+import HeroAppliances from './HeroAppliances';
 
 const CategoryIcon = ({ name }) => {
   const drawings = {
@@ -45,13 +46,7 @@ const LandingPage = () => (
       </div>
 
       <div className="evh-hero-art evh-smart-home-illustration">
-        <img
-          className="evh-appliances-illustration"
-          src="/electrovibehome-appliances.svg"
-          alt="Colección organizada de electrodomésticos: refrigerador, lavadora, televisor, aire acondicionado, horno, microondas, lavavajillas, freidora, cafetera, aspiradora, licuadora, tostadora, ventilador, computador y secador."
-          loading="eager"
-          decoding="async"
-        />
+        <HeroAppliances />
         <div className="evh-art-label">La energía de tu hogar, en un solo lugar.</div>
       </div>
     </section>
