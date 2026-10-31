@@ -54,13 +54,13 @@ describe('LandingPage', () => {
     });
   });
 
-  test('sends visitors directly to a dedicated guide page instead of the product list', () => {
+  test('sends visitors to the guide section below the products inside the catalog', () => {
     render(<LandingPage />);
 
     const guideLinks = screen.getAllByRole('link', { name: /probar la guía electrovibe/i });
     expect(guideLinks).toHaveLength(2);
     guideLinks.forEach(link => {
-      expect(link.getAttribute('href')).toBe('/guia-electrovibe');
+      expect(link.getAttribute('href')).toBe('/catalogo#guia-electrovibe');
     });
     expect(screen.getByRole('heading', { name: /cuéntanos qué quieres mejorar en casa/i })).toBeTruthy();
     expect(screen.getByText(/orientación gratuita basada en el catálogo disponible/i)).toBeTruthy();
