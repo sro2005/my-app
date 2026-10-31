@@ -164,7 +164,10 @@
 }
 .evh-orders-page.is-admin .evh-admin-order-clear {
   grid-column: 1 / -1;
-  justify-self: start;
+  justify-self: center;
+  width: fit-content;
+  min-width: 8.5rem;
+  text-align: center;
   min-height: 38px;
   padding: .5rem .75rem;
   border: 1px solid #d7e2ef;
@@ -360,7 +363,7 @@
   .evh-orders-page.is-admin .evh-order-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .evh-orders-page.is-admin .evh-admin-order-toolbar { grid-template-columns: minmax(0, 1fr) minmax(200px, .6fr); }
   .evh-orders-page.is-admin .evh-admin-order-results { grid-column: 1; }
-  .evh-orders-page.is-admin .evh-admin-order-clear { grid-column: 2; justify-self: end; }
+  .evh-orders-page.is-admin .evh-admin-order-clear { grid-column: 1 / -1; justify-self: center; }
   .evh-orders-page.is-admin .evh-order-field { grid-template-columns: minmax(0, .7fr) minmax(0, 1fr); }
 }
 @media (max-width: 620px) {
@@ -377,9 +380,12 @@
   .evh-orders-page.is-admin .evh-order-stat > span { font-size: .7rem; }
   .evh-orders-page.is-admin .evh-order-stat > small { font-size: .68rem; }
   .evh-orders-page.is-admin .evh-admin-order-toolbar { grid-template-columns: minmax(0, 1fr); gap: .75rem; padding: .85rem; }
-  .evh-orders-page.is-admin .evh-admin-order-results,
-  .evh-orders-page.is-admin .evh-admin-order-clear { grid-column: auto; justify-self: stretch; }
-  .evh-orders-page.is-admin .evh-admin-order-clear { width: 100%; }
+  .evh-orders-page.is-admin .evh-admin-order-results { grid-column: auto; justify-self: stretch; }
+  .evh-orders-page.is-admin .evh-admin-order-clear {
+    grid-column: auto;
+    justify-self: center;
+    width: min(100%, 14rem);
+  }
   .evh-orders-page.is-admin .pedido-item { padding: .9rem; border-radius: 16px; }
   .evh-orders-page.is-admin .pedido-info { grid-template-columns: minmax(0, 1fr); gap: .65rem; }
   .evh-orders-page.is-admin .pedido-image { width: 48px; height: 48px; border-radius: 13px; }
